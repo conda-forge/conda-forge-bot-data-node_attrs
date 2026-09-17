@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -26,8 +26,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "6d1d5772c07c13e676412f5854f402fd36822154",
-  "feedstock_hash_ts": 1783868712,
+  "feedstock_hash": "aa0be32dfac0259800296771638c943d97ee10a6",
+  "feedstock_hash_ts": 1789581026,
   "feedstock_name": "idt",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,18 +44,21 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions \"$PREFIX\"/share/man/man1",
-          "\"$PREFIX\"/bin/idt completions bash > \"$PREFIX\"/share/bash-completion/completions/idt",
-          "\"$PREFIX\"/bin/idt completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/idt.fish",
-          "\"$PREFIX\"/bin/idt completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_idt",
-          "\"$PREFIX\"/bin/idt manpage            \"$PREFIX\"/share/man/man1",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/man/man1 ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let bin = ($prefix)/bin/idt",
+          "^$bin manpage                 ($prefix)/share/man/man1",
+          "^$bin completions bash | save ($prefix)/share/bash-completion/completions/idt",
+          "^$bin completions fish | save ($prefix)/share/fish/vendor_completions.d/idt.fish",
+          "^$bin completions zsh  | save ($prefix)/share/zsh/site-functions/_idt"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -73,7 +76,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -91,10 +95,10 @@
                 "idt"
               ],
               "files": [
+                "share/man/man1/idt*.1",
                 "share/bash-completion/completions/idt",
                 "share/fish/vendor_completions.d/idt.fish",
-                "share/zsh/site-functions/_idt",
-                "share/man/man1/idt*.1"
+                "share/zsh/site-functions/_idt"
               ],
               "strict": true
             }
@@ -113,7 +117,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -130,6 +135,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -160,13 +166,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -184,7 +192,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -218,7 +227,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -235,6 +245,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -265,13 +276,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -289,7 +302,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -323,7 +337,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -340,6 +355,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -370,19 +386,21 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions \"$PREFIX\"/share/man/man1",
-          "\"$PREFIX\"/bin/idt completions bash > \"$PREFIX\"/share/bash-completion/completions/idt",
-          "\"$PREFIX\"/bin/idt completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/idt.fish",
-          "\"$PREFIX\"/bin/idt completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_idt",
-          "\"$PREFIX\"/bin/idt manpage            \"$PREFIX\"/share/man/man1",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml",
-          "cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/man/man1 ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let bin = ($prefix)/bin/idt",
+          "^$bin manpage                 ($prefix)/share/man/man1",
+          "^$bin completions bash | save ($prefix)/share/bash-completion/completions/idt",
+          "^$bin completions fish | save ($prefix)/share/fish/vendor_completions.d/idt.fish",
+          "^$bin completions zsh  | save ($prefix)/share/zsh/site-functions/_idt"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -400,7 +418,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -418,10 +437,10 @@
                 "idt"
               ],
               "files": [
+                "share/man/man1/idt*.1",
                 "share/bash-completion/completions/idt",
                 "share/fish/vendor_completions.d/idt.fish",
-                "share/zsh/site-functions/_idt",
-                "share/man/man1/idt*.1"
+                "share/zsh/site-functions/_idt"
               ],
               "strict": true
             }
@@ -438,7 +457,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -470,7 +490,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -502,7 +523,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -534,7 +556,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -566,7 +589,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -598,7 +622,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -632,7 +657,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -656,13 +682,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -680,7 +708,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -714,7 +743,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -731,6 +761,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -761,13 +792,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -785,7 +818,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -819,7 +853,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -836,6 +871,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -871,7 +907,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/idt.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.1.23\"\n\npackage:\n  name: idt\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/sh-cho/idt/archive/refs/tags/${{ version }}.tar.gz\n  sha256: 79404c0aef153f350d2c2982641f42bc881fc597e58f92024382ee9f8c528cc4\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    content:\n      - if: unix\n        then:\n          - cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins\n          # generate shell completions and manpage\n          - if: build_platform == host_platform\n            then:\n              - mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions \"$PREFIX\"/share/man/man1\n              - '\"$PREFIX\"/bin/idt completions bash > \"$PREFIX\"/share/bash-completion/completions/idt'\n              - '\"$PREFIX\"/bin/idt completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/idt.fish'\n              - '\"$PREFIX\"/bin/idt completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_idt'\n              - '\"$PREFIX\"/bin/idt manpage            \"$PREFIX\"/share/man/man1'\n        else:\n          - cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins\n          # generate shell completions and manpage\n          - if: build_platform == host_platform\n            then:\n              - mkdir \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\n              - mkdir \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\n              - mkdir \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\n              - mkdir \"%LIBRARY_PREFIX%\"\\share\\man\\man1\n              - '\"%LIBRARY_BIN%\"\\idt.exe completions bash > \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\\idt'\n              - '\"%LIBRARY_BIN%\"\\idt.exe completions fish > \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\\idt.fish'\n              - '\"%LIBRARY_BIN%\"\\idt.exe completions zsh  > \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\\_idt'\n              - '\"%LIBRARY_BIN%\"\\idt.exe manpage            \"%LIBRARY_PREFIX%\"\\share\\man\\man1'\n      - cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n\ntests:\n  - script:\n      - idt --help\n      - idt --version\n  - package_contents:\n      bin:\n        - idt\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/bash-completion/completions/idt\n            - share/fish/vendor_completions.d/idt.fish\n            - share/zsh/site-functions/_idt\n            - share/man/man1/idt*.1\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/bash-completion/completions/idt\n            - Library/share/fish/vendor_completions.d/idt.fish\n            - Library/share/zsh/site-functions/_idt\n            - Library/share/man/man1/idt*.1\n      strict: true\n\nabout:\n  summary: A fast, ergonomic CLI tool for working with various ID formats\n  description: |\n    idt (ID Tool) is a fast, ergonomic CLI tool for working with various\n    identifier formats. Whether you need to generate, inspect, convert, or\n    validate IDs, idt provides a unified interface for all your identifier needs\n    including support for UUID (all versions), ULID, NanoID, Snowflake, assigned\n    IDs (EAN, ISBN, ISIN), and more.\n  license: MIT OR Apache-2.0\n  license_file:\n    - LICENSE-APACHE\n    - LICENSE-MIT\n    - THIRDPARTY.yml\n  homepage: https://sh-cho.github.io/idt\n  repository: https://github.com/sh-cho/idt\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
+  "raw_meta_yaml": "context:\n  version: \"0.1.23\"\n\npackage:\n  name: idt\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/sh-cho/idt/archive/refs/tags/${{ version }}.tar.gz\n  sha256: 79404c0aef153f350d2c2982641f42bc881fc597e58f92024382ee9f8c528cc4\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # build main app and generate license data\n      - cargo auditable install --path=. --root=($prefix) --no-track --locked --bins\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      # generate shell completions\n      - if: build_platform == host_platform\n        then:\n          - mkdir ($prefix)/share/man/man1 ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions\n          - let bin = ($prefix)/bin/idt\n          - ^$bin manpage                 ($prefix)/share/man/man1\n          - ^$bin completions bash | save ($prefix)/share/bash-completion/completions/idt\n          - ^$bin completions fish | save ($prefix)/share/fish/vendor_completions.d/idt.fish\n          - ^$bin completions zsh  | save ($prefix)/share/zsh/site-functions/_idt\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - nushell\n\ntests:\n  - script:\n      - idt --help\n      - idt --version\n  - package_contents:\n      bin:\n        - idt\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/man/man1/idt*.1\n            - share/bash-completion/completions/idt\n            - share/fish/vendor_completions.d/idt.fish\n            - share/zsh/site-functions/_idt\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/man/man1/idt*.1\n            - Library/share/bash-completion/completions/idt\n            - Library/share/fish/vendor_completions.d/idt.fish\n            - Library/share/zsh/site-functions/_idt\n      strict: true\n\nabout:\n  summary: A fast, ergonomic CLI tool for working with various ID formats\n  description: |\n    idt (ID Tool) is a fast, ergonomic CLI tool for working with various\n    identifier formats. Whether you need to generate, inspect, convert, or\n    validate IDs, idt provides a unified interface for all your identifier needs\n    including support for UUID (all versions), ULID, NanoID, Snowflake, assigned\n    IDs (EAN, ISBN, ISIN), and more.\n  license: MIT OR Apache-2.0\n  license_file:\n    - LICENSE-APACHE\n    - LICENSE-MIT\n    - THIRDPARTY.yml\n  homepage: https://sh-cho.github.io/idt\n  repository: https://github.com/sh-cho/idt\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -879,6 +915,7 @@
       "c_stdlib_stub",
       "cargo-auditable",
       "cargo-bundle-licenses",
+      "nushell",
       "rust_compiler_stub"
     ]
   },
@@ -890,22 +927,17 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub"
-      ]
+      "elements": []
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
@@ -921,6 +953,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -956,13 +989,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -980,7 +1015,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -1014,7 +1050,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -1031,6 +1068,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -1061,13 +1099,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -1085,7 +1125,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -1119,7 +1160,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -1136,6 +1178,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
