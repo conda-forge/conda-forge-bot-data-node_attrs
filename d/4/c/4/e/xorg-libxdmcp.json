@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
@@ -19,12 +19,13 @@
     "provider": {
       "linux_aarch64": "azure",
       "linux_ppc64le": "azure",
-      "win": "azure"
+      "win": "azure",
+      "win_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "4679ef62c91181d1466b472ad1070ed7053a82b6",
-  "feedstock_hash_ts": 1786380802,
+  "feedstock_hash": "c2383a456fe44a772631107ccf13e3fccb8dff63",
+  "feedstock_hash_ts": 1789676743,
   "feedstock_name": "xorg-libxdmcp",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -77,7 +78,9 @@
     "test": {
       "commands": [
         "test -f $PREFIX/lib/libXdmcp.so"
-      ]
+      ],
+      "files": null,
+      "requires": null
     }
   },
   "linux_64_requirements": {
@@ -161,7 +164,9 @@
     "test": {
       "commands": [
         "test -f $PREFIX/lib/libXdmcp.so"
-      ]
+      ],
+      "files": null,
+      "requires": null
     }
   },
   "linux_aarch64_requirements": {
@@ -245,7 +250,9 @@
     "test": {
       "commands": [
         "test -f $PREFIX/lib/libXdmcp.so"
-      ]
+      ],
+      "files": null,
+      "requires": null
     }
   },
   "linux_ppc64le_requirements": {
@@ -321,7 +328,8 @@
         "m2-base",
         "m2-make",
         "m2w64_c_compiler_stub",
-        "m2w64_c_stdlib_stub"
+        "m2w64_c_stdlib_stub",
+        "autotools_clang_conda >=0.0.14"
       ],
       "host": [
         "xorg-util-macros",
@@ -331,7 +339,7 @@
     "schema_version": 0,
     "source": {
       "patches": [
-        "windows.patch"
+        "win-arm64-msvc.patch"
       ],
       "sha256": "d8a5222828c3adab70adf69a5583f1d32eb5ece04304f7f8392b6a353aa2228c",
       "url": "https://www.x.org/releases/individual/lib/libXdmcp-1.1.5.tar.xz"
@@ -341,7 +349,23 @@
         "test -f $PREFIX/lib/libXdmcp.so",
         "test -f $PREFIX/lib/libXdmcp.dylib",
         "if not exist %PREFIX%/Library/lib/libXdmcp.dll.a exit /b 1",
-        "if not exist %PREFIX%/Library/bin/msys-Xdmcp-*.dll exit /b 1"
+        "if not exist %PREFIX%/Library/bin/msys-Xdmcp-*.dll exit /b 1",
+        "if not exist %LIBRARY_INC%\\X11\\Xdmcp.h exit /b 1",
+        "if not exist %LIBRARY_LIB%\\Xdmcp.lib exit /b 1",
+        "if not exist %LIBRARY_BIN%\\Xdmcp-6.dll exit /b 1",
+        "if not exist %LIBRARY_LIB%\\pkgconfig\\xdmcp.pc exit /b 1",
+        "findstr /C:\"Requires: xproto\" \"%LIBRARY_LIB%\\pkgconfig\\xdmcp.pc\"",
+        "if errorlevel 1 exit /b 1",
+        "call %CC% /nologo /MD /W4 /I\"%LIBRARY_INC%\" test_xdmcp.c /link /LIBPATH:\"%LIBRARY_LIB%\" Xdmcp.lib /OUT:xdmcp_consumer.exe",
+        "set \"PATH=%LIBRARY_BIN%;%PATH%\"",
+        "xdmcp_consumer.exe"
+      ],
+      "files": [
+        "test_xdmcp.c"
+      ],
+      "requires": [
+        "c_compiler_stub",
+        "xorg-xorgproto"
       ]
     }
   },
@@ -396,7 +420,9 @@
     "test": {
       "commands": [
         "test -f $PREFIX/lib/libXdmcp.dylib"
-      ]
+      ],
+      "files": null,
+      "requires": null
     }
   },
   "osx_64_requirements": {
@@ -480,7 +506,9 @@
     "test": {
       "commands": [
         "test -f $PREFIX/lib/libXdmcp.dylib"
-      ]
+      ],
+      "files": null,
+      "requires": null
     }
   },
   "osx_arm64_requirements": {
@@ -527,17 +555,19 @@
     "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/xorg-libxdmcp.json"
   },
-  "raw_meta_yaml": "{% set xorg_name = \"libXdmcp\" %}\n{% set xorg_category = \"lib\" %}\n{% set name = \"xorg-\" ~ xorg_name %}\n{% set version = \"1.1.5\" %}\n{% set sha256 = \"d8a5222828c3adab70adf69a5583f1d32eb5ece04304f7f8392b6a353aa2228c\" %}\n{% set am_version = \"1.16\" %} # keep synchronized with build.sh\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://www.x.org/releases/individual/{{ xorg_category }}/{{ xorg_name }}-{{ version }}.tar.xz\n  sha256: {{ sha256 }}\n  patches:\n    - windows.patch  # [win]\n\nbuild:\n  number: 2\n  run_exports:\n    - {{ pin_subpackage(name|lower) }}\n\nrequirements:\n  build:\n    - m2-autoconf                   # [win]\n    - m2-automake{{ am_version }}   # [win]\n    - m2-libtool                    # [win]\n    - pkg-config                    # [unix]\n    - m2-pkg-config                 # [win]\n    - gnuconfig                     # [unix]\n    - m2-base                       # [win]\n    - make                          # [unix]\n    - m2-make                       # [win]\n    - gnuconfig  # [unix]\n    - {{ compiler(\"c\") }}           # [unix]\n    - {{ stdlib(\"c\") }}             # [unix]\n    - {{ compiler(\"m2w64_c\") }}     # [win]\n    - {{ stdlib(\"m2w64_c\") }}       # [win]\n    - autoconf                      # [unix]\n    - automake                      # [unix]\n    - gettext                       # [unix]\n    - libtool                       # [unix]\n  host:\n    - xorg-util-macros\n    - xorg-xorgproto\n\ntest:\n  commands:\n    {% set lib_idents = [ \"Xdmcp\" ] %}\n    {% for lib_ident in lib_idents %}\n    - test -f $PREFIX/lib/lib{{ lib_ident }}.dylib  # [osx]\n    - test -f $PREFIX/lib/lib{{ lib_ident }}.so  # [linux]\n    - if not exist %PREFIX%/Library/lib/lib{{ lib_ident }}.dll.a exit /b 1  # [win]\n    - if not exist %PREFIX%/Library/bin/msys-{{ lib_ident }}-*.dll exit /b 1  # [win]\n    {% endfor %}\n\nabout:\n  home: https://www.x.org/\n  dev_url: https://gitlab.freedesktop.org/xorg/lib/libxdmcp\n  license: MIT\n  license_family: MIT\n  license_file: COPYING\n  summary: 'The X-windows display manager client protocol library.'\n\nextra:\n  recipe-maintainers:\n    - pkgw\n",
+  "raw_meta_yaml": "{% set xorg_name = \"libXdmcp\" %}\n{% set xorg_category = \"lib\" %}\n{% set name = \"xorg-\" ~ xorg_name %}\n{% set version = \"1.1.5\" %}\n{% set sha256 = \"d8a5222828c3adab70adf69a5583f1d32eb5ece04304f7f8392b6a353aa2228c\" %}\n{% set am_version = \"1.16\" %} # keep synchronized with build.sh\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://www.x.org/releases/individual/{{ xorg_category }}/{{ xorg_name }}-{{ version }}.tar.xz\n  sha256: {{ sha256 }}\n  patches:\n    - windows.patch  # [win and x86_64]\n    - win-arm64-msvc.patch  # [win and arm64]\n\nbuild:\n  number: 2\n  run_exports:\n    - {{ pin_subpackage(name|lower) }}\n\nrequirements:\n  build:\n    - m2-autoconf                   # [win and x86_64]\n    - m2-automake{{ am_version }}   # [win and x86_64]\n    - m2-libtool                    # [win and x86_64]\n    - autotools_clang_conda >=0.0.14  # [win and arm64]\n    - pkg-config                    # [win and arm64]\n    - pkg-config                    # [unix]\n    - m2-pkg-config                 # [win]\n    - gnuconfig                     # [unix]\n    - m2-base                       # [win and x86_64]\n    - make                          # [unix]\n    - m2-make                       # [win and x86_64]\n    - gnuconfig  # [unix]\n    - {{ compiler(\"c\") }}           # [unix]\n    - {{ stdlib(\"c\") }}             # [unix]\n    - {{ compiler(\"c\") }}           # [win and arm64]\n    - {{ stdlib(\"c\") }}             # [win and arm64]\n    - {{ compiler(\"m2w64_c\") }}     # [win and x86_64]\n    - {{ stdlib(\"m2w64_c\") }}       # [win and x86_64]\n    - autoconf                      # [unix]\n    - automake                      # [unix]\n    - gettext                       # [unix]\n    - libtool                       # [unix]\n  host:\n    - xorg-util-macros\n    - xorg-xorgproto\n\ntest:\n  requires:\n    - {{ compiler(\"c\") }}  # [win and arm64]\n    - xorg-xorgproto  # [win and arm64]\n  files:\n    - test_xdmcp.c  # [win and arm64]\n  commands:\n    {% set lib_idents = [ \"Xdmcp\" ] %}\n    {% for lib_ident in lib_idents %}\n    - test -f $PREFIX/lib/lib{{ lib_ident }}.dylib  # [osx]\n    - test -f $PREFIX/lib/lib{{ lib_ident }}.so  # [linux]\n    - if not exist %PREFIX%/Library/lib/lib{{ lib_ident }}.dll.a exit /b 1  # [win and x86_64]\n    - if not exist %PREFIX%/Library/bin/msys-{{ lib_ident }}-*.dll exit /b 1  # [win and x86_64]\n    {% endfor %}\n    - if not exist %LIBRARY_INC%\\X11\\Xdmcp.h exit /b 1  # [win and arm64]\n    - if not exist %LIBRARY_LIB%\\Xdmcp.lib exit /b 1  # [win and arm64]\n    - if not exist %LIBRARY_BIN%\\Xdmcp-6.dll exit /b 1  # [win and arm64]\n    - if not exist %LIBRARY_LIB%\\pkgconfig\\xdmcp.pc exit /b 1  # [win and arm64]\n    - 'findstr /C:\"Requires: xproto\" \"%LIBRARY_LIB%\\pkgconfig\\xdmcp.pc\"'  # [win and arm64]\n    - if errorlevel 1 exit /b 1  # [win and arm64]\n    - call %CC% /nologo /MD /W4 /I\"%LIBRARY_INC%\" test_xdmcp.c /link /LIBPATH:\"%LIBRARY_LIB%\" Xdmcp.lib /OUT:xdmcp_consumer.exe  # [win and arm64]\n    - if errorlevel 1 exit /b 1  # [win and arm64]\n    - set \"PATH=%LIBRARY_BIN%;%PATH%\"  # [win and arm64]\n    - xdmcp_consumer.exe  # [win and arm64]\n    - if errorlevel 1 exit /b 1  # [win and arm64]\n\nabout:\n  home: https://www.x.org/\n  dev_url: https://gitlab.freedesktop.org/xorg/lib/libxdmcp\n  license: MIT\n  license_family: MIT\n  license_file: COPYING\n  summary: 'The X-windows display manager client protocol library.'\n\nextra:\n  recipe-maintainers:\n    - pkgw\n",
   "req": {
     "__set__": true,
     "elements": [
       "autoconf",
       "automake",
+      "autotools_clang_conda",
       "c_compiler_stub",
       "c_stdlib_stub",
       "gettext",
@@ -563,6 +593,7 @@
       "elements": [
         "autoconf",
         "automake",
+        "autotools_clang_conda",
         "c_compiler_stub",
         "c_stdlib_stub",
         "gettext",
@@ -598,7 +629,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "xorg-xorgproto"
+      ]
     }
   },
   "strong_exports": false,
@@ -608,6 +642,7 @@
       "elements": [
         "autoconf",
         "automake",
+        "autotools_clang_conda >=0.0.14",
         "c_compiler_stub",
         "c_stdlib_stub",
         "gettext",
@@ -638,7 +673,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "xorg-xorgproto"
+      ]
     }
   },
   "url": "https://www.x.org/releases/individual/lib/libXdmcp-1.1.5.tar.xz",
@@ -698,7 +736,9 @@
       "commands": [
         "if not exist %PREFIX%/Library/lib/libXdmcp.dll.a exit /b 1",
         "if not exist %PREFIX%/Library/bin/msys-Xdmcp-*.dll exit /b 1"
-      ]
+      ],
+      "files": null,
+      "requires": null
     }
   },
   "win_64_requirements": {
@@ -729,6 +769,102 @@
     "test": {
       "__set__": true,
       "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://gitlab.freedesktop.org/xorg/lib/libxdmcp",
+      "home": "https://www.x.org/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "COPYING",
+      "summary": "The X-windows display manager client protocol library."
+    },
+    "build": {
+      "number": "2",
+      "run_exports": [
+        "xorg-libxdmcp"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "pkgw"
+      ]
+    },
+    "package": {
+      "name": "xorg-libxdmcp",
+      "version": "1.1.5"
+    },
+    "requirements": {
+      "build": [
+        "autotools_clang_conda >=0.0.14",
+        "pkg-config",
+        "m2-pkg-config",
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ],
+      "host": [
+        "xorg-util-macros",
+        "xorg-xorgproto"
+      ]
+    },
+    "schema_version": 0,
+    "source": {
+      "patches": [
+        "win-arm64-msvc.patch"
+      ],
+      "sha256": "d8a5222828c3adab70adf69a5583f1d32eb5ece04304f7f8392b6a353aa2228c",
+      "url": "https://www.x.org/releases/individual/lib/libXdmcp-1.1.5.tar.xz"
+    },
+    "test": {
+      "commands": [
+        "if not exist %LIBRARY_INC%\\X11\\Xdmcp.h exit /b 1",
+        "if not exist %LIBRARY_LIB%\\Xdmcp.lib exit /b 1",
+        "if not exist %LIBRARY_BIN%\\Xdmcp-6.dll exit /b 1",
+        "if not exist %LIBRARY_LIB%\\pkgconfig\\xdmcp.pc exit /b 1",
+        "findstr /C:\"Requires: xproto\" \"%LIBRARY_LIB%\\pkgconfig\\xdmcp.pc\"",
+        "if errorlevel 1 exit /b 1",
+        "call %CC% /nologo /MD /W4 /I\"%LIBRARY_INC%\" test_xdmcp.c /link /LIBPATH:\"%LIBRARY_LIB%\" Xdmcp.lib /OUT:xdmcp_consumer.exe",
+        "set \"PATH=%LIBRARY_BIN%;%PATH%\"",
+        "xdmcp_consumer.exe"
+      ],
+      "files": [
+        "test_xdmcp.c"
+      ],
+      "requires": [
+        "c_compiler_stub",
+        "xorg-xorgproto"
+      ]
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "autotools_clang_conda",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "m2-pkg-config",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "xorg-util-macros",
+        "xorg-xorgproto"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "xorg-xorgproto"
+      ]
     }
   }
 }
