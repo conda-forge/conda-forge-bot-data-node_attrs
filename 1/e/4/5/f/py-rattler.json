@@ -50,6 +50,9 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "# Remove this wrapper once https://github.com/conda-forge/rust-activation-feedstock/pull/79 is merged\nif [[ \"$target_platform\" == win-* ]]; then\n  echo 'cargo auditable %*' > \"$BUILD_PREFIX/Library/bin/cargo-auditable-wrapper.bat\"\n  export CARGO=\"cargo-auditable-wrapper.bat\"\nelse\n  mkdir -p \"$BUILD_PREFIX/bin\"\n  printf '#!/usr/bin/env sh\\nexec cargo auditable \"$@\"\\n' > \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  chmod +x \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  export CARGO=\"cargo-auditable-wrapper\"\nfi\n\n# native-tls uses the conda openssl on Linux and Schannel on Windows,\n# both of which negotiate TLS 1.3. On macOS it uses Apple's deprecated\n# SecureTransport API, which never implemented TLS 1.3, so servers that\n# require TLS 1.3 fail with \"bad protocol version\"\n# (https://github.com/conda/rattler/issues/2749). Use rustls there,\n# which is also what the PyPI wheels ship.\nif [[ \"$target_platform\" == osx-* ]]; then\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=rustls\"\nelse\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=native-tls\"\nfi\n\nif [[ \"$target_platform\" == win-* ]]; then\n  export PYO3_PYTHON=\"$PYTHON\"\n  export CMAKE_GENERATOR=\"NMake Makefiles\"\n  export MATURIN_PEP517_ARGS=\"$MATURIN_PEP517_ARGS --jobs 1\"\nelif [[ \"$target_platform\" == linux-* ]]; then\n  export OPENSSL_DIR=\"$PREFIX\"\nfi\n\nif [[ \"$target_platform\" == \"win-arm64\" ]]; then\n  # Keep CMake's object paths below Windows' limit.\n  export CARGO_TARGET_DIR=\"$TMP/py-rattler-cargo-target\"\n  export CARGO_HOME=\"$TMP/py-rattler-cargo-home\"\n\n  # Use CMake for aws-lc-sys and clang-cl for its ARM64 assembly.\n  export AWS_LC_SYS_CMAKE_BUILDER=1\n  export CC_aarch64_pc_windows_msvc=clang-cl.exe\n  export CXX_aarch64_pc_windows_msvc=clang-cl.exe\n  export ASM_aarch64_pc_windows_msvc=clang-cl.exe\n  export CMAKE_GENERATOR=Ninja\nfi\n\n# rust-lld (LLD) cannot handle some of the relocations GCC emits for ppc64le\n# (e.g. inline-PLT R_PPC64_PLTSEQ/PLTCALL), which breaks linking of C-based\n# crates such as aws-lc-sys and libdbus-sys. Fall back to the GNU bfd linker on\n# that platform, which handles these relocations. gcc honors the last\n# -fuse-ld, so this overrides rustc's bundled rust-lld default.\nif [[ \"$target_platform\" == \"linux-ppc64le\" ]]; then\n  export CARGO_BUILD_RUSTFLAGS=\"${CARGO_BUILD_RUSTFLAGS:-} -C link-arg=-fuse-ld=bfd\"\nfi\n\n# Run the maturin build via pip which works for direct and\n# cross-compiled builds.\n\"$PYTHON\" -m pip install . -vv\n\ncd py-rattler\ncargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n",
         "env": {
@@ -104,7 +107,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -150,7 +157,9 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
         "name": "py_rattler",
         "requirements": {
           "build": [],
@@ -207,7 +216,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -253,7 +266,9 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
         "name": "py_rattler",
         "requirements": {
           "build": [],
@@ -353,6 +368,9 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "# Remove this wrapper once https://github.com/conda-forge/rust-activation-feedstock/pull/79 is merged\nif [[ \"$target_platform\" == win-* ]]; then\n  echo 'cargo auditable %*' > \"$BUILD_PREFIX/Library/bin/cargo-auditable-wrapper.bat\"\n  export CARGO=\"cargo-auditable-wrapper.bat\"\nelse\n  mkdir -p \"$BUILD_PREFIX/bin\"\n  printf '#!/usr/bin/env sh\\nexec cargo auditable \"$@\"\\n' > \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  chmod +x \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  export CARGO=\"cargo-auditable-wrapper\"\nfi\n\n# native-tls uses the conda openssl on Linux and Schannel on Windows,\n# both of which negotiate TLS 1.3. On macOS it uses Apple's deprecated\n# SecureTransport API, which never implemented TLS 1.3, so servers that\n# require TLS 1.3 fail with \"bad protocol version\"\n# (https://github.com/conda/rattler/issues/2749). Use rustls there,\n# which is also what the PyPI wheels ship.\nif [[ \"$target_platform\" == osx-* ]]; then\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=rustls\"\nelse\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=native-tls\"\nfi\n\nif [[ \"$target_platform\" == win-* ]]; then\n  export PYO3_PYTHON=\"$PYTHON\"\n  export CMAKE_GENERATOR=\"NMake Makefiles\"\n  export MATURIN_PEP517_ARGS=\"$MATURIN_PEP517_ARGS --jobs 1\"\nelif [[ \"$target_platform\" == linux-* ]]; then\n  export OPENSSL_DIR=\"$PREFIX\"\nfi\n\nif [[ \"$target_platform\" == \"win-arm64\" ]]; then\n  # Keep CMake's object paths below Windows' limit.\n  export CARGO_TARGET_DIR=\"$TMP/py-rattler-cargo-target\"\n  export CARGO_HOME=\"$TMP/py-rattler-cargo-home\"\n\n  # Use CMake for aws-lc-sys and clang-cl for its ARM64 assembly.\n  export AWS_LC_SYS_CMAKE_BUILDER=1\n  export CC_aarch64_pc_windows_msvc=clang-cl.exe\n  export CXX_aarch64_pc_windows_msvc=clang-cl.exe\n  export ASM_aarch64_pc_windows_msvc=clang-cl.exe\n  export CMAKE_GENERATOR=Ninja\nfi\n\n# rust-lld (LLD) cannot handle some of the relocations GCC emits for ppc64le\n# (e.g. inline-PLT R_PPC64_PLTSEQ/PLTCALL), which breaks linking of C-based\n# crates such as aws-lc-sys and libdbus-sys. Fall back to the GNU bfd linker on\n# that platform, which handles these relocations. gcc honors the last\n# -fuse-ld, so this overrides rustc's bundled rust-lld default.\nif [[ \"$target_platform\" == \"linux-ppc64le\" ]]; then\n  export CARGO_BUILD_RUSTFLAGS=\"${CARGO_BUILD_RUSTFLAGS:-} -C link-arg=-fuse-ld=bfd\"\nfi\n\n# Run the maturin build via pip which works for direct and\n# cross-compiled builds.\n\"$PYTHON\" -m pip install . -vv\n\ncd py-rattler\ncargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n",
         "env": {
@@ -410,7 +428,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -543,6 +565,9 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "# Remove this wrapper once https://github.com/conda-forge/rust-activation-feedstock/pull/79 is merged\nif [[ \"$target_platform\" == win-* ]]; then\n  echo 'cargo auditable %*' > \"$BUILD_PREFIX/Library/bin/cargo-auditable-wrapper.bat\"\n  export CARGO=\"cargo-auditable-wrapper.bat\"\nelse\n  mkdir -p \"$BUILD_PREFIX/bin\"\n  printf '#!/usr/bin/env sh\\nexec cargo auditable \"$@\"\\n' > \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  chmod +x \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  export CARGO=\"cargo-auditable-wrapper\"\nfi\n\n# native-tls uses the conda openssl on Linux and Schannel on Windows,\n# both of which negotiate TLS 1.3. On macOS it uses Apple's deprecated\n# SecureTransport API, which never implemented TLS 1.3, so servers that\n# require TLS 1.3 fail with \"bad protocol version\"\n# (https://github.com/conda/rattler/issues/2749). Use rustls there,\n# which is also what the PyPI wheels ship.\nif [[ \"$target_platform\" == osx-* ]]; then\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=rustls\"\nelse\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=native-tls\"\nfi\n\nif [[ \"$target_platform\" == win-* ]]; then\n  export PYO3_PYTHON=\"$PYTHON\"\n  export CMAKE_GENERATOR=\"NMake Makefiles\"\n  export MATURIN_PEP517_ARGS=\"$MATURIN_PEP517_ARGS --jobs 1\"\nelif [[ \"$target_platform\" == linux-* ]]; then\n  export OPENSSL_DIR=\"$PREFIX\"\nfi\n\nif [[ \"$target_platform\" == \"win-arm64\" ]]; then\n  # Keep CMake's object paths below Windows' limit.\n  export CARGO_TARGET_DIR=\"$TMP/py-rattler-cargo-target\"\n  export CARGO_HOME=\"$TMP/py-rattler-cargo-home\"\n\n  # Use CMake for aws-lc-sys and clang-cl for its ARM64 assembly.\n  export AWS_LC_SYS_CMAKE_BUILDER=1\n  export CC_aarch64_pc_windows_msvc=clang-cl.exe\n  export CXX_aarch64_pc_windows_msvc=clang-cl.exe\n  export ASM_aarch64_pc_windows_msvc=clang-cl.exe\n  export CMAKE_GENERATOR=Ninja\nfi\n\n# rust-lld (LLD) cannot handle some of the relocations GCC emits for ppc64le\n# (e.g. inline-PLT R_PPC64_PLTSEQ/PLTCALL), which breaks linking of C-based\n# crates such as aws-lc-sys and libdbus-sys. Fall back to the GNU bfd linker on\n# that platform, which handles these relocations. gcc honors the last\n# -fuse-ld, so this overrides rustc's bundled rust-lld default.\nif [[ \"$target_platform\" == \"linux-ppc64le\" ]]; then\n  export CARGO_BUILD_RUSTFLAGS=\"${CARGO_BUILD_RUSTFLAGS:-} -C link-arg=-fuse-ld=bfd\"\nfi\n\n# Run the maturin build via pip which works for direct and\n# cross-compiled builds.\n\"$PYTHON\" -m pip install . -vv\n\ncd py-rattler\ncargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n",
         "env": {
@@ -561,7 +586,11 @@
     },
     "outputs": [
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -748,7 +777,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -794,7 +827,9 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
         "name": "py_rattler",
         "requirements": {
           "build": [],
@@ -851,7 +886,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -897,7 +936,9 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
         "name": "py_rattler",
         "requirements": {
           "build": [],
@@ -957,7 +998,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -1006,7 +1051,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -1093,7 +1142,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -1179,7 +1232,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -1265,7 +1322,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -1353,7 +1414,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -1456,6 +1521,9 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "# Remove this wrapper once https://github.com/conda-forge/rust-activation-feedstock/pull/79 is merged\nif [[ \"$target_platform\" == win-* ]]; then\n  echo 'cargo auditable %*' > \"$BUILD_PREFIX/Library/bin/cargo-auditable-wrapper.bat\"\n  export CARGO=\"cargo-auditable-wrapper.bat\"\nelse\n  mkdir -p \"$BUILD_PREFIX/bin\"\n  printf '#!/usr/bin/env sh\\nexec cargo auditable \"$@\"\\n' > \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  chmod +x \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  export CARGO=\"cargo-auditable-wrapper\"\nfi\n\n# native-tls uses the conda openssl on Linux and Schannel on Windows,\n# both of which negotiate TLS 1.3. On macOS it uses Apple's deprecated\n# SecureTransport API, which never implemented TLS 1.3, so servers that\n# require TLS 1.3 fail with \"bad protocol version\"\n# (https://github.com/conda/rattler/issues/2749). Use rustls there,\n# which is also what the PyPI wheels ship.\nif [[ \"$target_platform\" == osx-* ]]; then\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=rustls\"\nelse\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=native-tls\"\nfi\n\nif [[ \"$target_platform\" == win-* ]]; then\n  export PYO3_PYTHON=\"$PYTHON\"\n  export CMAKE_GENERATOR=\"NMake Makefiles\"\n  export MATURIN_PEP517_ARGS=\"$MATURIN_PEP517_ARGS --jobs 1\"\nelif [[ \"$target_platform\" == linux-* ]]; then\n  export OPENSSL_DIR=\"$PREFIX\"\nfi\n\nif [[ \"$target_platform\" == \"win-arm64\" ]]; then\n  # Keep CMake's object paths below Windows' limit.\n  export CARGO_TARGET_DIR=\"$TMP/py-rattler-cargo-target\"\n  export CARGO_HOME=\"$TMP/py-rattler-cargo-home\"\n\n  # Use CMake for aws-lc-sys and clang-cl for its ARM64 assembly.\n  export AWS_LC_SYS_CMAKE_BUILDER=1\n  export CC_aarch64_pc_windows_msvc=clang-cl.exe\n  export CXX_aarch64_pc_windows_msvc=clang-cl.exe\n  export ASM_aarch64_pc_windows_msvc=clang-cl.exe\n  export CMAKE_GENERATOR=Ninja\nfi\n\n# rust-lld (LLD) cannot handle some of the relocations GCC emits for ppc64le\n# (e.g. inline-PLT R_PPC64_PLTSEQ/PLTCALL), which breaks linking of C-based\n# crates such as aws-lc-sys and libdbus-sys. Fall back to the GNU bfd linker on\n# that platform, which handles these relocations. gcc honors the last\n# -fuse-ld, so this overrides rustc's bundled rust-lld default.\nif [[ \"$target_platform\" == \"linux-ppc64le\" ]]; then\n  export CARGO_BUILD_RUSTFLAGS=\"${CARGO_BUILD_RUSTFLAGS:-} -C link-arg=-fuse-ld=bfd\"\nfi\n\n# Run the maturin build via pip which works for direct and\n# cross-compiled builds.\n\"$PYTHON\" -m pip install . -vv\n\ncd py-rattler\ncargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n",
         "env": {
@@ -1512,7 +1580,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -1642,6 +1714,9 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "# Remove this wrapper once https://github.com/conda-forge/rust-activation-feedstock/pull/79 is merged\nif [[ \"$target_platform\" == win-* ]]; then\n  echo 'cargo auditable %*' > \"$BUILD_PREFIX/Library/bin/cargo-auditable-wrapper.bat\"\n  export CARGO=\"cargo-auditable-wrapper.bat\"\nelse\n  mkdir -p \"$BUILD_PREFIX/bin\"\n  printf '#!/usr/bin/env sh\\nexec cargo auditable \"$@\"\\n' > \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  chmod +x \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  export CARGO=\"cargo-auditable-wrapper\"\nfi\n\n# native-tls uses the conda openssl on Linux and Schannel on Windows,\n# both of which negotiate TLS 1.3. On macOS it uses Apple's deprecated\n# SecureTransport API, which never implemented TLS 1.3, so servers that\n# require TLS 1.3 fail with \"bad protocol version\"\n# (https://github.com/conda/rattler/issues/2749). Use rustls there,\n# which is also what the PyPI wheels ship.\nif [[ \"$target_platform\" == osx-* ]]; then\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=rustls\"\nelse\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=native-tls\"\nfi\n\nif [[ \"$target_platform\" == win-* ]]; then\n  export PYO3_PYTHON=\"$PYTHON\"\n  export CMAKE_GENERATOR=\"NMake Makefiles\"\n  export MATURIN_PEP517_ARGS=\"$MATURIN_PEP517_ARGS --jobs 1\"\nelif [[ \"$target_platform\" == linux-* ]]; then\n  export OPENSSL_DIR=\"$PREFIX\"\nfi\n\nif [[ \"$target_platform\" == \"win-arm64\" ]]; then\n  # Keep CMake's object paths below Windows' limit.\n  export CARGO_TARGET_DIR=\"$TMP/py-rattler-cargo-target\"\n  export CARGO_HOME=\"$TMP/py-rattler-cargo-home\"\n\n  # Use CMake for aws-lc-sys and clang-cl for its ARM64 assembly.\n  export AWS_LC_SYS_CMAKE_BUILDER=1\n  export CC_aarch64_pc_windows_msvc=clang-cl.exe\n  export CXX_aarch64_pc_windows_msvc=clang-cl.exe\n  export ASM_aarch64_pc_windows_msvc=clang-cl.exe\n  export CMAKE_GENERATOR=Ninja\nfi\n\n# rust-lld (LLD) cannot handle some of the relocations GCC emits for ppc64le\n# (e.g. inline-PLT R_PPC64_PLTSEQ/PLTCALL), which breaks linking of C-based\n# crates such as aws-lc-sys and libdbus-sys. Fall back to the GNU bfd linker on\n# that platform, which handles these relocations. gcc honors the last\n# -fuse-ld, so this overrides rustc's bundled rust-lld default.\nif [[ \"$target_platform\" == \"linux-ppc64le\" ]]; then\n  export CARGO_BUILD_RUSTFLAGS=\"${CARGO_BUILD_RUSTFLAGS:-} -C link-arg=-fuse-ld=bfd\"\nfi\n\n# Run the maturin build via pip which works for direct and\n# cross-compiled builds.\n\"$PYTHON\" -m pip install . -vv\n\ncd py-rattler\ncargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n",
         "env": {
@@ -1698,7 +1773,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -1980,6 +2059,9 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "# Remove this wrapper once https://github.com/conda-forge/rust-activation-feedstock/pull/79 is merged\nif [[ \"$target_platform\" == win-* ]]; then\n  echo 'cargo auditable %*' > \"$BUILD_PREFIX/Library/bin/cargo-auditable-wrapper.bat\"\n  export CARGO=\"cargo-auditable-wrapper.bat\"\nelse\n  mkdir -p \"$BUILD_PREFIX/bin\"\n  printf '#!/usr/bin/env sh\\nexec cargo auditable \"$@\"\\n' > \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  chmod +x \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  export CARGO=\"cargo-auditable-wrapper\"\nfi\n\n# native-tls uses the conda openssl on Linux and Schannel on Windows,\n# both of which negotiate TLS 1.3. On macOS it uses Apple's deprecated\n# SecureTransport API, which never implemented TLS 1.3, so servers that\n# require TLS 1.3 fail with \"bad protocol version\"\n# (https://github.com/conda/rattler/issues/2749). Use rustls there,\n# which is also what the PyPI wheels ship.\nif [[ \"$target_platform\" == osx-* ]]; then\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=rustls\"\nelse\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=native-tls\"\nfi\n\nif [[ \"$target_platform\" == win-* ]]; then\n  export PYO3_PYTHON=\"$PYTHON\"\n  export CMAKE_GENERATOR=\"NMake Makefiles\"\n  export MATURIN_PEP517_ARGS=\"$MATURIN_PEP517_ARGS --jobs 1\"\nelif [[ \"$target_platform\" == linux-* ]]; then\n  export OPENSSL_DIR=\"$PREFIX\"\nfi\n\nif [[ \"$target_platform\" == \"win-arm64\" ]]; then\n  # Keep CMake's object paths below Windows' limit.\n  export CARGO_TARGET_DIR=\"$TMP/py-rattler-cargo-target\"\n  export CARGO_HOME=\"$TMP/py-rattler-cargo-home\"\n\n  # Use CMake for aws-lc-sys and clang-cl for its ARM64 assembly.\n  export AWS_LC_SYS_CMAKE_BUILDER=1\n  export CC_aarch64_pc_windows_msvc=clang-cl.exe\n  export CXX_aarch64_pc_windows_msvc=clang-cl.exe\n  export ASM_aarch64_pc_windows_msvc=clang-cl.exe\n  export CMAKE_GENERATOR=Ninja\nfi\n\n# rust-lld (LLD) cannot handle some of the relocations GCC emits for ppc64le\n# (e.g. inline-PLT R_PPC64_PLTSEQ/PLTCALL), which breaks linking of C-based\n# crates such as aws-lc-sys and libdbus-sys. Fall back to the GNU bfd linker on\n# that platform, which handles these relocations. gcc honors the last\n# -fuse-ld, so this overrides rustc's bundled rust-lld default.\nif [[ \"$target_platform\" == \"linux-ppc64le\" ]]; then\n  export CARGO_BUILD_RUSTFLAGS=\"${CARGO_BUILD_RUSTFLAGS:-} -C link-arg=-fuse-ld=bfd\"\nfi\n\n# Run the maturin build via pip which works for direct and\n# cross-compiled builds.\n\"$PYTHON\" -m pip install . -vv\n\ncd py-rattler\ncargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n",
         "env": {
@@ -2036,7 +2118,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
@@ -2166,6 +2252,9 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "# Remove this wrapper once https://github.com/conda-forge/rust-activation-feedstock/pull/79 is merged\nif [[ \"$target_platform\" == win-* ]]; then\n  echo 'cargo auditable %*' > \"$BUILD_PREFIX/Library/bin/cargo-auditable-wrapper.bat\"\n  export CARGO=\"cargo-auditable-wrapper.bat\"\nelse\n  mkdir -p \"$BUILD_PREFIX/bin\"\n  printf '#!/usr/bin/env sh\\nexec cargo auditable \"$@\"\\n' > \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  chmod +x \"$BUILD_PREFIX/bin/cargo-auditable-wrapper\"\n  export CARGO=\"cargo-auditable-wrapper\"\nfi\n\n# native-tls uses the conda openssl on Linux and Schannel on Windows,\n# both of which negotiate TLS 1.3. On macOS it uses Apple's deprecated\n# SecureTransport API, which never implemented TLS 1.3, so servers that\n# require TLS 1.3 fail with \"bad protocol version\"\n# (https://github.com/conda/rattler/issues/2749). Use rustls there,\n# which is also what the PyPI wheels ship.\nif [[ \"$target_platform\" == osx-* ]]; then\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=rustls\"\nelse\n  export MATURIN_PEP517_ARGS=\"--no-default-features --features=native-tls\"\nfi\n\nif [[ \"$target_platform\" == win-* ]]; then\n  export PYO3_PYTHON=\"$PYTHON\"\n  export CMAKE_GENERATOR=\"NMake Makefiles\"\n  export MATURIN_PEP517_ARGS=\"$MATURIN_PEP517_ARGS --jobs 1\"\nelif [[ \"$target_platform\" == linux-* ]]; then\n  export OPENSSL_DIR=\"$PREFIX\"\nfi\n\nif [[ \"$target_platform\" == \"win-arm64\" ]]; then\n  # Keep CMake's object paths below Windows' limit.\n  export CARGO_TARGET_DIR=\"$TMP/py-rattler-cargo-target\"\n  export CARGO_HOME=\"$TMP/py-rattler-cargo-home\"\n\n  # Use CMake for aws-lc-sys and clang-cl for its ARM64 assembly.\n  export AWS_LC_SYS_CMAKE_BUILDER=1\n  export CC_aarch64_pc_windows_msvc=clang-cl.exe\n  export CXX_aarch64_pc_windows_msvc=clang-cl.exe\n  export ASM_aarch64_pc_windows_msvc=clang-cl.exe\n  export CMAKE_GENERATOR=Ninja\nfi\n\n# rust-lld (LLD) cannot handle some of the relocations GCC emits for ppc64le\n# (e.g. inline-PLT R_PPC64_PLTSEQ/PLTCALL), which breaks linking of C-based\n# crates such as aws-lc-sys and libdbus-sys. Fall back to the GNU bfd linker on\n# that platform, which handles these relocations. gcc honors the last\n# -fuse-ld, so this overrides rustc's bundled rust-lld default.\nif [[ \"$target_platform\" == \"linux-ppc64le\" ]]; then\n  export CARGO_BUILD_RUSTFLAGS=\"${CARGO_BUILD_RUSTFLAGS:-} -C link-arg=-fuse-ld=bfd\"\nfi\n\n# Run the maturin build via pip which works for direct and\n# cross-compiled builds.\n\"$PYTHON\" -m pip install . -vv\n\ncd py-rattler\ncargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n",
         "env": {
@@ -2224,7 +2313,11 @@
         "version": "0.26.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "py-rattler",
         "requirements": {
           "build": [
