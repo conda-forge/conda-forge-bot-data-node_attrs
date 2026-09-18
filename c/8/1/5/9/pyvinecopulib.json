@@ -1,13 +1,8 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.10.____cpython.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nlibboost_python_devel:\n- '1.86'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.10.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - channel_sources\n",
-  "ci_support_migrations": {
-    "python314": {
-      "migration_number": 1,
-      "migrator_ts": 1724712607
-    }
-  },
+  "ci_support_linux_64_python3.11.____cpython.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\n",
+  "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
       "error_overlinking": true
@@ -18,23 +13,23 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "4465e501d22d70c848fa44419236ebdaaf1c37aa",
-  "feedstock_hash_ts": 1776887647,
+  "feedstock_hash": "ed80167ada61102da54cf50a94162813f134316f",
+  "feedstock_hash_ts": 1789750050,
   "feedstock_name": "pyvinecopulib",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "pyvinecopulib is the python interface to vinecopulib, a header-only C++\nlibrary for vine copula models based on Eigen. It provides high-performance\nimplementations of the core features of the popular VineCopula R library, in\nparticular inference algorithms for both vine copula and bivariate copula models.\n",
+      "description": "pyvinecopulib is the Python interface to vinecopulib, a header-only C++ library for vine copula models based on Eigen. It provides inference algorithms for both bivariate and vine copula models, with nonparametric and multi-parameter families, scikit-learn-compatible estimators, and an extensible protocol-based architecture for custom bivariate and vine copula implementations, including native PyTorch backends.\n",
       "dev_url": "https://github.com/vinecopulib/pyvinecopulib",
-      "doc_url": "https://vinecopulib.github.io/pyvinecopulib/",
-      "home": "https://vinecopulib.github.io/pyvinecopulib",
+      "doc_url": "https://pyvinecopulib.readthedocs.io",
+      "home": "https://github.com/vinecopulib/pyvinecopulib",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "A python interface to vinecopulib"
     },
     "build": {
-      "number": "1",
+      "number": "0",
       "script": "PYTHON -m pip install . -vv"
     },
     "extra": {
@@ -44,45 +39,70 @@
     },
     "package": {
       "name": "pyvinecopulib",
-      "version": "0.7.5"
+      "version": "1.0.0"
     },
     "requirements": {
       "build": [
         "cxx_compiler_stub",
         "c_stdlib_stub",
         "cmake",
-        "make",
-        "eigen",
-        "libboost-python-devel"
+        "make"
       ],
       "host": [
         "python",
+        "pip",
         "scikit-build-core >=0.5.0",
         "nanobind >=2.7.0",
-        "pip"
+        "python-clang >=18,<19",
+        "numpy >=2.0",
+        "matplotlib-base >=3.0",
+        "networkx >=3.0",
+        "array-api-compat >=1.7",
+        "eigen >=3.4,<5",
+        "libboost-headers >=1.75"
       ],
       "run": [
         "python",
-        "numpy >=1.14",
+        "numpy >=2.0",
         "matplotlib-base >=3.0",
         "networkx >=3.0",
-        "pydot >=3.0"
+        "pydot >=3.0",
+        "array-api-compat >=1.7"
+      ],
+      "run_constrained": [
+        "scipy >=1.16",
+        "scikit-learn >=1.4",
+        "pandas >=2.0",
+        "pytorch >=2.2"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "b964b921ec8bc40526530a78ebce4875e2682e0efa1571de92d2573e8519cca0",
-      "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-0.7.5.tar.gz"
+      "patches": [
+        "patches/0001-find-versioned-libclang-on-windows.patch"
+      ],
+      "sha256": "c3bb46512f7280e6ba56451a1e974e774a01571738566cd72cdb8874b525c348",
+      "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-1.0.0.tar.gz"
     },
     "test": {
       "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pyvinecopulib"
+        "pip check",
+        "pytest tests -r a -m \"not compile\""
       ],
       "requires": [
-        "pip"
+        "pip",
+        "pytest >=8",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist >=3.6",
+        "scipy >=1.16",
+        "scikit-learn >=1.4",
+        "pandas >=2.0",
+        "pytorch >=2.2"
+      ],
+      "source_files": [
+        "tests",
+        "scripts/generate_stubs.py"
       ]
     }
   },
@@ -93,23 +113,29 @@
         "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-python-devel",
         "make"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "array-api-compat",
+        "eigen",
+        "libboost-headers",
+        "matplotlib-base",
         "nanobind",
+        "networkx",
+        "numpy",
         "pip",
         "python",
+        "python-clang",
         "scikit-build-core"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "array-api-compat",
         "matplotlib-base",
         "networkx",
         "numpy",
@@ -120,23 +146,31 @@
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "pandas",
+        "pip",
+        "pytest",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist",
+        "pytorch",
+        "scikit-learn",
+        "scipy"
       ]
     }
   },
   "meta_yaml": {
     "about": {
-      "description": "pyvinecopulib is the python interface to vinecopulib, a header-only C++\nlibrary for vine copula models based on Eigen. It provides high-performance\nimplementations of the core features of the popular VineCopula R library, in\nparticular inference algorithms for both vine copula and bivariate copula models.\n",
+      "description": "pyvinecopulib is the Python interface to vinecopulib, a header-only C++ library for vine copula models based on Eigen. It provides inference algorithms for both bivariate and vine copula models, with nonparametric and multi-parameter families, scikit-learn-compatible estimators, and an extensible protocol-based architecture for custom bivariate and vine copula implementations, including native PyTorch backends.\n",
       "dev_url": "https://github.com/vinecopulib/pyvinecopulib",
-      "doc_url": "https://vinecopulib.github.io/pyvinecopulib/",
-      "home": "https://vinecopulib.github.io/pyvinecopulib",
+      "doc_url": "https://pyvinecopulib.readthedocs.io",
+      "home": "https://github.com/vinecopulib/pyvinecopulib",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "A python interface to vinecopulib"
     },
     "build": {
-      "number": "1",
+      "number": "0",
       "script": "PYTHON -m pip install . -vv"
     },
     "extra": {
@@ -146,62 +180,87 @@
     },
     "package": {
       "name": "pyvinecopulib",
-      "version": "0.7.5"
+      "version": "1.0.0"
     },
     "requirements": {
       "build": [
         "cxx_compiler_stub",
         "c_stdlib_stub",
         "cmake",
-        "make",
-        "eigen",
-        "libboost-python-devel"
+        "make"
       ],
       "host": [
         "python",
+        "pip",
         "scikit-build-core >=0.5.0",
         "nanobind >=2.7.0",
-        "pip"
+        "python-clang >=18,<19",
+        "numpy >=2.0",
+        "matplotlib-base >=3.0",
+        "networkx >=3.0",
+        "array-api-compat >=1.7",
+        "eigen >=3.4,<5",
+        "libboost-headers >=1.75"
       ],
       "run": [
         "python",
-        "numpy >=1.14",
+        "numpy >=2.0",
         "matplotlib-base >=3.0",
         "networkx >=3.0",
-        "pydot >=3.0"
+        "pydot >=3.0",
+        "array-api-compat >=1.7"
+      ],
+      "run_constrained": [
+        "scipy >=1.16",
+        "scikit-learn >=1.4",
+        "pandas >=2.0",
+        "pytorch >=2.2"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "b964b921ec8bc40526530a78ebce4875e2682e0efa1571de92d2573e8519cca0",
-      "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-0.7.5.tar.gz"
+      "patches": [
+        "patches/0001-find-versioned-libclang-on-windows.patch"
+      ],
+      "sha256": "c3bb46512f7280e6ba56451a1e974e774a01571738566cd72cdb8874b525c348",
+      "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-1.0.0.tar.gz"
     },
     "test": {
       "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pyvinecopulib"
+        "pip check",
+        "pytest tests -r a -m \"not compile\""
       ],
       "requires": [
-        "pip"
+        "pip",
+        "pytest >=8",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist >=3.6",
+        "scipy >=1.16",
+        "scikit-learn >=1.4",
+        "pandas >=2.0",
+        "pytorch >=2.2"
+      ],
+      "source_files": [
+        "tests",
+        "scripts/generate_stubs.py"
       ]
     }
   },
   "name": "pyvinecopulib",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "pyvinecopulib is the python interface to vinecopulib, a header-only C++\nlibrary for vine copula models based on Eigen. It provides high-performance\nimplementations of the core features of the popular VineCopula R library, in\nparticular inference algorithms for both vine copula and bivariate copula models.\n",
+      "description": "pyvinecopulib is the Python interface to vinecopulib, a header-only C++ library for vine copula models based on Eigen. It provides inference algorithms for both bivariate and vine copula models, with nonparametric and multi-parameter families, scikit-learn-compatible estimators, and an extensible protocol-based architecture for custom bivariate and vine copula implementations, including native PyTorch backends.\n",
       "dev_url": "https://github.com/vinecopulib/pyvinecopulib",
-      "doc_url": "https://vinecopulib.github.io/pyvinecopulib/",
-      "home": "https://vinecopulib.github.io/pyvinecopulib",
+      "doc_url": "https://pyvinecopulib.readthedocs.io",
+      "home": "https://github.com/vinecopulib/pyvinecopulib",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "A python interface to vinecopulib"
     },
     "build": {
-      "number": "1",
+      "number": "0",
       "script": "PYTHON -m pip install . -vv"
     },
     "extra": {
@@ -211,45 +270,70 @@
     },
     "package": {
       "name": "pyvinecopulib",
-      "version": "0.7.5"
+      "version": "1.0.0"
     },
     "requirements": {
       "build": [
         "cxx_compiler_stub",
         "c_stdlib_stub",
         "cmake",
-        "make",
-        "eigen",
-        "libboost-python-devel"
+        "make"
       ],
       "host": [
         "python",
+        "pip",
         "scikit-build-core >=0.5.0",
         "nanobind >=2.7.0",
-        "pip"
+        "python-clang >=18,<19",
+        "numpy >=2.0",
+        "matplotlib-base >=3.0",
+        "networkx >=3.0",
+        "array-api-compat >=1.7",
+        "eigen >=3.4,<5",
+        "libboost-headers >=1.75"
       ],
       "run": [
         "python",
-        "numpy >=1.14",
+        "numpy >=2.0",
         "matplotlib-base >=3.0",
         "networkx >=3.0",
-        "pydot >=3.0"
+        "pydot >=3.0",
+        "array-api-compat >=1.7"
+      ],
+      "run_constrained": [
+        "scipy >=1.16",
+        "scikit-learn >=1.4",
+        "pandas >=2.0",
+        "pytorch >=2.2"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "b964b921ec8bc40526530a78ebce4875e2682e0efa1571de92d2573e8519cca0",
-      "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-0.7.5.tar.gz"
+      "patches": [
+        "patches/0001-find-versioned-libclang-on-windows.patch"
+      ],
+      "sha256": "c3bb46512f7280e6ba56451a1e974e774a01571738566cd72cdb8874b525c348",
+      "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-1.0.0.tar.gz"
     },
     "test": {
       "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pyvinecopulib"
+        "pip check",
+        "pytest tests -r a -m \"not compile\""
       ],
       "requires": [
-        "pip"
+        "pip",
+        "pytest >=8",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist >=3.6",
+        "scipy >=1.16",
+        "scikit-learn >=1.4",
+        "pandas >=2.0",
+        "pytorch >=2.2"
+      ],
+      "source_files": [
+        "tests",
+        "scripts/generate_stubs.py"
       ]
     }
   },
@@ -260,23 +344,29 @@
         "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-python-devel",
         "make"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "array-api-compat",
+        "eigen",
+        "libboost-headers",
+        "matplotlib-base",
         "nanobind",
+        "networkx",
+        "numpy",
         "pip",
         "python",
+        "python-clang",
         "scikit-build-core"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "array-api-compat",
         "matplotlib-base",
         "networkx",
         "numpy",
@@ -287,7 +377,15 @@
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "pandas",
+        "pip",
+        "pytest",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist",
+        "pytorch",
+        "scikit-learn",
+        "scipy"
       ]
     }
   },
@@ -306,15 +404,16 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pyvinecopulib.json"
   },
-  "raw_meta_yaml": "{% set name = \"pyvinecopulib\" %}\n{% set version = \"0.7.5\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/pyvinecopulib-{{ version }}.tar.gz\n  sha256: b964b921ec8bc40526530a78ebce4875e2682e0efa1571de92d2573e8519cca0\n\nbuild:\n  skip: true  # [py<39]\n  script: {{ PYTHON }} -m pip install . -vv\n  number: 1\n\nrequirements:\n  build:\n    - {{ compiler('cxx') }}\n    - {{ stdlib('c') }}\n    - cmake\n    - make\n    - eigen\n    - libboost-python-devel\n  host:\n    - python\n    - scikit-build-core >=0.5.0\n    - nanobind >=2.7.0\n    - pip\n  run:\n    - python\n    - numpy >=1.14\n    - matplotlib-base >=3.0\n    - networkx >=3.0\n    - pydot >=3.0\n\ntest:\n  imports:\n    - pyvinecopulib\n  requires:\n    - pip\n  commands:\n    - pip check\n\nabout:\n  home: https://vinecopulib.github.io/pyvinecopulib\n  summary: A python interface to vinecopulib\n  description: |\n    pyvinecopulib is the python interface to vinecopulib, a header-only C++\n    library for vine copula models based on Eigen. It provides high-performance\n    implementations of the core features of the popular VineCopula R library, in\n    particular inference algorithms for both vine copula and bivariate copula models. \n  license: MIT\n  license_family: MIT\n  license_file: LICENSE\n  doc_url: https://vinecopulib.github.io/pyvinecopulib/\n  dev_url: https://github.com/vinecopulib/pyvinecopulib\n\nextra:\n  recipe-maintainers:\n    - tvatter\n",
+  "raw_meta_yaml": "{% set name = \"pyvinecopulib\" %}\n{% set version = \"1.0.0\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/pyvinecopulib-{{ version }}.tar.gz\n  sha256: c3bb46512f7280e6ba56451a1e974e774a01571738566cd72cdb8874b525c348\n  patches:\n    - patches/0001-find-versioned-libclang-on-windows.patch\n    \nbuild:\n  skip: true  # [py<311]\n  script: {{ PYTHON }} -m pip install . -vv\n  number: 0\n\nrequirements:\n\n  build:\n    - {{ compiler('cxx') }}\n    - {{ stdlib('c') }}\n    - cmake\n    - make\n\n  host:\n    - python\n    - pip\n    - scikit-build-core >=0.5.0\n    - nanobind >=2.7.0\n    - python-clang >=18,<19\n    - numpy >=2.0\n    - matplotlib-base >=3.0\n    - networkx >=3.0\n    - array-api-compat >=1.7\n    - eigen >=3.4,<5\n    - libboost-headers >=1.75\n\n  run:\n    - python\n    - numpy >=2.0\n    - matplotlib-base >=3.0\n    - networkx >=3.0\n    - pydot >=3.0\n    - array-api-compat >=1.7\n\n  run_constrained:\n    - scipy >=1.16\n    - scikit-learn >=1.4\n    - pandas >=2.0\n    - pytorch >=2.2\n\ntest:\n  source_files:\n    - tests\n    - scripts/generate_stubs.py\n\n  requires:\n    - pip\n    - pytest >=8\n    - pytest-cov\n    - pytest-rerunfailures\n    - pytest-xdist >=3.6\n    - scipy >=1.16\n    - scikit-learn >=1.4\n    - pandas >=2.0\n    - pytorch >=2.2\n\n  commands:\n    - pip check\n    - pytest tests -r a -m \"not compile\"\n    \nabout:\n  home: https://github.com/vinecopulib/pyvinecopulib\n  summary: A python interface to vinecopulib\n  description: |\n    pyvinecopulib is the Python interface to vinecopulib, a header-only C++ library for vine copula models based on Eigen. It provides inference algorithms for both bivariate and vine copula models, with nonparametric and multi-parameter families, scikit-learn-compatible estimators, and an extensible protocol-based architecture for custom bivariate and vine copula implementations, including native PyTorch backends.\n  license: MIT\n  license_family: MIT\n  license_file: LICENSE\n  doc_url: https://pyvinecopulib.readthedocs.io\n  dev_url: https://github.com/vinecopulib/pyvinecopulib\n\nextra:\n  recipe-maintainers:\n    - tvatter\n",
   "req": {
     "__set__": true,
     "elements": [
+      "array-api-compat",
       "c_stdlib_stub",
       "cmake",
       "cxx_compiler_stub",
       "eigen",
-      "libboost-python-devel",
+      "libboost-headers",
       "make",
       "matplotlib-base",
       "nanobind",
@@ -323,6 +422,7 @@
       "pip",
       "pydot",
       "python",
+      "python-clang",
       "scikit-build-core"
     ]
   },
@@ -333,25 +433,31 @@
         "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-python-devel",
         "make"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "array-api-compat",
         "c_stdlib_stub",
         "cxx_compiler_stub",
+        "eigen",
+        "libboost-headers",
+        "matplotlib-base",
         "nanobind",
+        "networkx",
+        "numpy",
         "pip",
         "python",
+        "python-clang",
         "scikit-build-core"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "array-api-compat",
         "c_stdlib_stub",
         "cxx_compiler_stub",
         "matplotlib-base",
@@ -364,7 +470,15 @@
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "pandas",
+        "pip",
+        "pytest",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist",
+        "pytorch",
+        "scikit-learn",
+        "scipy"
       ]
     }
   },
@@ -376,26 +490,32 @@
         "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-python-devel",
         "make"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "array-api-compat >=1.7",
+        "eigen >=3.4,<5",
+        "libboost-headers >=1.75",
+        "matplotlib-base >=3.0",
         "nanobind >=2.7.0",
+        "networkx >=3.0",
+        "numpy >=2.0",
         "pip",
         "python",
+        "python-clang >=18,<19",
         "scikit-build-core >=0.5.0"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "array-api-compat >=1.7",
         "matplotlib-base >=3.0",
         "networkx >=3.0",
-        "numpy >=1.14",
+        "numpy >=2.0",
         "pydot >=3.0",
         "python"
       ]
@@ -403,28 +523,36 @@
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "pandas >=2.0",
+        "pip",
+        "pytest >=8",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist >=3.6",
+        "pytorch >=2.2",
+        "scikit-learn >=1.4",
+        "scipy >=1.16"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-0.7.5.tar.gz",
-  "version": "0.7.5",
+  "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-1.0.0.tar.gz",
+  "version": "1.0.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/pyvinecopulib.json"
   },
   "win_64_meta_yaml": {
     "about": {
-      "description": "pyvinecopulib is the python interface to vinecopulib, a header-only C++\nlibrary for vine copula models based on Eigen. It provides high-performance\nimplementations of the core features of the popular VineCopula R library, in\nparticular inference algorithms for both vine copula and bivariate copula models.\n",
+      "description": "pyvinecopulib is the Python interface to vinecopulib, a header-only C++ library for vine copula models based on Eigen. It provides inference algorithms for both bivariate and vine copula models, with nonparametric and multi-parameter families, scikit-learn-compatible estimators, and an extensible protocol-based architecture for custom bivariate and vine copula implementations, including native PyTorch backends.\n",
       "dev_url": "https://github.com/vinecopulib/pyvinecopulib",
-      "doc_url": "https://vinecopulib.github.io/pyvinecopulib/",
-      "home": "https://vinecopulib.github.io/pyvinecopulib",
+      "doc_url": "https://pyvinecopulib.readthedocs.io",
+      "home": "https://github.com/vinecopulib/pyvinecopulib",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "A python interface to vinecopulib"
     },
     "build": {
-      "number": "1",
+      "number": "0",
       "script": "PYTHON -m pip install . -vv"
     },
     "extra": {
@@ -434,45 +562,70 @@
     },
     "package": {
       "name": "pyvinecopulib",
-      "version": "0.7.5"
+      "version": "1.0.0"
     },
     "requirements": {
       "build": [
         "cxx_compiler_stub",
         "c_stdlib_stub",
         "cmake",
-        "make",
-        "eigen",
-        "libboost-python-devel"
+        "make"
       ],
       "host": [
         "python",
+        "pip",
         "scikit-build-core >=0.5.0",
         "nanobind >=2.7.0",
-        "pip"
+        "python-clang >=18,<19",
+        "numpy >=2.0",
+        "matplotlib-base >=3.0",
+        "networkx >=3.0",
+        "array-api-compat >=1.7",
+        "eigen >=3.4,<5",
+        "libboost-headers >=1.75"
       ],
       "run": [
         "python",
-        "numpy >=1.14",
+        "numpy >=2.0",
         "matplotlib-base >=3.0",
         "networkx >=3.0",
-        "pydot >=3.0"
+        "pydot >=3.0",
+        "array-api-compat >=1.7"
+      ],
+      "run_constrained": [
+        "scipy >=1.16",
+        "scikit-learn >=1.4",
+        "pandas >=2.0",
+        "pytorch >=2.2"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "b964b921ec8bc40526530a78ebce4875e2682e0efa1571de92d2573e8519cca0",
-      "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-0.7.5.tar.gz"
+      "patches": [
+        "patches/0001-find-versioned-libclang-on-windows.patch"
+      ],
+      "sha256": "c3bb46512f7280e6ba56451a1e974e774a01571738566cd72cdb8874b525c348",
+      "url": "https://pypi.org/packages/source/p/pyvinecopulib/pyvinecopulib-1.0.0.tar.gz"
     },
     "test": {
       "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pyvinecopulib"
+        "pip check",
+        "pytest tests -r a -m \"not compile\""
       ],
       "requires": [
-        "pip"
+        "pip",
+        "pytest >=8",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist >=3.6",
+        "scipy >=1.16",
+        "scikit-learn >=1.4",
+        "pandas >=2.0",
+        "pytorch >=2.2"
+      ],
+      "source_files": [
+        "tests",
+        "scripts/generate_stubs.py"
       ]
     }
   },
@@ -483,23 +636,29 @@
         "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-python-devel",
         "make"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "array-api-compat",
+        "eigen",
+        "libboost-headers",
+        "matplotlib-base",
         "nanobind",
+        "networkx",
+        "numpy",
         "pip",
         "python",
+        "python-clang",
         "scikit-build-core"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "array-api-compat",
         "matplotlib-base",
         "networkx",
         "numpy",
@@ -510,7 +669,15 @@
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "pandas",
+        "pip",
+        "pytest",
+        "pytest-cov",
+        "pytest-rerunfailures",
+        "pytest-xdist",
+        "pytorch",
+        "scikit-learn",
+        "scipy"
       ]
     }
   }
