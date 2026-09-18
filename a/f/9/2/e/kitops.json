@@ -28,8 +28,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "c0c3b2af0b4488f15d14154ce3ae2cc6a6a30b4a",
-  "feedstock_hash_ts": 1784362972,
+  "feedstock_hash": "c280699263439e9fdb5d700ea357da297e680815",
+  "feedstock_hash_ts": 1789769938,
   "feedstock_name": "kitops",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -45,16 +45,21 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "go-licenses save . --save_path=library_licenses",
-        "BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"",
-        "SHORT_COMMIT_HASH=\"$(curl -s \"https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}\" | jq -r '.sha' | cut -c 1-7)\"",
-        "go build -v -o \"$PREFIX\"/bin/kit -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=${BUILD_TIME} -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=${SHORT_COMMIT_HASH}\" -trimpath .",
-        "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-        "\"$PREFIX\"/bin/kit completion bash > \"$PREFIX\"/share/bash-completion/completions/kit",
-        "\"$PREFIX\"/bin/kit completion fish > \"$PREFIX\"/share/fish/vendor_completions.d/kit.fish",
-        "\"$PREFIX\"/bin/kit completion zsh  > \"$PREFIX\"/share/zsh/site-functions/_kit"
-      ]
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'",
+          "let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6",
+          "let exe_name = 'kit'",
+          "^go build -o ($prefix)/bin/($exe_name) -v -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)' -trimpath .",
+          "^go-licenses save . --save_path=library_licenses",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "^kit completion bash | save ($prefix)/share/bash-completion/completions/kit",
+          "^kit completion fish | save ($prefix)/share/fish/vendor_completions.d/kit.fish",
+          "^kit completion zsh  | save ($prefix)/share/zsh/site-functions/_kit"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -68,7 +73,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -104,7 +110,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -118,7 +125,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -147,12 +155,17 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "go-licenses save . --save_path=library_licenses",
-        "BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"",
-        "SHORT_COMMIT_HASH=\"$(curl -s \"https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}\" | jq -r '.sha' | cut -c 1-7)\"",
-        "go build -v -o \"$PREFIX\"/bin/kit -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=${BUILD_TIME} -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=${SHORT_COMMIT_HASH}\" -trimpath ."
-      ]
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'",
+          "let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6",
+          "let exe_name = 'kit'",
+          "^go build -o ($prefix)/bin/($exe_name) -v -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)' -trimpath .",
+          "^go-licenses save . --save_path=library_licenses"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -166,7 +179,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -197,7 +211,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -211,7 +226,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -240,12 +256,17 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "go-licenses save . --save_path=library_licenses",
-        "BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"",
-        "SHORT_COMMIT_HASH=\"$(curl -s \"https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}\" | jq -r '.sha' | cut -c 1-7)\"",
-        "go build -v -o \"$PREFIX\"/bin/kit -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=${BUILD_TIME} -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=${SHORT_COMMIT_HASH}\" -trimpath ."
-      ]
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'",
+          "let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6",
+          "let exe_name = 'kit'",
+          "^go build -o ($prefix)/bin/($exe_name) -v -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)' -trimpath .",
+          "^go-licenses save . --save_path=library_licenses"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -259,7 +280,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -290,7 +312,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -304,7 +327,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -333,19 +357,22 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "go-licenses save . --save_path=library_licenses",
-        "BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"",
-        "SHORT_COMMIT_HASH=\"$(curl -s \"https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}\" | jq -r '.sha' | cut -c 1-7)\"",
-        "go build -v -o \"$PREFIX\"/bin/kit -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=${BUILD_TIME} -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=${SHORT_COMMIT_HASH}\" -trimpath .",
-        "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-        "\"$PREFIX\"/bin/kit completion bash > \"$PREFIX\"/share/bash-completion/completions/kit",
-        "\"$PREFIX\"/bin/kit completion fish > \"$PREFIX\"/share/fish/vendor_completions.d/kit.fish",
-        "\"$PREFIX\"/bin/kit completion zsh  > \"$PREFIX\"/share/zsh/site-functions/_kit",
-        "for /f \"usebackq delims=\" %%T in (`powershell -Command \"[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')\"`) do set BUILD_TIME=%%T",
-        "for /f \"usebackq delims=\" %%T in (`powershell -Command \"((Invoke-RestMethod 'https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}').sha).Substring(0, 7)\"`) do set SHORT_COMMIT_HASH=%%T",
-        "go build -v -o \"%LIBRARY_BIN%\"\\kit.exe -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=%BUILD_TIME% -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=%SHORT_COMMIT_HASH%\" -trimpath ."
-      ]
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'",
+          "let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6",
+          "let exe_name = 'kit'",
+          "^go build -o ($prefix)/bin/($exe_name) -v -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)' -trimpath .",
+          "^go-licenses save . --save_path=library_licenses",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "^kit completion bash | save ($prefix)/share/bash-completion/completions/kit",
+          "^kit completion fish | save ($prefix)/share/fish/vendor_completions.d/kit.fish",
+          "^kit completion zsh  | save ($prefix)/share/zsh/site-functions/_kit",
+          "let exe_name = 'kit.exe'"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -359,7 +386,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -393,7 +421,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -422,7 +451,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -451,7 +481,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -480,7 +511,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -509,7 +541,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -538,7 +571,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -569,7 +603,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -592,12 +627,17 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "go-licenses save . --save_path=library_licenses",
-        "BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"",
-        "SHORT_COMMIT_HASH=\"$(curl -s \"https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}\" | jq -r '.sha' | cut -c 1-7)\"",
-        "go build -v -o \"$PREFIX\"/bin/kit -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=${BUILD_TIME} -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=${SHORT_COMMIT_HASH}\" -trimpath ."
-      ]
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'",
+          "let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6",
+          "let exe_name = 'kit'",
+          "^go build -o ($prefix)/bin/($exe_name) -v -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)' -trimpath .",
+          "^go-licenses save . --save_path=library_licenses"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -611,7 +651,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -642,7 +683,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -656,7 +698,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -685,12 +728,17 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "go-licenses save . --save_path=library_licenses",
-        "BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"",
-        "SHORT_COMMIT_HASH=\"$(curl -s \"https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}\" | jq -r '.sha' | cut -c 1-7)\"",
-        "go build -v -o \"$PREFIX\"/bin/kit -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=${BUILD_TIME} -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=${SHORT_COMMIT_HASH}\" -trimpath ."
-      ]
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'",
+          "let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6",
+          "let exe_name = 'kit'",
+          "^go build -o ($prefix)/bin/($exe_name) -v -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)' -trimpath .",
+          "^go-licenses save . --save_path=library_licenses"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -704,7 +752,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -735,7 +784,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -749,7 +799,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -784,12 +835,13 @@
   "pr_info": {
     "__lazy_json__": "pr_info/kitops.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"1.15.0\"\n\npackage:\n  name: kitops\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/kitops-ml/kitops/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 956a3d526eb45848e66a49089fcc7867c7df4c2e019a3126219e8f1d7163f7e5\n\nbuild:\n  number: 0\n  script:\n    - go-licenses save . --save_path=library_licenses\n    - if: unix\n      then:\n        - BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\n        - SHORT_COMMIT_HASH=\"$(curl -s \"https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}\" | jq -r '.sha' | cut -c 1-7)\"\n        - go build -v -o \"$PREFIX\"/bin/kit -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=${BUILD_TIME} -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=${SHORT_COMMIT_HASH}\" -trimpath .\n        # generate shell completions\n        - if: build_platform == host_platform\n          then:\n            - mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions\n            - '\"$PREFIX\"/bin/kit completion bash > \"$PREFIX\"/share/bash-completion/completions/kit'\n            - '\"$PREFIX\"/bin/kit completion fish > \"$PREFIX\"/share/fish/vendor_completions.d/kit.fish'\n            - '\"$PREFIX\"/bin/kit completion zsh  > \"$PREFIX\"/share/zsh/site-functions/_kit'\n    - if: win\n      then:\n        - for /f \"usebackq delims=\" %%T in (`powershell -Command \"[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')\"`) do set BUILD_TIME=%%T\n        - for /f \"usebackq delims=\" %%T in (`powershell -Command \"((Invoke-RestMethod 'https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}').sha).Substring(0, 7)\"`) do set SHORT_COMMIT_HASH=%%T\n        - go build -v -o \"%LIBRARY_BIN%\"\\kit.exe -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=%BUILD_TIME% -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=%SHORT_COMMIT_HASH%\" -trimpath .\n        # generate shell completions\n        - if: build_platform == host_platform\n          then:\n            - mkdir \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\n            - mkdir \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\n            - mkdir \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\n            - '\"%LIBRARY_BIN%\"\\kit.exe completion bash > \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\\kit'\n            - '\"%LIBRARY_BIN%\"\\kit.exe completion fish > \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\\kit.fish'\n            - '\"%LIBRARY_BIN%\"\\kit.exe completion zsh  > \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\\_kit'\n\nrequirements:\n  build:\n    - ${{ compiler(\"go-nocgo\") }}\n    - go-licenses\n\ntests:\n  - script:\n      - kit --help\n      - kit version\n  - package_contents:\n      bin:\n        - kit\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/bash-completion/completions/kit\n            - share/fish/vendor_completions.d/kit.fish\n            - share/zsh/site-functions/_kit\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/bash-completion/completions/kit\n            - Library/share/fish/vendor_completions.d/kit.fish\n            - Library/share/zsh/site-functions/_kit\n      strict: true\n\nabout:\n  summary: An open source MLOps tool for packaging, versioning, and sharing AI/ML projects\n  description: |\n    KitOps is an open source tool that allows to package, version, share, and\n    deploy AI/ML models and their associated artifacts using familiar DevOps\n    practices and OCI standards. It facilitates collaborative work on\n    self-hosted AI/ML models and makes sharing, automating, and deploying those\n    models as simple as managing containerized apps.\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - library_licenses/\n  homepage: https://kitops.org\n  documentation: https://kitops.org/docs\n  repository: https://github.com/kitops-ml/kitops\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
+  "raw_meta_yaml": "context:\n  version: \"1.15.0\"\n\npackage:\n  name: kitops\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/kitops-ml/kitops/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 956a3d526eb45848e66a49089fcc7867c7df4c2e019a3126219e8f1d7163f7e5\n\nbuild:\n  number: 0\n  script:\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # build main app and generate license data\n      - let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'\n      - let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6\n      - if: win\n        then: let exe_name = 'kit.exe'\n        else: let exe_name = 'kit'\n      - ^go build\n        -o ($prefix)/bin/($exe_name)\n        -v\n        -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)'\n        -trimpath\n        .\n      - ^go-licenses save . --save_path=library_licenses\n      # generate shell completions\n      - if: build_platform == host_platform\n        then:\n          - mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions\n          - ^kit completion bash | save ($prefix)/share/bash-completion/completions/kit\n          - ^kit completion fish | save ($prefix)/share/fish/vendor_completions.d/kit.fish\n          - ^kit completion zsh  | save ($prefix)/share/zsh/site-functions/_kit\n\nrequirements:\n  build:\n    - ${{ compiler(\"go-nocgo\") }}\n    - go-licenses\n    - nushell\n\ntests:\n  - script:\n      - kit --help\n      - kit version\n  - package_contents:\n      bin:\n        - kit\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/bash-completion/completions/kit\n            - share/fish/vendor_completions.d/kit.fish\n            - share/zsh/site-functions/_kit\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/bash-completion/completions/kit\n            - Library/share/fish/vendor_completions.d/kit.fish\n            - Library/share/zsh/site-functions/_kit\n      strict: true\n\nabout:\n  summary: An open source MLOps tool for packaging, versioning, and sharing AI/ML projects\n  description: |\n    KitOps is an open source tool that allows to package, version, share, and\n    deploy AI/ML models and their associated artifacts using familiar DevOps\n    practices and OCI standards. It facilitates collaborative work on\n    self-hosted AI/ML models and makes sharing, automating, and deploying those\n    models as simple as managing containerized apps.\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - library_licenses/\n  homepage: https://kitops.org\n  documentation: https://kitops.org/docs\n  repository: https://github.com/kitops-ml/kitops\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
   "req": {
     "__set__": true,
     "elements": [
       "go-licenses",
-      "go-nocgo_compiler_stub"
+      "go-nocgo_compiler_stub",
+      "nushell"
     ]
   },
   "requirements": {
@@ -797,7 +849,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -819,7 +872,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -853,12 +907,17 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "go-licenses save . --save_path=library_licenses",
-        "for /f \"usebackq delims=\" %%T in (`powershell -Command \"[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')\"`) do set BUILD_TIME=%%T",
-        "for /f \"usebackq delims=\" %%T in (`powershell -Command \"((Invoke-RestMethod 'https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}').sha).Substring(0, 7)\"`) do set SHORT_COMMIT_HASH=%%T",
-        "go build -v -o \"%LIBRARY_BIN%\"\\kit.exe -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=%BUILD_TIME% -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=%SHORT_COMMIT_HASH%\" -trimpath ."
-      ]
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'",
+          "let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6",
+          "let exe_name = 'kit.exe'",
+          "^go build -o ($prefix)/bin/($exe_name) -v -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)' -trimpath .",
+          "^go-licenses save . --save_path=library_licenses"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -872,7 +931,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -903,7 +963,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -917,7 +978,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -946,12 +1008,17 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "go-licenses save . --save_path=library_licenses",
-        "for /f \"usebackq delims=\" %%T in (`powershell -Command \"[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')\"`) do set BUILD_TIME=%%T",
-        "for /f \"usebackq delims=\" %%T in (`powershell -Command \"((Invoke-RestMethod 'https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}').sha).Substring(0, 7)\"`) do set SHORT_COMMIT_HASH=%%T",
-        "go build -v -o \"%LIBRARY_BIN%\"\\kit.exe -ldflags=\"-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=%BUILD_TIME% -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=%SHORT_COMMIT_HASH%\" -trimpath ."
-      ]
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "let build_time = date now | format date '%Y-%m-%dT%H:%M:%SZ'",
+          "let short_commit_hash = (http get https://api.github.com/repos/kitops-ml/kitops/commits/v${{ version }}).sha | str substring 0..6",
+          "let exe_name = 'kit.exe'",
+          "^go build -o ($prefix)/bin/($exe_name) -v -ldflags=$'-s -w -X github.com/kitops-ml/kitops/pkg/lib/constants.Version=${{ version }} -X github.com/kitops-ml/kitops/pkg/lib/constants.BuildTime=($build_time) -X github.com/kitops-ml/kitops/pkg/lib/constants.GitCommit=($short_commit_hash)' -trimpath .",
+          "^go-licenses save . --save_path=library_licenses"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -965,7 +1032,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -996,7 +1064,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -1010,7 +1079,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
