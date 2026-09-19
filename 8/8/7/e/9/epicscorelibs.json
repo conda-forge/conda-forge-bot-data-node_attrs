@@ -1,18 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.10.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '13'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\ncdt_name:\n- cos7\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '13'\ndocker_image:\n- quay.io/condaforge/linux-anvil-cos7-x86_64\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.10.* *_cpython\nreadline:\n- '8'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n- - c_stdlib_version\n  - cdt_name\n- - python\n  - channel_sources\n",
-  "ci_support_migrations": {
-    "python312": {
-      "migration_number": 1,
-      "migrator_ts": 1695046563
-    },
-    "python313": {
-      "migration_number": 1,
-      "migrator_ts": 1724712607
-    }
-  },
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
+  "ci_support_migrations": {},
   "conda-forge.yml": {
+    "build_platform": {
+      "linux_aarch64": "linux_64",
+      "osx_arm64": "osx_64"
+    },
     "conda_build": {
       "pkg_format": "2"
     },
@@ -23,23 +18,25 @@
     },
     "provider": {
       "win": "azure"
-    }
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "cf45ea83567bdb49022263db52ddb411a1aacce8",
-  "feedstock_hash_ts": 1786741049,
+  "feedstock_hash": "0cb04317ee5a984608c9fa13ab11f520522f51f2",
+  "feedstock_hash_ts": 1789669971,
   "feedstock_name": "epicscorelibs",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "description": "The EPICS (Experimental Physics and Industrial Control System) core\nlibraries for use by python modules. Either dynamically with ctypes\nor statically by compiled extension.\n",
-      "home": "https://github.com/mdavidsaver/epicscorelibs",
+      "home": "https://github.com/epics-base/epicscorelibs",
       "license": "EPICS",
       "license_file": "LICENSE",
       "summary": "EPICS core libraries packaged as a \"python\" module"
     },
     "build": {
-      "number": "1",
-      "script": "PYTHON -m pip install . --no-binary :all: -vv"
+      "noarch": "python",
+      "number": "0",
+      "script": "PYTHON -m pip install . --no-deps --no-build-isolation -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -51,37 +48,38 @@
     },
     "package": {
       "name": "epicscorelibs",
-      "version": "7.0.7.99.1.1"
+      "version": "7.0.10.99.0.1"
     },
     "requirements": {
-      "build": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ],
       "host": [
-        "python",
+        "python 3.11",
         "pip",
         "setuptools",
-        "setuptools_dso >=2.9a1",
-        "readline"
+        "epics-base"
       ],
       "run": [
-        "python",
-        "setuptools_dso >=2.9a1",
-        "readline",
-        "numpy"
+        "python >=3.11",
+        "numpy",
+        "epics-base"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "f9dd2c01913cf13959e882c7c2afccd5d55cd5084bd4597201ea119f65752231",
-      "url": "https://pypi.io/packages/source/e/epicscorelibs/epicscorelibs-7.0.7.99.1.1.tar.gz"
+      "patches": [
+        "patch/ioc_and_path_use_epics_base.patch",
+        "patch/setup_and_pyproject_no_setuptools_dso.patch",
+        "patch/config_no_compiler_probe.patch"
+      ],
+      "sha256": "e8c8d9730faef7df55f4d329c359a0e4c044f03a524dd2e4587e90132873edfd",
+      "url": "https://pypi.org/packages/source/e/epicscorelibs/epicscorelibs-7.0.10.99.0.1.tar.gz"
     },
     "test": {
+      "commands": [
+        "python -c \"import os, epicscorelibs; d = os.path.join(os.path.dirname(epicscorelibs.__file__), 'lib'); assert not any(f.endswith(('.so', '.dylib', '.dll')) for f in os.listdir(d))\""
+      ],
       "imports": [
         "epicscorelibs",
-        "epicscorelibs.ca",
+        "epicscorelibs.ca.cadef",
         "epicscorelibs.ca.dbr",
         "epicscorelibs.config"
       ]
@@ -90,29 +88,23 @@
   "linux_64_requirements": {
     "build": {
       "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ]
+      "elements": []
     },
     "host": {
       "__set__": true,
       "elements": [
+        "epics-base",
         "pip",
         "python",
-        "readline",
-        "setuptools",
-        "setuptools_dso"
+        "setuptools"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "epics-base",
         "numpy",
-        "python",
-        "readline",
-        "setuptools_dso"
+        "python"
       ]
     },
     "test": {
@@ -123,14 +115,15 @@
   "meta_yaml": {
     "about": {
       "description": "The EPICS (Experimental Physics and Industrial Control System) core\nlibraries for use by python modules. Either dynamically with ctypes\nor statically by compiled extension.\n",
-      "home": "https://github.com/mdavidsaver/epicscorelibs",
+      "home": "https://github.com/epics-base/epicscorelibs",
       "license": "EPICS",
       "license_file": "LICENSE",
       "summary": "EPICS core libraries packaged as a \"python\" module"
     },
     "build": {
-      "number": "1",
-      "script": "PYTHON -m pip install . --no-binary :all: -vv"
+      "noarch": "python",
+      "number": "0",
+      "script": "PYTHON -m pip install . --no-deps --no-build-isolation -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -142,134 +135,44 @@
     },
     "package": {
       "name": "epicscorelibs",
-      "version": "7.0.7.99.1.1"
+      "version": "7.0.10.99.0.1"
     },
     "requirements": {
-      "build": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ],
       "host": [
-        "python",
+        "python 3.11",
         "pip",
         "setuptools",
-        "setuptools_dso >=2.9a1",
-        "readline"
+        "epics-base"
       ],
       "run": [
-        "python",
-        "setuptools_dso >=2.9a1",
-        "readline",
-        "numpy"
+        "python >=3.11",
+        "numpy",
+        "epics-base"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "f9dd2c01913cf13959e882c7c2afccd5d55cd5084bd4597201ea119f65752231",
-      "url": "https://pypi.io/packages/source/e/epicscorelibs/epicscorelibs-7.0.7.99.1.1.tar.gz"
+      "patches": [
+        "patch/ioc_and_path_use_epics_base.patch",
+        "patch/setup_and_pyproject_no_setuptools_dso.patch",
+        "patch/config_no_compiler_probe.patch"
+      ],
+      "sha256": "e8c8d9730faef7df55f4d329c359a0e4c044f03a524dd2e4587e90132873edfd",
+      "url": "https://pypi.org/packages/source/e/epicscorelibs/epicscorelibs-7.0.10.99.0.1.tar.gz"
     },
     "test": {
+      "commands": [
+        "python -c \"import os, epicscorelibs; d = os.path.join(os.path.dirname(epicscorelibs.__file__), 'lib'); assert not any(f.endswith(('.so', '.dylib', '.dll')) for f in os.listdir(d))\""
+      ],
       "imports": [
         "epicscorelibs",
-        "epicscorelibs.ca",
+        "epicscorelibs.ca.cadef",
         "epicscorelibs.ca.dbr",
         "epicscorelibs.config"
       ]
     }
   },
   "name": "epicscorelibs",
-  "osx_64_meta_yaml": {
-    "about": {
-      "description": "The EPICS (Experimental Physics and Industrial Control System) core\nlibraries for use by python modules. Either dynamically with ctypes\nor statically by compiled extension.\n",
-      "home": "https://github.com/mdavidsaver/epicscorelibs",
-      "license": "EPICS",
-      "license_file": "LICENSE",
-      "summary": "EPICS core libraries packaged as a \"python\" module"
-    },
-    "build": {
-      "number": "1",
-      "script": "PYTHON -m pip install . --no-binary :all: -vv"
-    },
-    "extra": {
-      "recipe-maintainers": [
-        "tacaswell",
-        "hhslepicka",
-        "klauer",
-        "mrakitin"
-      ]
-    },
-    "package": {
-      "name": "epicscorelibs",
-      "version": "7.0.7.99.1.1"
-    },
-    "requirements": {
-      "build": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ],
-      "host": [
-        "python",
-        "pip",
-        "setuptools",
-        "setuptools_dso >=2.9a1",
-        "readline"
-      ],
-      "run": [
-        "python",
-        "setuptools_dso >=2.9a1",
-        "readline",
-        "numpy"
-      ]
-    },
-    "schema_version": 0,
-    "source": {
-      "sha256": "f9dd2c01913cf13959e882c7c2afccd5d55cd5084bd4597201ea119f65752231",
-      "url": "https://pypi.io/packages/source/e/epicscorelibs/epicscorelibs-7.0.7.99.1.1.tar.gz"
-    },
-    "test": {
-      "imports": [
-        "epicscorelibs",
-        "epicscorelibs.ca",
-        "epicscorelibs.ca.dbr",
-        "epicscorelibs.config"
-      ]
-    }
-  },
-  "osx_64_requirements": {
-    "build": {
-      "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ]
-    },
-    "host": {
-      "__set__": true,
-      "elements": [
-        "pip",
-        "python",
-        "readline",
-        "setuptools",
-        "setuptools_dso"
-      ]
-    },
-    "run": {
-      "__set__": true,
-      "elements": [
-        "numpy",
-        "python",
-        "readline",
-        "setuptools_dso"
-      ]
-    },
-    "test": {
-      "__set__": true,
-      "elements": []
-    }
-  },
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -278,60 +181,42 @@
   },
   "parsing_error": false,
   "platforms": [
-    "linux_64",
-    "osx_64",
-    "win_64"
+    "linux_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/epicscorelibs.json"
   },
-  "raw_meta_yaml": "{% set name = \"epicscorelibs\" %}\n{% set version = \"7.0.7.99.1.1\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz\n  sha256: f9dd2c01913cf13959e882c7c2afccd5d55cd5084bd4597201ea119f65752231\n\nbuild:\n  number: 1\n  script: '{{ PYTHON }} -m pip install . --no-binary :all: -vv'\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n  host:\n    - python\n    - pip\n    - setuptools\n    - setuptools_dso >=2.9a1\n    - readline  # [not win]\n  run:\n    - python\n    - setuptools_dso >=2.9a1\n    - readline  # [not win]\n    - numpy\n\ntest:\n  imports:\n    - epicscorelibs\n    - epicscorelibs.ca\n    - epicscorelibs.ca.dbr\n    - epicscorelibs.config\n\nabout:\n  home: https://github.com/mdavidsaver/epicscorelibs\n  license: EPICS\n  license_file: LICENSE\n  summary: EPICS core libraries packaged as a \"python\" module\n  description: |\n    The EPICS (Experimental Physics and Industrial Control System) core\n    libraries for use by python modules. Either dynamically with ctypes\n    or statically by compiled extension.\n\nextra:\n  recipe-maintainers:\n    - tacaswell\n    - hhslepicka\n    - klauer\n    - mrakitin\n",
+  "raw_meta_yaml": "{% set name = \"epicscorelibs\" %}\n{% set version = \"7.0.10.99.0.1\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz\n  sha256: e8c8d9730faef7df55f4d329c359a0e4c044f03a524dd2e4587e90132873edfd\n  patches:\n    # These three patches together adapt epicscorelibs to use the\n    # epics-base conda package's shared libraries, headers, and DBD files\n    # instead of building and bundling a private copy (so both can\n    # coexist in one process). They are independent and do NOT stack: each\n    # touches a disjoint set of files (named after those files below), is\n    # generated directly against the pristine source tarball above, and\n    # does not depend on the others having been applied first. Their\n    # relative order in this list is arbitrary.\n    #\n    # Repoints epicscorelibs/{ioc,path/__init__}.py at epics-base's install\n    # location instead of a private copy built by this package.\n    - patch/ioc_and_path_use_epics_base.patch\n    # setup.py/pyproject.toml: no longer build or install any of that\n    # private copy (DSOs/headers/dbd files), nor the setuptools_dso build\n    # framework used to do so - meaning this package builds no native code\n    # at all, and needs neither setuptools_dso nor a compiler to build.\n    - patch/setup_and_pyproject_no_setuptools_dso.patch\n    # epicscorelibs/config.py still exposes a small amount of toolchain\n    # information (OS_CLASS, CMPLR_CLASS, CPPFLAGS, ...) as public API,\n    # upstream determined by invoking a compiler's preprocessor (via\n    # setuptools_dso) at import time. Since this is a noarch: python\n    # package installed as-is on every platform, nothing can be baked in\n    # at build time either (unlike the setup.py patch, above, for the\n    # same reason). Instead this is derived from platform.system() at\n    # import time: a given platform's compiler family and C++ ABI are\n    # fixed and coherent across the whole conda-forge ecosystem, so this\n    # is equivalent to actually probing a compiler, without requiring\n    # setuptools_dso or a compiler to be present at all.\n    - patch/config_no_compiler_probe.patch\n\nbuild:\n  number: 0\n  noarch: python\n  script: '{{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv'\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip\n    - setuptools\n    - epics-base\n  run:\n    - python >={{ python_min }}\n    - numpy\n    - epics-base\n\ntest:\n  imports:\n    - epicscorelibs\n    - epicscorelibs.ca.cadef  # loads libca from epics-base at import\n    - epicscorelibs.ca.dbr\n    - epicscorelibs.config\n  commands:\n    # EPICS libraries come from epics-base; none are bundled here\n    - python -c \"import os, epicscorelibs; d = os.path.join(os.path.dirname(epicscorelibs.__file__), 'lib'); assert not any(f.endswith(('.so', '.dylib', '.dll')) for f in os.listdir(d))\"\n\nabout:\n  home: https://github.com/epics-base/epicscorelibs\n  license: EPICS\n  license_file: LICENSE\n  summary: EPICS core libraries packaged as a \"python\" module\n  description: |\n    The EPICS (Experimental Physics and Industrial Control System) core\n    libraries for use by python modules. Either dynamically with ctypes\n    or statically by compiled extension.\n\nextra:\n  recipe-maintainers:\n    - tacaswell\n    - hhslepicka\n    - klauer\n    - mrakitin\n",
   "req": {
     "__set__": true,
     "elements": [
-      "c_compiler_stub",
-      "c_stdlib_stub",
-      "cxx_compiler_stub",
+      "epics-base",
       "numpy",
       "pip",
       "python",
-      "readline",
-      "setuptools",
-      "setuptools_dso"
+      "setuptools"
     ]
   },
   "requirements": {
     "build": {
       "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ]
+      "elements": []
     },
     "host": {
       "__set__": true,
       "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub",
+        "epics-base",
         "pip",
         "python",
-        "readline",
-        "setuptools",
-        "setuptools_dso"
+        "setuptools"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub",
+        "epics-base",
         "numpy",
-        "python",
-        "readline",
-        "setuptools_dso"
+        "python"
       ]
     },
     "test": {
@@ -343,29 +228,23 @@
   "total_requirements": {
     "build": {
       "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ]
+      "elements": []
     },
     "host": {
       "__set__": true,
       "elements": [
+        "epics-base",
         "pip",
-        "python",
-        "readline",
-        "setuptools",
-        "setuptools_dso >=2.9a1"
+        "python 3.11",
+        "setuptools"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "epics-base",
         "numpy",
-        "python",
-        "readline",
-        "setuptools_dso >=2.9a1"
+        "python >=3.11"
       ]
     },
     "test": {
@@ -373,96 +252,9 @@
       "elements": []
     }
   },
-  "url": "https://pypi.io/packages/source/e/epicscorelibs/epicscorelibs-7.0.7.99.1.1.tar.gz",
-  "version": "7.0.7.99.1.1",
+  "url": "https://pypi.org/packages/source/e/epicscorelibs/epicscorelibs-7.0.10.99.0.1.tar.gz",
+  "version": "7.0.10.99.0.1",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/epicscorelibs.json"
-  },
-  "win_64_meta_yaml": {
-    "about": {
-      "description": "The EPICS (Experimental Physics and Industrial Control System) core\nlibraries for use by python modules. Either dynamically with ctypes\nor statically by compiled extension.\n",
-      "home": "https://github.com/mdavidsaver/epicscorelibs",
-      "license": "EPICS",
-      "license_file": "LICENSE",
-      "summary": "EPICS core libraries packaged as a \"python\" module"
-    },
-    "build": {
-      "number": "1",
-      "script": "PYTHON -m pip install . --no-binary :all: -vv"
-    },
-    "extra": {
-      "recipe-maintainers": [
-        "tacaswell",
-        "hhslepicka",
-        "klauer",
-        "mrakitin"
-      ]
-    },
-    "package": {
-      "name": "epicscorelibs",
-      "version": "7.0.7.99.1.1"
-    },
-    "requirements": {
-      "build": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ],
-      "host": [
-        "python",
-        "pip",
-        "setuptools",
-        "setuptools_dso >=2.9a1"
-      ],
-      "run": [
-        "python",
-        "setuptools_dso >=2.9a1",
-        "numpy"
-      ]
-    },
-    "schema_version": 0,
-    "source": {
-      "sha256": "f9dd2c01913cf13959e882c7c2afccd5d55cd5084bd4597201ea119f65752231",
-      "url": "https://pypi.io/packages/source/e/epicscorelibs/epicscorelibs-7.0.7.99.1.1.tar.gz"
-    },
-    "test": {
-      "imports": [
-        "epicscorelibs",
-        "epicscorelibs.ca",
-        "epicscorelibs.ca.dbr",
-        "epicscorelibs.config"
-      ]
-    }
-  },
-  "win_64_requirements": {
-    "build": {
-      "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
-      ]
-    },
-    "host": {
-      "__set__": true,
-      "elements": [
-        "pip",
-        "python",
-        "setuptools",
-        "setuptools_dso"
-      ]
-    },
-    "run": {
-      "__set__": true,
-      "elements": [
-        "numpy",
-        "python",
-        "setuptools_dso"
-      ]
-    },
-    "test": {
-      "__set__": true,
-      "elements": []
-    }
   }
 }
