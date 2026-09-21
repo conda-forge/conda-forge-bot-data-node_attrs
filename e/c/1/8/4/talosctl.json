@@ -14,8 +14,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "ad2c5ab98fb8ef7def7cc3dc7c0c9ec6eb19e698",
-  "feedstock_hash_ts": 1787347546,
+  "feedstock_hash": "beff93cc3cdf0410b1bc971976d8872cd1ff95d0",
+  "feedstock_hash_ts": 1790009716,
   "feedstock_name": "talosctl",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -32,7 +32,7 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "# Talos pins `go 1.26.5` across its go.mod / go.work (including nested modules),\n# but the build toolchain is older; relax every pin to a version it satisfies.\n[(glob go.mod) (glob **/go.mod) (glob go.work) (glob **/go.work)]\n| flatten\n| uniq\n| each {|f|\n    open --raw $f\n    | decode utf-8\n    | str replace --regex --all '(?m)^go 1\\.26\\.[0-9]+' 'go 1.26.2'\n    | save --force $f\n}\n\n# Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\nlet bin = if $nu.os-info.name == \"windows\" {\n    $\"($env.LIBRARY_BIN)/talosctl.exe\"\n} else {\n    $\"($env.PREFIX)/bin/talosctl\"\n}\n\n# GOWORK=off builds in module mode using the go.mod replace directives.\nwith-env {GOWORK: \"off\"} {\n    go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n}\n\n# Collect statically-linked dependency licenses for the package.\ngo-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n",
+        "content": "# Talos pins `go 1.26.5` in its go.mod / go.work, and several dependencies\n# require that same minimum, so the pins are left alone: the go-nocgo\n# compiler (1.27.x) already satisfies them. Rewriting them downwards makes\n# the module graph inconsistent (\"updates to go.mod needed; go mod tidy\").\n\n# Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\nlet bin = if $nu.os-info.name == \"windows\" {\n    $\"($env.LIBRARY_BIN)/talosctl.exe\"\n} else {\n    $\"($env.PREFIX)/bin/talosctl\"\n}\n\n# GOWORK=off builds in module mode using the go.mod replace directives.\nwith-env {GOWORK: \"off\"} {\n    go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n}\n\n# Collect statically-linked dependency licenses for the package.\ngo-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n",
         "interpreter": "nu"
       }
     },
@@ -63,12 +63,12 @@
             }
           }
         ],
-        "version": "1.13.9"
+        "version": "1.14.1"
       }
     ],
     "package": {
       "name": "talosctl",
-      "version": "1.13.9"
+      "version": "1.14.1"
     },
     "requirements": {
       "build": [
@@ -79,8 +79,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "d8f328eb5963a7ee65eab01d1095ab14a127d03a2522c6050dcd0ca2b6447ed5",
-      "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.13.9.tar.gz"
+      "sha256": "49710f8a98f9c98f88453cc2d5ebbfe5c128183785684a9defbc60ad5c76dd55",
+      "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.14.1.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -119,7 +119,7 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "# Talos pins `go 1.26.5` across its go.mod / go.work (including nested modules),\n# but the build toolchain is older; relax every pin to a version it satisfies.\n[(glob go.mod) (glob **/go.mod) (glob go.work) (glob **/go.work)]\n| flatten\n| uniq\n| each {|f|\n    open --raw $f\n    | decode utf-8\n    | str replace --regex --all '(?m)^go 1\\.26\\.[0-9]+' 'go 1.26.2'\n    | save --force $f\n}\n\n# Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\nlet bin = if $nu.os-info.name == \"windows\" {\n    $\"($env.LIBRARY_BIN)/talosctl.exe\"\n} else {\n    $\"($env.PREFIX)/bin/talosctl\"\n}\n\n# GOWORK=off builds in module mode using the go.mod replace directives.\nwith-env {GOWORK: \"off\"} {\n    go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n}\n\n# Collect statically-linked dependency licenses for the package.\ngo-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n",
+        "content": "# Talos pins `go 1.26.5` in its go.mod / go.work, and several dependencies\n# require that same minimum, so the pins are left alone: the go-nocgo\n# compiler (1.27.x) already satisfies them. Rewriting them downwards makes\n# the module graph inconsistent (\"updates to go.mod needed; go mod tidy\").\n\n# Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\nlet bin = if $nu.os-info.name == \"windows\" {\n    $\"($env.LIBRARY_BIN)/talosctl.exe\"\n} else {\n    $\"($env.PREFIX)/bin/talosctl\"\n}\n\n# GOWORK=off builds in module mode using the go.mod replace directives.\nwith-env {GOWORK: \"off\"} {\n    go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n}\n\n# Collect statically-linked dependency licenses for the package.\ngo-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n",
         "interpreter": "nu"
       }
     },
@@ -150,7 +150,7 @@
             }
           }
         ],
-        "version": "1.13.9"
+        "version": "1.14.1"
       },
       {
         "build": null,
@@ -173,7 +173,7 @@
             }
           }
         ],
-        "version": "1.13.9"
+        "version": "1.14.1"
       },
       {
         "build": null,
@@ -196,12 +196,12 @@
             }
           }
         ],
-        "version": "1.13.9"
+        "version": "1.14.1"
       }
     ],
     "package": {
       "name": "talosctl",
-      "version": "1.13.9"
+      "version": "1.14.1"
     },
     "requirements": {
       "build": [
@@ -212,8 +212,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "d8f328eb5963a7ee65eab01d1095ab14a127d03a2522c6050dcd0ca2b6447ed5",
-      "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.13.9.tar.gz"
+      "sha256": "49710f8a98f9c98f88453cc2d5ebbfe5c128183785684a9defbc60ad5c76dd55",
+      "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.14.1.tar.gz"
     }
   },
   "name": "talosctl",
@@ -231,7 +231,7 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "# Talos pins `go 1.26.5` across its go.mod / go.work (including nested modules),\n# but the build toolchain is older; relax every pin to a version it satisfies.\n[(glob go.mod) (glob **/go.mod) (glob go.work) (glob **/go.work)]\n| flatten\n| uniq\n| each {|f|\n    open --raw $f\n    | decode utf-8\n    | str replace --regex --all '(?m)^go 1\\.26\\.[0-9]+' 'go 1.26.2'\n    | save --force $f\n}\n\n# Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\nlet bin = if $nu.os-info.name == \"windows\" {\n    $\"($env.LIBRARY_BIN)/talosctl.exe\"\n} else {\n    $\"($env.PREFIX)/bin/talosctl\"\n}\n\n# GOWORK=off builds in module mode using the go.mod replace directives.\nwith-env {GOWORK: \"off\"} {\n    go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n}\n\n# Collect statically-linked dependency licenses for the package.\ngo-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n",
+        "content": "# Talos pins `go 1.26.5` in its go.mod / go.work, and several dependencies\n# require that same minimum, so the pins are left alone: the go-nocgo\n# compiler (1.27.x) already satisfies them. Rewriting them downwards makes\n# the module graph inconsistent (\"updates to go.mod needed; go mod tidy\").\n\n# Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\nlet bin = if $nu.os-info.name == \"windows\" {\n    $\"($env.LIBRARY_BIN)/talosctl.exe\"\n} else {\n    $\"($env.PREFIX)/bin/talosctl\"\n}\n\n# GOWORK=off builds in module mode using the go.mod replace directives.\nwith-env {GOWORK: \"off\"} {\n    go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n}\n\n# Collect statically-linked dependency licenses for the package.\ngo-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n",
         "interpreter": "nu"
       }
     },
@@ -262,12 +262,12 @@
             }
           }
         ],
-        "version": "1.13.9"
+        "version": "1.14.1"
       }
     ],
     "package": {
       "name": "talosctl",
-      "version": "1.13.9"
+      "version": "1.14.1"
     },
     "requirements": {
       "build": [
@@ -278,8 +278,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "d8f328eb5963a7ee65eab01d1095ab14a127d03a2522c6050dcd0ca2b6447ed5",
-      "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.13.9.tar.gz"
+      "sha256": "49710f8a98f9c98f88453cc2d5ebbfe5c128183785684a9defbc60ad5c76dd55",
+      "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.14.1.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -319,7 +319,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/talosctl.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"1.13.9\"\n\npackage:\n  name: talosctl\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/siderolabs/talos/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: d8f328eb5963a7ee65eab01d1095ab14a127d03a2522c6050dcd0ca2b6447ed5\n\nbuild:\n  number: 0\n  script:\n    interpreter: nu\n    content: |\n      # Talos pins `go 1.26.5` across its go.mod / go.work (including nested modules),\n      # but the build toolchain is older; relax every pin to a version it satisfies.\n      [(glob go.mod) (glob **/go.mod) (glob go.work) (glob **/go.work)]\n      | flatten\n      | uniq\n      | each {|f|\n          open --raw $f\n          | decode utf-8\n          | str replace --regex --all '(?m)^go 1\\.26\\.[0-9]+' 'go 1.26.2'\n          | save --force $f\n      }\n\n      # Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\n      let bin = if $nu.os-info.name == \"windows\" {\n          $\"($env.LIBRARY_BIN)/talosctl.exe\"\n      } else {\n          $\"($env.PREFIX)/bin/talosctl\"\n      }\n\n      # GOWORK=off builds in module mode using the go.mod replace directives.\n      with-env {GOWORK: \"off\"} {\n          go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n      }\n\n      # Collect statically-linked dependency licenses for the package.\n      go-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n\nrequirements:\n  build:\n    - ${{ compiler('go-nocgo') }}\n    - go-licenses\n    - nushell\n\ntests:\n  - package_contents:\n      bin:\n        - talosctl\n\nabout:\n  homepage: https://github.com/talosctl/talosctl\n  summary: \"Talos Linux is an OS for Kubernetes\"\n  description: |\n    Talos is a modern OS for running Kubernetes: secure, immutable, and minimal.\n    Talos is fully open source.\n    All system management is done via an API.\n    `talosctl` is a command line tool which uses that API.\n  license: MPL-2.0\n  license_file:\n    - LICENSE\n    - library-licenses/\n  documentation: https://docs.siderolabs.com/talos\n  repository: https://github.com/siderolabs/talos\n\nextra:\n  recipe-maintainers:\n    - phreed\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"1.14.1\"\n\npackage:\n  name: talosctl\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/siderolabs/talos/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 49710f8a98f9c98f88453cc2d5ebbfe5c128183785684a9defbc60ad5c76dd55\n\nbuild:\n  number: 0\n  script:\n    interpreter: nu\n    content: |\n      # Talos pins `go 1.26.5` in its go.mod / go.work, and several dependencies\n      # require that same minimum, so the pins are left alone: the go-nocgo\n      # compiler (1.27.x) already satisfies them. Rewriting them downwards makes\n      # the module graph inconsistent (\"updates to go.mod needed; go mod tidy\").\n\n      # Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\n      let bin = if $nu.os-info.name == \"windows\" {\n          $\"($env.LIBRARY_BIN)/talosctl.exe\"\n      } else {\n          $\"($env.PREFIX)/bin/talosctl\"\n      }\n\n      # GOWORK=off builds in module mode using the go.mod replace directives.\n      with-env {GOWORK: \"off\"} {\n          go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n      }\n\n      # Collect statically-linked dependency licenses for the package.\n      go-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n\nrequirements:\n  build:\n    - ${{ compiler('go-nocgo') }}\n    - go-licenses\n    - nushell\n\ntests:\n  - package_contents:\n      bin:\n        - talosctl\n\nabout:\n  homepage: https://github.com/talosctl/talosctl\n  summary: \"Talos Linux is an OS for Kubernetes\"\n  description: |\n    Talos is a modern OS for running Kubernetes: secure, immutable, and minimal.\n    Talos is fully open source.\n    All system management is done via an API.\n    `talosctl` is a command line tool which uses that API.\n  license: MPL-2.0\n  license_file:\n    - LICENSE\n    - library-licenses/\n  documentation: https://docs.siderolabs.com/talos\n  repository: https://github.com/siderolabs/talos\n\nextra:\n  recipe-maintainers:\n    - phreed\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -373,8 +373,8 @@
       "elements": []
     }
   },
-  "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.13.9.tar.gz",
-  "version": "1.13.9",
+  "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.14.1.tar.gz",
+  "version": "1.14.1",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/talosctl.json"
   },
@@ -392,7 +392,7 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "# Talos pins `go 1.26.5` across its go.mod / go.work (including nested modules),\n# but the build toolchain is older; relax every pin to a version it satisfies.\n[(glob go.mod) (glob **/go.mod) (glob go.work) (glob **/go.work)]\n| flatten\n| uniq\n| each {|f|\n    open --raw $f\n    | decode utf-8\n    | str replace --regex --all '(?m)^go 1\\.26\\.[0-9]+' 'go 1.26.2'\n    | save --force $f\n}\n\n# Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\nlet bin = if $nu.os-info.name == \"windows\" {\n    $\"($env.LIBRARY_BIN)/talosctl.exe\"\n} else {\n    $\"($env.PREFIX)/bin/talosctl\"\n}\n\n# GOWORK=off builds in module mode using the go.mod replace directives.\nwith-env {GOWORK: \"off\"} {\n    go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n}\n\n# Collect statically-linked dependency licenses for the package.\ngo-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n",
+        "content": "# Talos pins `go 1.26.5` in its go.mod / go.work, and several dependencies\n# require that same minimum, so the pins are left alone: the go-nocgo\n# compiler (1.27.x) already satisfies them. Rewriting them downwards makes\n# the module graph inconsistent (\"updates to go.mod needed; go mod tidy\").\n\n# Windows lands the binary in Library\\bin with an .exe suffix; unix uses $PREFIX/bin.\nlet bin = if $nu.os-info.name == \"windows\" {\n    $\"($env.LIBRARY_BIN)/talosctl.exe\"\n} else {\n    $\"($env.PREFIX)/bin/talosctl\"\n}\n\n# GOWORK=off builds in module mode using the go.mod replace directives.\nwith-env {GOWORK: \"off\"} {\n    go build -v -o $bin -ldflags $\"-s -w -X github.com/siderolabs/talos/pkg/machinery/version.Tag=v($env.PKG_VERSION)\" ./cmd/talosctl\n}\n\n# Collect statically-linked dependency licenses for the package.\ngo-licenses save ./cmd/talosctl --save_path ./library-licenses --ignore github.com/siderolabs/talos\n",
         "interpreter": "nu"
       }
     },
@@ -423,12 +423,12 @@
             }
           }
         ],
-        "version": "1.13.9"
+        "version": "1.14.1"
       }
     ],
     "package": {
       "name": "talosctl",
-      "version": "1.13.9"
+      "version": "1.14.1"
     },
     "requirements": {
       "build": [
@@ -439,8 +439,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "d8f328eb5963a7ee65eab01d1095ab14a127d03a2522c6050dcd0ca2b6447ed5",
-      "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.13.9.tar.gz"
+      "sha256": "49710f8a98f9c98f88453cc2d5ebbfe5c128183785684a9defbc60ad5c76dd55",
+      "url": "https://github.com/siderolabs/talos/archive/refs/tags/v1.14.1.tar.gz"
     }
   },
   "win_64_requirements": {
