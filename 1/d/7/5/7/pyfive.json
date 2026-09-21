@@ -13,8 +13,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "1e8da7dfb53b2d6cc41e803859b845018ee524c0",
-  "feedstock_hash_ts": 1789914105,
+  "feedstock_hash": "bf66e8fc49b34b6ede1af9b0dc44162018c11d6b",
+  "feedstock_hash_ts": 1789990825,
   "feedstock_name": "pyfive",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -26,7 +26,7 @@
     },
     "build": {
       "noarch": "python",
-      "number": "0",
+      "number": "1",
       "script": "PYTHON -m pip install . -vv --no-deps --no-build-isolation"
     },
     "extra": {
@@ -49,6 +49,7 @@
       ],
       "run": [
         "python >=3.11",
+        "fsspec",
         "numpy >=2",
         "typing_extensions"
       ]
@@ -63,6 +64,7 @@
         "pip check",
         "python -c \"import boto3; s=boto3.Session(); print('ca_bundle =', repr(s._session.get_config_variable('ca_bundle')))\"",
         "python -c \"import os; print('AWS_CA_BUNDLE =', repr(os.environ.get('AWS_CA_BUNDLE'))); print('REQUESTS_CA_BUNDLE =', repr(os.environ.get('REQUESTS_CA_BUNDLE')))\"",
+        "python -c \"import pyfive\"",
         "env -u REQUESTS_CA_BUNDLE -u AWS_CA_BUNDLE pytest --ignore=tests/test_filter_pipeline_v2.py::test_hdf5_filters",
         "p5dump -h"
       ],
@@ -108,6 +110,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "fsspec",
         "numpy",
         "python",
         "typing_extensions"
@@ -143,7 +146,7 @@
     },
     "build": {
       "noarch": "python",
-      "number": "0",
+      "number": "1",
       "script": "PYTHON -m pip install . -vv --no-deps --no-build-isolation"
     },
     "extra": {
@@ -166,6 +169,7 @@
       ],
       "run": [
         "python >=3.11",
+        "fsspec",
         "numpy >=2",
         "typing_extensions"
       ]
@@ -180,6 +184,7 @@
         "pip check",
         "python -c \"import boto3; s=boto3.Session(); print('ca_bundle =', repr(s._session.get_config_variable('ca_bundle')))\"",
         "python -c \"import os; print('AWS_CA_BUNDLE =', repr(os.environ.get('AWS_CA_BUNDLE'))); print('REQUESTS_CA_BUNDLE =', repr(os.environ.get('REQUESTS_CA_BUNDLE')))\"",
+        "python -c \"import pyfive\"",
         "env -u REQUESTS_CA_BUNDLE -u AWS_CA_BUNDLE pytest --ignore=tests/test_filter_pipeline_v2.py::test_hdf5_filters",
         "p5dump -h"
       ],
@@ -222,10 +227,11 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pyfive.json"
   },
-  "raw_meta_yaml": "{% set name = \"pyfive\" %}\n{% set version = \"1.2.0\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/pyfive-{{ version }}.tar.gz\n  sha256: b34616b7827d42c5f1b81689e1a25b3f6d05e9364de2eb89447c22b04419017f\n\nbuild:\n  noarch: python\n  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  number: 0\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip !=21.3\n    - setuptools >=80\n    - setuptools_scm >=8\n  run:\n    - python >={{ python_min }}\n    - numpy >=2\n    - typing_extensions\n\ntest:\n  source_files:\n    - tests\n  requires:\n    - python {{ python_min }}\n    - pip\n    - dask\n    - flask\n    - flask-cors\n    - h5netcdf\n    - h5py\n    - moto\n    - netcdf4 !=1.7.4  # github.com/Unidata/netcdf4-python/issues/1464\n    - pytest\n    - pytest-cov\n    - pytest-html\n    - pytest-xdist\n    - python-neo-lzf\n    - s3fs >=2025.9.0\n  commands:\n    - pip check\n    # either botocore or s3fs sets REQUESTS_CA_BUNDLE='' (empty string)\n    # this tosses an error after botocore=1.45.54 but only inside the conda build environment\n    # so we need to reset env -u REQUESTS_CA_BUNDLE -u AWS_CA_BUNDLE before running pytest\n    - python -c \"import boto3; s=boto3.Session(); print('ca_bundle =', repr(s._session.get_config_variable('ca_bundle')))\"\n    - python -c \"import os; print('AWS_CA_BUNDLE =', repr(os.environ.get('AWS_CA_BUNDLE'))); print('REQUESTS_CA_BUNDLE =', repr(os.environ.get('REQUESTS_CA_BUNDLE')))\"\n    - env -u REQUESTS_CA_BUNDLE -u AWS_CA_BUNDLE pytest --ignore=tests/test_filter_pipeline_v2.py::test_hdf5_filters\n    - p5dump -h\n  imports:\n    - pyfive\n\nabout:\n  home: https://github.com/NCAS-CMS/pyfive\n  license: BSD-3-Clause\n  license_file: LICENSE.txt\n  summary: 'A pure Python HDF5 file reader'\n\nextra:\n  recipe-maintainers:\n    - davidhassell\n    - valeriupredoi\n    - jjhelmus\n",
+  "raw_meta_yaml": "{% set name = \"pyfive\" %}\n{% set version = \"1.2.0\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/pyfive-{{ version }}.tar.gz\n  sha256: b34616b7827d42c5f1b81689e1a25b3f6d05e9364de2eb89447c22b04419017f\n\nbuild:\n  noarch: python\n  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  number: 1\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip !=21.3\n    - setuptools >=80\n    - setuptools_scm >=8\n  run:\n    - python >={{ python_min }}\n    - fsspec\n    - numpy >=2\n    - typing_extensions\n\ntest:\n  source_files:\n    - tests\n  requires:\n    - python {{ python_min }}\n    - pip\n    - dask\n    - flask\n    - flask-cors\n    - h5netcdf\n    - h5py\n    - moto\n    - netcdf4 !=1.7.4  # github.com/Unidata/netcdf4-python/issues/1464\n    - pytest\n    - pytest-cov\n    - pytest-html\n    - pytest-xdist\n    - python-neo-lzf\n    - s3fs >=2025.9.0\n  commands:\n    - pip check\n    # either botocore or s3fs sets REQUESTS_CA_BUNDLE='' (empty string)\n    # this tosses an error after botocore=1.45.54 but only inside the conda build environment\n    # so we need to reset env -u REQUESTS_CA_BUNDLE -u AWS_CA_BUNDLE before running pytest\n    - python -c \"import boto3; s=boto3.Session(); print('ca_bundle =', repr(s._session.get_config_variable('ca_bundle')))\"\n    - python -c \"import os; print('AWS_CA_BUNDLE =', repr(os.environ.get('AWS_CA_BUNDLE'))); print('REQUESTS_CA_BUNDLE =', repr(os.environ.get('REQUESTS_CA_BUNDLE')))\"\n    - python -c \"import pyfive\"\n    - env -u REQUESTS_CA_BUNDLE -u AWS_CA_BUNDLE pytest --ignore=tests/test_filter_pipeline_v2.py::test_hdf5_filters\n    - p5dump -h\n  imports:\n    - pyfive\n\nabout:\n  home: https://github.com/NCAS-CMS/pyfive\n  license: BSD-3-Clause\n  license_file: LICENSE.txt\n  summary: 'A pure Python HDF5 file reader'\n\nextra:\n  recipe-maintainers:\n    - davidhassell\n    - valeriupredoi\n    - jjhelmus\n",
   "req": {
     "__set__": true,
     "elements": [
+      "fsspec",
       "numpy",
       "pip",
       "python",
@@ -251,6 +257,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "fsspec",
         "numpy",
         "python",
         "typing_extensions"
@@ -295,6 +302,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "fsspec",
         "numpy >=2",
         "python >=3.11",
         "typing_extensions"
