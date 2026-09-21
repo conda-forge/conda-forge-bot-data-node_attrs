@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.10'\n",
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
@@ -14,8 +14,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "418f4128056420641d88d6633acabb168806f83e",
-  "feedstock_hash_ts": 1787269632,
+  "feedstock_hash": "2a74d7d2b607f587959fd91a799b03dd0aacd514",
+  "feedstock_hash_ts": 1790021433,
   "feedstock_name": "irma-sqw",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -105,12 +105,12 @@
             ]
           }
         ],
-        "version": "1.0.1"
+        "version": "1.0.3"
       }
     ],
     "package": {
       "name": "irma-sqw",
-      "version": "1.0.1"
+      "version": "1.0.3"
     },
     "requirements": {
       "host": [
@@ -131,8 +131,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "ccbcbe85abd7bbc826e07f89077b2c6862f83c35ccd2be50519976f5ab3b8d37",
-      "url": "https://pypi.org/packages/source/i/irma/irma-1.0.1.tar.gz"
+      "sha256": "c413546d1187cbf99501b0e9d43f6be114b5151b9713529595dc119b95370ef5",
+      "url": "https://pypi.org/packages/source/i/irma/irma-1.0.3.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -256,12 +256,12 @@
             ]
           }
         ],
-        "version": "1.0.1"
+        "version": "1.0.3"
       }
     ],
     "package": {
       "name": "irma-sqw",
-      "version": "1.0.1"
+      "version": "1.0.3"
     },
     "requirements": {
       "host": [
@@ -282,8 +282,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "ccbcbe85abd7bbc826e07f89077b2c6862f83c35ccd2be50519976f5ab3b8d37",
-      "url": "https://pypi.org/packages/source/i/irma/irma-1.0.1.tar.gz"
+      "sha256": "c413546d1187cbf99501b0e9d43f6be114b5151b9713529595dc119b95370ef5",
+      "url": "https://pypi.org/packages/source/i/irma/irma-1.0.3.tar.gz"
     }
   },
   "name": "irma-sqw",
@@ -300,7 +300,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/irma-sqw.json"
   },
-  "raw_meta_yaml": "# The PyPI project is `irma`; the conda package is `irma-sqw` because\n# bioconda already ships an unrelated `irma` (the CDC influenza Iterative\n# Refinement Meta-Assembler). S(Q,omega) is the quantity this package\n# computes. The import name and the command stay `irma`.\ncontext:\n  name: irma-sqw\n  pypi_name: irma\n  version: \"1.0.1\"\n  python_min: \"3.11\"\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/i/${{ pypi_name }}/${{ pypi_name }}-${{ version }}.tar.gz\n  sha256: ccbcbe85abd7bbc826e07f89077b2c6862f83c35ccd2be50519976f5ab3b8d37\n\nbuild:\n  noarch: python\n  number: 0\n  script: python -m pip install . -vv --no-deps --no-build-isolation\n  python:\n    entry_points:\n      - irma = irma.cli:main\n      - irma-gui = irma.gui.app:main\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - setuptools >=77\n    - pip\n  run:\n    # Core plus the union of the pip extras (phonopy, spectra, mlip), so\n    # `conda install irma-sqw` delivers every capability. The pretrained\n    # potentials are deliberately NOT dependencies: their pins conflict with\n    # each other and each pulls its own torch, so `irma mlip env create`\n    # builds a separate environment per potential.\n    - python >=${{ python_min }}\n    - numpy >=2.0\n    # Pre-1.0 and on the ENDF MF7 write path: capped below the next\n    # unvalidated minor so a silent 0.x bump cannot change tape output.\n    # Mirrors the same pin in the project's pyproject.toml.\n    - endf-parserpy >=0.12,<0.18\n    - threadpoolctl >=3.0\n    - phonopy >=4.2\n    - ase >=3.23\n    - scipy >=1.10\n    - pyyaml >=6\n\ntests:\n  - python:\n      imports:\n        - irma\n        - irma.spectra\n        - irma.ncrystal\n        - irma.mlip\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - script:\n      - irma --version\n      - irma --help\n      - irma spectra --help\n      - irma mlip --help\n      - python -c \"import shutil, sys; sys.exit(0 if shutil.which('irma-gui') else 1)\"\n    requirements:\n      run:\n        - python ${{ python_min }}.*\n\nabout:\n  homepage: https://github.com/ramic-k/IRMA\n  summary: (In)elastic Representation of Materials As S(alpha,beta) evaluations\n  description: |\n    IRMA turns one phonon model into three outputs that usually require\n    three separate tool chains: an evaluated nuclear-data file, predicted\n    neutron-scattering spectra, and scattering kernels for Monte Carlo\n    transport.\n\n    It writes ENDF-6 File 7 thermal scattering evaluations on automatically\n    constructed alpha/beta grids, reimplementing and generalizing NJOY's\n    LEAPR: the classic kernels reproduce freshly generated NJOY2016 tapes\n    digit for digit, and the generalized paths add the exact coherent\n    one-phonon term, anisotropic Debye-Waller tensors, coherent elastic for\n    arbitrary crystals, and a per-species partition for polyatomic\n    materials. The same phonon model drives a neutron-scattering forward\n    model for indirect- and direct-geometry spectrometers, and an exporter\n    that writes scattering kernels for a companion NCrystal plugin. A front\n    end builds the phonon model from a bare crystal structure using\n    pretrained machine-learned interatomic potentials, with no\n    first-principles calculation required.\n  license: BSD-3-Clause AND Apache-2.0\n  license_file:\n    - LICENSE\n    - LICENSES/Apache-2.0.txt\n    - THIRD_PARTY_NOTICES.md\n  documentation: https://ramic-k.github.io/IRMA/\n  repository: https://github.com/ramic-k/IRMA\n\nextra:\n  recipe-maintainers:\n    - ramic-k\n",
+  "raw_meta_yaml": "# The PyPI project is `irma`; the conda package is `irma-sqw` because\n# bioconda already ships an unrelated `irma` (the CDC influenza Iterative\n# Refinement Meta-Assembler). S(Q,omega) is the quantity this package\n# computes. The import name and the command stay `irma`.\ncontext:\n  name: irma-sqw\n  pypi_name: irma\n  version: \"1.0.3\"\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/i/${{ pypi_name }}/${{ pypi_name }}-${{ version }}.tar.gz\n  sha256: c413546d1187cbf99501b0e9d43f6be114b5151b9713529595dc119b95370ef5\n\nbuild:\n  noarch: python\n  number: 0\n  script: python -m pip install . -vv --no-deps --no-build-isolation\n  python:\n    entry_points:\n      - irma = irma.cli:main\n      - irma-gui = irma.gui.app:main\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - setuptools >=77\n    - pip\n  run:\n    # Core plus the union of the pip extras (phonopy, spectra, mlip), so\n    # `conda install irma-sqw` delivers every capability. The pretrained\n    # potentials are deliberately NOT dependencies: their pins conflict with\n    # each other and each pulls its own torch, so `irma mlip env create`\n    # builds a separate environment per potential.\n    - python >=${{ python_min }}\n    - numpy >=2.0\n    # Pre-1.0 and on the ENDF MF7 write path: capped below the next\n    # unvalidated minor so a silent 0.x bump cannot change tape output.\n    # Mirrors the same pin in the project's pyproject.toml.\n    - endf-parserpy >=0.12,<0.18\n    - threadpoolctl >=3.0\n    - phonopy >=4.2\n    - ase >=3.23\n    - scipy >=1.10\n    - pyyaml >=6\n\ntests:\n  - python:\n      imports:\n        - irma\n        - irma.spectra\n        - irma.ncrystal\n        - irma.mlip\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - script:\n      - irma --version\n      - irma --help\n      - irma spectra --help\n      - irma mlip --help\n      - python -c \"import shutil, sys; sys.exit(0 if shutil.which('irma-gui') else 1)\"\n    requirements:\n      run:\n        - python ${{ python_min }}.*\n\nabout:\n  homepage: https://github.com/ramic-k/IRMA\n  summary: (In)elastic Representation of Materials As S(alpha,beta) evaluations\n  description: |\n    IRMA turns one phonon model into three outputs that usually require\n    three separate tool chains: an evaluated nuclear-data file, predicted\n    neutron-scattering spectra, and scattering kernels for Monte Carlo\n    transport.\n\n    It writes ENDF-6 File 7 thermal scattering evaluations on automatically\n    constructed alpha/beta grids, reimplementing and generalizing NJOY's\n    LEAPR: the classic kernels reproduce freshly generated NJOY2016 tapes\n    digit for digit, and the generalized paths add the exact coherent\n    one-phonon term, anisotropic Debye-Waller tensors, coherent elastic for\n    arbitrary crystals, and a per-species partition for polyatomic\n    materials. The same phonon model drives a neutron-scattering forward\n    model for indirect- and direct-geometry spectrometers, and an exporter\n    that writes scattering kernels for a companion NCrystal plugin. A front\n    end builds the phonon model from a bare crystal structure using\n    pretrained machine-learned interatomic potentials, with no\n    first-principles calculation required.\n  license: BSD-3-Clause AND Apache-2.0\n  license_file:\n    - LICENSE\n    - LICENSES/Apache-2.0.txt\n    - THIRD_PARTY_NOTICES.md\n  documentation: https://ramic-k.github.io/IRMA/\n  repository: https://github.com/ramic-k/IRMA\n\nextra:\n  recipe-maintainers:\n    - ramic-k\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -385,8 +385,8 @@
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/i/irma/irma-1.0.1.tar.gz",
-  "version": "1.0.1",
+  "url": "https://pypi.org/packages/source/i/irma/irma-1.0.3.tar.gz",
+  "version": "1.0.3",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/irma-sqw.json"
   }
