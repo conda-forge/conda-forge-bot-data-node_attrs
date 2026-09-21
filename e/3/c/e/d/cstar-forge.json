@@ -14,8 +14,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "4f7e257c0cd53cf49235afd72122d8b824934ff1",
-  "feedstock_hash_ts": 1789679417,
+  "feedstock_hash": "cf367c1d7d39b0d2d618b054f9e6da3bd1160780",
+  "feedstock_hash_ts": 1790031711,
   "feedstock_name": "cstar-forge",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -100,12 +100,12 @@
             }
           }
         ],
-        "version": "0.8.1"
+        "version": "0.8.2"
       }
     ],
     "package": {
       "name": "cstar-forge",
-      "version": "0.8.1"
+      "version": "0.8.2"
     },
     "requirements": {
       "host": [
@@ -147,8 +147,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "0324f4a2a79ca43f829425bb8fa3519aa4721f88d72962ae954c678eb13ab111",
-      "url": "https://pypi.org/packages/source/c/cstar-forge/cstar_forge-0.8.1.tar.gz"
+      "sha256": "a9b5aaf6a4e209c556cb25f0a9070ee83303a4ec859b44a9217ec1928a32ddb6",
+      "url": "https://pypi.org/packages/source/c/cstar-forge/cstar_forge-0.8.2.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -287,12 +287,12 @@
             }
           }
         ],
-        "version": "0.8.1"
+        "version": "0.8.2"
       }
     ],
     "package": {
       "name": "cstar-forge",
-      "version": "0.8.1"
+      "version": "0.8.2"
     },
     "requirements": {
       "host": [
@@ -334,8 +334,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "0324f4a2a79ca43f829425bb8fa3519aa4721f88d72962ae954c678eb13ab111",
-      "url": "https://pypi.org/packages/source/c/cstar-forge/cstar_forge-0.8.1.tar.gz"
+      "sha256": "a9b5aaf6a4e209c556cb25f0a9070ee83303a4ec859b44a9217ec1928a32ddb6",
+      "url": "https://pypi.org/packages/source/c/cstar-forge/cstar_forge-0.8.2.tar.gz"
     }
   },
   "name": "cstar-forge",
@@ -352,7 +352,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/cstar-forge.json"
   },
-  "raw_meta_yaml": "# rattler-build (v1) recipe for cstar-forge.\n\nschema_version: 1\n\ncontext:\n  version: \"0.8.1\"\n  python_min: \"3.12\"\n\npackage:\n  name: cstar-forge\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/c/cstar-forge/cstar_forge-${{ version }}.tar.gz\n  sha256: 0324f4a2a79ca43f829425bb8fa3519aa4721f88d72962ae954c678eb13ab111\n\nbuild:\n  number: 0\n  # note: we expect windows builds to fail due to a downstream dependency (xesmf)\n  # not being available for windows. we still use noarch and accept the windows\n  # build failures based on previous conda-forge admin guidance.\n  noarch: python\n  script:\n    - python -m pip install . -vv --no-deps --no-build-isolation\n    # Ship activate.d/deactivate.d hooks (recipe/activate.sh has the full\n    # rationale) that set PYTHONNOUSERSITE=1 on env activation, keeping the\n    # env off Python's user-site (~/.local) — which otherwise precedes the\n    # env's site-packages on sys.path and silently shadows it, a chronic\n    # breakage on HPC systems where a module Python shares ~/.local.\n    # .sh only: this is a noarch package, but the hooks target HPC/Linux/macOS;\n    # on Windows they are simply inert.\n    - mkdir -p \"$PREFIX/etc/conda/activate.d\" \"$PREFIX/etc/conda/deactivate.d\"\n    - cp \"$RECIPE_DIR/activate.sh\" \"$PREFIX/etc/conda/activate.d/cstar-forge_pythonnousersite.sh\"\n    - cp \"$RECIPE_DIR/deactivate.sh\" \"$PREFIX/etc/conda/deactivate.d/cstar-forge_pythonnousersite.sh\"\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - setuptools >=64\n    - setuptools-scm >=8\n  run:\n    - python >=${{ python_min }}\n    # -- mirrors [project.dependencies] in pyproject.toml --\n    - jinja2\n    - pandas\n    - pyyaml >=6.0\n    - copernicusmarine\n    - gdown\n    - dask\n    - distributed\n    - threadpoolctl\n    - numba\n    - fsspec\n    - pydantic\n    - numpy\n    - xarray\n    - nbformat\n    - psutil\n    # typer backs the `cstar forge ...` CLI subcommand group (cstar_forge/cli.py);\n    # it currently only arrives transitively.\n    - typer\n    - kerchunk\n    - nest-asyncio\n    - ujson\n    - fastparquet\n    - cstar-ocean >=0.14.0\n    - roms-tools >=5.0,<6\n    # -- the `app` extra, bundled deliberately (batteries-included conda\n    # package, matching the roms-tools metapackage philosophy): the blueprint\n    # wizard runs under voila/jupyter out of the box --\n    - jupyterlab\n    - voila\n    - papermill\n    - ipywidgets\n    # matplotlib-base (not the `matplotlib` GUI metapackage): notebooks render\n    # via the inline/Agg backends; keeps pyqt out of the default install.\n    - matplotlib-base\n  run_constraints:\n    # copernicusmarine 2.4.x's conda-forge package under-pins click\n    # (>=8.0.4,<8.3) relative to its own wheel metadata (>8.2.0,!=8.3.0,\n    # !=8.3.1), so an unconstrained solve can pick click 8.1.x and fail\n    # `pip check`. Constrain to the intersection; drop once the\n    # copernicusmarine feedstock aligns its pin.\n    - click >8.2.0,<8.3.0\n\ntests:\n  - python:\n      imports:\n        - cstar_forge\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n\nabout:\n  homepage: https://github.com/CWorthy-ocean/cstar-forge\n  summary: Generates regional oceanographic modeling domains and reproducible C-Star workflows\n  description: |\n    C-STAR Forge generates regional oceanographic modeling domains and\n    reproducible C-Star workflows. It automates the creation of ROMS-MARBL\n    domains by producing all required input files (grids, initial conditions,\n    forcing, boundaries, rivers, tidal forcing) from observational and\n    reanalysis datasets.\n  license: Apache-2.0\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - ScottEilerman\n",
+  "raw_meta_yaml": "# rattler-build (v1) recipe for cstar-forge.\n\nschema_version: 1\n\ncontext:\n  version: \"0.8.2\"\n  python_min: \"3.12\"\n\npackage:\n  name: cstar-forge\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/c/cstar-forge/cstar_forge-${{ version }}.tar.gz\n  sha256: a9b5aaf6a4e209c556cb25f0a9070ee83303a4ec859b44a9217ec1928a32ddb6\n\nbuild:\n  number: 0\n  # note: we expect windows builds to fail due to a downstream dependency (xesmf)\n  # not being available for windows. we still use noarch and accept the windows\n  # build failures based on previous conda-forge admin guidance.\n  noarch: python\n  script:\n    - python -m pip install . -vv --no-deps --no-build-isolation\n    # Ship activate.d/deactivate.d hooks (recipe/activate.sh has the full\n    # rationale) that set PYTHONNOUSERSITE=1 on env activation, keeping the\n    # env off Python's user-site (~/.local) — which otherwise precedes the\n    # env's site-packages on sys.path and silently shadows it, a chronic\n    # breakage on HPC systems where a module Python shares ~/.local.\n    # .sh only: this is a noarch package, but the hooks target HPC/Linux/macOS;\n    # on Windows they are simply inert.\n    - mkdir -p \"$PREFIX/etc/conda/activate.d\" \"$PREFIX/etc/conda/deactivate.d\"\n    - cp \"$RECIPE_DIR/activate.sh\" \"$PREFIX/etc/conda/activate.d/cstar-forge_pythonnousersite.sh\"\n    - cp \"$RECIPE_DIR/deactivate.sh\" \"$PREFIX/etc/conda/deactivate.d/cstar-forge_pythonnousersite.sh\"\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - setuptools >=64\n    - setuptools-scm >=8\n  run:\n    - python >=${{ python_min }}\n    # -- mirrors [project.dependencies] in pyproject.toml --\n    - jinja2\n    - pandas\n    - pyyaml >=6.0\n    - copernicusmarine\n    - gdown\n    - dask\n    - distributed\n    - threadpoolctl\n    - numba\n    - fsspec\n    - pydantic\n    - numpy\n    - xarray\n    - nbformat\n    - psutil\n    # typer backs the `cstar forge ...` CLI subcommand group (cstar_forge/cli.py);\n    # it currently only arrives transitively.\n    - typer\n    - kerchunk\n    - nest-asyncio\n    - ujson\n    - fastparquet\n    - cstar-ocean >=0.14.0\n    - roms-tools >=5.0,<6\n    # -- the `app` extra, bundled deliberately (batteries-included conda\n    # package, matching the roms-tools metapackage philosophy): the blueprint\n    # wizard runs under voila/jupyter out of the box --\n    - jupyterlab\n    - voila\n    - papermill\n    - ipywidgets\n    # matplotlib-base (not the `matplotlib` GUI metapackage): notebooks render\n    # via the inline/Agg backends; keeps pyqt out of the default install.\n    - matplotlib-base\n  run_constraints:\n    # copernicusmarine 2.4.x's conda-forge package under-pins click\n    # (>=8.0.4,<8.3) relative to its own wheel metadata (>8.2.0,!=8.3.0,\n    # !=8.3.1), so an unconstrained solve can pick click 8.1.x and fail\n    # `pip check`. Constrain to the intersection; drop once the\n    # copernicusmarine feedstock aligns its pin.\n    - click >8.2.0,<8.3.0\n\ntests:\n  - python:\n      imports:\n        - cstar_forge\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n\nabout:\n  homepage: https://github.com/CWorthy-ocean/cstar-forge\n  summary: Generates regional oceanographic modeling domains and reproducible C-Star workflows\n  description: |\n    C-STAR Forge generates regional oceanographic modeling domains and\n    reproducible C-Star workflows. It automates the creation of ROMS-MARBL\n    domains by producing all required input files (grids, initial conditions,\n    forcing, boundaries, rivers, tidal forcing) from observational and\n    reanalysis datasets.\n  license: Apache-2.0\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - ScottEilerman\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -498,8 +498,8 @@
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/c/cstar-forge/cstar_forge-0.8.1.tar.gz",
-  "version": "0.8.1",
+  "url": "https://pypi.org/packages/source/c/cstar-forge/cstar_forge-0.8.2.tar.gz",
+  "version": "0.8.2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/cstar-forge.json"
   }
