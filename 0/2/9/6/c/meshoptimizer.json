@@ -12,10 +12,15 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
+    },
+    "provider": {
+      "linux_aarch64": "default",
+      "linux_ppc64le": "default",
+      "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "91a07c6902e249a3bf4fb6d878afbb83b544accc",
-  "feedstock_hash_ts": 1788081017,
+  "feedstock_hash": "5e5666155f99cdfe3c988361876b1f6d40216dd8",
+  "feedstock_hash_ts": 1789996440,
   "feedstock_name": "meshoptimizer",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -30,14 +35,20 @@
       "summary": "Mesh optimization library that makes meshes smaller and faster to render"
     },
     "build": {
-      "number": "1",
+      "number": "0",
+      "run_exports": {
+        "weak": [
+          "meshoptimizer"
+        ]
+      },
       "script": [
-        "cmake -S . -B build -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
-        "cmake --build build --parallel ${{ CPU_COUNT }}",
-        "ctest --test-dir build --output-on-failure",
-        "cmake --install build",
-        "mkdir -p $PREFIX/bin",
-        "install -m 755 build/meshoptdemo $PREFIX/bin/meshoptdemo"
+        "cmake -S . -B build-shared -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=OFF -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-shared --parallel ${{ CPU_COUNT }}",
+        "cmake --install build-shared",
+        "cmake -S . -B build-demo -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=OFF -DMESHOPT_INSTALL=OFF -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-demo --target demo --parallel ${{ CPU_COUNT }}",
+        "mkdir -p \"${PREFIX}/bin\"",
+        "install -m 755 build-demo/meshoptdemo \"${PREFIX}/bin/meshoptdemo\""
       ]
     },
     "extra": {
@@ -47,7 +58,13 @@
     },
     "outputs": [
       {
-        "build": null,
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
         "name": "meshoptimizer",
         "requirements": {
           "build": [
@@ -74,15 +91,33 @@
             }
           },
           {
-            "script": "meshoptdemo"
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
           }
         ],
-        "version": "1.0.1"
+        "version": "1.2"
       }
     ],
     "package": {
       "name": "meshoptimizer",
-      "version": "1.0.1"
+      "version": "1.2"
     },
     "requirements": {
       "build": [
@@ -94,8 +129,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "9579624541e27e1cd01379c87e1295407e72c49e4b5b3e2f948393f3b68258ac",
-      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.0.1.tar.gz"
+      "sha256": "e40f71b809cdf3361b9a4def85fd44534e8733ce29d4b943c145b76859e4c2b4",
+      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.2.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -118,7 +153,288 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "When a GPU renders triangle meshes, various stages of the GPU pipeline have to process vertex and index data.\nThe efficiency of these stages depends on the data you feed to them;\nthis library provides algorithms to help optimize meshes for these stages,\nas well as algorithms to reduce the mesh complexity and storage overhead.",
+      "dev_url": "https://github.com/zeux/meshoptimizer",
+      "doc_url": "https://meshoptimizer.org/",
+      "home": "https://meshoptimizer.org/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.md",
+      "summary": "Mesh optimization library that makes meshes smaller and faster to render"
+    },
+    "build": {
+      "number": "0",
+      "run_exports": {
+        "weak": [
+          "meshoptimizer"
+        ]
+      },
+      "script": [
+        "cmake -S . -B build-shared -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=OFF -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-shared --parallel ${{ CPU_COUNT }}",
+        "cmake --install build-shared",
+        "cmake -S . -B build-demo -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=OFF -DMESHOPT_INSTALL=OFF -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-demo --target demo --parallel ${{ CPU_COUNT }}",
+        "mkdir -p \"${PREFIX}/bin\"",
+        "install -m 755 build-demo/meshoptdemo \"${PREFIX}/bin/meshoptdemo\""
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "multimeric"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
+        "name": "meshoptimizer",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "meshoptdemo"
+              ],
+              "include": [
+                "meshoptimizer.h"
+              ],
+              "lib": [
+                "meshoptimizer"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
+          }
+        ],
+        "version": "1.2"
+      }
+    ],
+    "package": {
+      "name": "meshoptimizer",
+      "version": "1.2"
+    },
+    "requirements": {
+      "build": [
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "ninja"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "e40f71b809cdf3361b9a4def85fd44534e8733ce29d4b943c145b76859e4c2b4",
+      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.2.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
       "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    }
+  },
+  "linux_ppc64le_meta_yaml": {
+    "about": {
+      "description": "When a GPU renders triangle meshes, various stages of the GPU pipeline have to process vertex and index data.\nThe efficiency of these stages depends on the data you feed to them;\nthis library provides algorithms to help optimize meshes for these stages,\nas well as algorithms to reduce the mesh complexity and storage overhead.",
+      "dev_url": "https://github.com/zeux/meshoptimizer",
+      "doc_url": "https://meshoptimizer.org/",
+      "home": "https://meshoptimizer.org/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.md",
+      "summary": "Mesh optimization library that makes meshes smaller and faster to render"
+    },
+    "build": {
+      "number": "0",
+      "run_exports": {
+        "weak": [
+          "meshoptimizer"
+        ]
+      },
+      "script": [
+        "cmake -S . -B build-shared -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=OFF -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-shared --parallel ${{ CPU_COUNT }}",
+        "cmake --install build-shared",
+        "cmake -S . -B build-demo -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=OFF -DMESHOPT_INSTALL=OFF -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-demo --target demo --parallel ${{ CPU_COUNT }}",
+        "mkdir -p \"${PREFIX}/bin\"",
+        "install -m 755 build-demo/meshoptdemo \"${PREFIX}/bin/meshoptdemo\""
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "multimeric"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
+        "name": "meshoptimizer",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "meshoptdemo"
+              ],
+              "include": [
+                "meshoptimizer.h"
+              ],
+              "lib": [
+                "meshoptimizer"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
+          }
+        ],
+        "version": "1.2"
+      }
+    ],
+    "package": {
+      "name": "meshoptimizer",
+      "version": "1.2"
+    },
+    "requirements": {
+      "build": [
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "ninja"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "e40f71b809cdf3361b9a4def85fd44534e8733ce29d4b943c145b76859e4c2b4",
+      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.2.tar.gz"
+    }
+  },
+  "linux_ppc64le_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
   "meta_yaml": {
@@ -133,14 +449,24 @@
       "summary": "Mesh optimization library that makes meshes smaller and faster to render"
     },
     "build": {
-      "number": "1",
+      "number": "0",
+      "run_exports": {
+        "weak": [
+          "meshoptimizer"
+        ]
+      },
       "script": [
-        "cmake -S . -B build -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
-        "cmake --build build --parallel ${{ CPU_COUNT }}",
-        "ctest --test-dir build --output-on-failure",
-        "cmake --install build",
-        "mkdir -p $PREFIX/bin",
-        "install -m 755 build/meshoptdemo $PREFIX/bin/meshoptdemo"
+        "cmake -S . -B build-shared -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=OFF -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-shared --parallel ${{ CPU_COUNT }}",
+        "cmake --install build-shared",
+        "cmake -S . -B build-demo -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=OFF -DMESHOPT_INSTALL=OFF -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-demo --target demo --parallel ${{ CPU_COUNT }}",
+        "mkdir -p \"${PREFIX}/bin\"",
+        "install -m 755 build-demo/meshoptdemo \"${PREFIX}/bin/meshoptdemo\"",
+        "cmake -S . -B build-shared -G Ninja %CMAKE_ARGS% -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=OFF -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake -S . -B build-demo -G Ninja %CMAKE_ARGS% -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=OFF -DMESHOPT_INSTALL=OFF -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "if not exist \"%LIBRARY_BIN%\" mkdir \"%LIBRARY_BIN%\"",
+        "copy /Y build-demo\\meshoptdemo.exe \"%LIBRARY_BIN%\\meshoptdemo.exe\""
       ]
     },
     "extra": {
@@ -150,7 +476,13 @@
     },
     "outputs": [
       {
-        "build": null,
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
         "name": "meshoptimizer",
         "requirements": {
           "build": [
@@ -177,13 +509,37 @@
             }
           },
           {
-            "script": "meshoptdemo"
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
           }
         ],
-        "version": "1.0.1"
+        "version": "1.2"
       },
       {
-        "build": null,
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
         "name": "meshoptimizer",
         "requirements": {
           "build": [
@@ -210,15 +566,261 @@
             }
           },
           {
-            "script": "meshoptdemo"
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
           }
         ],
-        "version": "1.0.1"
+        "version": "1.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
+        "name": "meshoptimizer",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "meshoptdemo"
+              ],
+              "include": [
+                "meshoptimizer.h"
+              ],
+              "lib": [
+                "meshoptimizer"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
+          }
+        ],
+        "version": "1.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
+        "name": "meshoptimizer",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "meshoptdemo"
+              ],
+              "include": [
+                "meshoptimizer.h"
+              ],
+              "lib": [
+                "meshoptimizer"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
+          }
+        ],
+        "version": "1.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
+        "name": "meshoptimizer",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "meshoptdemo"
+              ],
+              "include": [
+                "meshoptimizer.h"
+              ],
+              "lib": [
+                "meshoptimizer"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
+          }
+        ],
+        "version": "1.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
+        "name": "meshoptimizer",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "meshoptdemo"
+              ],
+              "include": [
+                "meshoptimizer.h"
+              ],
+              "lib": [
+                "meshoptimizer"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo.exe",
+              "cmake -S test -B test-build -G Ninja %CMAKE_ARGS%",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              ".\\\\test-build\\\\test_meshoptimizer.exe"
+            ]
+          }
+        ],
+        "version": "1.2"
       }
     ],
     "package": {
       "name": "meshoptimizer",
-      "version": "1.0.1"
+      "version": "1.2"
     },
     "requirements": {
       "build": [
@@ -230,8 +832,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "9579624541e27e1cd01379c87e1295407e72c49e4b5b3e2f948393f3b68258ac",
-      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.0.1.tar.gz"
+      "sha256": "e40f71b809cdf3361b9a4def85fd44534e8733ce29d4b943c145b76859e4c2b4",
+      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.2.tar.gz"
     }
   },
   "name": "meshoptimizer",
@@ -247,14 +849,20 @@
       "summary": "Mesh optimization library that makes meshes smaller and faster to render"
     },
     "build": {
-      "number": "1",
+      "number": "0",
+      "run_exports": {
+        "weak": [
+          "meshoptimizer"
+        ]
+      },
       "script": [
-        "cmake -S . -B build -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
-        "cmake --build build --parallel ${{ CPU_COUNT }}",
-        "ctest --test-dir build --output-on-failure",
-        "cmake --install build",
-        "mkdir -p $PREFIX/bin",
-        "install -m 755 build/meshoptdemo $PREFIX/bin/meshoptdemo"
+        "cmake -S . -B build-shared -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=OFF -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-shared --parallel ${{ CPU_COUNT }}",
+        "cmake --install build-shared",
+        "cmake -S . -B build-demo -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=OFF -DMESHOPT_INSTALL=OFF -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-demo --target demo --parallel ${{ CPU_COUNT }}",
+        "mkdir -p \"${PREFIX}/bin\"",
+        "install -m 755 build-demo/meshoptdemo \"${PREFIX}/bin/meshoptdemo\""
       ]
     },
     "extra": {
@@ -264,7 +872,13 @@
     },
     "outputs": [
       {
-        "build": null,
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
         "name": "meshoptimizer",
         "requirements": {
           "build": [
@@ -291,15 +905,33 @@
             }
           },
           {
-            "script": "meshoptdemo"
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
           }
         ],
-        "version": "1.0.1"
+        "version": "1.2"
       }
     ],
     "package": {
       "name": "meshoptimizer",
-      "version": "1.0.1"
+      "version": "1.2"
     },
     "requirements": {
       "build": [
@@ -311,8 +943,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "9579624541e27e1cd01379c87e1295407e72c49e4b5b3e2f948393f3b68258ac",
-      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.0.1.tar.gz"
+      "sha256": "e40f71b809cdf3361b9a4def85fd44534e8733ce29d4b943c145b76859e4c2b4",
+      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.2.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -335,7 +967,150 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    }
+  },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "description": "When a GPU renders triangle meshes, various stages of the GPU pipeline have to process vertex and index data.\nThe efficiency of these stages depends on the data you feed to them;\nthis library provides algorithms to help optimize meshes for these stages,\nas well as algorithms to reduce the mesh complexity and storage overhead.",
+      "dev_url": "https://github.com/zeux/meshoptimizer",
+      "doc_url": "https://meshoptimizer.org/",
+      "home": "https://meshoptimizer.org/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.md",
+      "summary": "Mesh optimization library that makes meshes smaller and faster to render"
+    },
+    "build": {
+      "number": "0",
+      "run_exports": {
+        "weak": [
+          "meshoptimizer"
+        ]
+      },
+      "script": [
+        "cmake -S . -B build-shared -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=OFF -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-shared --parallel ${{ CPU_COUNT }}",
+        "cmake --install build-shared",
+        "cmake -S . -B build-demo -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=OFF -DMESHOPT_INSTALL=OFF -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-demo --target demo --parallel ${{ CPU_COUNT }}",
+        "mkdir -p \"${PREFIX}/bin\"",
+        "install -m 755 build-demo/meshoptdemo \"${PREFIX}/bin/meshoptdemo\""
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "multimeric"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
+        "name": "meshoptimizer",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "meshoptdemo"
+              ],
+              "include": [
+                "meshoptimizer.h"
+              ],
+              "lib": [
+                "meshoptimizer"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo",
+              "cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              "./test-build/test_meshoptimizer"
+            ]
+          }
+        ],
+        "version": "1.2"
+      }
+    ],
+    "package": {
+      "name": "meshoptimizer",
+      "version": "1.2"
+    },
+    "requirements": {
+      "build": [
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "ninja"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "e40f71b809cdf3361b9a4def85fd44534e8733ce29d4b943c145b76859e4c2b4",
+      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.2.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
       "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
   "outputs_names": {
@@ -347,12 +1122,16 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
-    "osx_64"
+    "linux_aarch64",
+    "linux_ppc64le",
+    "osx_64",
+    "osx_arm64",
+    "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/meshoptimizer.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"1.0.1\"\n\npackage:\n  name: meshoptimizer\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/zeux/meshoptimizer/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 9579624541e27e1cd01379c87e1295407e72c49e4b5b3e2f948393f3b68258ac\n\nbuild:\n  number: 1\n  skip:\n    - win\n  script:\n    - cmake -S . -B build -G Ninja ${CMAKE_ARGS}\n        -DCMAKE_BUILD_TYPE=Release\n        -DMESHOPT_BUILD_SHARED_LIBS=ON\n        -DMESHOPT_STABLE_EXPORTS=ON\n        -DMESHOPT_INSTALL=ON\n        -DMESHOPT_BUILD_DEMO=ON\n        -DMESHOPT_BUILD_GLTFPACK=OFF\n    - cmake --build build --parallel ${{ CPU_COUNT }}\n    - ctest --test-dir build --output-on-failure \n    - cmake --install build\n    - mkdir -p $PREFIX/bin\n    - install -m 755 build/meshoptdemo $PREFIX/bin/meshoptdemo\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - ninja\n\ntests:\n  - package_contents:\n      include:\n        - meshoptimizer.h\n      lib:\n        - meshoptimizer\n      bin:\n        - meshoptdemo\n  - script:\n      - meshoptdemo\n\nabout:\n  homepage: https://meshoptimizer.org\n  summary: Mesh optimization library that makes meshes smaller and faster to render\n  description: |\n    When a GPU renders triangle meshes, various stages of the GPU pipeline have to process vertex and index data.\n    The efficiency of these stages depends on the data you feed to them;\n    this library provides algorithms to help optimize meshes for these stages,\n    as well as algorithms to reduce the mesh complexity and storage overhead.\n  license: MIT\n  license_file: LICENSE.md\n  documentation: https://meshoptimizer.org\n  repository: https://github.com/zeux/meshoptimizer\n\nextra:\n  recipe-maintainers:\n    - multimeric\n",
+  "raw_meta_yaml": "context:\n  version: \"1.2\"\n\npackage:\n  name: meshoptimizer\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/zeux/meshoptimizer/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: e40f71b809cdf3361b9a4def85fd44534e8733ce29d4b943c145b76859e4c2b4\n\nbuild:\n  number: 0\n  script:\n    - if: unix\n      then: >-\n        cmake -S . -B build-shared -G Ninja ${CMAKE_ARGS}\n        -DCMAKE_BUILD_TYPE=Release\n        -DMESHOPT_BUILD_SHARED_LIBS=ON\n        -DMESHOPT_STABLE_EXPORTS=ON\n        -DMESHOPT_INSTALL=ON\n        -DMESHOPT_BUILD_DEMO=OFF\n        -DMESHOPT_BUILD_GLTFPACK=OFF\n    - if: win\n      then: >-\n        cmake -S . -B build-shared -G Ninja %CMAKE_ARGS%\n        -DCMAKE_BUILD_TYPE=Release\n        -DMESHOPT_BUILD_SHARED_LIBS=ON\n        -DMESHOPT_STABLE_EXPORTS=ON\n        -DMESHOPT_INSTALL=ON\n        -DMESHOPT_BUILD_DEMO=OFF\n        -DMESHOPT_BUILD_GLTFPACK=OFF\n    - cmake --build build-shared --parallel ${{ CPU_COUNT }}\n    - cmake --install build-shared\n\n    # Build the demo against a static library because v1.2's demo exercises\n    # experimental APIs that are intentionally hidden from the shared library.\n    - if: unix\n      then: >-\n        cmake -S . -B build-demo -G Ninja ${CMAKE_ARGS}\n        -DCMAKE_BUILD_TYPE=Release\n        -DMESHOPT_BUILD_SHARED_LIBS=OFF\n        -DMESHOPT_INSTALL=OFF\n        -DMESHOPT_BUILD_DEMO=ON\n        -DMESHOPT_BUILD_GLTFPACK=OFF\n    - if: win\n      then: >-\n        cmake -S . -B build-demo -G Ninja %CMAKE_ARGS%\n        -DCMAKE_BUILD_TYPE=Release\n        -DMESHOPT_BUILD_SHARED_LIBS=OFF\n        -DMESHOPT_INSTALL=OFF\n        -DMESHOPT_BUILD_DEMO=ON\n        -DMESHOPT_BUILD_GLTFPACK=OFF\n    - cmake --build build-demo --target demo --parallel ${{ CPU_COUNT }}\n    - if: unix\n      then:\n        - mkdir -p \"${PREFIX}/bin\"\n        - install -m 755 build-demo/meshoptdemo \"${PREFIX}/bin/meshoptdemo\"\n    - if: win\n      then:\n        - if not exist \"%LIBRARY_BIN%\" mkdir \"%LIBRARY_BIN%\"\n        - copy /Y build-demo\\meshoptdemo.exe \"%LIBRARY_BIN%\\meshoptdemo.exe\"\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - ninja\n  run_exports:\n    - ${{ pin_subpackage('meshoptimizer', upper_bound='x.x') }}\n\ntests:\n  - package_contents:\n      include:\n        - meshoptimizer.h\n      lib:\n        - meshoptimizer\n      bin:\n        - meshoptdemo\n  - script:\n      - if: unix\n        then:\n          - meshoptdemo\n          - cmake -S test -B test-build -G Ninja ${CMAKE_ARGS}\n          - cmake --build test-build --parallel ${{ CPU_COUNT }}\n          - ./test-build/test_meshoptimizer\n      - if: win\n        then:\n          - meshoptdemo.exe\n          - cmake -S test -B test-build -G Ninja %CMAKE_ARGS%\n          - cmake --build test-build --parallel ${{ CPU_COUNT }}\n          - .\\\\test-build\\\\test_meshoptimizer.exe\n    files:\n      recipe:\n        - test/\n    requirements:\n      run:\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n\nabout:\n  homepage: https://meshoptimizer.org\n  summary: Mesh optimization library that makes meshes smaller and faster to render\n  description: |\n    When a GPU renders triangle meshes, various stages of the GPU pipeline have to process vertex and index data.\n    The efficiency of these stages depends on the data you feed to them;\n    this library provides algorithms to help optimize meshes for these stages,\n    as well as algorithms to reduce the mesh complexity and storage overhead.\n  license: MIT\n  license_file: LICENSE.md\n  documentation: https://meshoptimizer.org\n  repository: https://github.com/zeux/meshoptimizer\n\nextra:\n  recipe-maintainers:\n    - multimeric\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -388,7 +1167,12 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
   "strong_exports": false,
@@ -412,12 +1196,155 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
-  "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.0.1.tar.gz",
-  "version": "1.0.1",
+  "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.2.tar.gz",
+  "version": "1.2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/meshoptimizer.json"
+  },
+  "win_64_meta_yaml": {
+    "about": {
+      "description": "When a GPU renders triangle meshes, various stages of the GPU pipeline have to process vertex and index data.\nThe efficiency of these stages depends on the data you feed to them;\nthis library provides algorithms to help optimize meshes for these stages,\nas well as algorithms to reduce the mesh complexity and storage overhead.",
+      "dev_url": "https://github.com/zeux/meshoptimizer",
+      "doc_url": "https://meshoptimizer.org/",
+      "home": "https://meshoptimizer.org/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.md",
+      "summary": "Mesh optimization library that makes meshes smaller and faster to render"
+    },
+    "build": {
+      "number": "0",
+      "run_exports": {
+        "weak": [
+          "meshoptimizer"
+        ]
+      },
+      "script": [
+        "cmake -S . -B build-shared -G Ninja %CMAKE_ARGS% -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=ON -DMESHOPT_STABLE_EXPORTS=ON -DMESHOPT_INSTALL=ON -DMESHOPT_BUILD_DEMO=OFF -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-shared --parallel ${{ CPU_COUNT }}",
+        "cmake --install build-shared",
+        "cmake -S . -B build-demo -G Ninja %CMAKE_ARGS% -DCMAKE_BUILD_TYPE=Release -DMESHOPT_BUILD_SHARED_LIBS=OFF -DMESHOPT_INSTALL=OFF -DMESHOPT_BUILD_DEMO=ON -DMESHOPT_BUILD_GLTFPACK=OFF",
+        "cmake --build build-demo --target demo --parallel ${{ CPU_COUNT }}",
+        "if not exist \"%LIBRARY_BIN%\" mkdir \"%LIBRARY_BIN%\"",
+        "copy /Y build-demo\\meshoptdemo.exe \"%LIBRARY_BIN%\\meshoptdemo.exe\""
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "multimeric"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "meshoptimizer"
+            ]
+          }
+        },
+        "name": "meshoptimizer",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "meshoptdemo"
+              ],
+              "include": [
+                "meshoptimizer.h"
+              ],
+              "lib": [
+                "meshoptimizer"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "meshoptdemo.exe",
+              "cmake -S test -B test-build -G Ninja %CMAKE_ARGS%",
+              "cmake --build test-build --parallel ${{ CPU_COUNT }}",
+              ".\\\\test-build\\\\test_meshoptimizer.exe"
+            ]
+          }
+        ],
+        "version": "1.2"
+      }
+    ],
+    "package": {
+      "name": "meshoptimizer",
+      "version": "1.2"
+    },
+    "requirements": {
+      "build": [
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "ninja"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "e40f71b809cdf3361b9a4def85fd44534e8733ce29d4b943c145b76859e4c2b4",
+      "url": "https://github.com/zeux/meshoptimizer/archive/refs/tags/v1.2.tar.gz"
+    }
+  },
+  "win_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    }
   }
 }
