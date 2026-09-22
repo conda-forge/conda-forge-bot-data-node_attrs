@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -26,15 +26,15 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "bdc5992bf1faa3ed10006f2118eef65c94b6ff8d",
-  "feedstock_hash_ts": 1783873629,
+  "feedstock_hash": "1bb166ce57f77eca4b8c86791c0161274a4feded",
+  "feedstock_hash_ts": 1790090924,
   "feedstock_name": "rig",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "description": "rig is a CLI to install, remove, configure, and switch between multiple\nversions of R. It works on macOS, Windows and Linux, supports symbolic\nversion names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\nR versions in parallel via quick links, and integrates with the\nRStudio and Positron IDEs.",
       "dev_url": "https://github.com/r-lib/rig",
-      "home": "https://r-lib.github.io/rig/",
+      "home": "https://rig.r-lib.org/",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
@@ -44,17 +44,20 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins --target-dir=target",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "find target -name rig.bash -exec cp \\{\\} \"$PREFIX\"/share/bash-completion/completions/rig \\;",
-          "find target -name rig.fish -exec cp \\{\\} \"$PREFIX\"/share/fish/vendor_completions.d/rig.fish \\;",
-          "find target -name _rig     -exec cp \\{\\} \"$PREFIX\"/share/zsh/site-functions/_rig \\;",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let out_dir = glob target/*/release/build/rig-*/out | first",
+          "cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig",
+          "cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish",
+          "cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -72,7 +75,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -111,7 +115,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -128,6 +133,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -148,7 +154,7 @@
     "about": {
       "description": "rig is a CLI to install, remove, configure, and switch between multiple\nversions of R. It works on macOS, Windows and Linux, supports symbolic\nversion names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\nR versions in parallel via quick links, and integrates with the\nRStudio and Positron IDEs.",
       "dev_url": "https://github.com/r-lib/rig",
-      "home": "https://r-lib.github.io/rig/",
+      "home": "https://rig.r-lib.org/",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
@@ -158,17 +164,20 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins --target-dir=target",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "find target -name rig.bash -exec cp \\{\\} \"$PREFIX\"/share/bash-completion/completions/rig \\;",
-          "find target -name rig.fish -exec cp \\{\\} \"$PREFIX\"/share/fish/vendor_completions.d/rig.fish \\;",
-          "find target -name _rig     -exec cp \\{\\} \"$PREFIX\"/share/zsh/site-functions/_rig \\;",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let out_dir = glob target/*/release/build/rig-*/out | first",
+          "cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig",
+          "cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish",
+          "cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -186,7 +195,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -225,7 +235,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -242,6 +253,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -262,7 +274,7 @@
     "about": {
       "description": "rig is a CLI to install, remove, configure, and switch between multiple\nversions of R. It works on macOS, Windows and Linux, supports symbolic\nversion names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\nR versions in parallel via quick links, and integrates with the\nRStudio and Positron IDEs.",
       "dev_url": "https://github.com/r-lib/rig",
-      "home": "https://r-lib.github.io/rig/",
+      "home": "https://rig.r-lib.org/",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
@@ -272,17 +284,20 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins --target-dir=target",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "find target -name rig.bash -exec cp \\{\\} \"$PREFIX\"/share/bash-completion/completions/rig \\;",
-          "find target -name rig.fish -exec cp \\{\\} \"$PREFIX\"/share/fish/vendor_completions.d/rig.fish \\;",
-          "find target -name _rig     -exec cp \\{\\} \"$PREFIX\"/share/zsh/site-functions/_rig \\;",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let out_dir = glob target/*/release/build/rig-*/out | first",
+          "cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig",
+          "cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish",
+          "cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -300,7 +315,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -339,7 +355,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -356,6 +373,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -376,7 +394,7 @@
     "about": {
       "description": "rig is a CLI to install, remove, configure, and switch between multiple\nversions of R. It works on macOS, Windows and Linux, supports symbolic\nversion names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\nR versions in parallel via quick links, and integrates with the\nRStudio and Positron IDEs.",
       "dev_url": "https://github.com/r-lib/rig",
-      "home": "https://r-lib.github.io/rig/",
+      "home": "https://rig.r-lib.org/",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
@@ -386,24 +404,20 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins --target-dir=target",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "find target -name rig.bash -exec cp \\{\\} \"$PREFIX\"/share/bash-completion/completions/rig \\;",
-          "find target -name rig.fish -exec cp \\{\\} \"$PREFIX\"/share/fish/vendor_completions.d/rig.fish \\;",
-          "find target -name _rig     -exec cp \\{\\} \"$PREFIX\"/share/zsh/site-functions/_rig \\;",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml",
-          "cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins --target-dir=target",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\rig.bash`) do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\\rig\")",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\rig.fish`) do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\\rig.fish\")",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\_rig`)     do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\\_rig\")"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let out_dir = glob target/*/release/build/rig-*/out | first",
+          "cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig",
+          "cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish",
+          "cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -421,7 +435,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -458,7 +473,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -495,7 +511,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -532,7 +549,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -569,7 +587,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -606,7 +625,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -643,7 +663,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -682,7 +703,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -696,7 +718,7 @@
     "about": {
       "description": "rig is a CLI to install, remove, configure, and switch between multiple\nversions of R. It works on macOS, Windows and Linux, supports symbolic\nversion names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\nR versions in parallel via quick links, and integrates with the\nRStudio and Positron IDEs.",
       "dev_url": "https://github.com/r-lib/rig",
-      "home": "https://r-lib.github.io/rig/",
+      "home": "https://rig.r-lib.org/",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
@@ -706,17 +728,20 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins --target-dir=target",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "find target -name rig.bash -exec cp \\{\\} \"$PREFIX\"/share/bash-completion/completions/rig \\;",
-          "find target -name rig.fish -exec cp \\{\\} \"$PREFIX\"/share/fish/vendor_completions.d/rig.fish \\;",
-          "find target -name _rig     -exec cp \\{\\} \"$PREFIX\"/share/zsh/site-functions/_rig \\;",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let out_dir = glob target/*/release/build/rig-*/out | first",
+          "cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig",
+          "cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish",
+          "cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -734,7 +759,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -773,7 +799,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -790,6 +817,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -810,7 +838,7 @@
     "about": {
       "description": "rig is a CLI to install, remove, configure, and switch between multiple\nversions of R. It works on macOS, Windows and Linux, supports symbolic\nversion names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\nR versions in parallel via quick links, and integrates with the\nRStudio and Positron IDEs.",
       "dev_url": "https://github.com/r-lib/rig",
-      "home": "https://r-lib.github.io/rig/",
+      "home": "https://rig.r-lib.org/",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
@@ -820,17 +848,20 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins --target-dir=target",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "find target -name rig.bash -exec cp \\{\\} \"$PREFIX\"/share/bash-completion/completions/rig \\;",
-          "find target -name rig.fish -exec cp \\{\\} \"$PREFIX\"/share/fish/vendor_completions.d/rig.fish \\;",
-          "find target -name _rig     -exec cp \\{\\} \"$PREFIX\"/share/zsh/site-functions/_rig \\;",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let out_dir = glob target/*/release/build/rig-*/out | first",
+          "cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig",
+          "cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish",
+          "cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -848,7 +879,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -887,7 +919,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -904,6 +937,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -939,7 +973,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/rig.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.8.1\"\n\npackage:\n  name: rig\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/r-lib/rig/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: a0f00e7c84573c15819cf7d907dd8668ad67a31784b07e1edd59039e514675fd\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    content:\n      - if: unix\n        then:\n          - cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins --target-dir=target\n          # copy shell completion files\n          - mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions\n          - find target -name rig.bash -exec cp \\{\\} \"$PREFIX\"/share/bash-completion/completions/rig \\;\n          - find target -name rig.fish -exec cp \\{\\} \"$PREFIX\"/share/fish/vendor_completions.d/rig.fish \\;\n          - find target -name _rig     -exec cp \\{\\} \"$PREFIX\"/share/zsh/site-functions/_rig \\;\n      - if: win\n        then:\n          - cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins --target-dir=target\n          # copy shell completion files\n          - mkdir \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\n          - mkdir \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\n          - mkdir \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\n          - for /f \"usebackq\" %%f in (`dir /s /b target\\rig.bash`) do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\\rig\")\n          - for /f \"usebackq\" %%f in (`dir /s /b target\\rig.fish`) do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\\rig.fish\")\n          - for /f \"usebackq\" %%f in (`dir /s /b target\\_rig`)     do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\\_rig\")\n      - cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n\ntests:\n  - script:\n      - rig --help\n      - rig --version\n  - package_contents:\n      bin:\n        - rig\n      files:\n        - if: unix\n          then:\n            - share/bash-completion/completions/rig\n            - share/fish/vendor_completions.d/rig.fish\n            - share/zsh/site-functions/_rig\n        - if: win\n          then:\n            - Library/share/bash-completion/completions/rig\n            - Library/share/fish/vendor_completions.d/rig.fish\n            - Library/share/zsh/site-functions/_rig\n      strict: true\n\nabout:\n  summary: The R Installation Manager\n  description: |\n    rig is a CLI to install, remove, configure, and switch between multiple\n    versions of R. It works on macOS, Windows and Linux, supports symbolic\n    version names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\n    R versions in parallel via quick links, and integrates with the\n    RStudio and Positron IDEs.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://r-lib.github.io/rig/\n  repository: https://github.com/r-lib/rig\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
+  "raw_meta_yaml": "context:\n  version: \"0.8.1\"\n\npackage:\n  name: rig\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/r-lib/rig/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: a0f00e7c84573c15819cf7d907dd8668ad67a31784b07e1edd59039e514675fd\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # build main app and generate license data\n      - cargo auditable install --path=. --root=($prefix) --no-track --locked --bins\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      # copy shell completion files\n      - mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions\n      - let out_dir = glob target/*/release/build/rig-*/out | first\n      - cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig\n      - cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish\n      - cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - nushell\n\ntests:\n  - script:\n      - rig --help\n      - rig --version\n  - package_contents:\n      bin:\n        - rig\n      files:\n        - if: unix\n          then:\n            - share/bash-completion/completions/rig\n            - share/fish/vendor_completions.d/rig.fish\n            - share/zsh/site-functions/_rig\n        - if: win\n          then:\n            - Library/share/bash-completion/completions/rig\n            - Library/share/fish/vendor_completions.d/rig.fish\n            - Library/share/zsh/site-functions/_rig\n      strict: true\n\nabout:\n  summary: The R Installation Manager\n  description: |\n    rig is a CLI to install, remove, configure, and switch between multiple\n    versions of R. It works on macOS, Windows and Linux, supports symbolic\n    version names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\n    R versions in parallel via quick links, and integrates with the\n    RStudio and Positron IDEs.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://rig.r-lib.org\n  repository: https://github.com/r-lib/rig\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -947,6 +981,7 @@
       "c_stdlib_stub",
       "cargo-auditable",
       "cargo-bundle-licenses",
+      "nushell",
       "rust_compiler_stub"
     ]
   },
@@ -958,6 +993,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -989,6 +1025,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -1014,7 +1051,7 @@
     "about": {
       "description": "rig is a CLI to install, remove, configure, and switch between multiple\nversions of R. It works on macOS, Windows and Linux, supports symbolic\nversion names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\nR versions in parallel via quick links, and integrates with the\nRStudio and Positron IDEs.",
       "dev_url": "https://github.com/r-lib/rig",
-      "home": "https://r-lib.github.io/rig/",
+      "home": "https://rig.r-lib.org/",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
@@ -1024,19 +1061,20 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins --target-dir=target",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\rig.bash`) do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\\rig\")",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\rig.fish`) do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\\rig.fish\")",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\_rig`)     do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\\_rig\")",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let out_dir = glob target/*/release/build/rig-*/out | first",
+          "cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig",
+          "cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish",
+          "cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -1054,7 +1092,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -1093,7 +1132,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -1110,6 +1150,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -1130,7 +1171,7 @@
     "about": {
       "description": "rig is a CLI to install, remove, configure, and switch between multiple\nversions of R. It works on macOS, Windows and Linux, supports symbolic\nversion names (e.g. `release`, `devel`, `oldrel`), lets you run multiple\nR versions in parallel via quick links, and integrates with the\nRStudio and Positron IDEs.",
       "dev_url": "https://github.com/r-lib/rig",
-      "home": "https://r-lib.github.io/rig/",
+      "home": "https://rig.r-lib.org/",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
@@ -1140,19 +1181,20 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins --target-dir=target",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d",
-          "mkdir \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\rig.bash`) do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\\rig\")",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\rig.fish`) do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\\rig.fish\")",
-          "for /f \"usebackq\" %%f in (`dir /s /b target\\_rig`)     do (copy \"%%f\" \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\\_rig\")",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir ($prefix)/share/bash-completion/completions ($prefix)/share/fish/vendor_completions.d ($prefix)/share/zsh/site-functions",
+          "let out_dir = glob target/*/release/build/rig-*/out | first",
+          "cp ($out_dir)/rig.bash ($prefix)/share/bash-completion/completions/rig",
+          "cp ($out_dir)/rig.fish ($prefix)/share/fish/vendor_completions.d/rig.fish",
+          "cp ($out_dir)/_rig     ($prefix)/share/zsh/site-functions/_rig"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -1170,7 +1212,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -1209,7 +1252,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -1226,6 +1270,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
