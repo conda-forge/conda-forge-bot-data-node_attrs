@@ -26,8 +26,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "ed553f38beba23a2b52acdb278d698f6975c466a",
-  "feedstock_hash_ts": 1790102322,
+  "feedstock_hash": "5ad003e5167ecf1973d7b0c0c0ee83c08db36c31",
+  "feedstock_hash_ts": 1790129002,
   "feedstock_name": "ocaml-dune",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -40,12 +40,8 @@
       "summary": "A composable build system for OCaml."
     },
     "build": {
-      "number": "6",
+      "number": "7",
       "script": {
-        "env": {
-          "BUILD_PLATFORM": "linux-64",
-          "TARGET_PLATFORM": "linux-64"
-        },
         "file": "build.sh",
         "interpreter": "bash"
       }
@@ -194,12 +190,8 @@
       "summary": "A composable build system for OCaml."
     },
     "build": {
-      "number": "6",
+      "number": "7",
       "script": {
-        "env": {
-          "BUILD_PLATFORM": "linux-64",
-          "TARGET_PLATFORM": "linux-aarch64"
-        },
         "file": "build.sh",
         "interpreter": "bash"
       }
@@ -354,12 +346,8 @@
       "summary": "A composable build system for OCaml."
     },
     "build": {
-      "number": "6",
+      "number": "7",
       "script": {
-        "env": {
-          "BUILD_PLATFORM": "linux-64",
-          "TARGET_PLATFORM": "linux-ppc64le"
-        },
         "file": "build.sh",
         "interpreter": "bash"
       }
@@ -514,12 +502,8 @@
       "summary": "A composable build system for OCaml."
     },
     "build": {
-      "number": "6",
+      "number": "7",
       "script": {
-        "env": {
-          "BUILD_PLATFORM": "linux-64",
-          "TARGET_PLATFORM": "win-64"
-        },
         "file": "build.sh",
         "interpreter": "bash"
       }
@@ -1085,12 +1069,8 @@
       "summary": "A composable build system for OCaml."
     },
     "build": {
-      "number": "6",
+      "number": "7",
       "script": {
-        "env": {
-          "BUILD_PLATFORM": "linux-64",
-          "TARGET_PLATFORM": "osx-64"
-        },
         "file": "build.sh",
         "interpreter": "bash"
       }
@@ -1245,12 +1225,8 @@
       "summary": "A composable build system for OCaml."
     },
     "build": {
-      "number": "6",
+      "number": "7",
       "script": {
-        "env": {
-          "BUILD_PLATFORM": "linux-64",
-          "TARGET_PLATFORM": "osx-arm64"
-        },
         "file": "build.sh",
         "interpreter": "bash"
       }
@@ -1413,7 +1389,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/ocaml-dune.json"
   },
-  "raw_meta_yaml": "context:\n  build_number: 6\n  name: ocaml-dune\n  version: \"3.24.2\"\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n  sh: ${{ \"sh\" if unix else \"bat\" }}\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/ocaml/dune/archive/${{ version }}.tar.gz\n    sha256: 3c4facfef1bc1f96235808865665b94857e6e508ce346bfc36b53b775fd8423c\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script:\n    file: build.sh\n    env:\n      BUILD_PLATFORM: ${{ build_platform }}\n      TARGET_PLATFORM: ${{ target_platform }}\n  dynamic_linking:\n    missing_dso_allowlist:\n      - if: not unix\n        then:\n          - C:/Windows/system32/SHLWAPI.dll\n          - C:/Windows/system32/VERSION.dll\n\nrequirements:\n  build:\n    - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    - ${{ m2 }}bash >=5.2\n    - ${{ m2 }}make\n    - if: build_platform != target_platform\n      then:\n        - ocaml-dune\n        - zstd\n    - if: unix\n      then:\n        - file\n      else:\n        - ${{ m2 }}coreutils\n  host:\n    - zstd\n  run:\n    - ocaml_${{ target_platform }} >=${{ ocaml_compiler_version }} ${{ c_toolchain }}\n  ignore_run_exports:\n    by_name:\n      - zstd\n\ntests:\n  # Package contents validation\n  - package_contents:\n      strict: true\n      bin:\n        - dune\n      files:\n        - ${{ library }}doc/dune/CHANGES.md\n        - ${{ library }}doc/dune/LICENSE.md\n        - ${{ library }}doc/dune/README.md\n        - ${{ library }}doc/dune/odoc-pages/index.mld\n        - ${{ library }}lib/dune/META\n        - ${{ library }}lib/dune/dune-package\n        - ${{ library }}lib/dune/opam\n        - ${{ library }}share/man/man1/*\n        - ${{ library }}share/man/man5/dune-config.5\n        - ${{ library }}share/emacs/site-lisp/dune/dune-{flymake,watch}.el\n        - ${{ library }}share/emacs/site-lisp/dune/dune.el\n        - etc/conda/activate.d/dune-activate.${{ sh }}\n        - etc/conda/deactivate.d/dune-deactivate.${{ sh }}\n        # Tests artifacts\n        - etc/conda/test-files/ocaml-dune/*\n\n  # Python-based functional tests (all arm64 lanes are native)\n  - script: |\n      python testing/run_all_tests.py\n    files:\n      recipe:\n        - testing/test_utils.py\n        - testing/run_all_tests.py\n        - testing/probe-dune-cache.py\n        - testing/test-dune-activation.py\n        - testing/test-dune-arch.py\n        - testing/test-dune-build.py\n        - testing/test-dune-cmi.py\n        - testing/test-dune-config.py\n        - testing/test-dune-stubs.py\n        - testing/test-dune-version.py\n    requirements:\n      run:\n        - ${{ m2 }}file\n        # No version-suppression left in the test suite, so the OCaml floor\n        # here must be a real run constraint, not a runtime skip.\n        - ocaml-compiler >=${{ ocaml_compiler_version }}\n        - python >=3.9\n\nabout:\n  license: MIT\n  license_file: LICENSE.md\n  summary: A composable build system for OCaml.\n  homepage: https://dune.build/\n  repository: https://github.com/ocaml/dune\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n",
+  "raw_meta_yaml": "context:\n  build_number: 7\n  name: ocaml-dune\n  version: \"3.24.2\"\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n  sh: ${{ \"sh\" if unix else \"bat\" }}\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/ocaml/dune/archive/${{ version }}.tar.gz\n    sha256: 3c4facfef1bc1f96235808865665b94857e6e508ce346bfc36b53b775fd8423c\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script:\n    file: build.sh\n  dynamic_linking:\n    missing_dso_allowlist:\n      - if: not unix\n        then:\n          - C:/Windows/system32/SHLWAPI.dll\n          - C:/Windows/system32/VERSION.dll\n\nrequirements:\n  build:\n    - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    - ${{ m2 }}bash >=5.2\n    - ${{ m2 }}make\n    - if: build_platform != target_platform\n      then:\n        - ocaml-dune\n        - zstd\n    - if: unix\n      then:\n        - file\n      else:\n        - ${{ m2 }}coreutils\n  host:\n    - zstd\n  run:\n    - ocaml_${{ target_platform }} >=${{ ocaml_compiler_version }} ${{ c_toolchain }}\n  ignore_run_exports:\n    by_name:\n      - zstd\n\ntests:\n  # Package contents validation\n  - package_contents:\n      strict: true\n      bin:\n        - dune\n      files:\n        - ${{ library }}doc/dune/CHANGES.md\n        - ${{ library }}doc/dune/LICENSE.md\n        - ${{ library }}doc/dune/README.md\n        - ${{ library }}doc/dune/odoc-pages/index.mld\n        - ${{ library }}lib/dune/META\n        - ${{ library }}lib/dune/dune-package\n        - ${{ library }}lib/dune/opam\n        - ${{ library }}share/man/man1/*\n        - ${{ library }}share/man/man5/dune-config.5\n        - ${{ library }}share/emacs/site-lisp/dune/dune-{flymake,watch}.el\n        - ${{ library }}share/emacs/site-lisp/dune/dune.el\n        - etc/conda/activate.d/dune-activate.${{ sh }}\n        - etc/conda/deactivate.d/dune-deactivate.${{ sh }}\n        # Tests artifacts\n        - etc/conda/test-files/ocaml-dune/*\n\n  # Python-based functional tests (all arm64 lanes are native)\n  - script: |\n      python testing/run_all_tests.py\n    files:\n      recipe:\n        - testing/test_utils.py\n        - testing/run_all_tests.py\n        - testing/probe-dune-cache.py\n        - testing/test-dune-activation.py\n        - testing/test-dune-arch.py\n        - testing/test-dune-build.py\n        - testing/test-dune-cmi.py\n        - testing/test-dune-config.py\n        - testing/test-dune-stubs.py\n        - testing/test-dune-version.py\n    requirements:\n      run:\n        - ${{ m2 }}file\n        # No version-suppression left in the test suite, so the OCaml floor\n        # here must be a real run constraint, not a runtime skip.\n        - ocaml-compiler >=${{ ocaml_compiler_version }}\n        - python >=3.9\n\nabout:\n  license: MIT\n  license_file: LICENSE.md\n  summary: A composable build system for OCaml.\n  homepage: https://dune.build/\n  repository: https://github.com/ocaml/dune\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1551,12 +1527,8 @@
       "summary": "A composable build system for OCaml."
     },
     "build": {
-      "number": "6",
+      "number": "7",
       "script": {
-        "env": {
-          "BUILD_PLATFORM": "linux-64",
-          "TARGET_PLATFORM": "win-64"
-        },
         "file": "build.sh",
         "interpreter": "bash"
       }
