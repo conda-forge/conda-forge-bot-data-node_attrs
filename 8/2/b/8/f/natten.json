@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_c_compiler_version14c_stdlib_version2.17cuda_compiler_version12.9cxx_compiler_version14.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibtorch:\n- '2.13'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\n- 3.12.* *_cpython\n- 3.13.* *_cp313\n- 3.14.* *_cp314\npytorch:\n- '2.13'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n",
+  "ci_support_linux_64_c_compiler_version14c_stdlib_version2.17cuda_compiler_version12.9cxx_compiler_version14.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngithub_actions_labels:\n- depot-ubuntu-24.04-16\nlibtorch:\n- '2.13'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\n- 3.12.* *_cpython\n- 3.13.* *_cp313\n- 3.14.* *_cp314\npytorch:\n- '2.13'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n",
   "ci_support_migrations": {
     "pytorch213": {
       "migration_number": 1,
@@ -17,10 +17,16 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
+    },
+    "github_actions": {
+      "timeout_minutes": 720
+    },
+    "provider": {
+      "linux_64": "github_actions"
     }
   },
-  "feedstock_hash": "d9a6a40147fe655944feb2f4b848fc8649c7ddf2",
-  "feedstock_hash_ts": 1789915835,
+  "feedstock_hash": "326ad95f58e3694d6e9c099babc906a15546e35c",
+  "feedstock_hash_ts": 1790195748,
   "feedstock_name": "natten",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -35,14 +41,8 @@
       "summary": "Neighborhood Attention Extension"
     },
     "build": {
-      "number": "2",
-      "script": {
-        "env": {
-          "cuda_compiler_version": "13.4"
-        },
-        "file": "build_python.sh",
-        "interpreter": "bash"
-      }
+      "number": "3",
+      "script": "build_python.sh"
     },
     "extra": {
       "feedstock-name": "natten",
@@ -571,14 +571,8 @@
       "summary": "Neighborhood Attention Extension"
     },
     "build": {
-      "number": "2",
-      "script": {
-        "env": {
-          "cuda_compiler_version": "13.4"
-        },
-        "file": "build_python.sh",
-        "interpreter": "bash"
-      }
+      "number": "3",
+      "script": "build_python.sh"
     },
     "extra": {
       "feedstock-name": "natten",
@@ -1065,7 +1059,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/natten.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: natten\n  version: \"0.21.7\"\n\nrecipe:\n  name: natten-split\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/n/natten/natten-${{ version }}.tar.gz\n  sha256: 8417236b74db079b2d23899ec8f77514fb2dc73d4bbd6b346a45b6967fc05ffb\n  patches:\n    # https://github.com/SHI-Labs/NATTEN/pull/348\n    - 0001-Fix-int32-offset-overflow-in-compute-delta-reduction.patch\n    # https://github.com/SHI-Labs/NATTEN/pull/346\n    - 0002-Fix-torch.compile-self-attention-fallback-logging.patch\n    # Blackwell MMA helpers still use the pre-CUTLASS-4.5 spelling; we build\n    # against conda-forge's cutlass (4.7), not the vendored 4.3.5\n    - 0003-Port-Blackwell-MMA-helpers-to-CUTLASS-4.5.patch\n\nbuild:\n  number: 2\n  # libnatten is CUDA-only; without CUDA upstream builds a pure-python package\n  skip:\n    - cuda_compiler_version == \"None\" or (not linux)\n\noutputs:\n  # The CUDA kernels only use libtorch's C++ API, not Python, so they build into\n  # a shared library of their own instead of being compiled into every Python\n  # variant's extension module.\n  - package:\n      name: libnatten\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('cuda') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - make\n        # Only runs the stdlib-only kernel autogen scripts; constrained so that\n        # it does not become a per-Python variant\n        - python >=3.10\n      host:\n        - cuda-version ${{ cuda_compiler_version }}.*\n        - cuda-cudart-dev\n        # Pulled in by ATen/cuda/CUDAContext.h and curand_kernel.h\n        - libcublas-dev\n        - libcurand-dev\n        - libcusolver-dev\n        - libcusparse-dev\n        - cutlass\n        - libtorch\n        - libtorch * cuda*\n      # The kernels and the pybind11 module are two halves of one translation\n      # unit set; there is no soname-level ABI contract between them.\n      run_exports:\n        - ${{ pin_subpackage('libnatten', exact=True) }}\n    build:\n      script:\n        env:\n          # recipe/cuda_archs.sh turns this into NATTEN_CUDA_ARCHS and the\n          # NATTEN_WITH_*_FNA flags; the datacenter parts are CUDA 13 only\n          cuda_compiler_version: ${{ cuda_compiler_version }}\n        file: build_kernels.sh\n    tests:\n      - package_contents:\n          lib:\n            - natten_kernels\n\n  - package:\n      name: natten\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('cuda') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - make\n        - if: build_platform != host_platform\n          then:\n            - python\n            - cross-python_${{ host_platform }}\n            - pytorch\n            - pytorch * cuda*\n      host:\n        - cuda-version ${{ cuda_compiler_version }}.*\n        - cuda-cudart-dev\n        - ${{ pin_subpackage('libnatten', exact=True) }}\n        - pip\n        - python\n        - pytorch\n        - pytorch * cuda*\n        - setuptools >=64\n      run:\n        - python\n        - pytorch * cuda*\n    build:\n      script:\n        env:\n          # Same resolution as the kernels, via recipe/cuda_archs.sh\n          cuda_compiler_version: ${{ cuda_compiler_version }}\n        file: build_python.sh\n    tests:\n      - python:\n          imports:\n            - natten\n            # natten silently falls back to stubs if libnatten fails to import\n            - natten.libnatten\n          pip_check: true\n      - script:\n          - python -c \"import natten; assert natten.HAS_LIBNATTEN\"\n\nabout:\n  homepage: https://natten.org\n  summary: Neighborhood Attention Extension\n  description: |\n    NATTEN is an open-source project dedicated to providing infrastructure for\n    Neighborhood Attention (NA), a sliding window self-attention mechanism, and\n    its extensions. It provides fused CUDA kernels for 1D, 2D and 3D\n    neighborhood attention built on CUTLASS, with PyTorch bindings.\n  license: MIT AND BSD-3-Clause\n  license_file:\n    - LICENSE\n    - NOTICE\n    - third_party/cutlass/LICENSE.txt\n  documentation: https://natten.org\n  repository: https://github.com/SHI-Labs/NATTEN\n\nextra:\n  feedstock-name: natten\n  recipe-maintainers:\n    - hmaarrfk\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: natten\n  version: \"0.21.7\"\n\nrecipe:\n  name: natten-split\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/n/natten/natten-${{ version }}.tar.gz\n  sha256: 8417236b74db079b2d23899ec8f77514fb2dc73d4bbd6b346a45b6967fc05ffb\n  patches:\n    # https://github.com/SHI-Labs/NATTEN/pull/348\n    - 0001-Fix-int32-offset-overflow-in-compute-delta-reduction.patch\n    # https://github.com/SHI-Labs/NATTEN/pull/346\n    - 0002-Fix-torch.compile-self-attention-fallback-logging.patch\n    # Blackwell MMA helpers still use the pre-CUTLASS-4.5 spelling; we build\n    # against conda-forge's cutlass (4.7), not the vendored 4.3.5\n    - 0003-Port-Blackwell-MMA-helpers-to-CUTLASS-4.5.patch\n\nbuild:\n  number: 3\n  # libnatten is CUDA-only; without CUDA upstream builds a pure-python package\n  skip:\n    - cuda_compiler_version == \"None\" or (not linux)\n\noutputs:\n  # The CUDA kernels only use libtorch's C++ API, not Python, so they build into\n  # a shared library of their own instead of being compiled into every Python\n  # variant's extension module.\n  - package:\n      name: libnatten\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('cuda') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - make\n        # Only runs the stdlib-only kernel autogen scripts; constrained so that\n        # it does not become a per-Python variant\n        - python >=3.10\n      host:\n        - cuda-version ${{ cuda_compiler_version }}.*\n        - cuda-cudart-dev\n        # Pulled in by ATen/cuda/CUDAContext.h and curand_kernel.h\n        - libcublas-dev\n        - libcurand-dev\n        - libcusolver-dev\n        - libcusparse-dev\n        - cutlass\n        - libtorch\n        - libtorch * cuda*\n      # The kernels and the pybind11 module are two halves of one translation\n      # unit set; there is no soname-level ABI contract between them.\n      run_exports:\n        - ${{ pin_subpackage('libnatten', exact=True) }}\n    build:\n      script:\n        env:\n          # build_kernels.sh picks the arch list from this\n          cuda_compiler_version: ${{ cuda_compiler_version }}\n        file: build_kernels.sh\n    tests:\n      - package_contents:\n          lib:\n            - natten_kernels\n\n  - package:\n      name: natten\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('cuda') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - make\n        - if: build_platform != host_platform\n          then:\n            - python\n            - cross-python_${{ host_platform }}\n            - pytorch\n            - pytorch * cuda*\n      host:\n        - cuda-version ${{ cuda_compiler_version }}.*\n        - cuda-cudart-dev\n        - ${{ pin_subpackage('libnatten', exact=True) }}\n        - pip\n        - python\n        - pytorch\n        - pytorch * cuda*\n        - setuptools >=64\n      run:\n        - python\n        - pytorch * cuda*\n    build:\n      script: build_python.sh\n    tests:\n      - python:\n          imports:\n            - natten\n            # natten silently falls back to stubs if libnatten fails to import\n            - natten.libnatten\n          pip_check: true\n      - script:\n          - python -c \"import natten; assert natten.HAS_LIBNATTEN\"\n\nabout:\n  homepage: https://natten.org\n  summary: Neighborhood Attention Extension\n  description: |\n    NATTEN is an open-source project dedicated to providing infrastructure for\n    Neighborhood Attention (NA), a sliding window self-attention mechanism, and\n    its extensions. It provides fused CUDA kernels for 1D, 2D and 3D\n    neighborhood attention built on CUTLASS, with PyTorch bindings.\n  license: MIT AND BSD-3-Clause\n  license_file:\n    - LICENSE\n    - NOTICE\n    - third_party/cutlass/LICENSE.txt\n  documentation: https://natten.org\n  repository: https://github.com/SHI-Labs/NATTEN\n\nextra:\n  feedstock-name: natten\n  recipe-maintainers:\n    - hmaarrfk\n",
   "req": {
     "__set__": true,
     "elements": [
