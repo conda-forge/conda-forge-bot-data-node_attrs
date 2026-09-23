@@ -1,22 +1,28 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - channel_sources\n",
+  "ci_support_linux_64_channel_sourcesconda-forgeis_abi3falsepython3.14.____cp314t.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - channel_sources\n  - is_abi3\n",
   "ci_support_migrations": {
+    "python314t": {
+      "migration_number": 1,
+      "migrator_ts": 1755739493
+    },
     "python315": {
       "migration_number": 1,
       "migrator_ts": 1755739490
     }
   },
   "conda-forge.yml": {
-    "build_platform": {
-      "linux_ppc64le": "linux_64"
+    "bot": {
+      "inspection": "hint-all"
     },
     "conda_build": {
       "error_overlinking": true,
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
@@ -24,13 +30,12 @@
     "provider": {
       "linux_aarch64": "default",
       "linux_ppc64le": "default",
-      "osx_arm64": "default",
-      "win": "azure"
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "fc3561fd4ecdef36d92287ac41336ad4b63d1f9e",
-  "feedstock_hash_ts": 1789058196,
+  "feedstock_hash": "810eaab2ff60a961491bc0cc12c662f82c58b396",
+  "feedstock_hash_ts": 1790147971,
   "feedstock_name": "pycrdt",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -40,74 +45,193 @@
       "home": "https://github.com/y-crdt/pycrdt",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml"
-      ],
+      "license_file": "LICENSE",
       "summary": "CRDTs based on Yrs"
     },
     "build": {
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper.sh\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "MATURIN_PEP517_ARGS": "--features pyo3/abi3"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
         "davidbrochart"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      }
+    ],
     "package": {
       "name": "pycrdt",
-      "version": "0.14.5"
+      "version": "0.14.6"
     },
     "requirements": {
       "build": [
-        "python",
         "c_compiler_stub",
         "c_stdlib_stub",
         "rust_compiler_stub",
-        "cargo-bundle-licenses",
-        "maturin"
+        "cargo-auditable",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "maturin",
+        "maturin >=1.8.2,<2",
         "pip",
-        "python"
+        "python",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
         "anyio >=4.4.0,<5.0.0",
-        "typing_extensions >=4.14.0",
-        "exceptiongroup",
-        "typing_extensions >=4.15.0,<5.0.0"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "14fddab58ca4e19ec3b924bb838b29b8cc062da9490084a9454c131d7905950e",
-      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pycrdt",
-        "pycrdt._awareness",
-        "pycrdt._doc",
-        "pycrdt._text",
-        "pycrdt._array",
-        "pycrdt._map",
-        "pycrdt._transaction",
-        "pycrdt._undo",
-        "pycrdt._update",
-        "pycrdt._sync"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "ed59185cc0aec28d2fe2d92277a65af6ef799efcf5c5fe99303018cfc5d84428",
+      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.6.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -116,9 +240,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
-        "maturin",
-        "python",
         "rust_compiler_stub"
       ]
     },
@@ -127,22 +250,24 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "anyio",
-        "exceptiongroup",
         "python",
-        "typing_extensions"
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "abi3audit",
+        "pip",
+        "python"
       ]
     }
   },
@@ -153,74 +278,193 @@
       "home": "https://github.com/y-crdt/pycrdt",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml"
-      ],
+      "license_file": "LICENSE",
       "summary": "CRDTs based on Yrs"
     },
     "build": {
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper.sh\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "MATURIN_PEP517_ARGS": "--features pyo3/abi3"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
         "davidbrochart"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      }
+    ],
     "package": {
       "name": "pycrdt",
-      "version": "0.14.5"
+      "version": "0.14.6"
     },
     "requirements": {
       "build": [
-        "python",
         "c_compiler_stub",
         "c_stdlib_stub",
         "rust_compiler_stub",
-        "cargo-bundle-licenses",
-        "maturin"
+        "cargo-auditable",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "maturin",
+        "maturin >=1.8.2,<2",
         "pip",
-        "python"
+        "python",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
         "anyio >=4.4.0,<5.0.0",
-        "typing_extensions >=4.14.0",
-        "exceptiongroup",
-        "typing_extensions >=4.15.0,<5.0.0"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "14fddab58ca4e19ec3b924bb838b29b8cc062da9490084a9454c131d7905950e",
-      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pycrdt",
-        "pycrdt._awareness",
-        "pycrdt._doc",
-        "pycrdt._text",
-        "pycrdt._array",
-        "pycrdt._map",
-        "pycrdt._transaction",
-        "pycrdt._undo",
-        "pycrdt._update",
-        "pycrdt._sync"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "ed59185cc0aec28d2fe2d92277a65af6ef799efcf5c5fe99303018cfc5d84428",
+      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.6.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -229,9 +473,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
-        "maturin",
-        "python",
         "rust_compiler_stub"
       ]
     },
@@ -240,22 +483,24 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "anyio",
-        "exceptiongroup",
         "python",
-        "typing_extensions"
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "abi3audit",
+        "pip",
+        "python"
       ]
     }
   },
@@ -266,74 +511,193 @@
       "home": "https://github.com/y-crdt/pycrdt",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml"
-      ],
+      "license_file": "LICENSE",
       "summary": "CRDTs based on Yrs"
     },
     "build": {
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper.sh\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "MATURIN_PEP517_ARGS": "--features pyo3/abi3"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
         "davidbrochart"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      }
+    ],
     "package": {
       "name": "pycrdt",
-      "version": "0.14.5"
+      "version": "0.14.6"
     },
     "requirements": {
       "build": [
-        "python",
         "c_compiler_stub",
         "c_stdlib_stub",
         "rust_compiler_stub",
-        "cargo-bundle-licenses",
-        "maturin"
+        "cargo-auditable",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "maturin",
+        "maturin >=1.8.2,<2",
         "pip",
-        "python"
+        "python",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
         "anyio >=4.4.0,<5.0.0",
-        "typing_extensions >=4.14.0",
-        "exceptiongroup",
-        "typing_extensions >=4.15.0,<5.0.0"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "14fddab58ca4e19ec3b924bb838b29b8cc062da9490084a9454c131d7905950e",
-      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pycrdt",
-        "pycrdt._awareness",
-        "pycrdt._doc",
-        "pycrdt._text",
-        "pycrdt._array",
-        "pycrdt._map",
-        "pycrdt._transaction",
-        "pycrdt._undo",
-        "pycrdt._update",
-        "pycrdt._sync"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "ed59185cc0aec28d2fe2d92277a65af6ef799efcf5c5fe99303018cfc5d84428",
+      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.6.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
@@ -342,9 +706,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
-        "maturin",
-        "python",
         "rust_compiler_stub"
       ]
     },
@@ -353,22 +716,24 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "anyio",
-        "exceptiongroup",
         "python",
-        "typing_extensions"
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "abi3audit",
+        "pip",
+        "python"
       ]
     }
   },
@@ -379,74 +744,826 @@
       "home": "https://github.com/y-crdt/pycrdt",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml"
-      ],
+      "license_file": "LICENSE",
       "summary": "CRDTs based on Yrs"
     },
     "build": {
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper.sh\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
+          "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\\""
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.bat",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "MATURIN_PEP517_ARGS": "--features pyo3/abi3"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
         "davidbrochart"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      }
+    ],
     "package": {
       "name": "pycrdt",
-      "version": "0.14.5"
+      "version": "0.14.6"
     },
     "requirements": {
       "build": [
-        "python",
         "c_compiler_stub",
         "c_stdlib_stub",
         "rust_compiler_stub",
-        "cargo-bundle-licenses",
-        "maturin"
+        "cargo-auditable",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "maturin",
+        "maturin >=1.8.2,<2",
         "pip",
-        "python"
+        "python",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
         "anyio >=4.4.0,<5.0.0",
-        "typing_extensions >=4.14.0",
-        "exceptiongroup",
-        "typing_extensions >=4.15.0,<5.0.0"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "14fddab58ca4e19ec3b924bb838b29b8cc062da9490084a9454c131d7905950e",
-      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pycrdt",
-        "pycrdt._awareness",
-        "pycrdt._doc",
-        "pycrdt._text",
-        "pycrdt._array",
-        "pycrdt._map",
-        "pycrdt._transaction",
-        "pycrdt._undo",
-        "pycrdt._update",
-        "pycrdt._sync"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "ed59185cc0aec28d2fe2d92277a65af6ef799efcf5c5fe99303018cfc5d84428",
+      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.6.tar.gz"
     }
   },
   "name": "pycrdt",
@@ -457,74 +1574,193 @@
       "home": "https://github.com/y-crdt/pycrdt",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml"
-      ],
+      "license_file": "LICENSE",
       "summary": "CRDTs based on Yrs"
     },
     "build": {
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper.sh\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "MATURIN_PEP517_ARGS": "--features pyo3/abi3"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
         "davidbrochart"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      }
+    ],
     "package": {
       "name": "pycrdt",
-      "version": "0.14.5"
+      "version": "0.14.6"
     },
     "requirements": {
       "build": [
-        "python",
         "c_compiler_stub",
         "c_stdlib_stub",
         "rust_compiler_stub",
-        "cargo-bundle-licenses",
-        "maturin"
+        "cargo-auditable",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "maturin",
+        "maturin >=1.8.2,<2",
         "pip",
-        "python"
+        "python",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
         "anyio >=4.4.0,<5.0.0",
-        "typing_extensions >=4.14.0",
-        "exceptiongroup",
-        "typing_extensions >=4.15.0,<5.0.0"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "14fddab58ca4e19ec3b924bb838b29b8cc062da9490084a9454c131d7905950e",
-      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pycrdt",
-        "pycrdt._awareness",
-        "pycrdt._doc",
-        "pycrdt._text",
-        "pycrdt._array",
-        "pycrdt._map",
-        "pycrdt._transaction",
-        "pycrdt._undo",
-        "pycrdt._update",
-        "pycrdt._sync"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "ed59185cc0aec28d2fe2d92277a65af6ef799efcf5c5fe99303018cfc5d84428",
+      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.6.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -533,9 +1769,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
-        "maturin",
-        "python",
         "rust_compiler_stub"
       ]
     },
@@ -544,22 +1779,24 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "anyio",
-        "exceptiongroup",
         "python",
-        "typing_extensions"
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "abi3audit",
+        "pip",
+        "python"
       ]
     }
   },
@@ -570,74 +1807,193 @@
       "home": "https://github.com/y-crdt/pycrdt",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml"
-      ],
+      "license_file": "LICENSE",
       "summary": "CRDTs based on Yrs"
     },
     "build": {
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper.sh\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "MATURIN_PEP517_ARGS": "--features pyo3/abi3"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
         "davidbrochart"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      }
+    ],
     "package": {
       "name": "pycrdt",
-      "version": "0.14.5"
+      "version": "0.14.6"
     },
     "requirements": {
       "build": [
-        "python",
         "c_compiler_stub",
         "c_stdlib_stub",
         "rust_compiler_stub",
-        "cargo-bundle-licenses",
-        "maturin"
+        "cargo-auditable",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "maturin",
+        "maturin >=1.8.2,<2",
         "pip",
-        "python"
+        "python",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
         "anyio >=4.4.0,<5.0.0",
-        "typing_extensions >=4.14.0",
-        "exceptiongroup",
-        "typing_extensions >=4.15.0,<5.0.0"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "14fddab58ca4e19ec3b924bb838b29b8cc062da9490084a9454c131d7905950e",
-      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pycrdt",
-        "pycrdt._awareness",
-        "pycrdt._doc",
-        "pycrdt._text",
-        "pycrdt._array",
-        "pycrdt._map",
-        "pycrdt._transaction",
-        "pycrdt._undo",
-        "pycrdt._update",
-        "pycrdt._sync"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "ed59185cc0aec28d2fe2d92277a65af6ef799efcf5c5fe99303018cfc5d84428",
+      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.6.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -646,9 +2002,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
-        "maturin",
-        "python",
         "rust_compiler_stub"
       ]
     },
@@ -657,22 +2012,24 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "anyio",
-        "exceptiongroup",
         "python",
-        "typing_extensions"
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "abi3audit",
+        "pip",
+        "python"
       ]
     }
   },
@@ -694,20 +2051,20 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pycrdt.json"
   },
-  "raw_meta_yaml": "{% set maturin_version = \">=1.8.2,<2\" %}\n{% set maturin_version = \">=1.8.2,<2\" %}\n{% set maturin_version = \">=1.8.2,<2\" %}\n{% set maturin_version = \">=1.8.2,<2\" %}\n{% set maturin_version = \">=1.8.2,<2\" %}\n{% set maturin_version = \">=1.8.2,<2\" %}\n{% set maturin_version = \">=1.8.2,<2\" %}\n{% set maturin_version = \">=1.8.2,<2\" %}\n{% set version = \"0.14.5\" %}\n\npackage:\n  name: pycrdt\n  version: {{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-{{ version }}.tar.gz\n  sha256: 14fddab58ca4e19ec3b924bb838b29b8cc062da9490084a9454c131d7905950e\n\nbuild:\n  number: 0\n  script:\n    - {{ PYTHON }} -m pip install . -vv\n    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n\nrequirements:\n  build:\n    - python\n    - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n    - {{ compiler('c') }}\n    - {{ stdlib('c') }}\n    - {{ compiler('rust') }}\n    - cargo-bundle-licenses\n    - maturin\n  host:\n    - maturin\n    - pip\n    - python\n  run:\n    - python\n    - anyio >=4.4.0,<5.0.0\n    - typing_extensions >=4.14.0\n    - exceptiongroup\n    - typing_extensions >=4.15.0,<5.0.0\n\ntest:\n  requires:\n    - pip\n  commands:\n    - pip check\n  imports:\n    - pycrdt\n    - pycrdt._awareness\n    - pycrdt._doc\n    - pycrdt._text\n    - pycrdt._array\n    - pycrdt._map\n    - pycrdt._transaction\n    - pycrdt._undo\n    - pycrdt._update\n    - pycrdt._sync\n\nabout:\n  home: https://github.com/y-crdt/pycrdt\n  license: MIT\n  license_family: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  summary: CRDTs based on Yrs\n  dev_url: https://github.com/y-crdt/pycrdt\n  doc_url: https://y-crdt.github.io/pycrdt\n\nextra:\n  recipe-maintainers:\n    - davidbrochart\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.14.6\"\n  python_check_max: \"3.14\"\n\npackage:\n  name: pycrdt\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-${{ version }}.tar.gz\n  sha256: ed59185cc0aec28d2fe2d92277a65af6ef799efcf5c5fe99303018cfc5d84428\n\nbuild:\n  number: 0\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO: cargo-auditable-wrapper${{ \".bat\" if win else \".sh\" }}\n      MATURIN_PEP517_ARGS: ${{ \"--features pyo3/abi3\" if is_abi3 else \"\" }}\n    content:\n      - if: win\n        then:\n          - copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\\"\n        else:\n          - cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper.sh\"\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n  host:\n    - maturin >=1.8.2,<2\n    - pip\n    - python\n    - if: is_abi3\n      then:\n        - python ${{ python_min }}.*\n        - python-abi3\n  run:\n    - python\n    - anyio >=4.4.0,<5.0.0\n    - if: is_abi3\n      then:\n        - python >=${{ python_min }}\n        - python-abi3\n\ntests:\n  - python:\n      imports:\n        - pycrdt\n        - pycrdt._awareness\n        - pycrdt._doc\n        - pycrdt._text\n        - pycrdt._array\n        - pycrdt._map\n        - pycrdt._transaction\n        - pycrdt._undo\n        - pycrdt._update\n        - pycrdt._sync\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then:\n            - ${{ python_min }}.*\n            - ${{ python_check_max }}.*\n          else:\n            - \"*\"\n  - package_contents:\n      strict: true\n      site_packages:\n        - pycrdt/**\n        - pycrdt-${{ version }}.dist-info/**\n  - if: is_abi3\n    then:\n      - requirements:\n          run:\n            - abi3audit\n            - python ${{ python_min }}.*\n        script:\n          - cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"\n          - abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}\n\nabout:\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  summary: CRDTs based on Yrs\n  homepage: https://github.com/y-crdt/pycrdt\n  repository: https://github.com/y-crdt/pycrdt\n  documentation: https://y-crdt.github.io/pycrdt\n\nextra:\n  recipe-maintainers:\n    - davidbrochart\n",
   "req": {
     "__set__": true,
     "elements": [
       "anyio",
       "c_compiler_stub",
       "c_stdlib_stub",
+      "cargo-auditable",
       "cargo-bundle-licenses",
-      "exceptiongroup",
       "maturin",
       "pip",
       "python",
-      "rust_compiler_stub",
-      "typing_extensions"
+      "python-abi3",
+      "rust_compiler_stub"
     ]
   },
   "requirements": {
@@ -716,9 +2073,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
-        "maturin",
-        "python",
         "rust_compiler_stub"
       ]
     },
@@ -729,7 +2085,8 @@
         "c_stdlib_stub",
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
@@ -738,15 +2095,16 @@
         "anyio",
         "c_compiler_stub",
         "c_stdlib_stub",
-        "exceptiongroup",
         "python",
-        "typing_extensions"
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "abi3audit",
+        "pip",
+        "python"
       ]
     }
   },
@@ -757,39 +2115,41 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
-        "maturin",
-        "python",
         "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "maturin",
+        "maturin >=1.8.2,<2",
         "pip",
-        "python"
+        "python",
+        "python 3.11.*",
+        "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "anyio >=4.4.0,<5.0.0",
-        "exceptiongroup",
         "python",
-        "typing_extensions >=4.14.0",
-        "typing_extensions >=4.15.0,<5.0.0"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "abi3audit",
+        "pip",
+        "python 3.11.*"
       ]
     }
   },
-  "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.5.tar.gz",
-  "version": "0.14.5",
+  "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.6.tar.gz",
+  "version": "0.14.6",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/pycrdt.json"
   },
@@ -800,74 +2160,192 @@
       "home": "https://github.com/y-crdt/pycrdt",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml"
-      ],
+      "license_file": "LICENSE",
       "summary": "CRDTs based on Yrs"
     },
     "build": {
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.bat",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "MATURIN_PEP517_ARGS": "--features pyo3/abi3"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
         "davidbrochart"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.14.6"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "pycrdt",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.8.2,<2",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "anyio >=4.4.0,<5.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pycrdt",
+                "pycrdt._awareness",
+                "pycrdt._doc",
+                "pycrdt._text",
+                "pycrdt._array",
+                "pycrdt._map",
+                "pycrdt._transaction",
+                "pycrdt._undo",
+                "pycrdt._update",
+                "pycrdt._sync"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "pycrdt/**",
+                "pycrdt-0.14.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/pycrdt\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _pycrdt.${{ 'abi3.so' if unix else 'pyd' }}"
+            ]
+          }
+        ],
+        "version": "0.14.6"
+      }
+    ],
     "package": {
       "name": "pycrdt",
-      "version": "0.14.5"
+      "version": "0.14.6"
     },
     "requirements": {
       "build": [
-        "python",
         "c_compiler_stub",
         "c_stdlib_stub",
         "rust_compiler_stub",
-        "cargo-bundle-licenses",
-        "maturin"
+        "cargo-auditable",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "maturin",
+        "maturin >=1.8.2,<2",
         "pip",
-        "python"
+        "python",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
         "anyio >=4.4.0,<5.0.0",
-        "typing_extensions >=4.14.0",
-        "exceptiongroup",
-        "typing_extensions >=4.15.0,<5.0.0"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "14fddab58ca4e19ec3b924bb838b29b8cc062da9490084a9454c131d7905950e",
-      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "pycrdt",
-        "pycrdt._awareness",
-        "pycrdt._doc",
-        "pycrdt._text",
-        "pycrdt._array",
-        "pycrdt._map",
-        "pycrdt._transaction",
-        "pycrdt._undo",
-        "pycrdt._update",
-        "pycrdt._sync"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "ed59185cc0aec28d2fe2d92277a65af6ef799efcf5c5fe99303018cfc5d84428",
+      "url": "https://files.pythonhosted.org/packages/source/p/pycrdt/pycrdt-0.14.6.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -876,9 +2354,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
-        "maturin",
-        "python",
         "rust_compiler_stub"
       ]
     },
@@ -887,22 +2364,24 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "anyio",
-        "exceptiongroup",
         "python",
-        "typing_extensions"
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "abi3audit",
+        "pip",
+        "python"
       ]
     }
   }
