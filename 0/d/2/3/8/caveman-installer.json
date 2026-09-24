@@ -4,18 +4,59 @@
   "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "bot": {
+      "automerge": true,
+      "check_solvable": true,
+      "inspection": "update-grayskull",
+      "run_deps_from_wheel": true
+    },
+    "build_platform": {
+      "linux_aarch64": "linux_64",
+      "osx_arm64": "osx_64"
+    },
     "conda_build": {
-      "error_overlinking": true
+      "error_overlinking": true,
+      "pkg_format": "2"
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
+    },
+    "noarch_platforms": [
+      "linux_64",
+      "win_64",
+      "osx_64",
+      "osx_arm64",
+      "linux_aarch64"
+    ],
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
+    },
+    "shellcheck": {
+      "enabled": true
+    },
+    "test": "native_and_emulated",
+    "workflow_settings": {
+      "store_build_artifacts": [
+        {
+          "platform": [
+            "linux_64",
+            "linux_aarch64",
+            "osx_64",
+            "osx_arm64",
+            "win_64"
+          ],
+          "value": true
+        }
+      ]
     }
   },
-  "feedstock_hash": "71904c6b61cb46c723e3d6d23f18f5f6e7111f13",
-  "feedstock_hash_ts": 1790232290,
+  "feedstock_hash": "2e40b7bf3e607db42910204af54cd01dc10d05be",
+  "feedstock_hash_ts": 1790251540,
   "feedstock_name": "caveman-installer",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -68,12 +109,12 @@
             "script": "caveman-install --help"
           }
         ],
-        "version": "2.4.0"
+        "version": "2.7.0"
       }
     ],
     "package": {
       "name": "caveman-installer",
-      "version": "2.4.0"
+      "version": "2.7.0"
     },
     "requirements": {
       "build": [
@@ -90,11 +131,113 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "3e487f5b3b0916cc5594f2bf4973b47cf5711995be68eae4ae92f4698444756f",
-      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.4.0.tar.gz"
+      "sha256": "0f8b833ef65be67b565573d075264b7acab645e80241cfdae016421211d41147",
+      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.7.0.tar.gz"
     }
   },
   "linux_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "nodejs",
+        "pnpm",
+        "pnpm-licenses"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "nodejs"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "nodejs"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "caveman is a Claude Code skill that cuts ~65% of tokens by talking like\ncaveman. This package installs the `caveman` CLI, a one-shot bootstrapper\nthat auto-detects supported AI coding agents on the machine (Claude Code,\nCursor, Codex, Gemini CLI, opencode, Continue, Cline, Windsurf, and\n~25 more) and runs each agent's native install path. It also wires\nClaude Code hooks, a statusline badge, and the `caveman-shrink` MCP\nmiddleware when those targets are present. Idempotent and re-runnable.",
+      "dev_url": "https://github.com/JuliusBrussee/caveman",
+      "doc_url": "https://github.com/JuliusBrussee/caveman/blob/main/INSTALL.md",
+      "home": "https://getcaveman.dev/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE",
+      "summary": "One-shot installer that wires the caveman Claude Code skill into ~30 AI coding agents"
+    },
+    "build": {
+      "number": "0",
+      "script": [
+        "set -ex",
+        "NPM_VER=$(node -p \"require('./package.json').version\")",
+        "pnpm install --prod --ignore-scripts",
+        "pnpm-licenses generate-disclaimer --prod --output-file=ThirdPartyLicenses.txt",
+        "npm pack --ignore-scripts --userconfig nonexistentrc",
+        "npm install --userconfig nonexistentrc --global \"${SRC_DIR}/caveman-installer-${NPM_VER}.tgz\"",
+        "find \"${PREFIX}/lib/node_modules/caveman-installer\" -type d -name .bin -exec rm -rf {} + || true"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "rxm7706"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "caveman-installer",
+        "requirements": {
+          "build": [
+            "nodejs >=18",
+            "pnpm",
+            "pnpm-licenses"
+          ],
+          "host": [
+            "nodejs >=18"
+          ],
+          "run": [
+            "nodejs >=18"
+          ]
+        },
+        "tests": [
+          {
+            "script": "caveman-install --help"
+          }
+        ],
+        "version": "2.7.0"
+      }
+    ],
+    "package": {
+      "name": "caveman-installer",
+      "version": "2.7.0"
+    },
+    "requirements": {
+      "build": [
+        "nodejs >=18",
+        "pnpm",
+        "pnpm-licenses"
+      ],
+      "host": [
+        "nodejs >=18"
+      ],
+      "run": [
+        "nodejs >=18"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "0f8b833ef65be67b565573d075264b7acab645e80241cfdae016421211d41147",
+      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.7.0.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
@@ -177,7 +320,7 @@
             "script": "caveman-install --help"
           }
         ],
-        "version": "2.4.0"
+        "version": "2.7.0"
       },
       {
         "build": null,
@@ -200,7 +343,7 @@
             "script": "caveman-install --help"
           }
         ],
-        "version": "2.4.0"
+        "version": "2.7.0"
       },
       {
         "build": null,
@@ -223,12 +366,58 @@
             "script": "caveman-install --help"
           }
         ],
-        "version": "2.4.0"
+        "version": "2.7.0"
+      },
+      {
+        "build": null,
+        "name": "caveman-installer",
+        "requirements": {
+          "build": [
+            "nodejs >=18",
+            "pnpm",
+            "pnpm-licenses"
+          ],
+          "host": [
+            "nodejs >=18"
+          ],
+          "run": [
+            "nodejs >=18"
+          ]
+        },
+        "tests": [
+          {
+            "script": "caveman-install --help"
+          }
+        ],
+        "version": "2.7.0"
+      },
+      {
+        "build": null,
+        "name": "caveman-installer",
+        "requirements": {
+          "build": [
+            "nodejs >=18",
+            "pnpm",
+            "pnpm-licenses"
+          ],
+          "host": [
+            "nodejs >=18"
+          ],
+          "run": [
+            "nodejs >=18"
+          ]
+        },
+        "tests": [
+          {
+            "script": "caveman-install --help"
+          }
+        ],
+        "version": "2.7.0"
       }
     ],
     "package": {
       "name": "caveman-installer",
-      "version": "2.4.0"
+      "version": "2.7.0"
     },
     "requirements": {
       "build": [
@@ -245,8 +434,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "3e487f5b3b0916cc5594f2bf4973b47cf5711995be68eae4ae92f4698444756f",
-      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.4.0.tar.gz"
+      "sha256": "0f8b833ef65be67b565573d075264b7acab645e80241cfdae016421211d41147",
+      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.7.0.tar.gz"
     }
   },
   "name": "caveman-installer",
@@ -300,12 +489,12 @@
             "script": "caveman-install --help"
           }
         ],
-        "version": "2.4.0"
+        "version": "2.7.0"
       }
     ],
     "package": {
       "name": "caveman-installer",
-      "version": "2.4.0"
+      "version": "2.7.0"
     },
     "requirements": {
       "build": [
@@ -322,11 +511,113 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "3e487f5b3b0916cc5594f2bf4973b47cf5711995be68eae4ae92f4698444756f",
-      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.4.0.tar.gz"
+      "sha256": "0f8b833ef65be67b565573d075264b7acab645e80241cfdae016421211d41147",
+      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.7.0.tar.gz"
     }
   },
   "osx_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "nodejs",
+        "pnpm",
+        "pnpm-licenses"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "nodejs"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "nodejs"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "description": "caveman is a Claude Code skill that cuts ~65% of tokens by talking like\ncaveman. This package installs the `caveman` CLI, a one-shot bootstrapper\nthat auto-detects supported AI coding agents on the machine (Claude Code,\nCursor, Codex, Gemini CLI, opencode, Continue, Cline, Windsurf, and\n~25 more) and runs each agent's native install path. It also wires\nClaude Code hooks, a statusline badge, and the `caveman-shrink` MCP\nmiddleware when those targets are present. Idempotent and re-runnable.",
+      "dev_url": "https://github.com/JuliusBrussee/caveman",
+      "doc_url": "https://github.com/JuliusBrussee/caveman/blob/main/INSTALL.md",
+      "home": "https://getcaveman.dev/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE",
+      "summary": "One-shot installer that wires the caveman Claude Code skill into ~30 AI coding agents"
+    },
+    "build": {
+      "number": "0",
+      "script": [
+        "set -ex",
+        "NPM_VER=$(node -p \"require('./package.json').version\")",
+        "pnpm install --prod --ignore-scripts",
+        "pnpm-licenses generate-disclaimer --prod --output-file=ThirdPartyLicenses.txt",
+        "npm pack --ignore-scripts --userconfig nonexistentrc",
+        "npm install --userconfig nonexistentrc --global \"${SRC_DIR}/caveman-installer-${NPM_VER}.tgz\"",
+        "find \"${PREFIX}/lib/node_modules/caveman-installer\" -type d -name .bin -exec rm -rf {} + || true"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "rxm7706"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "caveman-installer",
+        "requirements": {
+          "build": [
+            "nodejs >=18",
+            "pnpm",
+            "pnpm-licenses"
+          ],
+          "host": [
+            "nodejs >=18"
+          ],
+          "run": [
+            "nodejs >=18"
+          ]
+        },
+        "tests": [
+          {
+            "script": "caveman-install --help"
+          }
+        ],
+        "version": "2.7.0"
+      }
+    ],
+    "package": {
+      "name": "caveman-installer",
+      "version": "2.7.0"
+    },
+    "requirements": {
+      "build": [
+        "nodejs >=18",
+        "pnpm",
+        "pnpm-licenses"
+      ],
+      "host": [
+        "nodejs >=18"
+      ],
+      "run": [
+        "nodejs >=18"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "0f8b833ef65be67b565573d075264b7acab645e80241cfdae016421211d41147",
+      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.7.0.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
@@ -361,13 +652,15 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
+    "osx_arm64",
     "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/caveman-installer.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"2.4.0\"\n\npackage:\n  # Upstream npm `name` is `caveman-installer`; both `caveman` slots (PyPI + npm)\n  # are taken by unrelated dormant projects, so we keep the upstream name here.\n  # The installed CLI is `caveman-install` (per package.json `bin` map).\n  name: caveman-installer\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/JuliusBrussee/caveman/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 3e487f5b3b0916cc5594f2bf4973b47cf5711995be68eae4ae92f4698444756f\n\nbuild:\n  number: 0\n  script:\n    - if: unix\n      then:\n        - set -ex\n        - NPM_VER=$(node -p \"require('./package.json').version\")\n        - pnpm install --prod --ignore-scripts\n        - pnpm-licenses generate-disclaimer --prod --output-file=ThirdPartyLicenses.txt\n        - npm pack --ignore-scripts --userconfig nonexistentrc\n        - npm install --userconfig nonexistentrc --global \"${SRC_DIR}/caveman-installer-${NPM_VER}.tgz\"\n        - find \"${PREFIX}/lib/node_modules/caveman-installer\" -type d -name .bin -exec rm -rf {} + || true\n      else:\n        - for /f \"delims=\" %%v in ('node -p \"require('./package.json').version\"') do set NPM_VER=%%v\n        - call pnpm install --prod --ignore-scripts\n        - if %ERRORLEVEL% neq 0 exit 1\n        - call pnpm-licenses generate-disclaimer --prod --output-file=ThirdPartyLicenses.txt\n        - if %ERRORLEVEL% neq 0 exit 1\n        - call npm pack --ignore-scripts --userconfig nonexistentrc\n        - if %ERRORLEVEL% neq 0 exit 1\n        - call npm install --userconfig nonexistentrc --global \"%SRC_DIR%/caveman-installer-%NPM_VER%.tgz\"\n        - if %ERRORLEVEL% neq 0 exit 1\n        - for /d /r \"%PREFIX%\\node_modules\\caveman-installer\" %%d in (.bin) do if exist \"%%d\" rd /s /q \"%%d\"\n\nrequirements:\n  build:\n    - nodejs >=18\n    - pnpm\n    - pnpm-licenses\n  host:\n    - nodejs >=18\n  run:\n    - nodejs >=18\n\ntests:\n  - script:\n      - caveman-install --help\n\nabout:\n  license: MIT\n  license_file:\n    - LICENSE\n    - LICENSE.BSL\n    - LICENSING.md\n    - ThirdPartyLicenses.txt\n  summary: One-shot installer that wires the caveman Claude Code skill into ~30 AI coding agents\n  description: |\n    caveman is a Claude Code skill that cuts ~65% of tokens by talking like\n    caveman. This package installs the `caveman` CLI, a one-shot bootstrapper\n    that auto-detects supported AI coding agents on the machine (Claude Code,\n    Cursor, Codex, Gemini CLI, opencode, Continue, Cline, Windsurf, and\n    ~25 more) and runs each agent's native install path. It also wires\n    Claude Code hooks, a statusline badge, and the `caveman-shrink` MCP\n    middleware when those targets are present. Idempotent and re-runnable.\n  homepage: https://getcaveman.dev/\n  repository: https://github.com/JuliusBrussee/caveman\n  documentation: https://github.com/JuliusBrussee/caveman/blob/main/INSTALL.md\n\nextra:\n  recipe-maintainers:\n    - rxm7706\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"2.7.0\"\n\npackage:\n  # Upstream npm `name` is `caveman-installer`; both `caveman` slots (PyPI + npm)\n  # are taken by unrelated dormant projects, so we keep the upstream name here.\n  # The installed CLI is `caveman-install` (per package.json `bin` map).\n  name: caveman-installer\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/JuliusBrussee/caveman/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 0f8b833ef65be67b565573d075264b7acab645e80241cfdae016421211d41147\n\nbuild:\n  number: 0\n  script:\n    - if: unix\n      then:\n        - set -ex\n        - NPM_VER=$(node -p \"require('./package.json').version\")\n        - pnpm install --prod --ignore-scripts\n        - pnpm-licenses generate-disclaimer --prod --output-file=ThirdPartyLicenses.txt\n        - npm pack --ignore-scripts --userconfig nonexistentrc\n        - npm install --userconfig nonexistentrc --global \"${SRC_DIR}/caveman-installer-${NPM_VER}.tgz\"\n        - find \"${PREFIX}/lib/node_modules/caveman-installer\" -type d -name .bin -exec rm -rf {} + || true\n      else:\n        - for /f \"delims=\" %%v in ('node -p \"require('./package.json').version\"') do set NPM_VER=%%v\n        - call pnpm install --prod --ignore-scripts\n        - if %ERRORLEVEL% neq 0 exit 1\n        - call pnpm-licenses generate-disclaimer --prod --output-file=ThirdPartyLicenses.txt\n        - if %ERRORLEVEL% neq 0 exit 1\n        - call npm pack --ignore-scripts --userconfig nonexistentrc\n        - if %ERRORLEVEL% neq 0 exit 1\n        - call npm install --userconfig nonexistentrc --global \"%SRC_DIR%/caveman-installer-%NPM_VER%.tgz\"\n        - if %ERRORLEVEL% neq 0 exit 1\n        - for /d /r \"%PREFIX%\\node_modules\\caveman-installer\" %%d in (.bin) do if exist \"%%d\" rd /s /q \"%%d\"\n\nrequirements:\n  build:\n    - nodejs >=18\n    - pnpm\n    - pnpm-licenses\n  host:\n    - nodejs >=18\n  run:\n    - nodejs >=18\n\ntests:\n  - script:\n      - caveman-install --help\n\nabout:\n  license: MIT\n  license_file:\n    - LICENSE\n    - LICENSE.BSL\n    - LICENSING.md\n    - ThirdPartyLicenses.txt\n  summary: One-shot installer that wires the caveman Claude Code skill into ~30 AI coding agents\n  description: |\n    caveman is a Claude Code skill that cuts ~65% of tokens by talking like\n    caveman. This package installs the `caveman` CLI, a one-shot bootstrapper\n    that auto-detects supported AI coding agents on the machine (Claude Code,\n    Cursor, Codex, Gemini CLI, opencode, Continue, Cline, Windsurf, and\n    ~25 more) and runs each agent's native install path. It also wires\n    Claude Code hooks, a statusline badge, and the `caveman-shrink` MCP\n    middleware when those targets are present. Idempotent and re-runnable.\n  homepage: https://getcaveman.dev/\n  repository: https://github.com/JuliusBrussee/caveman\n  documentation: https://github.com/JuliusBrussee/caveman/blob/main/INSTALL.md\n\nextra:\n  recipe-maintainers:\n    - rxm7706\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -429,8 +722,8 @@
       "elements": []
     }
   },
-  "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.4.0.tar.gz",
-  "version": "2.4.0",
+  "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.7.0.tar.gz",
+  "version": "2.7.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/caveman-installer.json"
   },
@@ -484,12 +777,12 @@
             "script": "caveman-install --help"
           }
         ],
-        "version": "2.4.0"
+        "version": "2.7.0"
       }
     ],
     "package": {
       "name": "caveman-installer",
-      "version": "2.4.0"
+      "version": "2.7.0"
     },
     "requirements": {
       "build": [
@@ -506,8 +799,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "3e487f5b3b0916cc5594f2bf4973b47cf5711995be68eae4ae92f4698444756f",
-      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.4.0.tar.gz"
+      "sha256": "0f8b833ef65be67b565573d075264b7acab645e80241cfdae016421211d41147",
+      "url": "https://github.com/JuliusBrussee/caveman/archive/refs/tags/v2.7.0.tar.gz"
     }
   },
   "win_64_requirements": {
