@@ -39,8 +39,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "302b3378f70d72981e5555eaaa0ca95cd37f3bd5",
-  "feedstock_hash_ts": 1788033836,
+  "feedstock_hash": "9af8f2c7a7b97acf9981df817c9e8d5ac0aaed98",
+  "feedstock_hash_ts": 1790328624,
   "feedstock_name": "menuinst",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -72,6 +72,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "marcoesters",
         "goanpeca",
         "jakirkham",
         "carlodri",
@@ -391,6 +392,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "marcoesters",
         "goanpeca",
         "jakirkham",
         "carlodri",
@@ -694,6 +696,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "marcoesters",
         "goanpeca",
         "jakirkham",
         "carlodri",
@@ -1001,6 +1004,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "marcoesters",
         "goanpeca",
         "jakirkham",
         "carlodri",
@@ -2474,6 +2478,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "marcoesters",
         "goanpeca",
         "jakirkham",
         "carlodri",
@@ -2803,6 +2808,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "marcoesters",
         "goanpeca",
         "jakirkham",
         "carlodri",
@@ -3126,7 +3132,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/menuinst.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"2.5.2\"\n\npackage:\n  name: menuinst\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/conda/menuinst/archive/${{ version }}.tar.gz\n  sha256: 079ea48b73530907881526240d0bda1cc012659baee344a61b62090d52465109\n\nbuild:\n  number: 2\n  dynamic_linking:\n    # The launcher binaries under menuinst/data/ are standalone .app templates that\n    # get copied verbatim into the shortcuts menuinst creates; they are not linked\n    # into this environment and must not be relocated. Relocation strips the\n    # /usr/lib/swift RPATH from the Swift appkit_launcher, which then fails to load\n    # libswiftCore on Intel macOS (arm64 is unaffected because dyld resolves the OS\n    # Swift runtime from the shared cache regardless). menuinst is pure Python with\n    # no other binaries, so disabling relocation is safe. See conda/menuinst#507.\n    binary_relocation: false\n  script:\n    env:\n      SETUPTOOLS_SCM_PRETEND_VERSION: ${{ version }}\n    content:\n      - if: win\n        then:\n          # Apparently these files make the post-build linkage analysis crash\n          # and we should not need them on Windows\n          - del /q \"${{ SRC_DIR }}\\\\menuinst\\\\data\\\\osx_launcher_*\"\n          - del /q \"${{ SRC_DIR }}\\\\menuinst\\\\data\\\\appkit_launcher_*\"\n      - if: linux\n        then:\n          # Delete in Linux too because we don't need them there\n          - rm -f \"${{ SRC_DIR }}/menuinst/data/osx_launcher_*\"\n          - rm -f \"${{ SRC_DIR }}/menuinst/data/appkit_launcher_*\"\n      - ${{ PYTHON }} -m pip install . -vv\n      - if: win\n        # menuinst v1 expects cwp.py in PREFIX; backwards compat fix\n        then: copy \"%SP_DIR%\\\\menuinst\\\\_legacy\\cwp.py\" \"%PREFIX%\\\\\"\n  python:\n    entry_points:\n      - menuinst = menuinst.cli:main\n    skip_pyc_compilation:\n      - if: win\n        then: cwp.py\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n    - if: win\n      then:\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n  host:\n    - python\n    - pip\n    - setuptools\n    - setuptools_scm\n  run:\n    - python\n    - if: match(python, \"<3.11\")\n      then: tomli\n    - tomli-w\n\ntests:\n  - python:\n      imports:\n        - menuinst\n        - menuinst.api\n        - if: win\n          then:\n            - menuinst._legacy\n            - menuinst.platforms.win_utils.winshortcut\n      pip_check: false\n  - script:\n      - menuinst --help\n      - if: osx\n        then:\n          - test -f \"${SP_DIR}/menuinst/data/appkit_launcher_arm64\"\n          - test -f \"${SP_DIR}/menuinst/data/appkit_launcher_x86_64\"\n          - test -f \"${SP_DIR}/menuinst/data/osx_launcher_arm64\"\n          - test -f \"${SP_DIR}/menuinst/data/osx_launcher_x86_64\"\n\nabout:\n  license: BSD-3-Clause AND MIT\n  license_file:\n    - LICENSE.txt\n    - menuinst/_vendor/apipkg/LICENSE\n  summary: cross platform install of menu items\n  homepage: https://github.com/conda/menuinst/\n  documentation: https://conda.github.io/menuinst/\n\nextra:\n  recipe-maintainers:\n    - goanpeca\n    - jakirkham\n    - carlodri\n    - isuruf\n    - jaimergp\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"2.5.2\"\n\npackage:\n  name: menuinst\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/conda/menuinst/archive/${{ version }}.tar.gz\n  sha256: 079ea48b73530907881526240d0bda1cc012659baee344a61b62090d52465109\n\nbuild:\n  number: 2\n  dynamic_linking:\n    # The launcher binaries under menuinst/data/ are standalone .app templates that\n    # get copied verbatim into the shortcuts menuinst creates; they are not linked\n    # into this environment and must not be relocated. Relocation strips the\n    # /usr/lib/swift RPATH from the Swift appkit_launcher, which then fails to load\n    # libswiftCore on Intel macOS (arm64 is unaffected because dyld resolves the OS\n    # Swift runtime from the shared cache regardless). menuinst is pure Python with\n    # no other binaries, so disabling relocation is safe. See conda/menuinst#507.\n    binary_relocation: false\n  script:\n    env:\n      SETUPTOOLS_SCM_PRETEND_VERSION: ${{ version }}\n    content:\n      - if: win\n        then:\n          # Apparently these files make the post-build linkage analysis crash\n          # and we should not need them on Windows\n          - del /q \"${{ SRC_DIR }}\\\\menuinst\\\\data\\\\osx_launcher_*\"\n          - del /q \"${{ SRC_DIR }}\\\\menuinst\\\\data\\\\appkit_launcher_*\"\n      - if: linux\n        then:\n          # Delete in Linux too because we don't need them there\n          - rm -f \"${{ SRC_DIR }}/menuinst/data/osx_launcher_*\"\n          - rm -f \"${{ SRC_DIR }}/menuinst/data/appkit_launcher_*\"\n      - ${{ PYTHON }} -m pip install . -vv\n      - if: win\n        # menuinst v1 expects cwp.py in PREFIX; backwards compat fix\n        then: copy \"%SP_DIR%\\\\menuinst\\\\_legacy\\cwp.py\" \"%PREFIX%\\\\\"\n  python:\n    entry_points:\n      - menuinst = menuinst.cli:main\n    skip_pyc_compilation:\n      - if: win\n        then: cwp.py\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n    - if: win\n      then:\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n  host:\n    - python\n    - pip\n    - setuptools\n    - setuptools_scm\n  run:\n    - python\n    - if: match(python, \"<3.11\")\n      then: tomli\n    - tomli-w\n\ntests:\n  - python:\n      imports:\n        - menuinst\n        - menuinst.api\n        - if: win\n          then:\n            - menuinst._legacy\n            - menuinst.platforms.win_utils.winshortcut\n      pip_check: false\n  - script:\n      - menuinst --help\n      - if: osx\n        then:\n          - test -f \"${SP_DIR}/menuinst/data/appkit_launcher_arm64\"\n          - test -f \"${SP_DIR}/menuinst/data/appkit_launcher_x86_64\"\n          - test -f \"${SP_DIR}/menuinst/data/osx_launcher_arm64\"\n          - test -f \"${SP_DIR}/menuinst/data/osx_launcher_x86_64\"\n\nabout:\n  license: BSD-3-Clause AND MIT\n  license_file:\n    - LICENSE.txt\n    - menuinst/_vendor/apipkg/LICENSE\n  summary: cross platform install of menu items\n  homepage: https://github.com/conda/menuinst/\n  documentation: https://conda.github.io/menuinst/\n\nextra:\n  recipe-maintainers:\n    - marcoesters\n    - goanpeca\n    - jakirkham\n    - carlodri\n    - isuruf\n    - jaimergp\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -3274,6 +3280,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "marcoesters",
         "goanpeca",
         "jakirkham",
         "carlodri",
@@ -3627,6 +3634,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "marcoesters",
         "goanpeca",
         "jakirkham",
         "carlodri",
