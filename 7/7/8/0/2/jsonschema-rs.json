@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_is_abi3falsepython3.14.____cp314t.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - is_abi3\n",
+  "ci_support_linux_64_is_abi3falsepython3.14.____cp314t.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - is_abi3\n",
   "ci_support_migrations": {
     "python314t": {
       "migration_number": 1,
@@ -10,7 +10,7 @@
   },
   "conda-forge.yml": {
     "bot": {
-      "inspection": "hint-grayskull"
+      "inspection": "hint-all"
     },
     "conda_build": {
       "error_overlinking": true
@@ -28,8 +28,8 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "ebbaa4e23ad815a09a10d222d9144adaf95e55e6",
-  "feedstock_hash_ts": 1790204934,
+  "feedstock_hash": "587506a19c12de31e8c34faa029e42d191df0d74",
+  "feedstock_hash_ts": 1790375215,
   "feedstock_name": "jsonschema-rs",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -46,10 +46,19 @@
       "python": {
         "version_independent": true
       },
-      "script": [
-        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/${{ cargo_auditable_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_auditable_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -62,8 +71,10 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -77,9 +88,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -96,13 +123,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -113,25 +144,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -150,51 +199,61 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       }
     ],
     "package": {
       "name": "jsonschema-rs",
-      "version": "0.57.1"
+      "version": "0.58.0"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses"
       ],
       "host": [
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "08ed69730c526544aff246d802373a2abf76082eb1aa7759528d104cad9a883b",
-      "url": "https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-0.57.1.tar.gz"
+      "sha256": "45e0d2e07113eb5da922ea9d9a414da511b858a63bf89dba8a14cc958f7981fe",
+      "url": "https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-0.58.0.tar.gz"
     }
   },
   "linux_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "rust_compiler_stub"
       ]
@@ -211,7 +270,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -221,7 +281,8 @@
         "flask",
         "hypothesis",
         "pip",
-        "pytest"
+        "pytest",
+        "python"
       ]
     }
   },
@@ -239,10 +300,19 @@
       "python": {
         "version_independent": true
       },
-      "script": [
-        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/${{ cargo_auditable_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_auditable_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -255,8 +325,10 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -270,9 +342,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -289,13 +377,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -306,25 +398,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -343,51 +453,61 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       }
     ],
     "package": {
       "name": "jsonschema-rs",
-      "version": "0.57.1"
+      "version": "0.58.0"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses"
       ],
       "host": [
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "08ed69730c526544aff246d802373a2abf76082eb1aa7759528d104cad9a883b",
-      "url": "https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-0.57.1.tar.gz"
+      "sha256": "45e0d2e07113eb5da922ea9d9a414da511b858a63bf89dba8a14cc958f7981fe",
+      "url": "https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-0.58.0.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "rust_compiler_stub"
       ]
@@ -404,7 +524,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -414,7 +535,8 @@
         "flask",
         "hypothesis",
         "pip",
-        "pytest"
+        "pytest",
+        "python"
       ]
     }
   },
@@ -432,10 +554,19 @@
       "python": {
         "version_independent": true
       },
-      "script": [
-        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/${{ cargo_auditable_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_auditable_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -448,8 +579,10 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -463,9 +596,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -482,13 +631,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -499,25 +652,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -536,51 +707,61 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       }
     ],
     "package": {
       "name": "jsonschema-rs",
-      "version": "0.57.1"
+      "version": "0.58.0"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses"
       ],
       "host": [
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "08ed69730c526544aff246d802373a2abf76082eb1aa7759528d104cad9a883b",
-      "url": "https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-0.57.1.tar.gz"
+      "sha256": "45e0d2e07113eb5da922ea9d9a414da511b858a63bf89dba8a14cc958f7981fe",
+      "url": "https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-0.58.0.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "rust_compiler_stub"
       ]
@@ -597,7 +778,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -607,7 +789,8 @@
         "flask",
         "hypothesis",
         "pip",
-        "pytest"
+        "pytest",
+        "python"
       ]
     }
   },
@@ -622,10 +805,20 @@
     },
     "build": {
       "number": "0",
-      "script": [
-        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/${{ cargo_auditable_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_auditable_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
+          "copy \"%RECIPE_DIR%\\${{ cargo_auditable_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\""
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.bat",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -638,8 +831,10 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -653,9 +848,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -672,13 +883,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -689,25 +904,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -726,26 +959,31 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": null,
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -759,9 +997,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -778,13 +1032,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -795,25 +1053,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -832,26 +1108,31 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": null,
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -865,9 +1146,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -884,13 +1181,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -901,25 +1202,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -938,26 +1257,31 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": null,
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -971,9 +1295,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -990,13 +1330,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -1007,25 +1351,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -1044,26 +1406,31 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": null,
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -1077,9 +1444,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1096,13 +1479,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -1113,25 +1500,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -1150,26 +1555,31 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": null,
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -1183,9 +1593,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1202,13 +1628,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -1219,25 +1649,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -1256,44 +1704,52 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       }
     ],
     "package": {
       "name": "jsonschema-rs",
-      "version": "0.57.1"
+      "version": "0.58.0"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses"
       ],
       "host": [
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "08ed69730c526544aff246d802373a2abf76082eb1aa7759528d104cad9a883b",
-      "url": "https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-0.57.1.tar.gz"
+      "sha256": "45e0d2e07113eb5da922ea9d9a414da511b858a63bf89dba8a14cc958f7981fe",
+      "url": "https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-0.58.0.tar.gz"
     }
   },
   "name": "jsonschema-rs",
@@ -1311,10 +1767,19 @@
       "python": {
         "version_independent": true
       },
-      "script": [
-        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/${{ cargo_auditable_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_auditable_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -1327,8 +1792,10 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -1342,9 +1809,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1361,13 +1844,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -1378,25 +1865,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -1415,51 +1920,61 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       }
     ],
     "package": {
       "name": "jsonschema-rs",
-      "version": "0.57.1"
+      "version": "0.58.0"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses"
       ],
       "host": [
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "08ed69730c526544aff246d802373a2abf76082eb1aa7759528d104cad9a883b",
-      "url": "https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-0.57.1.tar.gz"
+      "sha256": "45e0d2e07113eb5da922ea9d9a414da511b858a63bf89dba8a14cc958f7981fe",
+      "url": "https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-0.58.0.tar.gz"
     }
   },
   "osx_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "rust_compiler_stub"
       ]
@@ -1476,7 +1991,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1486,7 +2002,8 @@
         "flask",
         "hypothesis",
         "pip",
-        "pytest"
+        "pytest",
+        "python"
       ]
     }
   },
@@ -1504,10 +2021,19 @@
       "python": {
         "version_independent": true
       },
-      "script": [
-        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/${{ cargo_auditable_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_auditable_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.sh",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -1520,8 +2046,10 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -1535,9 +2063,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1554,13 +2098,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -1571,25 +2119,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -1608,51 +2174,61 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       }
     ],
     "package": {
       "name": "jsonschema-rs",
-      "version": "0.57.1"
+      "version": "0.58.0"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses"
       ],
       "host": [
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "08ed69730c526544aff246d802373a2abf76082eb1aa7759528d104cad9a883b",
-      "url": "https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-0.57.1.tar.gz"
+      "sha256": "45e0d2e07113eb5da922ea9d9a414da511b858a63bf89dba8a14cc958f7981fe",
+      "url": "https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-0.58.0.tar.gz"
     }
   },
   "osx_arm64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "rust_compiler_stub"
       ]
@@ -1669,7 +2245,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1679,7 +2256,8 @@
         "flask",
         "hypothesis",
         "pip",
-        "pytest"
+        "pytest",
+        "python"
       ]
     }
   },
@@ -1701,11 +2279,13 @@
   "pr_info": {
     "__lazy_json__": "pr_info/jsonschema-rs.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.57.1\"\n  maturin_min: \"1.0\"\n  maturin_max: \"2.0\"\n  python_check_max: \"3.14\"\n  abi3_ext: ${{ \"pyd\" if win else \"abi3.so\" }}\n  unix_sp_dir: |-\n    $(python -c \"print(__import__('site').getsitepackages()[-1])\")/jsonschema_rs\n  win_sp_dir: |-\n    Lib\\site-packages\\jsonschema_rs\n  sp_dir: |-\n    ${{ \"%PREFIX%\\\\\" ~ win_sp_dir if win else unix_sp_dir }}\n  # test_annotation_suite.py: needs fixtures from `jsonschema` submodule (#28)\n  unlink_tests: |-\n    crates/jsonschema-py/tests-py/test_annotation_suite.py\n\npackage:\n  name: jsonschema-rs\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-${{ version }}.tar.gz\n  sha256: 08ed69730c526544aff246d802373a2abf76082eb1aa7759528d104cad9a883b\n\nbuild:\n  number: 0\n  skip: is_abi3 and not is_python_min\n  script:\n    - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check\n    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n  python:\n    version_independent: ${{ is_abi3 }}\n\nrequirements:\n  build:\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-bundle-licenses\n  host:\n    - maturin >=${{ maturin_min }},<${{ maturin_max }}\n    - pip\n    - python\n    - if: is_abi3\n      then:\n        - python-abi3\n  run:\n    - python\n  ignore_run_exports:\n    by_name:\n      - if: is_abi3\n        then:\n          - python_abi\n\ntests:\n  - if: is_abi3\n    then:\n      - python:\n          imports: jsonschema_rs\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - ${{ python_check_max }}.*\n    else:\n      - python:\n          imports: jsonschema_rs\n          pip_check: true\n  - files:\n      source:\n        - crates/jsonschema-py/tests-py/\n    requirements:\n      run:\n        - flask >=2.2.5\n        - hypothesis >=6.79.4\n        - pytest >=7.4.4\n        - if: is_abi3\n          then:\n            - abi3audit\n    script:\n      - python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"\n      - pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"\n      - if: is_abi3\n        then:\n          - cd ${{ sp_dir }}\n          - abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}\n\nabout:\n  summary: A high-performance JSON Schema validator for Python\n  license: MIT\n  license_file:\n    - THIRDPARTY.yml\n    - crates/jsonschema-referencing/LICENSE\n    - crates/jsonschema/LICENSE\n  homepage: https://pypi.org/project/jsonschema-rs\n  repository: https://github.com/Stranger6667/jsonschema\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.58.0\"\n  python_check_max: \"3.14\"\n  cargo_auditable_wrapper: cargo-auditable-wrapper.${{ \"bat\" if win else \"sh\" }}\n\npackage:\n  name: jsonschema-rs\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-${{ version }}.tar.gz\n  sha256: 45e0d2e07113eb5da922ea9d9a414da511b858a63bf89dba8a14cc958f7981fe\n\nbuild:\n  number: 0\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO: ${{ cargo_auditable_wrapper }}\n    content:\n      - if: win\n        then:\n          - copy \"%RECIPE_DIR%\\${{ cargo_auditable_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\"\n        else:\n          - cp \"${RECIPE_DIR}/${{ cargo_auditable_wrapper }}\" \"${BUILD_PREFIX}/bin/\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_auditable_wrapper }}\"\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n  host:\n    - maturin >=1.0,<2.0\n    - pip\n    - python\n    - if: is_abi3\n      then:\n        - python ${{ python_min }}.*\n        - python-abi3\n  run:\n    - python\n    - if: is_abi3\n      then:\n        - python >=${{ python_min }}\n        - python-abi3\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - etc/conda/test-files/jsonschema-rs/**\n      site_packages:\n        - jsonschema_rs/**\n        - jsonschema_rs-${{ version }}.dist-info/**\n  - python:\n      imports:\n        - jsonschema_rs\n        - jsonschema_rs.jsonschema_rs\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then:\n            - ${{ python_min }}.*\n            - ${{ python_check_max }}.*\n          else:\n            - \"*\"\n  - files:\n      source:\n        - crates/jsonschema-py/tests-py/\n    requirements:\n      run:\n        - flask >=2.2.5\n        - hypothesis >=6.79.4\n        - pytest >=7.4.4\n        - if: is_abi3\n          then:\n            - abi3audit\n            - python ${{ python_min }}.*\n    script:\n      env:\n        PYTHON_MIN: ${{ python_min }}\n        IS_ABI3: ${{ is_abi3 }}\n      file: run_test.py\n\nabout:\n  summary: A high-performance JSON Schema validator for Python\n  license: MIT\n  license_file:\n    - THIRDPARTY.yml\n    - crates/jsonschema-referencing/LICENSE\n    - crates/jsonschema/LICENSE\n  homepage: https://pypi.org/project/jsonschema-rs\n  repository: https://github.com/Stranger6667/jsonschema\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
+      "c_compiler_stub",
       "c_stdlib_stub",
+      "cargo-auditable",
       "cargo-bundle-licenses",
       "maturin",
       "pip",
@@ -1718,7 +2298,9 @@
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "rust_compiler_stub"
       ]
@@ -1726,6 +2308,7 @@
     "host": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
         "maturin",
         "pip",
@@ -1736,8 +2319,10 @@
     "run": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1747,7 +2332,8 @@
         "flask",
         "hypothesis",
         "pip",
-        "pytest"
+        "pytest",
+        "python"
       ]
     }
   },
@@ -1756,7 +2342,9 @@
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "rust_compiler_stub"
       ]
@@ -1767,13 +2355,16 @@
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1783,12 +2374,13 @@
         "flask >=2.2.5",
         "hypothesis >=6.79.4",
         "pip",
-        "pytest >=7.4.4"
+        "pytest >=7.4.4",
+        "python 3.11.*"
       ]
     }
   },
-  "url": "https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-0.57.1.tar.gz",
-  "version": "0.57.1",
+  "url": "https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-0.58.0.tar.gz",
+  "version": "0.58.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/jsonschema-rs.json"
   },
@@ -1806,10 +2398,18 @@
       "python": {
         "version_independent": true
       },
-      "script": [
-        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
-        "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
-      ]
+      "script": {
+        "content": [
+          "copy \"%RECIPE_DIR%\\${{ cargo_auditable_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO": "cargo-auditable-wrapper.bat",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -1822,8 +2422,10 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
@@ -1837,9 +2439,25 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1856,13 +2474,17 @@
                 "pytest >=7.4.4"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\""
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "False",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       },
       {
         "build": {
@@ -1873,25 +2495,43 @@
         "name": "jsonschema-rs",
         "requirements": {
           "build": [
+            "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses"
           ],
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
             "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/jsonschema-rs/**"
+              ],
+              "site_packages": [
+                "jsonschema_rs/**",
+                "jsonschema_rs-0.58.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
-                "jsonschema_rs"
+                "jsonschema_rs",
+                "jsonschema_rs.jsonschema_rs"
               ],
               "python_version": [
                 "3.11.*",
@@ -1910,51 +2550,61 @@
                 "flask >=2.2.5",
                 "hypothesis >=6.79.4",
                 "pytest >=7.4.4",
-                "abi3audit"
+                "abi3audit",
+                "python 3.11.*"
               ]
             },
-            "script": [
-              "python -c \"from pathlib import Path; [Path(p).unlink() for p in '${{ unlink_tests }}'.split()]\"",
-              "pytest -vv --tb=long --color=yes crates/jsonschema-py -k \"not readme\"",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} jsonschema_rs.${{ abi3_ext }}"
-            ]
+            "script": {
+              "env": {
+                "IS_ABI3": "True",
+                "PYTHON_MIN": "3.11"
+              },
+              "file": "run_test.py",
+              "interpreter": "python"
+            }
           }
         ],
-        "version": "0.57.1"
+        "version": "0.58.0"
       }
     ],
     "package": {
       "name": "jsonschema-rs",
-      "version": "0.57.1"
+      "version": "0.58.0"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses"
       ],
       "host": [
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "08ed69730c526544aff246d802373a2abf76082eb1aa7759528d104cad9a883b",
-      "url": "https://files.pythonhosted.org/packages/b4/d6/e3eaf97f6daf16f006df57736052656ca717a35bb4651548b5c96fe43e5c/jsonschema_rs-0.57.1.tar.gz"
+      "sha256": "45e0d2e07113eb5da922ea9d9a414da511b858a63bf89dba8a14cc958f7981fe",
+      "url": "https://files.pythonhosted.org/packages/b0/94/b2b290f3dda177b0074e32c1a495260173e77257dd7163d914254b4061a5/jsonschema_rs-0.58.0.tar.gz"
     }
   },
   "win_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "rust_compiler_stub"
       ]
@@ -1971,7 +2621,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1981,7 +2632,8 @@
         "flask",
         "hypothesis",
         "pip",
-        "pytest"
+        "pytest",
+        "python"
       ]
     }
   }
