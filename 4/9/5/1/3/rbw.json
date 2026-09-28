@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -20,14 +20,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default",
       "osx_arm64": "default",
       "win_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "6d21c42056012f3fe0cb7996dd89654df3670cb1",
-  "feedstock_hash_ts": 1783873876,
+  "feedstock_hash": "ab91eaf74a1213c733da12f819429c58eccdc927",
+  "feedstock_hash_ts": 1790601552,
   "feedstock_name": "rbw",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,17 +43,18 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "\"$PREFIX\"/bin/rbw gen-completions bash > \"$PREFIX\"/share/bash-completion/completions/rbw",
-          "\"$PREFIX\"/bin/rbw gen-completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/rbw.fish",
-          "\"$PREFIX\"/bin/rbw gen-completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_rbw",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "^rbw gen-completions bash | save --force ($prefix)/share/bash-completion/completions/rbw",
+          "^rbw gen-completions fish | save --force ($prefix)/share/fish/vendor_completions.d/rbw.fish",
+          "^rbw gen-completions zsh  | save --force ($prefix)/share/zsh/site-functions/_rbw"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -72,7 +72,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -112,7 +113,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -129,6 +131,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -159,17 +162,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "\"$PREFIX\"/bin/rbw gen-completions bash > \"$PREFIX\"/share/bash-completion/completions/rbw",
-          "\"$PREFIX\"/bin/rbw gen-completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/rbw.fish",
-          "\"$PREFIX\"/bin/rbw gen-completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_rbw",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -187,7 +188,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -227,7 +229,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -244,121 +247,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
-        "rust_compiler_stub"
-      ]
-    },
-    "host": {
-      "__set__": true,
-      "elements": []
-    },
-    "run": {
-      "__set__": true,
-      "elements": []
-    },
-    "test": {
-      "__set__": true,
-      "elements": []
-    }
-  },
-  "linux_ppc64le_meta_yaml": {
-    "about": {
-      "description": "`rbw` is an unofficial command line client for Bitwarden that maintains\na background agent to manage encryption keys, similar to `ssh-agent` or\n`gpg-agent`. This avoids the need to repeatedly decrypt the vault for\neach operation, providing a faster and more convenient experience.",
-      "dev_url": "https://github.com/doy/rbw",
-      "home": "https://github.com/doy/rbw",
-      "license": "MIT",
-      "license_family": "MIT",
-      "license_file": "LICENSE",
-      "summary": "Unofficial Bitwarden CLI"
-    },
-    "build": {
-      "number": "1",
-      "script": {
-        "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "\"$PREFIX\"/bin/rbw gen-completions bash > \"$PREFIX\"/share/bash-completion/completions/rbw",
-          "\"$PREFIX\"/bin/rbw gen-completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/rbw.fish",
-          "\"$PREFIX\"/bin/rbw gen-completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_rbw",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
-        ],
-        "env": {
-          "CARGO_PROFILE_RELEASE_LTO": "fat",
-          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
-      }
-    },
-    "extra": {
-      "recipe-maintainers": [
-        "salim-b"
-      ]
-    },
-    "outputs": [
-      {
-        "build": null,
-        "name": "rbw",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "rust_compiler_stub",
-            "cargo-auditable",
-            "cargo-bundle-licenses"
-          ],
-          "host": [],
-          "run": []
-        },
-        "tests": [
-          {
-            "script": [
-              "rbw --help",
-              "rbw --version"
-            ]
-          },
-          {
-            "package_contents": {
-              "bin": [
-                "rbw",
-                "rbw-agent"
-              ],
-              "files": [
-                "share/bash-completion/completions/rbw",
-                "share/fish/vendor_completions.d/rbw.fish",
-                "share/zsh/site-functions/_rbw"
-              ],
-              "strict": true
-            }
-          }
-        ],
-        "version": "1.15.0"
-      }
-    ],
-    "package": {
-      "name": "rbw",
-      "version": "1.15.0"
-    },
-    "requirements": {
-      "build": [
-        "c_stdlib_stub",
-        "c_compiler_stub",
-        "rust_compiler_stub",
-        "cargo-auditable",
-        "cargo-bundle-licenses"
-      ]
-    },
-    "schema_version": 1,
-    "source": {
-      "sha256": "660cfa4c727711665bef060046c28dd3924ca1e490fdc058d90d35372b2d2cf6",
-      "url": "https://github.com/doy/rbw/archive/refs/tags/1.15.0.tar.gz"
-    }
-  },
-  "linux_ppc64le_requirements": {
-    "build": {
-      "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "cargo-auditable",
-        "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -389,17 +278,18 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "\"$PREFIX\"/bin/rbw gen-completions bash > \"$PREFIX\"/share/bash-completion/completions/rbw",
-          "\"$PREFIX\"/bin/rbw gen-completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/rbw.fish",
-          "\"$PREFIX\"/bin/rbw gen-completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_rbw",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "^rbw gen-completions bash | save --force ($prefix)/share/bash-completion/completions/rbw",
+          "^rbw gen-completions fish | save --force ($prefix)/share/fish/vendor_completions.d/rbw.fish",
+          "^rbw gen-completions zsh  | save --force ($prefix)/share/zsh/site-functions/_rbw"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -417,7 +307,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -455,7 +346,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -493,7 +385,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -531,45 +424,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
-          ],
-          "host": [],
-          "run": []
-        },
-        "tests": [
-          {
-            "script": [
-              "rbw --help",
-              "rbw --version"
-            ]
-          },
-          {
-            "package_contents": {
-              "bin": [
-                "rbw",
-                "rbw-agent"
-              ],
-              "files": [
-                "share/bash-completion/completions/rbw",
-                "share/fish/vendor_completions.d/rbw.fish",
-                "share/zsh/site-functions/_rbw"
-              ],
-              "strict": true
-            }
-          }
-        ],
-        "version": "1.15.0"
-      },
-      {
-        "build": null,
-        "name": "rbw",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "rust_compiler_stub",
-            "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -609,7 +465,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -633,17 +490,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "\"$PREFIX\"/bin/rbw gen-completions bash > \"$PREFIX\"/share/bash-completion/completions/rbw",
-          "\"$PREFIX\"/bin/rbw gen-completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/rbw.fish",
-          "\"$PREFIX\"/bin/rbw gen-completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_rbw",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -661,7 +516,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -701,7 +557,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -718,6 +575,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -748,17 +606,15 @@
       "number": "1",
       "script": {
         "content": [
-          "cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins",
-          "mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-          "\"$PREFIX\"/bin/rbw gen-completions bash > \"$PREFIX\"/share/bash-completion/completions/rbw",
-          "\"$PREFIX\"/bin/rbw gen-completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/rbw.fish",
-          "\"$PREFIX\"/bin/rbw gen-completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_rbw",
-          "cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml"
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "cargo auditable install --path=. --root=($prefix) --no-track --locked --bins",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        }
+        },
+        "interpreter": "nu"
       }
     },
     "extra": {
@@ -776,7 +632,8 @@
             "c_compiler_stub",
             "rust_compiler_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -816,7 +673,8 @@
         "c_compiler_stub",
         "rust_compiler_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -833,6 +691,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -859,14 +718,13 @@
   "platforms": [
     "linux_64",
     "linux_aarch64",
-    "linux_ppc64le",
     "osx_64",
     "osx_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/rbw.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"1.15.0\"\n\npackage:\n  name: rbw\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/doy/rbw/archive/refs/tags/${{ version }}.tar.gz\n  sha256: 660cfa4c727711665bef060046c28dd3924ca1e490fdc058d90d35372b2d2cf6\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    content:\n      - if: unix\n        then:\n          - cargo auditable install --path=. --root=\"$PREFIX\" --no-track --locked --bins\n          # generate shell completions\n          - mkdir -p \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions\n          - '\"$PREFIX\"/bin/rbw gen-completions bash > \"$PREFIX\"/share/bash-completion/completions/rbw'\n          - '\"$PREFIX\"/bin/rbw gen-completions fish > \"$PREFIX\"/share/fish/vendor_completions.d/rbw.fish'\n          - '\"$PREFIX\"/bin/rbw gen-completions zsh  > \"$PREFIX\"/share/zsh/site-functions/_rbw'\n      - if: win\n        then:\n          - cargo auditable install --path=. --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins\n          # generate shell completions\n          - mkdir \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\n          - mkdir \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\n          - mkdir \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\n          - '\"%LIBRARY_BIN%\"\\rbw.exe gen-completions bash > \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\\rbw'\n          - '\"%LIBRARY_BIN%\"\\rbw.exe gen-completions fish > \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\\rbw.fish'\n          - '\"%LIBRARY_BIN%\"\\rbw.exe gen-completions zsh  > \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\\_rbw'\n      - cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml\n  skip: win\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n\ntests:\n  - script:\n      - rbw --help\n      - rbw --version\n  - package_contents:\n      bin:\n        - rbw\n        - rbw-agent\n      files:\n        - if: unix\n          then:\n            - share/bash-completion/completions/rbw\n            - share/fish/vendor_completions.d/rbw.fish\n            - share/zsh/site-functions/_rbw\n        - if: win\n          then:\n            - Library/share/bash-completion/completions/rbw\n            - Library/share/fish/vendor_completions.d/rbw.fish\n            - Library/share/zsh/site-functions/_rbw\n      strict: true\n\nabout:\n  summary: Unofficial Bitwarden CLI\n  description: |\n    `rbw` is an unofficial command line client for Bitwarden that maintains\n    a background agent to manage encryption keys, similar to `ssh-agent` or\n    `gpg-agent`. This avoids the need to repeatedly decrypt the vault for\n    each operation, providing a faster and more convenient experience.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://github.com/doy/rbw\n  repository: https://github.com/doy/rbw\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
+  "raw_meta_yaml": "context:\n  version: \"1.15.0\"\n\npackage:\n  name: rbw\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/doy/rbw/archive/refs/tags/${{ version }}.tar.gz\n  sha256: 660cfa4c727711665bef060046c28dd3924ca1e490fdc058d90d35372b2d2cf6\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # build main app and generate license data\n      - cargo auditable install --path=. --root=($prefix) --no-track --locked --bins\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      # generate shell completions\n      - if: build_platform == host_platform\n        then:\n          - ^rbw gen-completions bash | save --force ($prefix)/share/bash-completion/completions/rbw\n          - ^rbw gen-completions fish | save --force ($prefix)/share/fish/vendor_completions.d/rbw.fish\n          - ^rbw gen-completions zsh  | save --force ($prefix)/share/zsh/site-functions/_rbw\n  skip: win\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - nushell\n\ntests:\n  - script:\n      - rbw --help\n      - rbw --version\n  - package_contents:\n      bin:\n        - rbw\n        - rbw-agent\n      files:\n        - if: unix\n          then:\n            - share/bash-completion/completions/rbw\n            - share/fish/vendor_completions.d/rbw.fish\n            - share/zsh/site-functions/_rbw\n        - if: win\n          then:\n            - Library/share/bash-completion/completions/rbw\n            - Library/share/fish/vendor_completions.d/rbw.fish\n            - Library/share/zsh/site-functions/_rbw\n      strict: true\n\nabout:\n  summary: Unofficial Bitwarden CLI\n  description: |\n    `rbw` is an unofficial command line client for Bitwarden that maintains\n    a background agent to manage encryption keys, similar to `ssh-agent` or\n    `gpg-agent`. This avoids the need to repeatedly decrypt the vault for\n    each operation, providing a faster and more convenient experience.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://github.com/doy/rbw\n  repository: https://github.com/doy/rbw\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -874,6 +732,7 @@
       "c_stdlib_stub",
       "cargo-auditable",
       "cargo-bundle-licenses",
+      "nushell",
       "rust_compiler_stub"
     ]
   },
@@ -885,6 +744,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
@@ -916,6 +776,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "nushell",
         "rust_compiler_stub"
       ]
     },
