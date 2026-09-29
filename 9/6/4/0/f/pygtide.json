@@ -3,6 +3,10 @@
   "branch": "main",
   "ci_support_linux_64_channel_sourcesconda-forgeconda-forgelabelpython_rcpython3.15.____cp315.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge,conda-forge/label/python_rc\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.15.* *_cp315\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - fortran_compiler_version\n- - python\n  - channel_sources\n",
   "ci_support_migrations": {
+    "flang21": {
+      "migration_number": 1,
+      "migrator_ts": 1761259558.8193212
+    },
     "python315": {
       "migration_number": 1,
       "migrator_ts": 1755739490
@@ -19,8 +23,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "2499c09ace9573f20f804ef755e01b1482b86fd7",
-  "feedstock_hash_ts": 1790668920,
+  "feedstock_hash": "c8b1f0d6a4ee28905f2d28b0685aea66ce1f77b1",
+  "feedstock_hash_ts": 1790715073,
   "feedstock_name": "pygtide",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -33,7 +37,7 @@
       "summary": "A Python module and wrapper for ETERNA PREDICT to compute gravitational tides on Earth"
     },
     "build": {
-      "number": "1",
+      "number": "5",
       "script": [
         "unset MESON_BUILD_ROOT",
         "unset MESON_SOURCE_ROOT",
@@ -303,7 +307,7 @@
       "summary": "A Python module and wrapper for ETERNA PREDICT to compute gravitational tides on Earth"
     },
     "build": {
-      "number": "1",
+      "number": "5",
       "script": [
         "unset MESON_BUILD_ROOT",
         "unset MESON_SOURCE_ROOT",
@@ -313,8 +317,16 @@
         "$PYTHON -m pip install . -vv --no-build-isolation --no-deps",
         "set \"AR=llvm-ar\"",
         "set \"LIB=%PREFIX%\\Library\\lib;%BUILD_PREFIX%\\Library\\lib;%LIB%\"",
-        "set \"FFLAGS=%FFLAGS% -std=legacy\"",
-        "%PYTHON% -m pip install . -vv --no-build-isolation --no-deps"
+        "set \"FFLAGS=%FFLAGS% -fms-runtime-lib=static\"",
+        "for /f \"delims=\" %%i in ('where /r \"%BUILD_PREFIX%\\Library\\lib\\clang\" flang_rt.runtime.static.lib 2^>nul') do set \"FLANG_LIB_DIR=%%~dpi\"",
+        "if not defined FLANG_LIB_DIR (echo Flang static runtime library not found & exit /b 1)",
+        "set \"FLANG_WINDOWS_LIB_DIR=%FLANG_LIB_DIR%..\\windows\"",
+        "set \"LIB=%FLANG_WINDOWS_LIB_DIR%;%FLANG_LIB_DIR%;%LIB%\"",
+        "set \"LIBPATH=%FLANG_WINDOWS_LIB_DIR%;%FLANG_LIB_DIR%;%BUILD_PREFIX%\\Library\\lib;%LIBPATH%\"",
+        "set \"LD=lld-link\"",
+        "set \"FC_LD=lld-link\"",
+        "set \"CC_LD=lld-link\"",
+        "\"%PYTHON%\" -m pip install . -vv --no-build-isolation --no-deps || (if exist build_abi\\meson-logs\\meson-log.txt type build_abi\\meson-logs\\meson-log.txt & exit /b 1)"
       ]
     },
     "extra": {
@@ -904,7 +916,7 @@
       "summary": "A Python module and wrapper for ETERNA PREDICT to compute gravitational tides on Earth"
     },
     "build": {
-      "number": "1",
+      "number": "5",
       "script": [
         "unset MESON_BUILD_ROOT",
         "unset MESON_SOURCE_ROOT",
@@ -1179,7 +1191,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pygtide.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.9.5\"\n\npackage:\n  name: pygtide\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/p/pygtide/pygtide-${{ version }}.tar.gz\n  sha256: 2d7f88b6cd83f28e38aecc19b9e2bdbdbfa6a32a85428ff92ec74c9d5c847407\n\nbuild:\n  skip: match(python, \"<3.10\")\n  number: 1\n  script:\n    - if: win\n      then:\n        - set \"AR=llvm-ar\"\n        - set \"LIB=%PREFIX%\\Library\\lib;%BUILD_PREFIX%\\Library\\lib;%LIB%\"\n        # Pass legacy standard flag for Fortran compatibility\n        - set \"FFLAGS=%FFLAGS% -std=legacy\"\n        - \"%PYTHON% -m pip install . -vv --no-build-isolation --no-deps\"\n      else:\n        - unset MESON_BUILD_ROOT\n        - unset MESON_SOURCE_ROOT\n        - unset NINJA_STATUS\n        - unset NINJA_LOG_PATH\n        - unset MESONINTROSPECT\n        - \"$PYTHON -m pip install . -vv --no-build-isolation --no-deps\"\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('fortran') }}\n    - ${{ stdlib('c') }}\n    - if: win\n      then:\n        - llvm-tools\n\n  host:\n    - python\n    - pip\n    - setuptools >=61\n    - wheel\n    - meson >=1.1.0\n    - ninja\n    - numpy >=1.21\n    - if: win\n      then:\n        - libpgmath\n\n  run:\n    - python\n    - numpy >=1.21\n    - pandas\n\ntests:\n  - python:\n      imports:\n        - pygtide\n      pip_check: true\n\nabout:\n  homepage: https://github.com/hydrogeoscience/pygtide\n  summary: A Python module and wrapper for ETERNA PREDICT to compute gravitational tides on Earth\n  documentation: https://hydrogeo.science\n  license: MPL-2.0\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - craigmillernz\n    - hydrogeoscience\n",
+  "raw_meta_yaml": "context:\n  version: \"0.9.5\"\n\npackage:\n  name: pygtide\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/p/pygtide/pygtide-${{ version }}.tar.gz\n  sha256: 2d7f88b6cd83f28e38aecc19b9e2bdbdbfa6a32a85428ff92ec74c9d5c847407\n\nbuild:\n  skip: match(python, \"<3.10\")\n  number: 5\n  script:\n    - if: win\n      then:\n        - set \"AR=llvm-ar\"\n        - set \"LIB=%PREFIX%\\Library\\lib;%BUILD_PREFIX%\\Library\\lib;%LIB%\"\n        - set \"FFLAGS=%FFLAGS% -fms-runtime-lib=static\"\n        - for /f \"delims=\" %%i in ('where /r \"%BUILD_PREFIX%\\Library\\lib\\clang\" flang_rt.runtime.static.lib 2^>nul') do set \"FLANG_LIB_DIR=%%~dpi\"\n        - if not defined FLANG_LIB_DIR (echo Flang static runtime library not found & exit /b 1)\n        - set \"FLANG_WINDOWS_LIB_DIR=%FLANG_LIB_DIR%..\\windows\"\n        - set \"LIB=%FLANG_WINDOWS_LIB_DIR%;%FLANG_LIB_DIR%;%LIB%\"\n        - set \"LIBPATH=%FLANG_WINDOWS_LIB_DIR%;%FLANG_LIB_DIR%;%BUILD_PREFIX%\\Library\\lib;%LIBPATH%\"\n        # flang (LLVM) needs an explicit linker on windows, or meson's compiler check fails\n        - set \"LD=lld-link\"\n        - set \"FC_LD=lld-link\"\n        - set \"CC_LD=lld-link\"\n        - '\"%PYTHON%\" -m pip install . -vv --no-build-isolation --no-deps || (if exist build_abi\\meson-logs\\meson-log.txt type build_abi\\meson-logs\\meson-log.txt & exit /b 1)'\n      else:\n        - unset MESON_BUILD_ROOT\n        - unset MESON_SOURCE_ROOT\n        - unset NINJA_STATUS\n        - unset NINJA_LOG_PATH\n        - unset MESONINTROSPECT\n        - \"$PYTHON -m pip install . -vv --no-build-isolation --no-deps\"\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('fortran') }}\n    - ${{ stdlib('c') }}\n    - if: win\n      then:\n        - llvm-tools\n\n  host:\n    - python\n    - pip\n    - setuptools >=61\n    - wheel\n    - meson >=1.1.0\n    - ninja\n    - numpy >=1.21\n    - if: win\n      then:\n        - libpgmath\n\n  run:\n    - python\n    - numpy >=1.21\n    - pandas\n\ntests:\n  - python:\n      imports:\n        - pygtide\n      pip_check: true\n\nabout:\n  homepage: https://github.com/hydrogeoscience/pygtide\n  summary: A Python module and wrapper for ETERNA PREDICT to compute gravitational tides on Earth\n  documentation: https://hydrogeo.science\n  license: MPL-2.0\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - craigmillernz\n    - hydrogeoscience\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1296,12 +1308,20 @@
       "summary": "A Python module and wrapper for ETERNA PREDICT to compute gravitational tides on Earth"
     },
     "build": {
-      "number": "1",
+      "number": "5",
       "script": [
         "set \"AR=llvm-ar\"",
         "set \"LIB=%PREFIX%\\Library\\lib;%BUILD_PREFIX%\\Library\\lib;%LIB%\"",
-        "set \"FFLAGS=%FFLAGS% -std=legacy\"",
-        "%PYTHON% -m pip install . -vv --no-build-isolation --no-deps"
+        "set \"FFLAGS=%FFLAGS% -fms-runtime-lib=static\"",
+        "for /f \"delims=\" %%i in ('where /r \"%BUILD_PREFIX%\\Library\\lib\\clang\" flang_rt.runtime.static.lib 2^>nul') do set \"FLANG_LIB_DIR=%%~dpi\"",
+        "if not defined FLANG_LIB_DIR (echo Flang static runtime library not found & exit /b 1)",
+        "set \"FLANG_WINDOWS_LIB_DIR=%FLANG_LIB_DIR%..\\windows\"",
+        "set \"LIB=%FLANG_WINDOWS_LIB_DIR%;%FLANG_LIB_DIR%;%LIB%\"",
+        "set \"LIBPATH=%FLANG_WINDOWS_LIB_DIR%;%FLANG_LIB_DIR%;%BUILD_PREFIX%\\Library\\lib;%LIBPATH%\"",
+        "set \"LD=lld-link\"",
+        "set \"FC_LD=lld-link\"",
+        "set \"CC_LD=lld-link\"",
+        "\"%PYTHON%\" -m pip install . -vv --no-build-isolation --no-deps || (if exist build_abi\\meson-logs\\meson-log.txt type build_abi\\meson-logs\\meson-log.txt & exit /b 1)"
       ]
     },
     "extra": {
