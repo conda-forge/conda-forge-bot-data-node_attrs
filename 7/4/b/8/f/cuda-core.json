@@ -27,12 +27,13 @@
       "tooling_branch_name": "main"
     },
     "provider": {
-      "linux_aarch64": "default"
+      "linux_aarch64": "default",
+      "win_arm64": "github_actions"
     },
     "test": "native"
   },
-  "feedstock_hash": "3109c370817ecf3c8021642aeb50d924b4bb2b77",
-  "feedstock_hash_ts": 1790196556,
+  "feedstock_hash": "06316e7bcffbdfa58b5d0095ae9cac68ea7e44fb",
+  "feedstock_hash_ts": 1790709631,
   "feedstock_name": "cuda-core",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -47,7 +48,7 @@
       "summary": "cuda.core: pythonic CUDA module"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "SUBDIR": "targets/x86_64-linux"
@@ -591,7 +592,7 @@
       "summary": "cuda.core: pythonic CUDA module"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "SUBDIR": "targets/sbsa-linux"
@@ -1177,7 +1178,7 @@
       "summary": "cuda.core: pythonic CUDA module"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "SUBDIR": "Library\\"
@@ -2568,6 +2569,84 @@
           }
         ],
         "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "cuda-core",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cross-python_win-arm64",
+            "python",
+            "cython >=3.2.5,<3.3"
+          ],
+          "host": [
+            "cython >=3.2.5,<3.3",
+            "pip",
+            "python",
+            "setuptools",
+            "setuptools-scm >=8",
+            "cuda-cudart-dev",
+            "cuda-nvrtc-dev",
+            "cuda-profiler-api",
+            "cuda-bindings 13.*",
+            "cuda-version 13.*"
+          ],
+          "run": [
+            "python",
+            "numpy",
+            "cuda-pathfinder >=1.4.2,<2",
+            "cuda-bindings",
+            "cuda-version"
+          ]
+        },
+        "tests": [
+          {
+            "script": "python -c \"from cuda.core import Device, Buffer, utils; print('ok')\""
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "cuda-core",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cross-python_win-arm64",
+            "python",
+            "cython >=3.2.5,<3.3"
+          ],
+          "host": [
+            "cython >=3.2.5,<3.3",
+            "pip",
+            "python",
+            "setuptools",
+            "setuptools-scm >=8",
+            "cuda-cudart-dev",
+            "cuda-nvrtc-dev",
+            "cuda-profiler-api",
+            "cuda-bindings 13.*",
+            "cuda-version 13.*"
+          ],
+          "run": [
+            "python",
+            "numpy",
+            "cuda-pathfinder >=1.4.2,<2",
+            "cuda-bindings",
+            "cuda-version"
+          ]
+        },
+        "tests": [
+          {
+            "script": "python -c \"from cuda.core import Device, Buffer, utils; print('ok')\""
+          }
+        ],
+        "version": "1.2.1"
       }
     ],
     "package": {
@@ -2582,7 +2661,8 @@
         "cross-python_linux-aarch64",
         "python",
         "cython >=3.2.5,<3.3",
-        "cross-python_win-64"
+        "cross-python_win-64",
+        "cross-python_win-arm64"
       ],
       "host": [
         "cython >=3.2.5,<3.3",
@@ -2624,12 +2704,13 @@
   "platforms": [
     "linux_64",
     "linux_aarch64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/cuda-core.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: cuda-core\n  version: \"1.2.1\"\n  number: 0\n  target_name: ${{ \"sbsa-linux\" if aarch64 else 'x86_64-linux' if linux else \"x64\" if win else \"\" }}\n  subdir: ${{ \"targets/\" ~ target_name if aarch64 or linux else \"Library\\\\\" if win else \"\" }}\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/NVIDIA/cuda-python/releases/download/${{ name }}-v${{ version }}/cuda-python-${{ name }}-v${{ version }}.tar.gz\n  sha256: 6adaaf5a73dcea412ef2766131270126609ae1cbd79644e9e04b38f9c08c2336\n\nbuild:\n  number: ${{ number }}\n  string: cuda${{ cuda_major_version }}_py${{ python | version_to_buildstring }}h${{ hash }}_${{ build_number }}\n  skip: match(python, \"<3.10\") or ppc64le or osx\n  script:\n    # keep `file` explicit: a script mapping without file/content is invalid per the recipe-format schema\n    file: ${{ \"build.bat\" if win else \"build.sh\" }}\n    env:\n      SUBDIR: ${{ subdir }}\n  dynamic_linking:\n    missing_dso_allowlist:\n      - if: win\n        then:\n          - \"*/torch_cpu.dll\"\n          - \"*/torch_python.dll\"\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - if: build_platform != target_platform\n      then:\n        - cross-python_${{ target_platform }}\n        - python\n        - cython >=3.2.5,<3.3\n  host:\n    - cython >=3.2.5,<3.3\n    - pip\n    - python\n    - setuptools\n    - setuptools-scm >=8\n    - cuda-cudart-dev\n    - cuda-nvrtc-dev\n    - cuda-profiler-api\n    - cuda-bindings ${{ cuda_major_version }}.*\n    - cuda-version ${{ cuda_major_version }}.*\n  run:\n    - python\n    - numpy\n    - cuda-pathfinder >=1.4.2,<2\n    - if: match(python, \"<3.11\")\n      then: backports.strenum\n    - ${{ pin_compatible(\"cuda-bindings\", lower_bound=\"x\", upper_bound=\"x\") }}\n    - ${{ pin_compatible(\"cuda-version\", lower_bound=\"x\", upper_bound=\"x\") }}\n  ignore_run_exports:\n    from_package:\n      - cuda-cudart-dev\n      - cuda-nvrtc-dev\n\ntests:\n  - script:\n      - python -c \"from cuda.core import Device, Buffer, utils; print('ok')\"\n\nabout:\n  license: Apache-2.0\n  license_file: cuda_core/LICENSE\n  summary: \"cuda.core: pythonic CUDA module\"\n  description: |\n    cuda.core bridges Python's productivity with CUDA's performance through intuitive and pythonic APIs.\n    The mission is to provide users full access to all of the core CUDA features in Python, such as\n    runtime control, compiler and linker.\n  homepage: https://nvidia.github.io/cuda-python/cuda-core\n  repository: https://github.com/NVIDIA/cuda-python\n  documentation: https://nvidia.github.io/cuda-python/cuda-core\n\nextra:\n  recipe-maintainers:\n    - conda-forge/cuda-python\n    - bdice\n    - leofang\n    - kkraus14\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: cuda-core\n  version: \"1.2.1\"\n  number: 1\n  target_name: ${{ \"sbsa-linux\" if aarch64 else 'x86_64-linux' if linux else \"arm64\" if win and arm64 else \"x64\" if win else \"\" }}\n  subdir: ${{ \"targets/\" ~ target_name if aarch64 or linux else \"Library\\\\\" if win else \"\" }}\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/NVIDIA/cuda-python/releases/download/${{ name }}-v${{ version }}/cuda-python-${{ name }}-v${{ version }}.tar.gz\n  sha256: 6adaaf5a73dcea412ef2766131270126609ae1cbd79644e9e04b38f9c08c2336\n\nbuild:\n  number: ${{ number }}\n  string: cuda${{ cuda_major_version }}_py${{ python | version_to_buildstring }}h${{ hash }}_${{ build_number }}\n  # conda-forge does not ship CPython builds for win-arm64 until PY314\n  # CUDA 12 does not support WoA\n  skip: match(python, \"<3.10\") or ppc64le or osx or (win and arm64 and (match(python, \"<3.14\") or cuda_major_version == \"12\"))\n  script:\n    # keep `file` explicit: a script mapping without file/content is invalid per the recipe-format schema\n    file: ${{ \"build.bat\" if win else \"build.sh\" }}\n    env:\n      SUBDIR: ${{ subdir }}\n  dynamic_linking:\n    missing_dso_allowlist:\n      - if: win\n        then:\n          - \"*/torch_cpu.dll\"\n          - \"*/torch_python.dll\"\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - if: build_platform != target_platform\n      then:\n        - cross-python_${{ target_platform }}\n        - python\n        - cython >=3.2.5,<3.3\n  host:\n    - cython >=3.2.5,<3.3\n    - pip\n    - python\n    - setuptools\n    - setuptools-scm >=8\n    - cuda-cudart-dev\n    - cuda-nvrtc-dev\n    - cuda-profiler-api\n    - cuda-bindings ${{ cuda_major_version }}.*\n    - cuda-version ${{ cuda_major_version }}.*\n  run:\n    - python\n    - numpy\n    - cuda-pathfinder >=1.4.2,<2\n    - if: match(python, \"<3.11\")\n      then: backports.strenum\n    - ${{ pin_compatible(\"cuda-bindings\", lower_bound=\"x\", upper_bound=\"x\") }}\n    - ${{ pin_compatible(\"cuda-version\", lower_bound=\"x\", upper_bound=\"x\") }}\n  ignore_run_exports:\n    from_package:\n      - cuda-cudart-dev\n      - cuda-nvrtc-dev\n\ntests:\n  - script:\n      - python -c \"from cuda.core import Device, Buffer, utils; print('ok')\"\n\nabout:\n  license: Apache-2.0\n  license_file: cuda_core/LICENSE\n  summary: \"cuda.core: pythonic CUDA module\"\n  description: |\n    cuda.core bridges Python's productivity with CUDA's performance through intuitive and pythonic APIs.\n    The mission is to provide users full access to all of the core CUDA features in Python, such as\n    runtime control, compiler and linker.\n  homepage: https://nvidia.github.io/cuda-python/cuda-core\n  repository: https://github.com/NVIDIA/cuda-python\n  documentation: https://nvidia.github.io/cuda-python/cuda-core\n\nextra:\n  recipe-maintainers:\n    - conda-forge/cuda-python\n    - bdice\n    - leofang\n    - kkraus14\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2638,6 +2719,7 @@
       "c_stdlib_stub",
       "cross-python_linux-aarch64",
       "cross-python_win-64",
+      "cross-python_win-arm64",
       "cuda-bindings",
       "cuda-cudart-dev",
       "cuda-nvrtc-dev",
@@ -2661,6 +2743,7 @@
         "c_stdlib_stub",
         "cross-python_linux-aarch64",
         "cross-python_win-64",
+        "cross-python_win-arm64",
         "cxx_compiler_stub",
         "cython",
         "python"
@@ -2712,6 +2795,7 @@
         "c_stdlib_stub",
         "cross-python_linux-aarch64",
         "cross-python_win-64",
+        "cross-python_win-arm64",
         "cxx_compiler_stub",
         "cython >=3.2.5,<3.3",
         "python"
@@ -2767,7 +2851,7 @@
       "summary": "cuda.core: pythonic CUDA module"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "SUBDIR": "Library\\"
@@ -3329,6 +3413,196 @@
       "__set__": true,
       "elements": [
         "backports.strenum",
+        "cuda-bindings",
+        "cuda-pathfinder",
+        "cuda-version",
+        "numpy",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "description": "cuda.core bridges Python's productivity with CUDA's performance through intuitive and pythonic APIs.\nThe mission is to provide users full access to all of the core CUDA features in Python, such as\nruntime control, compiler and linker.",
+      "dev_url": "https://github.com/NVIDIA/cuda-python",
+      "doc_url": "https://nvidia.github.io/cuda-python/cuda-core",
+      "home": "https://nvidia.github.io/cuda-python/cuda-core",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "cuda_core/LICENSE",
+      "summary": "cuda.core: pythonic CUDA module"
+    },
+    "build": {
+      "number": "1",
+      "script": {
+        "env": {
+          "SUBDIR": "Library\\"
+        },
+        "file": "build.bat",
+        "interpreter": "cmd"
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "conda-forge/cuda-python",
+        "bdice",
+        "leofang",
+        "kkraus14"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "cuda-core",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cross-python_win-arm64",
+            "python",
+            "cython >=3.2.5,<3.3"
+          ],
+          "host": [
+            "cython >=3.2.5,<3.3",
+            "pip",
+            "python",
+            "setuptools",
+            "setuptools-scm >=8",
+            "cuda-cudart-dev",
+            "cuda-nvrtc-dev",
+            "cuda-profiler-api",
+            "cuda-bindings 13.*",
+            "cuda-version 13.*"
+          ],
+          "run": [
+            "python",
+            "numpy",
+            "cuda-pathfinder >=1.4.2,<2",
+            "cuda-bindings",
+            "cuda-version"
+          ]
+        },
+        "tests": [
+          {
+            "script": "python -c \"from cuda.core import Device, Buffer, utils; print('ok')\""
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "cuda-core",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cross-python_win-arm64",
+            "python",
+            "cython >=3.2.5,<3.3"
+          ],
+          "host": [
+            "cython >=3.2.5,<3.3",
+            "pip",
+            "python",
+            "setuptools",
+            "setuptools-scm >=8",
+            "cuda-cudart-dev",
+            "cuda-nvrtc-dev",
+            "cuda-profiler-api",
+            "cuda-bindings 13.*",
+            "cuda-version 13.*"
+          ],
+          "run": [
+            "python",
+            "numpy",
+            "cuda-pathfinder >=1.4.2,<2",
+            "cuda-bindings",
+            "cuda-version"
+          ]
+        },
+        "tests": [
+          {
+            "script": "python -c \"from cuda.core import Device, Buffer, utils; print('ok')\""
+          }
+        ],
+        "version": "1.2.1"
+      }
+    ],
+    "package": {
+      "name": "cuda-core",
+      "version": "1.2.1"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cross-python_win-arm64",
+        "python",
+        "cython >=3.2.5,<3.3"
+      ],
+      "host": [
+        "cython >=3.2.5,<3.3",
+        "pip",
+        "python",
+        "setuptools",
+        "setuptools-scm >=8",
+        "cuda-cudart-dev",
+        "cuda-nvrtc-dev",
+        "cuda-profiler-api",
+        "cuda-bindings 13.*",
+        "cuda-version 13.*"
+      ],
+      "run": [
+        "python",
+        "numpy",
+        "cuda-pathfinder >=1.4.2,<2",
+        "cuda-bindings",
+        "cuda-version"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "6adaaf5a73dcea412ef2766131270126609ae1cbd79644e9e04b38f9c08c2336",
+      "url": "https://github.com/NVIDIA/cuda-python/releases/download/cuda-core-v1.2.1/cuda-python-cuda-core-v1.2.1.tar.gz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cross-python_win-arm64",
+        "cxx_compiler_stub",
+        "cython",
+        "python"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "cuda-bindings",
+        "cuda-cudart-dev",
+        "cuda-nvrtc-dev",
+        "cuda-profiler-api",
+        "cuda-version",
+        "cython",
+        "pip",
+        "python",
+        "setuptools",
+        "setuptools-scm"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
         "cuda-bindings",
         "cuda-pathfinder",
         "cuda-version",
