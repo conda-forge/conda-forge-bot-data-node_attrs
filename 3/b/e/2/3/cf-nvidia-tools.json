@@ -18,8 +18,8 @@
       "linux_64"
     ]
   },
-  "feedstock_hash": "b715d9dbaf5f309638f3e3e1732438c3b26f5e68",
-  "feedstock_hash_ts": 1790711328,
+  "feedstock_hash": "e1b846b8fd308118c142debfdfa682d2beb54cce",
+  "feedstock_hash_ts": 1790712622,
   "feedstock_name": "cf-nvidia-tools",
   "linux_64_meta_yaml": {
     "about": {
@@ -32,7 +32,7 @@
     },
     "build": {
       "noarch": "python",
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "check-cuda-arch = cf_nvidia_tools.check_cuda_arch:main",
@@ -71,6 +71,7 @@
           ],
           "run": [
             "patchelf >=0.12",
+            "__unix",
             "python >=3.11",
             "cuda-cuobjdump"
           ]
@@ -118,6 +119,7 @@
       ],
       "run": [
         "patchelf >=0.12",
+        "__unix",
         "python >=3.11",
         "cuda-cuobjdump"
       ]
@@ -144,6 +146,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "__unix",
         "cuda-cuobjdump",
         "patchelf",
         "python"
@@ -168,7 +171,7 @@
     },
     "build": {
       "noarch": "python",
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "check-cuda-arch = cf_nvidia_tools.check_cuda_arch:main",
@@ -207,6 +210,7 @@
           ],
           "run": [
             "patchelf >=0.12",
+            "__unix",
             "python >=3.11",
             "cuda-cuobjdump"
           ]
@@ -257,6 +261,7 @@
             "setuptools-scm"
           ],
           "run": [
+            "__win",
             "python >=3.11",
             "cuda-cuobjdump"
           ]
@@ -290,8 +295,10 @@
       ],
       "run": [
         "patchelf >=0.12",
+        "__unix",
         "python >=3.11",
-        "cuda-cuobjdump"
+        "cuda-cuobjdump",
+        "__win"
       ]
     },
     "schema_version": 1,
@@ -312,10 +319,12 @@
   "pr_info": {
     "__lazy_json__": "pr_info/cf-nvidia-tools.json"
   },
-  "raw_meta_yaml": "context:\n  name: cf-nvidia-tools\n  version: \"1.1.0\"\n  build_number: 1\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  - path: .\n\nbuild:\n  noarch: python\n  number: ${{ build_number }}\n  script:\n    - if: win\n      then: build.bat\n      else: build.sh\n  string: ${{ winorunix }}_${{ hash }}_${{ build_number }}\n  python:\n    entry_points:\n      - check-cuda-arch = cf_nvidia_tools.check_cuda_arch:main\n      - trim-cuda-archs = cf_nvidia_tools.trim_cuda_archs:main\n\nrequirements:\n  build:\n    - if: unix\n      then:\n        - shellcheck\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - setuptools\n    - setuptools-scm\n  run:\n    - if: unix\n      then:\n        - patchelf >=0.12\n    - python >=${{ python_min }}\n    - cuda-cuobjdump\n\ntests:\n  - if: linux\n    then:\n      - requirements:\n          run:\n            - dav1d-dev\n        script:\n        - check-glibc || true\n        - export c_stdlib_version=\"99.99.99\"\n        - check-glibc \"${CONDA_PREFIX}\"/lib/*.so.*\n        # Also check that tool will exit 1 if c_stdlib_version is too old\n        - export c_stdlib_version=\"0.0.1\"\n        - \"[ $(check-glibc ${CONDA_PREFIX}/lib/*.so.* &>/dev/null; echo $?) -eq 1 ]\"\n  - requirements:\n      run:\n        - libcublas 13.*\n    script:\n      # Separate native scripts, not a shared Python one, so each platform's test actually\n      # exercises the shell setting idiom documented for it (bash `export X=\"$(...)\"` vs.\n      # cmd.exe `for /f ... do set X=...`), not just a subprocess call into the tool.\n      - if: win\n        then: test_trim_cuda_archs.bat\n        else: test_trim_cuda_archs.sh\nabout:\n  summary: NVIDIA's feedstock validation and linting tools for conda-forge\n  description: >\n    This package contains CLI tools for validating and linting NVIDIA's conda recipes on\n    conda-forge. For a description of the tools see the README in the package feedstock. The\n    tools are hosted directly in the feedstock; there is no external source code repository\n    for these tools at this time.\n  license: Apache-2.0\n  license_file: LICENSE\n  homepage: https://github.com/conda-forge/cf-nvidia-tools-feedstock\n\nextra:\n  feedstock-name: cf-nvidia-tools\n  recipe-maintainers:\n    - conda-forge/cuda\n",
+  "raw_meta_yaml": "context:\n  name: cf-nvidia-tools\n  version: \"1.1.0\"\n  build_number: 2\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  - path: .\n\nbuild:\n  noarch: python\n  number: ${{ build_number }}\n  script:\n    - if: win\n      then: build.bat\n      else: build.sh\n  string: ${{ winorunix }}_${{ hash }}_${{ build_number }}\n  python:\n    entry_points:\n      - check-cuda-arch = cf_nvidia_tools.check_cuda_arch:main\n      - trim-cuda-archs = cf_nvidia_tools.trim_cuda_archs:main\n\nrequirements:\n  build:\n    - if: unix\n      then:\n        - shellcheck\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - setuptools\n    - setuptools-scm\n  run:\n    - if: unix\n      then:\n        - patchelf >=0.12\n        - __unix\n      else:\n        - __win\n    - python >=${{ python_min }}\n    - cuda-cuobjdump\n\ntests:\n  - if: linux\n    then:\n      - requirements:\n          run:\n            - dav1d-dev\n        script:\n        - check-glibc || true\n        - export c_stdlib_version=\"99.99.99\"\n        - check-glibc \"${CONDA_PREFIX}\"/lib/*.so.*\n        # Also check that tool will exit 1 if c_stdlib_version is too old\n        - export c_stdlib_version=\"0.0.1\"\n        - \"[ $(check-glibc ${CONDA_PREFIX}/lib/*.so.* &>/dev/null; echo $?) -eq 1 ]\"\n  - requirements:\n      run:\n        - libcublas 13.*\n    script:\n      # Separate native scripts, not a shared Python one, so each platform's test actually\n      # exercises the shell setting idiom documented for it (bash `export X=\"$(...)\"` vs.\n      # cmd.exe `for /f ... do set X=...`), not just a subprocess call into the tool.\n      - if: win\n        then: test_trim_cuda_archs.bat\n        else: test_trim_cuda_archs.sh\nabout:\n  summary: NVIDIA's feedstock validation and linting tools for conda-forge\n  description: >\n    This package contains CLI tools for validating and linting NVIDIA's conda recipes on\n    conda-forge. For a description of the tools see the README in the package feedstock. The\n    tools are hosted directly in the feedstock; there is no external source code repository\n    for these tools at this time.\n  license: Apache-2.0\n  license_file: LICENSE\n  homepage: https://github.com/conda-forge/cf-nvidia-tools-feedstock\n\nextra:\n  feedstock-name: cf-nvidia-tools\n  recipe-maintainers:\n    - conda-forge/cuda\n",
   "req": {
     "__set__": true,
     "elements": [
+      "__unix",
+      "__win",
       "cuda-cuobjdump",
       "patchelf",
       "pip",
@@ -344,6 +353,8 @@
     "run": {
       "__set__": true,
       "elements": [
+        "__unix",
+        "__win",
         "cuda-cuobjdump",
         "patchelf",
         "python"
@@ -377,6 +388,8 @@
     "run": {
       "__set__": true,
       "elements": [
+        "__unix",
+        "__win",
         "cuda-cuobjdump",
         "patchelf >=0.12",
         "python >=3.11"
@@ -406,7 +419,7 @@
     },
     "build": {
       "noarch": "python",
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "check-cuda-arch = cf_nvidia_tools.check_cuda_arch:main",
@@ -442,6 +455,7 @@
             "setuptools-scm"
           ],
           "run": [
+            "__win",
             "python >=3.11",
             "cuda-cuobjdump"
           ]
@@ -471,6 +485,7 @@
         "setuptools-scm"
       ],
       "run": [
+        "__win",
         "python >=3.11",
         "cuda-cuobjdump"
       ]
@@ -495,6 +510,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "__win",
         "cuda-cuobjdump",
         "python"
       ]
