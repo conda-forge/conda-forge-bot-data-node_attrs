@@ -1,106 +1,142 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.10.____cpython.yaml": "cdt_name:\n- conda\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncoin_or_cbc:\n- '2.10'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.10.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - channel_sources\n",
-  "ci_support_migrations": {
-    "python313": {
-      "migration_number": 1,
-      "migrator_ts": 1724712607
-    },
-    "python314": {
-      "migration_number": 1,
-      "migrator_ts": 1724712607
-    }
-  },
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
+  "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
       "automerge": true
     },
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
+    "noarch_platforms": [
+      "linux_64",
+      "linux_aarch64",
+      "linux_ppc64le",
+      "osx_64",
+      "osx_arm64",
+      "win_64"
+    ],
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "d5e1090d34b768c55d8afd3dae64c0912e83d212",
-  "feedstock_hash_ts": 1776876245,
+  "feedstock_hash": "f2f3e84168b45b2a1ff219f139a70f4760560745",
+  "feedstock_hash_ts": 1790797703,
   "feedstock_name": "pulp",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/coin-or/pulp",
-      "doc_url": "https://pythonhosted.org/PuLP/",
       "home": "https://github.com/coin-or/pulp",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n"
+      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "number": "3",
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "pulptest = pulp.tests.run_tests:pulpTestAll"
+        ]
+      },
       "script": [
-        "PYTHON -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"",
-        "rm \"${SP_DIR}/pulp/solverdir/CoinMP.dll\""
+        "${{ PYTHON }} -m pip install . -vv",
+        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
       ]
     },
     "extra": {
       "recipe-maintainers": [
         "johanneskoester",
-        "christopher-schroeder"
+        "christopher-schroeder",
+        "mgorny"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      }
+    ],
     "package": {
       "name": "pulp",
-      "version": "2.8.0"
+      "version": "3.3.2"
     },
     "requirements": {
-      "build": [],
       "host": [
         "pip",
-        "python",
-        "setuptools"
+        "python 3.11.*",
+        "setuptools >=77"
       ],
       "run": [
         "amply >=0.1.2",
         "coin-or-cbc",
-        "python"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
-        "pulp.cfg.linux.patch",
-        "pulp.cfg.osx.patch"
+        "patches/system-cbc.patch"
       ],
-      "sha256": "4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125",
-      "url": "https://pypi.org/packages/source/P/PuLP/PuLP-2.8.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\""
-      ],
-      "imports": [
-        "pulp",
-        "pulp.solverdir"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -134,71 +170,118 @@
   "linux_aarch64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/coin-or/pulp",
-      "doc_url": "https://pythonhosted.org/PuLP/",
       "home": "https://github.com/coin-or/pulp",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n"
+      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "number": "3",
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "pulptest = pulp.tests.run_tests:pulpTestAll"
+        ]
+      },
       "script": [
-        "PYTHON -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"",
-        "rm \"${SP_DIR}/pulp/solverdir/CoinMP.dll\""
+        "${{ PYTHON }} -m pip install . -vv",
+        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
       ]
     },
     "extra": {
       "recipe-maintainers": [
         "johanneskoester",
-        "christopher-schroeder"
+        "christopher-schroeder",
+        "mgorny"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      }
+    ],
     "package": {
       "name": "pulp",
-      "version": "2.8.0"
+      "version": "3.3.2"
     },
     "requirements": {
-      "build": [],
+      "build": [
+        "python",
+        "cross-python_linux-aarch64"
+      ],
       "host": [
         "pip",
-        "python",
-        "setuptools"
+        "python 3.11.*",
+        "setuptools >=77"
       ],
       "run": [
         "amply >=0.1.2",
         "coin-or-cbc",
-        "python"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
-        "pulp.cfg.linux.patch",
-        "pulp.cfg.osx.patch"
+        "patches/system-cbc.patch"
       ],
-      "sha256": "4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125",
-      "url": "https://pypi.org/packages/source/P/PuLP/PuLP-2.8.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\""
-      ],
-      "imports": [
-        "pulp",
-        "pulp.solverdir"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cross-python_linux-aarch64",
+        "python"
+      ]
     },
     "host": {
       "__set__": true,
@@ -226,71 +309,118 @@
   "linux_ppc64le_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/coin-or/pulp",
-      "doc_url": "https://pythonhosted.org/PuLP/",
       "home": "https://github.com/coin-or/pulp",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n"
+      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "number": "3",
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "pulptest = pulp.tests.run_tests:pulpTestAll"
+        ]
+      },
       "script": [
-        "PYTHON -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"",
-        "rm \"${SP_DIR}/pulp/solverdir/CoinMP.dll\""
+        "${{ PYTHON }} -m pip install . -vv",
+        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
       ]
     },
     "extra": {
       "recipe-maintainers": [
         "johanneskoester",
-        "christopher-schroeder"
+        "christopher-schroeder",
+        "mgorny"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      }
+    ],
     "package": {
       "name": "pulp",
-      "version": "2.8.0"
+      "version": "3.3.2"
     },
     "requirements": {
-      "build": [],
+      "build": [
+        "python",
+        "cross-python_linux-ppc64le"
+      ],
       "host": [
         "pip",
-        "python",
-        "setuptools"
+        "python 3.11.*",
+        "setuptools >=77"
       ],
       "run": [
         "amply >=0.1.2",
         "coin-or-cbc",
-        "python"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
-        "pulp.cfg.linux.patch",
-        "pulp.cfg.osx.patch"
+        "patches/system-cbc.patch"
       ],
-      "sha256": "4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125",
-      "url": "https://pypi.org/packages/source/P/PuLP/PuLP-2.8.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\""
-      ],
-      "imports": [
-        "pulp",
-        "pulp.solverdir"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cross-python_linux-ppc64le",
+        "python"
+      ]
     },
     "host": {
       "__set__": true,
@@ -318,136 +448,465 @@
   "meta_yaml": {
     "about": {
       "dev_url": "https://github.com/coin-or/pulp",
-      "doc_url": "https://pythonhosted.org/PuLP/",
       "home": "https://github.com/coin-or/pulp",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n"
+      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "number": "3",
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "pulptest = pulp.tests.run_tests:pulpTestAll"
+        ]
+      },
       "script": [
-        "PYTHON -m pip install . -vv",
+        "${{ PYTHON }} -m pip install . -vv",
         "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"",
-        "rm \"${SP_DIR}/pulp/solverdir/CoinMP.dll\""
+        "rd /s /q %SP_DIR%/pulp/solverdir/cbc"
       ]
     },
     "extra": {
       "recipe-maintainers": [
         "johanneskoester",
-        "christopher-schroeder"
+        "christopher-schroeder",
+        "mgorny"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      },
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      },
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      },
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      },
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      },
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      }
+    ],
     "package": {
       "name": "pulp",
-      "version": "2.8.0"
+      "version": "3.3.2"
     },
     "requirements": {
-      "build": [],
+      "build": [
+        "python",
+        "cross-python_win-64"
+      ],
       "host": [
         "pip",
-        "python",
-        "setuptools"
+        "python 3.11.*",
+        "setuptools >=77"
       ],
       "run": [
         "amply >=0.1.2",
         "coin-or-cbc",
-        "python"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
-        "pulp.cfg.linux.patch",
-        "pulp.cfg.osx.patch"
+        "patches/system-cbc.patch"
       ],
-      "sha256": "4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125",
-      "url": "https://pypi.org/packages/source/P/PuLP/PuLP-2.8.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\""
-      ],
-      "imports": [
-        "pulp",
-        "pulp.solverdir"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
     }
   },
   "name": "pulp",
   "osx_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/coin-or/pulp",
-      "doc_url": "https://pythonhosted.org/PuLP/",
       "home": "https://github.com/coin-or/pulp",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n"
+      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "number": "3",
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "pulptest = pulp.tests.run_tests:pulpTestAll"
+        ]
+      },
       "script": [
-        "PYTHON -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"",
-        "rm \"${SP_DIR}/pulp/solverdir/CoinMP.dll\""
+        "${{ PYTHON }} -m pip install . -vv",
+        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
       ]
     },
     "extra": {
       "recipe-maintainers": [
         "johanneskoester",
-        "christopher-schroeder"
+        "christopher-schroeder",
+        "mgorny"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      }
+    ],
     "package": {
       "name": "pulp",
-      "version": "2.8.0"
+      "version": "3.3.2"
     },
     "requirements": {
-      "build": [],
+      "build": [
+        "python",
+        "cross-python_osx-64"
+      ],
       "host": [
         "pip",
-        "python",
-        "setuptools"
+        "python 3.11.*",
+        "setuptools >=77"
       ],
       "run": [
         "amply >=0.1.2",
         "coin-or-cbc",
-        "python"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
-        "pulp.cfg.linux.patch",
-        "pulp.cfg.osx.patch"
+        "patches/system-cbc.patch"
       ],
-      "sha256": "4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125",
-      "url": "https://pypi.org/packages/source/P/PuLP/PuLP-2.8.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\""
-      ],
-      "imports": [
-        "pulp",
-        "pulp.solverdir"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
     }
   },
   "osx_64_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cross-python_osx-64",
+        "python"
+      ]
     },
     "host": {
       "__set__": true,
@@ -475,71 +934,118 @@
   "osx_arm64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/coin-or/pulp",
-      "doc_url": "https://pythonhosted.org/PuLP/",
       "home": "https://github.com/coin-or/pulp",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n"
+      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "number": "3",
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "pulptest = pulp.tests.run_tests:pulpTestAll"
+        ]
+      },
       "script": [
-        "PYTHON -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"",
-        "rm \"${SP_DIR}/pulp/solverdir/CoinMP.dll\""
+        "${{ PYTHON }} -m pip install . -vv",
+        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
       ]
     },
     "extra": {
       "recipe-maintainers": [
         "johanneskoester",
-        "christopher-schroeder"
+        "christopher-schroeder",
+        "mgorny"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      }
+    ],
     "package": {
       "name": "pulp",
-      "version": "2.8.0"
+      "version": "3.3.2"
     },
     "requirements": {
-      "build": [],
+      "build": [
+        "python",
+        "cross-python_osx-arm64"
+      ],
       "host": [
         "pip",
-        "python",
-        "setuptools"
+        "python 3.11.*",
+        "setuptools >=77"
       ],
       "run": [
         "amply >=0.1.2",
         "coin-or-cbc",
-        "python"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
-        "pulp.cfg.linux.patch",
-        "pulp.cfg.osx.patch"
+        "patches/system-cbc.patch"
       ],
-      "sha256": "4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125",
-      "url": "https://pypi.org/packages/source/P/PuLP/PuLP-2.8.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\""
-      ],
-      "imports": [
-        "pulp",
-        "pulp.solverdir"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
     }
   },
   "osx_arm64_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cross-python_osx-arm64",
+        "python"
+      ]
     },
     "host": {
       "__set__": true,
@@ -582,12 +1088,17 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pulp.json"
   },
-  "raw_meta_yaml": "{% set version = \"2.8.0\" %}\n\npackage:\n  name: pulp\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/P/PuLP/PuLP-{{ version }}.tar.gz\n  sha256: 4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125\n  patches:\n    # Use the conda provided cbc binary, not those bundled in tar-ball:\n    - pulp.cfg.linux.patch\n    - pulp.cfg.osx.patch\n\nbuild:\n  number: 3\n  script:\n    - {{ PYTHON }} -m pip install . -vv\n    # Remove bundled cbc binaries, using coin-or-cbc provided cbc instead:\n    - rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"  # [not win]\n    - rm \"${SP_DIR}/pulp/solverdir/CoinMP.dll\"  # [not win]\n\nrequirements:\n  build:\n    - python                                 # [build_platform != target_platform]\n    - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n  host:\n    - pip\n    - python\n    - setuptools\n  run:\n    - amply >=0.1.2\n    - coin-or-cbc\n    - python\n\ntest:\n  imports:\n    - pulp\n    - pulp.solverdir\n  commands:\n    - pip check\n    - python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"\n  requires:\n    - pip\n\nabout:\n  summary: |\n    PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\n    and call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n  home: https://github.com/coin-or/pulp\n  license: MIT\n  license_file: LICENSE\n  doc_url: https://pythonhosted.org/PuLP/\n  dev_url: https://github.com/coin-or/pulp\n  license_family: MIT\n\nextra:\n  recipe-maintainers:\n    - johanneskoester\n    - christopher-schroeder\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"3.3.2\"\n\npackage:\n  name: pulp\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/p/pulp/pulp-${{ version }}.tar.gz\n  sha256: d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0\n  patches:\n    - patches/system-cbc.patch\n\nbuild:\n  number: 0\n  noarch: python\n  script:\n    - ${{ PYTHON }} -m pip install . -vv\n    # Remove bundled cbc binaries, using coin-or-cbc provided cbc instead:\n    - if: not win\n      then: rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"\n      else: rd /s /q %SP_DIR%/pulp/solverdir/cbc\n  python:\n    entry_points:\n      - pulptest = pulp.tests.run_tests:pulpTestAll\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n  host:\n    - pip\n    - python ${{ python_min }}.*\n    - setuptools >=77\n  run:\n    - amply >=0.1.2\n    - coin-or-cbc\n    - python >=${{ python_min }}\n\ntests:\n  - python:\n      imports:\n        - pulp\n        - pulp.solverdir\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - script:\n      - python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"\n      - pulptest\n\nabout:\n  summary: |\n    PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\n    and call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n  license: MIT\n  license_file: LICENSE\n  homepage: https://github.com/coin-or/pulp\n  repository: https://github.com/coin-or/pulp\n\nextra:\n  recipe-maintainers:\n    - johanneskoester\n    - christopher-schroeder\n    - mgorny\n",
   "req": {
     "__set__": true,
     "elements": [
       "amply",
       "coin-or-cbc",
+      "cross-python_linux-aarch64",
+      "cross-python_linux-ppc64le",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
+      "cross-python_win-64",
       "pip",
       "python",
       "setuptools"
@@ -596,11 +1107,19 @@
   "requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "python"
+      ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "cross-python",
         "pip",
         "python",
         "setuptools"
@@ -611,6 +1130,7 @@
       "elements": [
         "amply",
         "coin-or-cbc",
+        "cross-python",
         "python"
       ]
     },
@@ -626,14 +1146,21 @@
   "total_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "python"
+      ]
     },
     "host": {
       "__set__": true,
       "elements": [
         "pip",
-        "python",
-        "setuptools"
+        "python 3.11.*",
+        "setuptools >=77"
       ]
     },
     "run": {
@@ -641,7 +1168,7 @@
       "elements": [
         "amply >=0.1.2",
         "coin-or-cbc",
-        "python"
+        "python >=3.11"
       ]
     },
     "test": {
@@ -651,77 +1178,126 @@
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/P/PuLP/PuLP-2.8.0.tar.gz",
-  "version": "2.8.0",
+  "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz",
+  "version": "3.3.2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/pulp.json"
   },
   "win_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/coin-or/pulp",
-      "doc_url": "https://pythonhosted.org/PuLP/",
       "home": "https://github.com/coin-or/pulp",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n"
+      "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "number": "3",
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "pulptest = pulp.tests.run_tests:pulpTestAll"
+        ]
+      },
       "script": [
-        "PYTHON -m pip install . -vv"
+        "${{ PYTHON }} -m pip install . -vv",
+        "rd /s /q %SP_DIR%/pulp/solverdir/cbc"
       ]
     },
     "extra": {
       "recipe-maintainers": [
         "johanneskoester",
-        "christopher-schroeder"
+        "christopher-schroeder",
+        "mgorny"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64"
+          ],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=77"
+          ],
+          "run": [
+            "amply >=0.1.2",
+            "coin-or-cbc",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp",
+                "pulp.solverdir"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "pulptest"
+            ]
+          }
+        ],
+        "version": "3.3.2"
+      }
+    ],
     "package": {
       "name": "pulp",
-      "version": "2.8.0"
+      "version": "3.3.2"
     },
     "requirements": {
-      "build": [],
+      "build": [
+        "python",
+        "cross-python_win-64"
+      ],
       "host": [
         "pip",
-        "python",
-        "setuptools"
+        "python 3.11.*",
+        "setuptools >=77"
       ],
       "run": [
         "amply >=0.1.2",
         "coin-or-cbc",
-        "python"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
-        "pulp.cfg.linux.patch",
-        "pulp.cfg.osx.patch"
+        "patches/system-cbc.patch"
       ],
-      "sha256": "4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125",
-      "url": "https://pypi.org/packages/source/P/PuLP/PuLP-2.8.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\""
-      ],
-      "imports": [
-        "pulp",
-        "pulp.solverdir"
-      ],
-      "requires": [
-        "pip"
-      ]
+      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
     }
   },
   "win_64_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cross-python_win-64",
+        "python"
+      ]
     },
     "host": {
       "__set__": true,
