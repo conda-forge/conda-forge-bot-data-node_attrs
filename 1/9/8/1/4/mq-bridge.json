@@ -1,0 +1,1313 @@
+{
+  "archived": false,
+  "branch": "main",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- true\nis_python_min:\n- true\nlibprotobuf:\n- 7.35.1\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n- - python\n  - is_python_min\n",
+  "ci_support_migrations": {},
+  "conda-forge.yml": {
+    "conda_build": {
+      "error_overlinking": true
+    },
+    "conda_build_tool": "rattler-build",
+    "conda_forge_output_validation": true,
+    "github": {
+      "branch_name": "main",
+      "tooling_branch_name": "main"
+    }
+  },
+  "feedstock_hash": "e687421ded375955054687397f43dabced3d1b39",
+  "feedstock_hash_ts": 1790750819,
+  "feedstock_name": "mq-bridge",
+  "hash_type": "sha256",
+  "linux_64_meta_yaml": {
+    "about": {
+      "description": "mq-bridge-app is a standalone application built on the mq-bridge engine.\nIt moves messages between brokers, databases, files and HTTP endpoints\nfrom a declarative YAML or JSON route configuration, with\ntransformation, filtering, retries, dead-letter queues, deduplication\nand rate limiting available as middleware. It runs as a CLI, an MCP\nserver, or a daemon serving a built-in web UI.",
+      "dev_url": "https://github.com/marcomq/mq-bridge",
+      "doc_url": "https://github.com/marcomq/mq-bridge/tree/main/docs",
+      "home": "https://github.com/marcomq/mq-bridge",
+      "license": "MIT OR Apache-2.0",
+      "license_family": "MIT OR Apache-2.0",
+      "license_file": "apps/mq-bridge-app/LICENSE",
+      "summary": "Zero-code ETL bridge between message brokers, databases and HTTP endpoints"
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "content": [
+          "export PROTOC=\"$BUILD_PREFIX/bin/protoc\"",
+          "export LIBCLANG_PATH=\"$BUILD_PREFIX/lib\"",
+          "export BINDGEN_EXTRA_CLANG_ARGS=\"-I$BUILD_PREFIX/lib/clang/${{ llvm_major }}/include -I$PREFIX/include ${CONDA_TOOLCHAIN_HOST:+--target=$CONDA_TOOLCHAIN_HOST}\"",
+          "export PKG_CONFIG_ALLOW_CROSS=1",
+          "unset RDKAFKA_STATIC LIBCURL_STATIC OPENSSL_STATIC PKG_CONFIG_ALL_STATIC",
+          "export PKG_CONFIG_ALL_DYNAMIC=1",
+          "export RUSTFLAGS=\"${RUSTFLAGS:-} -C link-arg=-L$PREFIX/lib -C link-arg=-Wl,-rpath,$PREFIX/lib\"",
+          "export BINDGEN_EXTRA_CLANG_ARGS=\"$BINDGEN_EXTRA_CLANG_ARGS ${CONDA_BUILD_SYSROOT:+--sysroot=$CONDA_BUILD_SYSROOT}\"",
+          "cp \"$RECIPE_DIR/pnpm-workspace.yaml\" apps/mq-bridge-app/",
+          "cd apps/mq-bridge-app",
+          "pnpm import",
+          "pnpm install --frozen-lockfile",
+          "pnpm run build:ui",
+          "cp node_modules/@tauri-apps/api/LICENSE_MIT node_modules/@tauri-apps/api/LICENSE",
+          "pnpm licenses list --json | pnpm-licenses generate-disclaimer --json-input --output-file ../../THIRDPARTY-node-app.txt",
+          "cargo fetch",
+          "cargo auditable install --path=crates/cli --root=\"$PREFIX\" --no-track --locked --bins --no-default-features --features \"${{ feature_set }}\"",
+          "cargo-bundle-licenses --format=yaml --output=../../THIRDPARTY-rust-app.yml"
+        ]
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "phreed"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "mq-bridge-app",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "cmake",
+            "nodejs >=24,<25",
+            "pnpm >=10.4,<13",
+            "pnpm-licenses >=2.4,<3",
+            "make",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20"
+          ],
+          "host": [
+            "librdkafka >=2.12.1"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "mq-bridge-app --version",
+              "mq-bridge-app --help",
+              "mqb --version"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "mq-bridge-app",
+                "mqb"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.4.16"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "mq-bridge-py",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses",
+            "cmake",
+            "make",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.7,<2",
+            "librdkafka >=2.12.1"
+          ],
+          "run": [
+            "python",
+            "typing_extensions >=4.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mq_bridge",
+                "mq_bridge.config"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/mq_bridge/_mq_bridge.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.4.16"
+      }
+    ],
+    "package": {
+      "name": "mq-bridge-app",
+      "version": "0.4.16"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "cmake",
+        "nodejs >=24,<25",
+        "pnpm >=10.4,<13",
+        "pnpm-licenses >=2.4,<3",
+        "make",
+        "pkg-config",
+        "libprotobuf",
+        "libclang 20.*",
+        "clang-20"
+      ],
+      "host": [
+        "librdkafka >=2.12.1"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "patches/0006-build-the-wheel-with-full-dynamic.patch"
+      ],
+      "sha256": "495b0361bcba51e7089d78f2b1e9fedeae6d43559b9ae3e62af852d6fed0845a",
+      "url": "https://github.com/marcomq/mq-bridge/archive/refs/tags/v0.4.16.tar.gz"
+    }
+  },
+  "linux_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "clang-20",
+        "cmake",
+        "cxx_compiler_stub",
+        "libclang",
+        "libprotobuf",
+        "make",
+        "nodejs",
+        "pkg-config",
+        "pnpm",
+        "pnpm-licenses",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "librdkafka",
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "python",
+        "typing_extensions"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip"
+      ]
+    }
+  },
+  "meta_yaml": {
+    "about": {
+      "description": "mq-bridge-app is a standalone application built on the mq-bridge engine.\nIt moves messages between brokers, databases, files and HTTP endpoints\nfrom a declarative YAML or JSON route configuration, with\ntransformation, filtering, retries, dead-letter queues, deduplication\nand rate limiting available as middleware. It runs as a CLI, an MCP\nserver, or a daemon serving a built-in web UI.",
+      "dev_url": "https://github.com/marcomq/mq-bridge",
+      "doc_url": "https://github.com/marcomq/mq-bridge/tree/main/docs",
+      "home": "https://github.com/marcomq/mq-bridge",
+      "license": "MIT OR Apache-2.0",
+      "license_family": "MIT OR Apache-2.0",
+      "license_file": "apps/mq-bridge-app/LICENSE",
+      "summary": "Zero-code ETL bridge between message brokers, databases and HTTP endpoints"
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "content": [
+          "export PROTOC=\"$BUILD_PREFIX/bin/protoc\"",
+          "export LIBCLANG_PATH=\"$BUILD_PREFIX/lib\"",
+          "export BINDGEN_EXTRA_CLANG_ARGS=\"-I$BUILD_PREFIX/lib/clang/${{ llvm_major }}/include -I$PREFIX/include ${CONDA_TOOLCHAIN_HOST:+--target=$CONDA_TOOLCHAIN_HOST}\"",
+          "export PKG_CONFIG_ALLOW_CROSS=1",
+          "unset RDKAFKA_STATIC LIBCURL_STATIC OPENSSL_STATIC PKG_CONFIG_ALL_STATIC",
+          "export PKG_CONFIG_ALL_DYNAMIC=1",
+          "export RUSTFLAGS=\"${RUSTFLAGS:-} -C link-arg=-L$PREFIX/lib -C link-arg=-Wl,-rpath,$PREFIX/lib\"",
+          "export BINDGEN_EXTRA_CLANG_ARGS=\"$BINDGEN_EXTRA_CLANG_ARGS ${CONDA_BUILD_SYSROOT:+--sysroot=$CONDA_BUILD_SYSROOT}\"",
+          "cp \"$RECIPE_DIR/pnpm-workspace.yaml\" apps/mq-bridge-app/",
+          "cd apps/mq-bridge-app",
+          "pnpm import",
+          "pnpm install --frozen-lockfile",
+          "pnpm run build:ui",
+          "cp node_modules/@tauri-apps/api/LICENSE_MIT node_modules/@tauri-apps/api/LICENSE",
+          "pnpm licenses list --json | pnpm-licenses generate-disclaimer --json-input --output-file ../../THIRDPARTY-node-app.txt",
+          "cargo fetch",
+          "cargo auditable install --path=crates/cli --root=\"$PREFIX\" --no-track --locked --bins --no-default-features --features \"${{ feature_set }}\"",
+          "cargo-bundle-licenses --format=yaml --output=../../THIRDPARTY-rust-app.yml",
+          "export BINDGEN_EXTRA_CLANG_ARGS=\"$BINDGEN_EXTRA_CLANG_ARGS ${CONDA_BUILD_SYSROOT:+-isysroot $CONDA_BUILD_SYSROOT}\"",
+          "set \"PROTOC=%BUILD_PREFIX%\\Library\\bin\\protoc.exe\"",
+          "if not exist \"%SRC_DIR%\\libclang-shim\" mkdir \"%SRC_DIR%\\libclang-shim\"",
+          "for %%F in (\"%BUILD_PREFIX%\\Library\\bin\\libclang*.dll\") do copy /Y \"%%F\" \"%SRC_DIR%\\libclang-shim\\libclang.dll\"",
+          "if not exist \"%SRC_DIR%\\libclang-shim\\libclang.dll\" exit /b 1",
+          "set \"LIBCLANG_PATH=%SRC_DIR%\\libclang-shim\"",
+          "set \"BINDGEN_EXTRA_CLANG_ARGS=-I%BUILD_PREFIX%\\Library\\lib\\clang\\${{ llvm_major }}\\include -I%LIBRARY_INC%\"",
+          "set \"PKG_CONFIG_ALLOW_CROSS=1\"",
+          "set \"RDKAFKA_STATIC=\"",
+          "set \"LIBCURL_STATIC=\"",
+          "set \"OPENSSL_STATIC=\"",
+          "set \"PKG_CONFIG_ALL_STATIC=\"",
+          "set \"PKG_CONFIG_ALL_DYNAMIC=1\"",
+          "if not exist \"%SRC_DIR%\\libshim\" mkdir \"%SRC_DIR%\\libshim\"",
+          "for %%P in (curl ssh2 crypto ssl) do if exist \"%PREFIX%\\Library\\lib\\lib%%P.lib\" copy /Y \"%PREFIX%\\Library\\lib\\lib%%P.lib\" \"%SRC_DIR%\\libshim\\%%P.lib\" >nul",
+          "set \"LIB=%SRC_DIR%\\libshim;%LIB%\"",
+          "copy \"%RECIPE_DIR%\\pnpm-workspace.yaml\" apps\\mq-bridge-app\\",
+          "cd apps\\mq-bridge-app",
+          "call pnpm import",
+          "call pnpm install --frozen-lockfile",
+          "call pnpm run build:ui",
+          "copy node_modules\\@tauri-apps\\api\\LICENSE_MIT node_modules\\@tauri-apps\\api\\LICENSE",
+          "call pnpm licenses list --json | pnpm-licenses generate-disclaimer --json-input --output-file ..\\..\\THIRDPARTY-node-app.txt",
+          "cargo auditable install --path=crates/cli --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins --no-default-features --features \"${{ feature_set }}\"",
+          "cargo-bundle-licenses --format=yaml --output=..\\..\\THIRDPARTY-rust-app.yml"
+        ]
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "phreed"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "mq-bridge-app",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "cmake",
+            "nodejs >=24,<25",
+            "pnpm >=10.4,<13",
+            "pnpm-licenses >=2.4,<3",
+            "make",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20"
+          ],
+          "host": [
+            "librdkafka >=2.12.1"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "mq-bridge-app --version",
+              "mq-bridge-app --help",
+              "mqb --version"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "mq-bridge-app",
+                "mqb"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.4.16"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "mq-bridge-py",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses",
+            "cmake",
+            "make",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.7,<2",
+            "librdkafka >=2.12.1"
+          ],
+          "run": [
+            "python",
+            "typing_extensions >=4.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mq_bridge",
+                "mq_bridge.config"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/mq_bridge/_mq_bridge.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.4.16"
+      },
+      {
+        "build": null,
+        "name": "mq-bridge-app",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "cmake",
+            "nodejs >=24,<25",
+            "pnpm >=10.4,<13",
+            "pnpm-licenses >=2.4,<3",
+            "make",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20"
+          ],
+          "host": [
+            "librdkafka >=2.12.1"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "mq-bridge-app --version",
+              "mq-bridge-app --help",
+              "mqb --version"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "mq-bridge-app",
+                "mqb"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.4.16"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "mq-bridge-py",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses",
+            "cmake",
+            "make",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.7,<2"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.7,<2",
+            "librdkafka >=2.12.1"
+          ],
+          "run": [
+            "python",
+            "typing_extensions >=4.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mq_bridge",
+                "mq_bridge.config"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/mq_bridge/_mq_bridge.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.4.16"
+      },
+      {
+        "build": null,
+        "name": "mq-bridge-app",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "cmake",
+            "nodejs >=24,<25",
+            "pnpm >=10.4,<13",
+            "pnpm-licenses >=2.4,<3",
+            "nasm",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20"
+          ],
+          "host": [
+            "librdkafka >=2.12.1",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "mq-bridge-app --version",
+              "mq-bridge-app --help",
+              "mqb --version"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "mq-bridge-app",
+                "mqb"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.4.16"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "mq-bridge-py",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses",
+            "cmake",
+            "nasm",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.7,<2"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.7,<2",
+            "librdkafka >=2.12.1",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "typing_extensions >=4.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mq_bridge",
+                "mq_bridge.config"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit %SP_DIR%\\mq_bridge\\_mq_bridge.pyd -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.4.16"
+      }
+    ],
+    "package": {
+      "name": "mq-bridge-app",
+      "version": "0.4.16"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "cmake",
+        "nodejs >=24,<25",
+        "pnpm >=10.4,<13",
+        "pnpm-licenses >=2.4,<3",
+        "make",
+        "pkg-config",
+        "libprotobuf",
+        "libclang 20.*",
+        "clang-20",
+        "nasm"
+      ],
+      "host": [
+        "librdkafka >=2.12.1",
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "patches/0006-build-the-wheel-with-full-dynamic.patch"
+      ],
+      "sha256": "495b0361bcba51e7089d78f2b1e9fedeae6d43559b9ae3e62af852d6fed0845a",
+      "url": "https://github.com/marcomq/mq-bridge/archive/refs/tags/v0.4.16.tar.gz"
+    }
+  },
+  "name": "mq-bridge-app",
+  "osx_64_meta_yaml": {
+    "about": {
+      "description": "mq-bridge-app is a standalone application built on the mq-bridge engine.\nIt moves messages between brokers, databases, files and HTTP endpoints\nfrom a declarative YAML or JSON route configuration, with\ntransformation, filtering, retries, dead-letter queues, deduplication\nand rate limiting available as middleware. It runs as a CLI, an MCP\nserver, or a daemon serving a built-in web UI.",
+      "dev_url": "https://github.com/marcomq/mq-bridge",
+      "doc_url": "https://github.com/marcomq/mq-bridge/tree/main/docs",
+      "home": "https://github.com/marcomq/mq-bridge",
+      "license": "MIT OR Apache-2.0",
+      "license_family": "MIT OR Apache-2.0",
+      "license_file": "apps/mq-bridge-app/LICENSE",
+      "summary": "Zero-code ETL bridge between message brokers, databases and HTTP endpoints"
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "content": [
+          "export PROTOC=\"$BUILD_PREFIX/bin/protoc\"",
+          "export LIBCLANG_PATH=\"$BUILD_PREFIX/lib\"",
+          "export BINDGEN_EXTRA_CLANG_ARGS=\"-I$BUILD_PREFIX/lib/clang/${{ llvm_major }}/include -I$PREFIX/include ${CONDA_TOOLCHAIN_HOST:+--target=$CONDA_TOOLCHAIN_HOST}\"",
+          "export PKG_CONFIG_ALLOW_CROSS=1",
+          "unset RDKAFKA_STATIC LIBCURL_STATIC OPENSSL_STATIC PKG_CONFIG_ALL_STATIC",
+          "export PKG_CONFIG_ALL_DYNAMIC=1",
+          "export RUSTFLAGS=\"${RUSTFLAGS:-} -C link-arg=-L$PREFIX/lib -C link-arg=-Wl,-rpath,$PREFIX/lib\"",
+          "export BINDGEN_EXTRA_CLANG_ARGS=\"$BINDGEN_EXTRA_CLANG_ARGS ${CONDA_BUILD_SYSROOT:+-isysroot $CONDA_BUILD_SYSROOT}\"",
+          "cp \"$RECIPE_DIR/pnpm-workspace.yaml\" apps/mq-bridge-app/",
+          "cd apps/mq-bridge-app",
+          "pnpm import",
+          "pnpm install --frozen-lockfile",
+          "pnpm run build:ui",
+          "cp node_modules/@tauri-apps/api/LICENSE_MIT node_modules/@tauri-apps/api/LICENSE",
+          "pnpm licenses list --json | pnpm-licenses generate-disclaimer --json-input --output-file ../../THIRDPARTY-node-app.txt",
+          "cargo fetch",
+          "cargo auditable install --path=crates/cli --root=\"$PREFIX\" --no-track --locked --bins --no-default-features --features \"${{ feature_set }}\"",
+          "cargo-bundle-licenses --format=yaml --output=../../THIRDPARTY-rust-app.yml"
+        ]
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "phreed"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "mq-bridge-app",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "cmake",
+            "nodejs >=24,<25",
+            "pnpm >=10.4,<13",
+            "pnpm-licenses >=2.4,<3",
+            "make",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20"
+          ],
+          "host": [
+            "librdkafka >=2.12.1"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "mq-bridge-app --version",
+              "mq-bridge-app --help",
+              "mqb --version"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "mq-bridge-app",
+                "mqb"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.4.16"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "mq-bridge-py",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses",
+            "cmake",
+            "make",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.7,<2"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.7,<2",
+            "librdkafka >=2.12.1"
+          ],
+          "run": [
+            "python",
+            "typing_extensions >=4.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mq_bridge",
+                "mq_bridge.config"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/mq_bridge/_mq_bridge.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.4.16"
+      }
+    ],
+    "package": {
+      "name": "mq-bridge-app",
+      "version": "0.4.16"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "cmake",
+        "nodejs >=24,<25",
+        "pnpm >=10.4,<13",
+        "pnpm-licenses >=2.4,<3",
+        "make",
+        "pkg-config",
+        "libprotobuf",
+        "libclang 20.*",
+        "clang-20"
+      ],
+      "host": [
+        "librdkafka >=2.12.1"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "patches/0006-build-the-wheel-with-full-dynamic.patch"
+      ],
+      "sha256": "495b0361bcba51e7089d78f2b1e9fedeae6d43559b9ae3e62af852d6fed0845a",
+      "url": "https://github.com/marcomq/mq-bridge/archive/refs/tags/v0.4.16.tar.gz"
+    }
+  },
+  "osx_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "clang-20",
+        "cmake",
+        "cross-python_osx-64",
+        "cxx_compiler_stub",
+        "libclang",
+        "libprotobuf",
+        "make",
+        "maturin",
+        "nodejs",
+        "pkg-config",
+        "pnpm",
+        "pnpm-licenses",
+        "python",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "librdkafka",
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "python",
+        "typing_extensions"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip"
+      ]
+    }
+  },
+  "outputs_names": {
+    "__set__": true,
+    "elements": [
+      "mq-bridge-app",
+      "mq-bridge-py"
+    ]
+  },
+  "parsing_error": false,
+  "platforms": [
+    "linux_64",
+    "osx_64",
+    "win_64"
+  ],
+  "pr_info": {
+    "__lazy_json__": "pr_info/mq-bridge.json"
+  },
+  "raw_meta_yaml": "context:\n  version: \"0.4.16\"\n  feature_set: full-dynamic\n  llvm_major: \"20\"\n\nrecipe:\n  name: mq-bridge\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/marcomq/mq-bridge/archive/refs/tags/v${{ version }}.tar.gz\n    sha256: 495b0361bcba51e7089d78f2b1e9fedeae6d43559b9ae3e62af852d6fed0845a\n    patches:\n      - patches/0006-build-the-wheel-with-full-dynamic.patch\n\nbuild:\n  number: 0\n\noutputs:\n  - package:\n      name: mq-bridge-app\n\n    build:\n      number: 0\n      script:\n        content:\n          - if: unix\n            then:\n              - export PROTOC=\"$BUILD_PREFIX/bin/protoc\"\n              - export LIBCLANG_PATH=\"$BUILD_PREFIX/lib\"\n              - export BINDGEN_EXTRA_CLANG_ARGS=\"-I$BUILD_PREFIX/lib/clang/${{ llvm_major }}/include -I$PREFIX/include ${CONDA_TOOLCHAIN_HOST:+--target=$CONDA_TOOLCHAIN_HOST}\"\n              - export PKG_CONFIG_ALLOW_CROSS=1\n              - unset RDKAFKA_STATIC LIBCURL_STATIC OPENSSL_STATIC PKG_CONFIG_ALL_STATIC\n              - export PKG_CONFIG_ALL_DYNAMIC=1\n              - export RUSTFLAGS=\"${RUSTFLAGS:-} -C link-arg=-L$PREFIX/lib -C link-arg=-Wl,-rpath,$PREFIX/lib\"\n            else:\n              - set \"PROTOC=%BUILD_PREFIX%\\Library\\bin\\protoc.exe\"\n              - if not exist \"%SRC_DIR%\\libclang-shim\" mkdir \"%SRC_DIR%\\libclang-shim\"\n              - for %%F in (\"%BUILD_PREFIX%\\Library\\bin\\libclang*.dll\") do copy /Y \"%%F\" \"%SRC_DIR%\\libclang-shim\\libclang.dll\"\n              - if not exist \"%SRC_DIR%\\libclang-shim\\libclang.dll\" exit /b 1\n              - set \"LIBCLANG_PATH=%SRC_DIR%\\libclang-shim\"\n              - set \"BINDGEN_EXTRA_CLANG_ARGS=-I%BUILD_PREFIX%\\Library\\lib\\clang\\${{ llvm_major }}\\include -I%LIBRARY_INC%\"\n              - set \"PKG_CONFIG_ALLOW_CROSS=1\"\n              - set \"RDKAFKA_STATIC=\"\n              - set \"LIBCURL_STATIC=\"\n              - set \"OPENSSL_STATIC=\"\n              - set \"PKG_CONFIG_ALL_STATIC=\"\n              - set \"PKG_CONFIG_ALL_DYNAMIC=1\"\n              - if not exist \"%SRC_DIR%\\libshim\" mkdir \"%SRC_DIR%\\libshim\"\n              - for %%P in (curl ssh2 crypto ssl) do if exist \"%PREFIX%\\Library\\lib\\lib%%P.lib\" copy /Y \"%PREFIX%\\Library\\lib\\lib%%P.lib\" \"%SRC_DIR%\\libshim\\%%P.lib\" >nul\n              - set \"LIB=%SRC_DIR%\\libshim;%LIB%\"\n          - if: linux\n            then: export BINDGEN_EXTRA_CLANG_ARGS=\"$BINDGEN_EXTRA_CLANG_ARGS ${CONDA_BUILD_SYSROOT:+--sysroot=$CONDA_BUILD_SYSROOT}\"\n          - if: osx\n            then: export BINDGEN_EXTRA_CLANG_ARGS=\"$BINDGEN_EXTRA_CLANG_ARGS ${CONDA_BUILD_SYSROOT:+-isysroot $CONDA_BUILD_SYSROOT}\"\n          - if: unix\n            then:\n              - cp \"$RECIPE_DIR/pnpm-workspace.yaml\" apps/mq-bridge-app/\n              - cd apps/mq-bridge-app\n              - pnpm import\n              - pnpm install --frozen-lockfile\n              - pnpm run build:ui\n              - cp node_modules/@tauri-apps/api/LICENSE_MIT node_modules/@tauri-apps/api/LICENSE\n              - pnpm licenses list --json | pnpm-licenses generate-disclaimer --json-input --output-file ../../THIRDPARTY-node-app.txt\n              - cargo fetch\n              - cargo auditable install --path=crates/cli --root=\"$PREFIX\" --no-track --locked --bins --no-default-features --features \"${{ feature_set }}\"\n              - cargo-bundle-licenses --format=yaml --output=../../THIRDPARTY-rust-app.yml\n            else:\n              - copy \"%RECIPE_DIR%\\pnpm-workspace.yaml\" apps\\mq-bridge-app\\\n              - cd apps\\mq-bridge-app\n              - call pnpm import\n              - call pnpm install --frozen-lockfile\n              - call pnpm run build:ui\n              - copy node_modules\\@tauri-apps\\api\\LICENSE_MIT node_modules\\@tauri-apps\\api\\LICENSE\n              - call pnpm licenses list --json | pnpm-licenses generate-disclaimer --json-input --output-file ..\\..\\THIRDPARTY-node-app.txt\n              - cargo fetch\n              - cargo auditable install --path=crates/cli --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins --no-default-features --features \"${{ feature_set }}\"\n              - cargo-bundle-licenses --format=yaml --output=..\\..\\THIRDPARTY-rust-app.yml\n\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('rust') }}\n        - cargo-auditable\n        - cargo-bundle-licenses\n        - cmake\n        - nodejs >=24,<25\n        - pnpm >=10.4,<13\n        - pnpm-licenses >=2.4,<3\n        - if: unix\n          then: make\n        - if: win\n          then: nasm\n        - pkg-config\n        - libprotobuf\n        - libclang ${{ llvm_major }}.*\n        - clang-${{ llvm_major }}\n      host:\n        - librdkafka >=2.12.1\n        - if: win\n          then: zlib\n\n    tests:\n      - script:\n          - mq-bridge-app --version\n          - mq-bridge-app --help\n          - mqb --version\n      - package_contents:\n          bin:\n            - mq-bridge-app\n            - mqb\n          strict: true\n\n    about:\n      summary: Zero-code ETL bridge between message brokers, databases and HTTP endpoints\n      description: |\n        mq-bridge-app is a standalone application built on the mq-bridge engine.\n        It moves messages between brokers, databases, files and HTTP endpoints\n        from a declarative YAML or JSON route configuration, with\n        transformation, filtering, retries, dead-letter queues, deduplication\n        and rate limiting available as middleware. It runs as a CLI, an MCP\n        server, or a daemon serving a built-in web UI.\n      license: MIT OR Apache-2.0\n      license_file:\n        - apps/mq-bridge-app/LICENSE\n        - apps/mq-bridge-app/LICENSE-MIT\n        - apps/mq-bridge-app/LICENSE-APACHE\n        - THIRDPARTY-node-app.txt\n        - THIRDPARTY-rust-app.yml\n      homepage: https://github.com/marcomq/mq-bridge\n      repository: https://github.com/marcomq/mq-bridge\n      documentation: https://github.com/marcomq/mq-bridge/tree/main/docs\n\n  - package:\n      name: mq-bridge-py\n\n    build:\n      number: 0\n      skip: is_abi3 and not is_python_min\n      python:\n        version_independent: ${{ is_abi3 }}\n      script:\n        env:\n          MATURIN_PEP517_ARGS: --locked --no-default-features\n        content:\n          - if: unix\n            then:\n              - export PROTOC=\"$BUILD_PREFIX/bin/protoc\"\n              - export LIBCLANG_PATH=\"$BUILD_PREFIX/lib\"\n              - export BINDGEN_EXTRA_CLANG_ARGS=\"-I$BUILD_PREFIX/lib/clang/${{ llvm_major }}/include -I$PREFIX/include ${CONDA_TOOLCHAIN_HOST:+--target=$CONDA_TOOLCHAIN_HOST}\"\n              - export PKG_CONFIG_ALLOW_CROSS=1\n              - unset RDKAFKA_STATIC LIBCURL_STATIC OPENSSL_STATIC PKG_CONFIG_ALL_STATIC\n              - export PKG_CONFIG_ALL_DYNAMIC=1\n              - export RUSTFLAGS=\"${RUSTFLAGS:-} -C link-arg=-L$PREFIX/lib -C link-arg=-Wl,-rpath,$PREFIX/lib\"\n            else:\n              - set \"PROTOC=%BUILD_PREFIX%\\Library\\bin\\protoc.exe\"\n              - if not exist \"%SRC_DIR%\\libclang-shim\" mkdir \"%SRC_DIR%\\libclang-shim\"\n              - for %%F in (\"%BUILD_PREFIX%\\Library\\bin\\libclang*.dll\") do copy /Y \"%%F\" \"%SRC_DIR%\\libclang-shim\\libclang.dll\"\n              - if not exist \"%SRC_DIR%\\libclang-shim\\libclang.dll\" exit /b 1\n              - set \"LIBCLANG_PATH=%SRC_DIR%\\libclang-shim\"\n              - set \"BINDGEN_EXTRA_CLANG_ARGS=-I%BUILD_PREFIX%\\Library\\lib\\clang\\${{ llvm_major }}\\include -I%LIBRARY_INC%\"\n              - set \"PKG_CONFIG_ALLOW_CROSS=1\"\n              - set \"RDKAFKA_STATIC=\"\n              - set \"LIBCURL_STATIC=\"\n              - set \"OPENSSL_STATIC=\"\n              - set \"PKG_CONFIG_ALL_STATIC=\"\n              - set \"PKG_CONFIG_ALL_DYNAMIC=1\"\n              - if not exist \"%SRC_DIR%\\libshim\" mkdir \"%SRC_DIR%\\libshim\"\n              - for %%P in (curl ssh2 crypto ssl) do if exist \"%PREFIX%\\Library\\lib\\lib%%P.lib\" copy /Y \"%PREFIX%\\Library\\lib\\lib%%P.lib\" \"%SRC_DIR%\\libshim\\%%P.lib\" >nul\n              - set \"LIB=%SRC_DIR%\\libshim;%LIB%\"\n          - if: linux\n            then: export BINDGEN_EXTRA_CLANG_ARGS=\"$BINDGEN_EXTRA_CLANG_ARGS ${CONDA_BUILD_SYSROOT:+--sysroot=$CONDA_BUILD_SYSROOT}\"\n          - if: osx\n            then: export BINDGEN_EXTRA_CLANG_ARGS=\"$BINDGEN_EXTRA_CLANG_ARGS ${CONDA_BUILD_SYSROOT:+-isysroot $CONDA_BUILD_SYSROOT}\"\n          - cargo fetch\n          - if: unix\n            then: cd python/mq-bridge-py\n            else: cd python\\mq-bridge-py\n          - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n          - if: unix\n            then: cargo-bundle-licenses --format=yaml --output=../../THIRDPARTY-rust-py.yml\n            else: cargo-bundle-licenses --format=yaml --output=..\\..\\THIRDPARTY-rust-py.yml\n\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('rust') }}\n        - cargo-bundle-licenses\n        - cmake\n        - if: unix\n          then: make\n        - if: win\n          then: nasm\n        - pkg-config\n        - libprotobuf\n        - libclang ${{ llvm_major }}.*\n        - clang-${{ llvm_major }}\n        - if: build_platform != target_platform\n          then:\n            - python\n            - cross-python_${{ target_platform }}\n            - maturin >=1.7,<2\n      host:\n        - python\n        - if: is_abi3\n          then: python-abi3\n        - pip\n        - maturin >=1.7,<2\n        - librdkafka >=2.12.1\n        - if: win\n          then: zlib\n      run:\n        - python\n        - typing_extensions >=4.0\n\n    tests:\n      - python:\n          imports:\n            - mq_bridge\n            - mq_bridge.config\n          python_version:\n            - if: is_abi3\n              then: ${{ python_min }}.*\n            - \"*\"\n          pip_check: true\n      - if: is_abi3\n        then:\n          requirements:\n            run:\n              - abi3audit\n          script:\n            - if: unix\n              then: abi3audit $SP_DIR/mq_bridge/_mq_bridge.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n              else: abi3audit %SP_DIR%\\mq_bridge\\_mq_bridge.pyd -s -v --assume-minimum-abi3 ${{ python_min }}\n\n    about:\n      summary: Python bindings for mq-bridge, an async message-bridging library\n      description: |\n        Thin Python bindings for the Rust mq-bridge engine. They expose\n        Publisher, Consumer and Route objects that connect message brokers,\n        databases, files, HTTP/WebSocket endpoints and in-memory channels\n        behind one small set of traits, with batch-aware processing and\n        acknowledgement sequencing. Routes can be declared in code or loaded\n        from YAML/JSON, and custom endpoints and middleware can be registered\n        from Python or loaded as native plugins.\n      license: MIT OR Apache-2.0\n      license_file:\n        - python/mq-bridge-py/LICENSE.python\n        - python/mq-bridge-py/LICENSE-MIT.python\n        - python/mq-bridge-py/LICENSE-APACHE.python\n        - THIRDPARTY-rust-py.yml\n      homepage: https://github.com/marcomq/mq-bridge\n      repository: https://github.com/marcomq/mq-bridge\n      documentation: https://github.com/marcomq/mq-bridge/tree/main/python/mq-bridge-py\n\nabout:\n  homepage: https://github.com/marcomq/mq-bridge\n  repository: https://github.com/marcomq/mq-bridge\n  documentation: https://github.com/marcomq/mq-bridge/tree/main/docs\n  license: MIT OR Apache-2.0\n  license_file:\n    - LICENSE\n    - LICENSE-MIT\n    - LICENSE-APACHE\n  summary: Asynchronous message bridging between brokers, databases and HTTP endpoints\n  description: |\n    mq-bridge moves messages between message brokers, databases, files,\n    HTTP/WebSocket endpoints and in-memory channels, giving each transport the\n    same message, consumer and publisher interfaces and composing them into\n    routes that can transform, filter, batch, retry, rate-limit, deduplicate or\n    fan out along the way.\n\n    This recipe produces two packages: `mq-bridge-app`, the zero-code ETL\n    application driven by a YAML or JSON route configuration, and\n    `mq-bridge-py`, the Python bindings for the engine.\n\nextra:\n  recipe-maintainers:\n    - phreed\n",
+  "req": {
+    "__set__": true,
+    "elements": [
+      "c_compiler_stub",
+      "c_stdlib_stub",
+      "cargo-auditable",
+      "cargo-bundle-licenses",
+      "clang-20",
+      "cmake",
+      "cross-python_osx-64",
+      "cross-python_win-64",
+      "cxx_compiler_stub",
+      "libclang",
+      "libprotobuf",
+      "librdkafka",
+      "make",
+      "maturin",
+      "nasm",
+      "nodejs",
+      "pip",
+      "pkg-config",
+      "pnpm",
+      "pnpm-licenses",
+      "python",
+      "python-abi3",
+      "rust_compiler_stub",
+      "typing_extensions",
+      "zlib"
+    ]
+  },
+  "requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "clang-20",
+        "cmake",
+        "cross-python_osx-64",
+        "cross-python_win-64",
+        "cxx_compiler_stub",
+        "libclang",
+        "libprotobuf",
+        "make",
+        "maturin",
+        "nasm",
+        "nodejs",
+        "pkg-config",
+        "pnpm",
+        "pnpm-licenses",
+        "python",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cross-python",
+        "cxx_compiler_stub",
+        "librdkafka",
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cross-python",
+        "cxx_compiler_stub",
+        "python",
+        "typing_extensions"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip"
+      ]
+    }
+  },
+  "strong_exports": false,
+  "total_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "clang-20",
+        "cmake",
+        "cross-python_osx-64",
+        "cross-python_win-64",
+        "cxx_compiler_stub",
+        "libclang 20.*",
+        "libprotobuf",
+        "make",
+        "maturin >=1.7,<2",
+        "nasm",
+        "nodejs >=24,<25",
+        "pkg-config",
+        "pnpm >=10.4,<13",
+        "pnpm-licenses >=2.4,<3",
+        "python",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "librdkafka >=2.12.1",
+        "maturin >=1.7,<2",
+        "pip",
+        "python",
+        "python-abi3",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "python",
+        "typing_extensions >=4.0"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip"
+      ]
+    }
+  },
+  "url": "https://github.com/marcomq/mq-bridge/archive/refs/tags/v0.4.16.tar.gz",
+  "version": "0.4.16",
+  "version_pr_info": {
+    "__lazy_json__": "version_pr_info/mq-bridge.json"
+  },
+  "win_64_meta_yaml": {
+    "about": {
+      "description": "mq-bridge-app is a standalone application built on the mq-bridge engine.\nIt moves messages between brokers, databases, files and HTTP endpoints\nfrom a declarative YAML or JSON route configuration, with\ntransformation, filtering, retries, dead-letter queues, deduplication\nand rate limiting available as middleware. It runs as a CLI, an MCP\nserver, or a daemon serving a built-in web UI.",
+      "dev_url": "https://github.com/marcomq/mq-bridge",
+      "doc_url": "https://github.com/marcomq/mq-bridge/tree/main/docs",
+      "home": "https://github.com/marcomq/mq-bridge",
+      "license": "MIT OR Apache-2.0",
+      "license_family": "MIT OR Apache-2.0",
+      "license_file": "apps/mq-bridge-app/LICENSE",
+      "summary": "Zero-code ETL bridge between message brokers, databases and HTTP endpoints"
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "content": [
+          "set \"PROTOC=%BUILD_PREFIX%\\Library\\bin\\protoc.exe\"",
+          "if not exist \"%SRC_DIR%\\libclang-shim\" mkdir \"%SRC_DIR%\\libclang-shim\"",
+          "for %%F in (\"%BUILD_PREFIX%\\Library\\bin\\libclang*.dll\") do copy /Y \"%%F\" \"%SRC_DIR%\\libclang-shim\\libclang.dll\"",
+          "if not exist \"%SRC_DIR%\\libclang-shim\\libclang.dll\" exit /b 1",
+          "set \"LIBCLANG_PATH=%SRC_DIR%\\libclang-shim\"",
+          "set \"BINDGEN_EXTRA_CLANG_ARGS=-I%BUILD_PREFIX%\\Library\\lib\\clang\\${{ llvm_major }}\\include -I%LIBRARY_INC%\"",
+          "set \"PKG_CONFIG_ALLOW_CROSS=1\"",
+          "set \"RDKAFKA_STATIC=\"",
+          "set \"LIBCURL_STATIC=\"",
+          "set \"OPENSSL_STATIC=\"",
+          "set \"PKG_CONFIG_ALL_STATIC=\"",
+          "set \"PKG_CONFIG_ALL_DYNAMIC=1\"",
+          "if not exist \"%SRC_DIR%\\libshim\" mkdir \"%SRC_DIR%\\libshim\"",
+          "for %%P in (curl ssh2 crypto ssl) do if exist \"%PREFIX%\\Library\\lib\\lib%%P.lib\" copy /Y \"%PREFIX%\\Library\\lib\\lib%%P.lib\" \"%SRC_DIR%\\libshim\\%%P.lib\" >nul",
+          "set \"LIB=%SRC_DIR%\\libshim;%LIB%\"",
+          "copy \"%RECIPE_DIR%\\pnpm-workspace.yaml\" apps\\mq-bridge-app\\",
+          "cd apps\\mq-bridge-app",
+          "call pnpm import",
+          "call pnpm install --frozen-lockfile",
+          "call pnpm run build:ui",
+          "copy node_modules\\@tauri-apps\\api\\LICENSE_MIT node_modules\\@tauri-apps\\api\\LICENSE",
+          "call pnpm licenses list --json | pnpm-licenses generate-disclaimer --json-input --output-file ..\\..\\THIRDPARTY-node-app.txt",
+          "cargo fetch",
+          "cargo auditable install --path=crates/cli --root=\"%LIBRARY_PREFIX%\" --no-track --locked --bins --no-default-features --features \"${{ feature_set }}\"",
+          "cargo-bundle-licenses --format=yaml --output=..\\..\\THIRDPARTY-rust-app.yml"
+        ]
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "phreed"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "mq-bridge-app",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "cmake",
+            "nodejs >=24,<25",
+            "pnpm >=10.4,<13",
+            "pnpm-licenses >=2.4,<3",
+            "nasm",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20"
+          ],
+          "host": [
+            "librdkafka >=2.12.1",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "mq-bridge-app --version",
+              "mq-bridge-app --help",
+              "mqb --version"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "mq-bridge-app",
+                "mqb"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.4.16"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "mq-bridge-py",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses",
+            "cmake",
+            "nasm",
+            "pkg-config",
+            "libprotobuf",
+            "libclang 20.*",
+            "clang-20",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.7,<2"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.7,<2",
+            "librdkafka >=2.12.1",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "typing_extensions >=4.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mq_bridge",
+                "mq_bridge.config"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit %SP_DIR%\\mq_bridge\\_mq_bridge.pyd -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.4.16"
+      }
+    ],
+    "package": {
+      "name": "mq-bridge-app",
+      "version": "0.4.16"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "cmake",
+        "nodejs >=24,<25",
+        "pnpm >=10.4,<13",
+        "pnpm-licenses >=2.4,<3",
+        "nasm",
+        "pkg-config",
+        "libprotobuf",
+        "libclang 20.*",
+        "clang-20"
+      ],
+      "host": [
+        "librdkafka >=2.12.1",
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "patches/0006-build-the-wheel-with-full-dynamic.patch"
+      ],
+      "sha256": "495b0361bcba51e7089d78f2b1e9fedeae6d43559b9ae3e62af852d6fed0845a",
+      "url": "https://github.com/marcomq/mq-bridge/archive/refs/tags/v0.4.16.tar.gz"
+    }
+  },
+  "win_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "clang-20",
+        "cmake",
+        "cross-python_win-64",
+        "cxx_compiler_stub",
+        "libclang",
+        "libprotobuf",
+        "maturin",
+        "nasm",
+        "nodejs",
+        "pkg-config",
+        "pnpm",
+        "pnpm-licenses",
+        "python",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "librdkafka",
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "python",
+        "typing_extensions"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip"
+      ]
+    }
+  }
+}
