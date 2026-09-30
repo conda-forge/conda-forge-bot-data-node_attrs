@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "cdt_name:\n- conda\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.9'\n",
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -10,37 +10,37 @@
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "9bb5182f879444b6c3da06ad627a9623da2c9f49",
-  "feedstock_hash_ts": 1776851662,
+  "feedstock_hash": "4c6ba4d9cfb4d61f4450adf6819d9fbaf24d7bb5",
+  "feedstock_hash_ts": 1790807776,
   "feedstock_name": "nbgrader",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "doc_url": "https://nbgrader.readthedocs.io",
-      "home": "https://github.com/jupyter/nbgrader",
+      "dev_url": "https://github.com/jupyter/nbgrader",
+      "doc_url": "https://nbgrader.readthedocs.io/",
+      "home": "https://pypi.org/project/nbgrader",
       "license": "BSD-3-Clause",
-      "license_family": "BSD",
-      "license_file": [
-        "LICENSE",
-        "nbgrader/labextension/static/third-party-licenses.json"
-      ],
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE",
       "summary": "A system for assigning and grading Jupyter notebooks"
     },
     "build": {
-      "entry_points": [
-        "nbgrader = nbgrader.apps.nbgraderapp:main"
-      ],
       "noarch": "python",
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check"
-      ]
+      "python": {
+        "entry_points": [
+          "nbgrader = nbgrader.apps.nbgraderapp:main"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies"
     },
     "extra": {
       "recipe-maintainers": [
@@ -53,17 +53,108 @@
         "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "nbgrader = nbgrader.apps.nbgraderapp:main"
+            ]
+          }
+        },
+        "name": "nbgrader",
+        "requirements": {
+          "build": [],
+          "host": [
+            "hatch-jupyter-builder >=0.7",
+            "hatchling >=1.10.0",
+            "jupyter-builder >=1.2.3",
+            "pip",
+            "python 3.11.*"
+          ],
+          "run": [
+            "alembic >=1.7",
+            "ipython >=8.10.0",
+            "ipywidgets >=7.6",
+            "jinja2 >=3",
+            "jsonschema >=3",
+            "jupyter_client <9",
+            "jupyter_server >=2",
+            "jupyterlab >=4.5,<5.0",
+            "jupyterlab_server",
+            "nbclient >=0.6.1",
+            "nbconvert >=6",
+            "notebook >=7.2.0,<8",
+            "python >=3.11",
+            "python-dateutil >=2.8",
+            "pyyaml >=6.0",
+            "rapidfuzz >=1.8",
+            "requests >=2.26",
+            "setuptools",
+            "sqlalchemy >=1.4,<3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/jupyter/jupyter_server_config.d/nbgrader.json",
+                "share/jupyter/labextensions/@jupyter/nbgrader/**"
+              ],
+              "site_packages": [
+                "nbgrader/**",
+                "nbgrader-0.9.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "nbgrader"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "jupyterlab 4.5.*",
+                "pip",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "nbgrader -h",
+              "jupyter lab --version",
+              "jupyter labextension list",
+              "jupyter server extension list",
+              "jupyter labextension list 1>labextensions 2>&1",
+              "jupyter server extension list 1>server_extensions 2>&1",
+              "grep -iE \"nbgrader.server_extensions.${{ ext }}.*OK\" server_extensions",
+              "grep -iE \"nbgrader.server_extensions.${{ ext }}.*enabled\" server_extensions",
+              "grep -iE \"@jupyter/nbgrader.*OK\" labextensions"
+            ]
+          }
+        ],
+        "version": "0.9.6"
+      }
+    ],
     "package": {
       "name": "nbgrader",
-      "version": "0.9.5"
+      "version": "0.9.6"
     },
     "requirements": {
       "host": [
         "hatch-jupyter-builder >=0.7",
         "hatchling >=1.10.0",
-        "jupyterlab 4.2",
+        "jupyter-builder >=1.2.3",
         "pip",
-        "python 3.9"
+        "python 3.11.*"
       ],
       "run": [
         "alembic >=1.7",
@@ -73,12 +164,12 @@
         "jsonschema >=3",
         "jupyter_client <9",
         "jupyter_server >=2",
-        "jupyterlab >=4.2,<5.0",
+        "jupyterlab >=4.5,<5.0",
         "jupyterlab_server",
         "nbclient >=0.6.1",
         "nbconvert >=6",
         "notebook >=7.2.0,<8",
-        "python >=3.9",
+        "python >=3.11",
         "python-dateutil >=2.8",
         "pyyaml >=6.0",
         "rapidfuzz >=1.8",
@@ -87,38 +178,10 @@
         "sqlalchemy >=1.4,<3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "1ea898f3b1cd15ebd1f407591ac94b454244566876f0bc8740f5b1d501dc076a",
-      "url": "https://pypi.org/packages/source/n/nbgrader/nbgrader-0.9.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "nbgrader -h",
-        "jupyter lab --version",
-        "jupyter labextension list",
-        "jupyter server extension list",
-        "jupyter labextension list 1>labextensions 2>&1",
-        "jupyter server extension list 1>server_extensions 2>&1",
-        "grep -iE \"nbgrader.server_extensions.assignment_list.*OK\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.assignment_list.*enabled\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.course_list.*OK\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.course_list.*enabled\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.formgrader.*OK\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.formgrader.*enabled\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.validate_assignment.*OK\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.validate_assignment.*enabled\" server_extensions",
-        "grep -iE \"@jupyter/nbgrader.*OK\" labextensions"
-      ],
-      "imports": [
-        "nbgrader"
-      ],
-      "requires": [
-        "jupyterlab 4.2",
-        "pip",
-        "python 3.9"
-      ]
+      "sha256": "d01c3a1033c0ef1535936fc53b8e152b46e1e06c02422dca5ef7d5ae62076d4f",
+      "url": "https://files.pythonhosted.org/packages/source/n/nbgrader/nbgrader-0.9.6.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -131,7 +194,7 @@
       "elements": [
         "hatch-jupyter-builder",
         "hatchling",
-        "jupyterlab",
+        "jupyter-builder",
         "pip",
         "python"
       ]
@@ -171,25 +234,23 @@
   },
   "meta_yaml": {
     "about": {
-      "doc_url": "https://nbgrader.readthedocs.io",
-      "home": "https://github.com/jupyter/nbgrader",
+      "dev_url": "https://github.com/jupyter/nbgrader",
+      "doc_url": "https://nbgrader.readthedocs.io/",
+      "home": "https://pypi.org/project/nbgrader",
       "license": "BSD-3-Clause",
-      "license_family": "BSD",
-      "license_file": [
-        "LICENSE",
-        "nbgrader/labextension/static/third-party-licenses.json"
-      ],
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE",
       "summary": "A system for assigning and grading Jupyter notebooks"
     },
     "build": {
-      "entry_points": [
-        "nbgrader = nbgrader.apps.nbgraderapp:main"
-      ],
       "noarch": "python",
       "number": "0",
-      "script": [
-        "PYTHON -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check"
-      ]
+      "python": {
+        "entry_points": [
+          "nbgrader = nbgrader.apps.nbgraderapp:main"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies"
     },
     "extra": {
       "recipe-maintainers": [
@@ -202,17 +263,108 @@
         "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "nbgrader = nbgrader.apps.nbgraderapp:main"
+            ]
+          }
+        },
+        "name": "nbgrader",
+        "requirements": {
+          "build": [],
+          "host": [
+            "hatch-jupyter-builder >=0.7",
+            "hatchling >=1.10.0",
+            "jupyter-builder >=1.2.3",
+            "pip",
+            "python 3.11.*"
+          ],
+          "run": [
+            "alembic >=1.7",
+            "ipython >=8.10.0",
+            "ipywidgets >=7.6",
+            "jinja2 >=3",
+            "jsonschema >=3",
+            "jupyter_client <9",
+            "jupyter_server >=2",
+            "jupyterlab >=4.5,<5.0",
+            "jupyterlab_server",
+            "nbclient >=0.6.1",
+            "nbconvert >=6",
+            "notebook >=7.2.0,<8",
+            "python >=3.11",
+            "python-dateutil >=2.8",
+            "pyyaml >=6.0",
+            "rapidfuzz >=1.8",
+            "requests >=2.26",
+            "setuptools",
+            "sqlalchemy >=1.4,<3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/jupyter/jupyter_server_config.d/nbgrader.json",
+                "share/jupyter/labextensions/@jupyter/nbgrader/**"
+              ],
+              "site_packages": [
+                "nbgrader/**",
+                "nbgrader-0.9.6.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "nbgrader"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "jupyterlab 4.5.*",
+                "pip",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "nbgrader -h",
+              "jupyter lab --version",
+              "jupyter labextension list",
+              "jupyter server extension list",
+              "jupyter labextension list 1>labextensions 2>&1",
+              "jupyter server extension list 1>server_extensions 2>&1",
+              "grep -iE \"nbgrader.server_extensions.${{ ext }}.*OK\" server_extensions",
+              "grep -iE \"nbgrader.server_extensions.${{ ext }}.*enabled\" server_extensions",
+              "grep -iE \"@jupyter/nbgrader.*OK\" labextensions"
+            ]
+          }
+        ],
+        "version": "0.9.6"
+      }
+    ],
     "package": {
       "name": "nbgrader",
-      "version": "0.9.5"
+      "version": "0.9.6"
     },
     "requirements": {
       "host": [
         "hatch-jupyter-builder >=0.7",
         "hatchling >=1.10.0",
-        "jupyterlab 4.2",
+        "jupyter-builder >=1.2.3",
         "pip",
-        "python 3.9"
+        "python 3.11.*"
       ],
       "run": [
         "alembic >=1.7",
@@ -222,12 +374,12 @@
         "jsonschema >=3",
         "jupyter_client <9",
         "jupyter_server >=2",
-        "jupyterlab >=4.2,<5.0",
+        "jupyterlab >=4.5,<5.0",
         "jupyterlab_server",
         "nbclient >=0.6.1",
         "nbconvert >=6",
         "notebook >=7.2.0,<8",
-        "python >=3.9",
+        "python >=3.11",
         "python-dateutil >=2.8",
         "pyyaml >=6.0",
         "rapidfuzz >=1.8",
@@ -236,38 +388,10 @@
         "sqlalchemy >=1.4,<3"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "1ea898f3b1cd15ebd1f407591ac94b454244566876f0bc8740f5b1d501dc076a",
-      "url": "https://pypi.org/packages/source/n/nbgrader/nbgrader-0.9.5.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "nbgrader -h",
-        "jupyter lab --version",
-        "jupyter labextension list",
-        "jupyter server extension list",
-        "jupyter labextension list 1>labextensions 2>&1",
-        "jupyter server extension list 1>server_extensions 2>&1",
-        "grep -iE \"nbgrader.server_extensions.assignment_list.*OK\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.assignment_list.*enabled\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.course_list.*OK\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.course_list.*enabled\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.formgrader.*OK\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.formgrader.*enabled\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.validate_assignment.*OK\" server_extensions",
-        "grep -iE \"nbgrader.server_extensions.validate_assignment.*enabled\" server_extensions",
-        "grep -iE \"@jupyter/nbgrader.*OK\" labextensions"
-      ],
-      "imports": [
-        "nbgrader"
-      ],
-      "requires": [
-        "jupyterlab 4.2",
-        "pip",
-        "python 3.9"
-      ]
+      "sha256": "d01c3a1033c0ef1535936fc53b8e152b46e1e06c02422dca5ef7d5ae62076d4f",
+      "url": "https://files.pythonhosted.org/packages/source/n/nbgrader/nbgrader-0.9.6.tar.gz"
     }
   },
   "name": "nbgrader",
@@ -284,7 +408,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/nbgrader.json"
   },
-  "raw_meta_yaml": "{% set version = \"0.9.5\" %}\n{% set python_min = python_min | default(\"3.9\") %}\n\n{% set jupyterlab_min = \"4.2\" %}\n{% set jupyterlab_max = \"5.0\" %}\n\npackage:\n  name: nbgrader\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/n/nbgrader/nbgrader-{{ version }}.tar.gz\n  sha256: 1ea898f3b1cd15ebd1f407591ac94b454244566876f0bc8740f5b1d501dc076a\n\nbuild:\n  noarch: python\n  number: 0\n  script:\n    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check\n  entry_points:\n    - nbgrader = nbgrader.apps.nbgraderapp:main\n\nrequirements:\n  host:\n    - hatch-jupyter-builder >=0.7\n    - hatchling >=1.10.0\n    - jupyterlab {{ jupyterlab_min }}\n    - pip\n    - python {{ python_min }}\n  run:\n    - alembic >=1.7\n    - ipython >=8.10.0\n    - ipywidgets >=7.6\n    - jinja2 >=3\n    - jsonschema >=3\n    - jupyter_client <9\n    - jupyter_server >=2\n    - jupyterlab >={{ jupyterlab_min }},<{{ jupyterlab_max }}\n    - jupyterlab_server\n    - nbclient >=0.6.1\n    - nbconvert >=6\n    - notebook >=7.2.0,<8\n    - python >={{ python_min }}\n    - python-dateutil >=2.8\n    - pyyaml >=6.0\n    - rapidfuzz >=1.8\n    - requests >=2.26\n    - setuptools\n    - sqlalchemy >=1.4,<3\n\ntest:\n  requires:\n    - jupyterlab {{ jupyterlab_min }}\n    - m2-grep  # [win]\n    - pip\n    - python {{ python_min }}\n  imports:\n    - nbgrader\n  commands:\n    - pip check\n    - nbgrader -h\n    - jupyter lab --version\n    - jupyter labextension list\n    - jupyter server extension list\n    - jupyter labextension list 1>labextensions 2>&1\n    - jupyter server extension list 1>server_extensions 2>&1\n    {% for ext in [\"assignment_list\", \"course_list\", \"formgrader\", \"validate_assignment\"] %}\n    - grep -iE \"nbgrader.server_extensions.{{ ext }}.*OK\" server_extensions\n    - grep -iE \"nbgrader.server_extensions.{{ ext }}.*enabled\" server_extensions\n    {% endfor %}\n    - grep -iE \"@jupyter/nbgrader.*OK\" labextensions\n\nabout:\n  home: https://github.com/jupyter/nbgrader\n  license: BSD-3-Clause\n  license_family: BSD\n  license_file:\n    - LICENSE\n    - nbgrader/labextension/static/third-party-licenses.json\n  summary: A system for assigning and grading Jupyter notebooks\n  doc_url: https://nbgrader.readthedocs.io\n\nextra:\n  recipe-maintainers:\n    - blink1073\n    - jhamrick\n    - lgpage\n    - ocefpaf\n    - BertR\n    - SylvainCorlay\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.9.6\"\n  python_check_max: \"3.14\"\n  # upstream claims `4.2`, but this fails `jupyter labextension list`\n  jupyterlab_min: \"4.5\"\n  jupyterlab_max: \"5.0\"\n\npackage:\n  name: nbgrader\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/n/nbgrader/nbgrader-${{ version }}.tar.gz\n  sha256: d01c3a1033c0ef1535936fc53b8e152b46e1e06c02422dca5ef7d5ae62076d4f\n\nbuild:\n  number: 0\n  noarch: python\n  script:\n    - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n  python:\n    entry_points:\n      - nbgrader = nbgrader.apps.nbgraderapp:main\n\nrequirements:\n  host:\n    - hatch-jupyter-builder >=0.7\n    - hatchling >=1.10.0\n    - jupyter-builder >=1.2.3\n    - pip\n    - python ${{ python_min }}.*\n  run:\n    - alembic >=1.7\n    - ipython >=8.10.0\n    - ipywidgets >=7.6\n    - jinja2 >=3\n    - jsonschema >=3\n    - jupyter_client <9\n    - jupyter_server >=2\n    - jupyterlab >=${{ jupyterlab_min }},<${{ jupyterlab_max }}\n    - jupyterlab_server\n    - nbclient >=0.6.1\n    - nbconvert >=6\n    - notebook >=7.2.0,<8\n    - python >=${{ python_min }}\n    - python-dateutil >=2.8\n    - pyyaml >=6.0\n    - rapidfuzz >=1.8\n    - requests >=2.26\n    - setuptools\n    - sqlalchemy >=1.4,<3\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - etc/jupyter/jupyter_server_config.d/nbgrader.json\n        - share/jupyter/labextensions/@jupyter/nbgrader/**\n      site_packages:\n        - nbgrader/**\n        - nbgrader-${{ version }}.dist-info/**\n  - python:\n      imports: nbgrader\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - ${{ python_check_max }}.*\n  - requirements:\n      run:\n        - jupyterlab ${{ jupyterlab_min }}.*\n        - if: win\n          then: m2-grep\n        - pip\n        - python ${{ python_min }}.*\n    script:\n      - nbgrader -h\n      - jupyter lab --version\n      - jupyter labextension list\n      - jupyter server extension list\n      - jupyter labextension list 1>labextensions 2>&1\n      - jupyter server extension list 1>server_extensions 2>&1\n      - grep -iE \"nbgrader.server_extensions.${{ ext }}.*OK\" server_extensions\n      - grep -iE \"nbgrader.server_extensions.${{ ext }}.*enabled\" server_extensions\n      - grep -iE \"@jupyter/nbgrader.*OK\" labextensions\n\nabout:\n  license: BSD-3-Clause\n  license_file:\n    - LICENSE\n    - nbgrader/labextension/static/third-party-licenses.json\n  summary: A system for assigning and grading Jupyter notebooks\n  homepage: https://pypi.org/project/nbgrader\n  repository: https://github.com/jupyter/nbgrader\n  documentation: https://nbgrader.readthedocs.io\n\nextra:\n  recipe-maintainers:\n    - blink1073\n    - jhamrick\n    - lgpage\n    - ocefpaf\n    - BertR\n    - SylvainCorlay\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -295,6 +419,7 @@
       "ipywidgets",
       "jinja2",
       "jsonschema",
+      "jupyter-builder",
       "jupyter_client",
       "jupyter_server",
       "jupyterlab",
@@ -322,7 +447,7 @@
       "elements": [
         "hatch-jupyter-builder",
         "hatchling",
-        "jupyterlab",
+        "jupyter-builder",
         "pip",
         "python"
       ]
@@ -371,9 +496,9 @@
       "elements": [
         "hatch-jupyter-builder >=0.7",
         "hatchling >=1.10.0",
-        "jupyterlab 4.2",
+        "jupyter-builder >=1.2.3",
         "pip",
-        "python 3.9"
+        "python 3.11.*"
       ]
     },
     "run": {
@@ -386,12 +511,12 @@
         "jsonschema >=3",
         "jupyter_client <9",
         "jupyter_server >=2",
-        "jupyterlab >=4.2,<5.0",
+        "jupyterlab >=4.5,<5.0",
         "jupyterlab_server",
         "nbclient >=0.6.1",
         "nbconvert >=6",
         "notebook >=7.2.0,<8",
-        "python >=3.9",
+        "python >=3.11",
         "python-dateutil >=2.8",
         "pyyaml >=6.0",
         "rapidfuzz >=1.8",
@@ -403,14 +528,14 @@
     "test": {
       "__set__": true,
       "elements": [
-        "jupyterlab 4.2",
+        "jupyterlab 4.5.*",
         "pip",
-        "python 3.9"
+        "python 3.11.*"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/n/nbgrader/nbgrader-0.9.5.tar.gz",
-  "version": "0.9.5",
+  "url": "https://files.pythonhosted.org/packages/source/n/nbgrader/nbgrader-0.9.6.tar.gz",
+  "version": "0.9.6",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/nbgrader.json"
   }
