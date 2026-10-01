@@ -21,8 +21,8 @@
       "free_disk_space": "quick"
     }
   },
-  "feedstock_hash": "d5db0a69bb11d545c210353200134b55b4b1f7e3",
-  "feedstock_hash_ts": 1790268479,
+  "feedstock_hash": "18ec3bfc016138f7e046a772853467e5ac2c3edc",
+  "feedstock_hash_ts": 1790879434,
   "feedstock_name": "torch-harmonics",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -38,12 +38,13 @@
         "libcusolver-dev",
         "libcusparse-dev"
       ],
-      "number": "0",
+      "number": "1",
       "script": [
         "export SETUPTOOLS_SCM_PRETEND_VERSION=\"$PKG_VERSION\"",
         "export TORCH_CUDA_ARCH_LIST=\"8.0;8.6;8.9;9.0a;10.0a;10.3a;12.0+PTX\"",
         "export TORCH_DONT_CHECK_COMPILER_ABI=1",
         "export TORCH_HARMONICS_BUILD_CUDA_EXTENSION=1",
+        "export MAX_JOBS=2",
         "PYTHON -m pip install . -vv --no-deps --no-build-isolation"
       ]
     },
@@ -63,7 +64,8 @@
         "cxx_compiler_stub",
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cuda_compiler_stub"
+        "cuda_compiler_stub",
+        "ninja"
       ],
       "host": [
         "python",
@@ -110,7 +112,8 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cuda_compiler_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "ninja"
       ]
     },
     "host": {
@@ -153,12 +156,13 @@
     },
     "build": {
       "ignore_run_exports_from": null,
-      "number": "0",
+      "number": "1",
       "script": [
         "export SETUPTOOLS_SCM_PRETEND_VERSION=\"$PKG_VERSION\"",
         "export TORCH_CUDA_ARCH_LIST=\"8.0;8.6;8.9;9.0a;10.0a;10.3a;12.0+PTX\"",
         "export TORCH_DONT_CHECK_COMPILER_ABI=1",
         "export TORCH_HARMONICS_BUILD_CUDA_EXTENSION=1",
+        "export MAX_JOBS=2",
         "PYTHON -m pip install . -vv --no-deps --no-build-isolation"
       ]
     },
@@ -178,7 +182,8 @@
         "cxx_compiler_stub",
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cuda_compiler_stub"
+        "cuda_compiler_stub",
+        "ninja"
       ],
       "host": [
         "python",
@@ -228,7 +233,7 @@
     },
     "build": {
       "ignore_run_exports_from": null,
-      "number": "0",
+      "number": "1",
       "script": [
         "export SETUPTOOLS_SCM_PRETEND_VERSION=\"$PKG_VERSION\"",
         "PYTHON -m pip install . -vv --no-deps --no-build-isolation"
@@ -249,7 +254,8 @@
       "build": [
         "cxx_compiler_stub",
         "c_compiler_stub",
-        "c_stdlib_stub"
+        "c_stdlib_stub",
+        "ninja"
       ],
       "host": [
         "python",
@@ -288,7 +294,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "ninja"
       ]
     },
     "host": {
@@ -331,7 +338,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/torch-harmonics.json"
   },
-  "raw_meta_yaml": "{% set name = \"torch-harmonics\" %}\n{% set version = \"0.9.2\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/NVIDIA/torch-harmonics/archive/refs/tags/v{{ version }}.tar.gz\n  sha256: 27b5f11d73bda5188bfc949b4d52b4120bbbe75f6e68a7543e103ee285b90b6c\n\nbuild:\n  # Pytorch is not available on conda-forge for windows yet...\n  # https://github.com/conda-forge/pytorch-cpu-feedstock/pull/231\n  skip: true  # [win]\n  # pytorch in conda-forge does not support CUDA 11.8 as of v2.5\n  skip: true  # [cuda_compiler_version == \"11.8\"]\n  ignore_run_exports_from:\n    - libcublas-dev    # [cuda_compiler_version != \"None\"]\n    - libcusolver-dev  # [cuda_compiler_version != \"None\"]\n    - libcusparse-dev  # [cuda_compiler_version != \"None\"]\n  script:\n    - export SETUPTOOLS_SCM_PRETEND_VERSION=\"$PKG_VERSION\"  # [not win]\n    - set \"SETUPTOOLS_SCM_PRETEND_VERSION=%PKG_VERSION%\"    # [win]\n    - export TORCH_CUDA_ARCH_LIST=\"8.0;8.6;8.9;9.0a;10.0a;10.3a;12.0+PTX\"  # [cuda_compiler_version != \"None\"]\n    - export TORCH_DONT_CHECK_COMPILER_ABI=1                # [cuda_compiler_version != \"None\"]\n    - export TORCH_HARMONICS_BUILD_CUDA_EXTENSION=1         # [cuda_compiler_version != \"None\"]\n    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  number: 0\n\nrequirements:\n  build:\n    - {{ compiler('cxx') }}\n    - {{ compiler('c') }}\n    - {{ stdlib('c') }}\n    - {{ compiler('cuda') }}   # [cuda_compiler_version != \"None\"]\n  host:\n    - python\n    - setuptools\n    - setuptools-scm\n    - libtorch\n    - pytorch\n    - pip\n    - cuda-version {{ cuda_compiler_version }}  # [cuda_compiler_version != \"None\"]\n    - cuda-cudart-dev                           # [cuda_compiler_version != \"None\"]\n    - libcublas-dev                             # [cuda_compiler_version != \"None\"]\n    - libcusolver-dev                           # [cuda_compiler_version != \"None\"]\n    - libcusparse-dev                           # [cuda_compiler_version != \"None\"]\n  run:\n    - python\n    - numpy >=1.22.4\n    - pytorch * cpu*          # [cuda_compiler_version == \"None\"]\n    - pytorch * cuda*         # [cuda_compiler_version != \"None\"]\n\ntest:\n  imports:\n    - torch_harmonics\n  commands:\n    - pip check\n  requires:\n    - pip\n\nabout:\n  home: https://github.com/NVIDIA/torch-harmonics\n  summary: Differentiable signal processing on the sphere for PyTorch.\n  license: BSD-3-Clause\n  license_file: LICENSE.txt\n\nextra:\n  recipe-maintainers:\n    - mwyau\n    - isuruf\n    - timkpaine\n",
+  "raw_meta_yaml": "{% set name = \"torch-harmonics\" %}\n{% set version = \"0.9.2\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/NVIDIA/torch-harmonics/archive/refs/tags/v{{ version }}.tar.gz\n  sha256: 27b5f11d73bda5188bfc949b4d52b4120bbbe75f6e68a7543e103ee285b90b6c\n\nbuild:\n  # torch-harmonics does not support windows yet...\n  skip: true  # [win]\n  ignore_run_exports_from:\n    - libcublas-dev    # [cuda_compiler_version != \"None\"]\n    - libcusolver-dev  # [cuda_compiler_version != \"None\"]\n    - libcusparse-dev  # [cuda_compiler_version != \"None\"]\n  script:\n    - export SETUPTOOLS_SCM_PRETEND_VERSION=\"$PKG_VERSION\"  # [not win]\n    - set \"SETUPTOOLS_SCM_PRETEND_VERSION=%PKG_VERSION%\"    # [win]\n    - export TORCH_CUDA_ARCH_LIST=\"8.0;8.6;8.9;9.0a;10.0a;10.3a;12.0+PTX\"  # [cuda_compiler_version != \"None\"]\n    - export TORCH_DONT_CHECK_COMPILER_ABI=1                # [cuda_compiler_version != \"None\"]\n    - export TORCH_HARMONICS_BUILD_CUDA_EXTENSION=1         # [cuda_compiler_version != \"None\"]\n    - export MAX_JOBS=2                                     # [cuda_compiler_version != \"None\"]\n    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  number: 1\n\nrequirements:\n  build:\n    - {{ compiler('cxx') }}\n    - {{ compiler('c') }}\n    - {{ stdlib('c') }}\n    - {{ compiler('cuda') }}   # [cuda_compiler_version != \"None\"]\n    - ninja\n  host:\n    - python\n    - setuptools\n    - setuptools-scm\n    - libtorch\n    - pytorch\n    - pip\n    - cuda-version {{ cuda_compiler_version }}  # [cuda_compiler_version != \"None\"]\n    - cuda-cudart-dev                           # [cuda_compiler_version != \"None\"]\n    - libcublas-dev                             # [cuda_compiler_version != \"None\"]\n    - libcusolver-dev                           # [cuda_compiler_version != \"None\"]\n    - libcusparse-dev                           # [cuda_compiler_version != \"None\"]\n  run:\n    - python\n    - numpy >=1.22.4\n    - pytorch * cpu*          # [cuda_compiler_version == \"None\"]\n    - pytorch * cuda*         # [cuda_compiler_version != \"None\"]\n\ntest:\n  imports:\n    - torch_harmonics\n  commands:\n    - pip check\n  requires:\n    - pip\n\nabout:\n  home: https://github.com/NVIDIA/torch-harmonics\n  summary: Differentiable signal processing on the sphere for PyTorch.\n  license: BSD-3-Clause\n  license_file: LICENSE.txt\n\nextra:\n  recipe-maintainers:\n    - mwyau\n    - isuruf\n    - timkpaine\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -345,6 +352,7 @@
       "libcusolver-dev",
       "libcusparse-dev",
       "libtorch",
+      "ninja",
       "numpy",
       "pip",
       "python",
@@ -360,7 +368,8 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cuda_compiler_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "ninja"
       ]
     },
     "host": {
@@ -410,7 +419,8 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cuda_compiler_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "ninja"
       ]
     },
     "host": {
