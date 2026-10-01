@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.10'\n",
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -10,14 +10,15 @@
     "conda_build": {
       "error_overlinking": true
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "59d17dafcc33707dad4695559818029e4d70e84a",
-  "feedstock_hash_ts": 1780514617,
+  "feedstock_hash": "262b07e4d3bd7d3aab768506a97a4d4b1c4adff2",
+  "feedstock_hash_ts": 1790866855,
   "feedstock_name": "toil",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -26,23 +27,25 @@
       "doc_url": "https://toil.readthedocs.io/en/latest/",
       "home": "https://toil.ucsc-cgl.org/",
       "license": "Apache-2.0",
-      "license_family": "APACHE",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
       "summary": "A scalable, efficient, cross-platform and easy-to-use workflow engine in pure Python"
     },
     "build": {
-      "entry_points": [
-        "toil = toil.utils.toilMain:main",
-        "_toil_worker = toil.worker:main",
-        "toil-cwl-runner = toil.cwl.cwltoil:main",
-        "toil-wdl-runner = toil.wdl.wdltoil:main",
-        "toil-wes-cwl-runner = toil.server.cli.wes_cwl_runner:main",
-        "_toil_mesos_executor = toil.batchSystems.mesos.executor:main",
-        "_toil_contained_executor = toil.batchSystems.contained_executor:executor"
-      ],
       "noarch": "python",
-      "number": "0",
-      "script": "PYTHON -m pip install . --no-deps --no-build-isolation --no-cache-dir -vvv"
+      "number": "1",
+      "python": {
+        "entry_points": [
+          "toil = toil.utils.toilMain:main",
+          "_toil_worker = toil.worker:main",
+          "toil-cwl-runner = toil.cwl.cwltoil:main",
+          "toil-wdl-runner = toil.wdl.wdltoil:main",
+          "toil-wes-cwl-runner = toil.server.cli.wes_cwl_runner:main",
+          "_toil_mesos_executor = toil.batchSystems.mesos.executor:main",
+          "_toil_contained_executor = toil.batchSystems.contained_executor:executor"
+        ]
+      },
+      "script": "sed -i \"s/python = 'python3.*'/python = 'python3'/g\" src/toil/version.py\nsed -i \"s/exactPython = 'python3.*'/exactPython = 'python3'/g\" src/toil/version.py\nsed -i \"s/cwltool_version = '.*'/cwltool_version = '3.3.20260925135507'/g\" src/toil/version.py\n${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --no-cache-dir -vvv\n"
     },
     "extra": {
       "recipe-maintainers": [
@@ -50,21 +53,147 @@
         "mr-c"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "toil = toil.utils.toilMain:main",
+              "_toil_worker = toil.worker:main",
+              "toil-cwl-runner = toil.cwl.cwltoil:main",
+              "toil-wdl-runner = toil.wdl.wdltoil:main",
+              "toil-wes-cwl-runner = toil.server.cli.wes_cwl_runner:main",
+              "_toil_mesos_executor = toil.batchSystems.mesos.executor:main",
+              "_toil_contained_executor = toil.batchSystems.contained_executor:executor"
+            ]
+          }
+        },
+        "name": "toil",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "setuptools >=65.5.1,<83",
+            "wheel"
+          ],
+          "run": [
+            "python >=3.11",
+            "dill >=0.3.2,<0.5",
+            "requests >2,<=2.33.1",
+            "docker-py >=6.1.0,<8",
+            "urllib3 >=1.26.0,<3",
+            "python-dateutil",
+            "psutil >=6.1.0,<8",
+            "pypubsub >=4.0.3,<5",
+            "addict >=2.2.1,<2.5",
+            "enlighten >=1.5.2,<2",
+            "configargparse >=1.7,<2",
+            "ruamel.yaml >=0.15",
+            "pyyaml >=6,<7",
+            "typing-extensions >=4.6.2,<5",
+            "coloredlogs >=15,<16",
+            "prompt_toolkit >=3.0,<4",
+            "boto3-stubs >=1.28.3.post2,<2",
+            "mypy-boto3-s3 >=1.28.3.post3,<2",
+            "moto >=5.0.3,<6",
+            "pynacl >=1.4.0,<2",
+            "apache-libcloud >=3.6.1,<4",
+            "google-cloud-storage >=2,<=2.8.0",
+            "google-auth >=2.18.1,<3",
+            "cwltool ==3.3.20260925135507",
+            "schema-salad >=8.4.20230128170514,<9",
+            "galaxy-tool-util <27",
+            "ruamel.yaml >=0.15,<=0.19.1",
+            "ruamel.yaml.clib >=0.2.6",
+            "networkx <4",
+            "cachecontrol-with-filecache",
+            "cwl-utils >=0.41",
+            "python-htcondor >=23.6.0,<25",
+            "python-kubernetes >=12.0.1,<36",
+            "idna >=2",
+            "miniwdl ==1.13.1"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "toil",
+                "toil.batchSystems",
+                "toil.cwl",
+                "toil.fileStores",
+                "toil.jobStores",
+                "toil.jobStores.aws",
+                "toil.lib",
+                "toil.lib.encryption",
+                "toil.provisioners",
+                "toil.provisioners.aws",
+                "toil.server",
+                "toil.server.api_spec",
+                "toil.server.cli",
+                "toil.server.wes",
+                "toil.utils",
+                "toil.wdl"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "setup.cfg"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pip",
+                "python 3.11.*",
+                "pytest >=9,<10",
+                "pytest-xdist",
+                "pytest-timeout >=1.4.2,<3",
+                "pytest-httpserver >=1.1.3,<2",
+                "cwltest >=2.7.20260814150058",
+                "rsync",
+                "nodejs",
+                "edit_distance",
+                "util-linux"
+              ]
+            },
+            "script": {
+              "content": "toil --help\n_toil_worker --help\ntoil-cwl-runner --help\npytest -n auto --dist worksteal --durations=10 -k \"not (testVirtualEnv or testBuiltIn or test_retrieve_task_directory ${slow_tests})\" --pyargs toil.test\n# testVirtualEnv: the Toil Conda package is not installed as a VirtualEnv\n# testBuiltIn: tests are not run from a source checkout\n# test_retrieve_task_directory: unknown failure reason\n",
+              "env": {
+                "TOIL_HISTORY": "0",
+                "TOIL_SKIP_DOCKER": "true",
+                "TOIL_SKIP_ONLINE": "true",
+                "TOIL_TEST_QUICK": "true",
+                "slow_tests": "or test_url_to_optional_file or test_rm_tmpdir or testImportReadFileCompatibility or testPromises2 or testServices or testJobDeletions or testDynamic or testSimultaneousReadsUncachedStream or testServiceWithCheckpoints"
+              }
+            }
+          }
+        ],
+        "version": "9.5.0"
+      }
+    ],
     "package": {
       "name": "toil",
       "version": "9.5.0"
     },
     "requirements": {
       "host": [
-        "python 3.10",
+        "python 3.11.*",
         "pip",
         "setuptools >=65.5.1,<83",
         "wheel"
       ],
       "run": [
-        "python >=3.10",
-        "dill >=0.3.2,<0.4",
-        "requests >2,<=2.32.5",
+        "python >=3.11",
+        "dill >=0.3.2,<0.5",
+        "requests >2,<=2.33.1",
         "docker-py >=6.1.0,<8",
         "urllib3 >=1.26.0,<3",
         "python-dateutil",
@@ -85,57 +214,31 @@
         "apache-libcloud >=3.6.1,<4",
         "google-cloud-storage >=2,<=2.8.0",
         "google-auth >=2.18.1,<3",
-        "cwltool ==3.1.20260108082145",
+        "cwltool ==3.3.20260925135507",
         "schema-salad >=8.4.20230128170514,<9",
-        "galaxy-tool-util <26",
+        "galaxy-tool-util <27",
         "ruamel.yaml >=0.15,<=0.19.1",
         "ruamel.yaml.clib >=0.2.6",
         "networkx <4",
         "cachecontrol-with-filecache",
-        "cwl-utils >=0.36",
+        "cwl-utils >=0.41",
         "python-htcondor >=23.6.0,<25",
         "python-kubernetes >=12.0.1,<36",
         "idna >=2",
         "miniwdl ==1.13.1"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
+      "patches": [
+        "0001-Avoid-AssertionError-Could-not-determine-AWS-availab.patch",
+        "0002-work-around-missing-stubserver.patch",
+        "0003-ToilCommandLineTool-fix-inits.patch",
+        "0004-count_cpu-support-cgroups-v2-default-maximum-bandwid.patch",
+        "0005-Missing-needs_docker.patch"
+      ],
       "sha256": "dae9a12b0f277355170129be38406c831da47054758e64d6693e18d7e5b45d3f",
       "url": "https://pypi.org/packages/source/t/toil/toil-9.5.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "toil --help",
-        "_toil_worker --help",
-        "toil-cwl-runner --help",
-        "pip check"
-      ],
-      "imports": [
-        "toil",
-        "toil.batchSystems",
-        "toil.cwl",
-        "toil.fileStores",
-        "toil.jobStores",
-        "toil.jobStores.aws",
-        "toil.lib",
-        "toil.lib.encryption",
-        "toil.provisioners",
-        "toil.provisioners.aws",
-        "toil.server",
-        "toil.server.api_spec",
-        "toil.server.cli",
-        "toil.server.wes",
-        "toil.test",
-        "toil.utils",
-        "toil.wdl"
-      ],
-      "requires": [
-        "pip",
-        "python 3.10",
-        "pytest",
-        "rsync"
-      ]
     }
   },
   "linux_64_requirements": {
@@ -194,10 +297,17 @@
     "test": {
       "__set__": true,
       "elements": [
+        "cwltest",
+        "edit_distance",
+        "nodejs",
         "pip",
         "pytest",
+        "pytest-httpserver",
+        "pytest-timeout",
+        "pytest-xdist",
         "python",
-        "rsync"
+        "rsync",
+        "util-linux"
       ]
     }
   },
@@ -207,23 +317,25 @@
       "doc_url": "https://toil.readthedocs.io/en/latest/",
       "home": "https://toil.ucsc-cgl.org/",
       "license": "Apache-2.0",
-      "license_family": "APACHE",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
       "summary": "A scalable, efficient, cross-platform and easy-to-use workflow engine in pure Python"
     },
     "build": {
-      "entry_points": [
-        "toil = toil.utils.toilMain:main",
-        "_toil_worker = toil.worker:main",
-        "toil-cwl-runner = toil.cwl.cwltoil:main",
-        "toil-wdl-runner = toil.wdl.wdltoil:main",
-        "toil-wes-cwl-runner = toil.server.cli.wes_cwl_runner:main",
-        "_toil_mesos_executor = toil.batchSystems.mesos.executor:main",
-        "_toil_contained_executor = toil.batchSystems.contained_executor:executor"
-      ],
       "noarch": "python",
-      "number": "0",
-      "script": "PYTHON -m pip install . --no-deps --no-build-isolation --no-cache-dir -vvv"
+      "number": "1",
+      "python": {
+        "entry_points": [
+          "toil = toil.utils.toilMain:main",
+          "_toil_worker = toil.worker:main",
+          "toil-cwl-runner = toil.cwl.cwltoil:main",
+          "toil-wdl-runner = toil.wdl.wdltoil:main",
+          "toil-wes-cwl-runner = toil.server.cli.wes_cwl_runner:main",
+          "_toil_mesos_executor = toil.batchSystems.mesos.executor:main",
+          "_toil_contained_executor = toil.batchSystems.contained_executor:executor"
+        ]
+      },
+      "script": "sed -i \"s/python = 'python3.*'/python = 'python3'/g\" src/toil/version.py\nsed -i \"s/exactPython = 'python3.*'/exactPython = 'python3'/g\" src/toil/version.py\nsed -i \"s/cwltool_version = '.*'/cwltool_version = '3.3.20260925135507'/g\" src/toil/version.py\n${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --no-cache-dir -vvv\n"
     },
     "extra": {
       "recipe-maintainers": [
@@ -231,21 +343,147 @@
         "mr-c"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "toil = toil.utils.toilMain:main",
+              "_toil_worker = toil.worker:main",
+              "toil-cwl-runner = toil.cwl.cwltoil:main",
+              "toil-wdl-runner = toil.wdl.wdltoil:main",
+              "toil-wes-cwl-runner = toil.server.cli.wes_cwl_runner:main",
+              "_toil_mesos_executor = toil.batchSystems.mesos.executor:main",
+              "_toil_contained_executor = toil.batchSystems.contained_executor:executor"
+            ]
+          }
+        },
+        "name": "toil",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "setuptools >=65.5.1,<83",
+            "wheel"
+          ],
+          "run": [
+            "python >=3.11",
+            "dill >=0.3.2,<0.5",
+            "requests >2,<=2.33.1",
+            "docker-py >=6.1.0,<8",
+            "urllib3 >=1.26.0,<3",
+            "python-dateutil",
+            "psutil >=6.1.0,<8",
+            "pypubsub >=4.0.3,<5",
+            "addict >=2.2.1,<2.5",
+            "enlighten >=1.5.2,<2",
+            "configargparse >=1.7,<2",
+            "ruamel.yaml >=0.15",
+            "pyyaml >=6,<7",
+            "typing-extensions >=4.6.2,<5",
+            "coloredlogs >=15,<16",
+            "prompt_toolkit >=3.0,<4",
+            "boto3-stubs >=1.28.3.post2,<2",
+            "mypy-boto3-s3 >=1.28.3.post3,<2",
+            "moto >=5.0.3,<6",
+            "pynacl >=1.4.0,<2",
+            "apache-libcloud >=3.6.1,<4",
+            "google-cloud-storage >=2,<=2.8.0",
+            "google-auth >=2.18.1,<3",
+            "cwltool ==3.3.20260925135507",
+            "schema-salad >=8.4.20230128170514,<9",
+            "galaxy-tool-util <27",
+            "ruamel.yaml >=0.15,<=0.19.1",
+            "ruamel.yaml.clib >=0.2.6",
+            "networkx <4",
+            "cachecontrol-with-filecache",
+            "cwl-utils >=0.41",
+            "python-htcondor >=23.6.0,<25",
+            "python-kubernetes >=12.0.1,<36",
+            "idna >=2",
+            "miniwdl ==1.13.1"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "toil",
+                "toil.batchSystems",
+                "toil.cwl",
+                "toil.fileStores",
+                "toil.jobStores",
+                "toil.jobStores.aws",
+                "toil.lib",
+                "toil.lib.encryption",
+                "toil.provisioners",
+                "toil.provisioners.aws",
+                "toil.server",
+                "toil.server.api_spec",
+                "toil.server.cli",
+                "toil.server.wes",
+                "toil.utils",
+                "toil.wdl"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "setup.cfg"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pip",
+                "python 3.11.*",
+                "pytest >=9,<10",
+                "pytest-xdist",
+                "pytest-timeout >=1.4.2,<3",
+                "pytest-httpserver >=1.1.3,<2",
+                "cwltest >=2.7.20260814150058",
+                "rsync",
+                "nodejs",
+                "edit_distance",
+                "util-linux"
+              ]
+            },
+            "script": {
+              "content": "toil --help\n_toil_worker --help\ntoil-cwl-runner --help\npytest -n auto --dist worksteal --durations=10 -k \"not (testVirtualEnv or testBuiltIn or test_retrieve_task_directory ${slow_tests})\" --pyargs toil.test\n# testVirtualEnv: the Toil Conda package is not installed as a VirtualEnv\n# testBuiltIn: tests are not run from a source checkout\n# test_retrieve_task_directory: unknown failure reason\n",
+              "env": {
+                "TOIL_HISTORY": "0",
+                "TOIL_SKIP_DOCKER": "true",
+                "TOIL_SKIP_ONLINE": "true",
+                "TOIL_TEST_QUICK": "true",
+                "slow_tests": "or test_url_to_optional_file or test_rm_tmpdir or testImportReadFileCompatibility or testPromises2 or testServices or testJobDeletions or testDynamic or testSimultaneousReadsUncachedStream or testServiceWithCheckpoints"
+              }
+            }
+          }
+        ],
+        "version": "9.5.0"
+      }
+    ],
     "package": {
       "name": "toil",
       "version": "9.5.0"
     },
     "requirements": {
       "host": [
-        "python 3.10",
+        "python 3.11.*",
         "pip",
         "setuptools >=65.5.1,<83",
         "wheel"
       ],
       "run": [
-        "python >=3.10",
-        "dill >=0.3.2,<0.4",
-        "requests >2,<=2.32.5",
+        "python >=3.11",
+        "dill >=0.3.2,<0.5",
+        "requests >2,<=2.33.1",
         "docker-py >=6.1.0,<8",
         "urllib3 >=1.26.0,<3",
         "python-dateutil",
@@ -266,57 +504,31 @@
         "apache-libcloud >=3.6.1,<4",
         "google-cloud-storage >=2,<=2.8.0",
         "google-auth >=2.18.1,<3",
-        "cwltool ==3.1.20260108082145",
+        "cwltool ==3.3.20260925135507",
         "schema-salad >=8.4.20230128170514,<9",
-        "galaxy-tool-util <26",
+        "galaxy-tool-util <27",
         "ruamel.yaml >=0.15,<=0.19.1",
         "ruamel.yaml.clib >=0.2.6",
         "networkx <4",
         "cachecontrol-with-filecache",
-        "cwl-utils >=0.36",
+        "cwl-utils >=0.41",
         "python-htcondor >=23.6.0,<25",
         "python-kubernetes >=12.0.1,<36",
         "idna >=2",
         "miniwdl ==1.13.1"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
+      "patches": [
+        "0001-Avoid-AssertionError-Could-not-determine-AWS-availab.patch",
+        "0002-work-around-missing-stubserver.patch",
+        "0003-ToilCommandLineTool-fix-inits.patch",
+        "0004-count_cpu-support-cgroups-v2-default-maximum-bandwid.patch",
+        "0005-Missing-needs_docker.patch"
+      ],
       "sha256": "dae9a12b0f277355170129be38406c831da47054758e64d6693e18d7e5b45d3f",
       "url": "https://pypi.org/packages/source/t/toil/toil-9.5.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "toil --help",
-        "_toil_worker --help",
-        "toil-cwl-runner --help",
-        "pip check"
-      ],
-      "imports": [
-        "toil",
-        "toil.batchSystems",
-        "toil.cwl",
-        "toil.fileStores",
-        "toil.jobStores",
-        "toil.jobStores.aws",
-        "toil.lib",
-        "toil.lib.encryption",
-        "toil.provisioners",
-        "toil.provisioners.aws",
-        "toil.server",
-        "toil.server.api_spec",
-        "toil.server.cli",
-        "toil.server.wes",
-        "toil.test",
-        "toil.utils",
-        "toil.wdl"
-      ],
-      "requires": [
-        "pip",
-        "python 3.10",
-        "pytest",
-        "rsync"
-      ]
     }
   },
   "name": "toil",
@@ -333,7 +545,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/toil.json"
   },
-  "raw_meta_yaml": "# copied from https://github.com/bioconda/bioconda-recipes/blob/9c08a16bac9b7d0a076578823d5008b8bbfc466e/recipes/toil/meta.yaml\n{% set name = \"toil\" %}\n{% set version = \"9.5.0\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz\n  sha256: dae9a12b0f277355170129be38406c831da47054758e64d6693e18d7e5b45d3f\n\nbuild:\n  number: 0\n  noarch: python\n  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --no-cache-dir -vvv\n  entry_points:\n    - toil = toil.utils.toilMain:main\n    - _toil_worker = toil.worker:main\n    - toil-cwl-runner = toil.cwl.cwltoil:main\n    - toil-wdl-runner = toil.wdl.wdltoil:main\n    - toil-wes-cwl-runner = toil.server.cli.wes_cwl_runner:main\n    - _toil_mesos_executor = toil.batchSystems.mesos.executor:main\n    - _toil_contained_executor = toil.batchSystems.contained_executor:executor\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip\n    - setuptools >=65.5.1,<83\n    - wheel\n  run:\n    - python >={{ python_min }}\n    - dill >=0.3.2,<0.4\n    - requests >2,<=2.32.5\n    - docker-py >=6.1.0,<8\n    - urllib3 >=1.26.0,<3\n    - python-dateutil\n    - psutil >=6.1.0,<8\n    - pypubsub >=4.0.3,<5\n    - addict >=2.2.1,<2.5\n    - enlighten >=1.5.2,<2\n    - configargparse >=1.7,<2\n    - ruamel.yaml >=0.15\n    - pyyaml >=6,<7\n    - typing-extensions >=4.6.2,<5\n    - coloredlogs >=15,<16\n    - prompt_toolkit >=3.0,<4\n    #mesos pymesos isn't available\n    #server reqs\n    # - wes-service is missing\n    # so commenting out the remaining server reqs for now\n    # - connexion >=2.10.0, <4\n    # - flask >=2.0,<4\n    # - werkzeug >=2.0,<4\n    # - flask-cors ==5.0.0\n    # - gunicorn ==23.0.0\n    # - celery >=5.1.0, <6\n    #aws reqs\n    # mypy-boto3-iam & ec2_metadata are not yet in Conda\n    - boto3-stubs >=1.28.3.post2,<2\n    # - mypy-boto3-iam >=1.28.3.post2,<2\n    - mypy-boto3-s3 >=1.28.3.post3,<2\n    - moto >=5.0.3,<6\n    # - ec2_metadata <3\n    #encryption reqs\n    - pynacl >=1.4.0,<2\n    #google reqs\n    - apache-libcloud >=3.6.1,<4\n    - google-cloud-storage >=2,<=2.8.0\n    - google-auth >=2.18.1,<3\n    #cwl reqs\n    - cwltool ==3.1.20260108082145\n    - schema-salad >=8.4.20230128170514,<9\n    - galaxy-tool-util <26\n    - ruamel.yaml >=0.15,<=0.19.1\n    - ruamel.yaml.clib >=0.2.6\n    - networkx <4\n    - cachecontrol-with-filecache\n    - cwl-utils >=0.36\n    #htcondor reqs\n    - python-htcondor >=23.6.0,<25\n    #kubernetes reqs\n    - python-kubernetes >=12.0.1,<36\n    - idna >=2\n    #wdl reqs\n    - miniwdl ==1.13.1\n\ntest:\n  imports:\n    - toil\n    - toil.batchSystems\n    - toil.cwl\n    - toil.fileStores\n    - toil.jobStores\n    - toil.jobStores.aws\n    - toil.lib\n    - toil.lib.encryption\n    - toil.provisioners\n    - toil.provisioners.aws\n    - toil.server\n    - toil.server.api_spec\n    - toil.server.cli\n    - toil.server.wes\n    - toil.test\n    - toil.utils\n    - toil.wdl\n  commands:\n    - toil --help\n    - _toil_worker --help\n    - toil-cwl-runner --help\n    - pip check\n  requires:\n    - pip\n    - python {{ python_min }}\n    - pytest\n    - rsync\n\nabout:\n  home: 'https://toil.ucsc-cgl.org/'\n  summary: 'A scalable, efficient, cross-platform and easy-to-use workflow engine in pure Python'\n  dev_url: 'https://github.com/DataBiosphere/toil'\n  doc_url: 'https://toil.readthedocs.io/en/latest/'\n  license: Apache-2.0\n  license_family: APACHE\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - sameeul\n    - mr-c\n",
+  "raw_meta_yaml": "# copied from https://github.com/bioconda/bioconda-recipes/blob/9c08a16bac9b7d0a076578823d5008b8bbfc466e/recipes/toil/meta.yaml\nschema_version: 1\n\ncontext:\n  name: toil\n  version: \"9.5.0\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/${{ name }}-${{ version }}.tar.gz\n  sha256: dae9a12b0f277355170129be38406c831da47054758e64d6693e18d7e5b45d3f\n  patches:\n    - 0001-Avoid-AssertionError-Could-not-determine-AWS-availab.patch\n    - 0002-work-around-missing-stubserver.patch\n    - 0003-ToilCommandLineTool-fix-inits.patch\n    - 0004-count_cpu-support-cgroups-v2-default-maximum-bandwid.patch\n    - 0005-Missing-needs_docker.patch\n\nbuild:\n  number: 1\n  noarch: python\n  script: |\n    sed -i \"s/python = 'python3.*'/python = 'python3'/g\" src/toil/version.py\n    sed -i \"s/exactPython = 'python3.*'/exactPython = 'python3'/g\" src/toil/version.py\n    sed -i \"s/cwltool_version = '.*'/cwltool_version = '3.3.20260925135507'/g\" src/toil/version.py\n    ${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --no-cache-dir -vvv\n  python:\n    entry_points:\n      - toil = toil.utils.toilMain:main\n      - _toil_worker = toil.worker:main\n      - toil-cwl-runner = toil.cwl.cwltoil:main\n      - toil-wdl-runner = toil.wdl.wdltoil:main\n      - toil-wes-cwl-runner = toil.server.cli.wes_cwl_runner:main\n      - _toil_mesos_executor = toil.batchSystems.mesos.executor:main\n      - _toil_contained_executor = toil.batchSystems.contained_executor:executor\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - setuptools >=65.5.1,<83\n    - wheel\n  run:\n    - python >=${{ python_min }}\n    - dill >=0.3.2,<0.5\n    - requests >2,<=2.33.1\n    - docker-py >=6.1.0,<8\n    - urllib3 >=1.26.0,<3\n    - python-dateutil\n    - psutil >=6.1.0,<8\n    - pypubsub >=4.0.3,<5\n    - addict >=2.2.1,<2.5\n    - enlighten >=1.5.2,<2\n    - configargparse >=1.7,<2\n    - ruamel.yaml >=0.15\n    - pyyaml >=6,<7\n    - typing-extensions >=4.6.2,<5\n    - coloredlogs >=15,<16\n    - prompt_toolkit >=3.0,<4\n    #mesos pymesos isn't available\n    #server reqs\n    # - wes-service is missing\n    # so commenting out the remaining server reqs for now\n    # - connexion >=2.10.0, <4\n    # - flask >=2.0,<4\n    # - werkzeug >=2.0,<4\n    # - flask-cors ==5.0.0\n    # - gunicorn ==23.0.0\n    # - celery >=5.1.0, <6\n    #aws reqs\n    # mypy-boto3-iam & ec2_metadata are not yet in Conda\n    - boto3-stubs >=1.28.3.post2,<2\n    # - mypy-boto3-iam >=1.28.3.post2,<2\n    - mypy-boto3-s3 >=1.28.3.post3,<2\n    - moto >=5.0.3,<6\n    # - ec2_metadata <3\n    #encryption reqs\n    - pynacl >=1.4.0,<2\n    #google reqs\n    - apache-libcloud >=3.6.1,<4\n    - google-cloud-storage >=2,<=2.8.0\n    - google-auth >=2.18.1,<3\n    #cwl reqs\n    - cwltool ==3.3.20260925135507\n    - schema-salad >=8.4.20230128170514,<9\n    - galaxy-tool-util <27\n    - ruamel.yaml >=0.15,<=0.19.1\n    - ruamel.yaml.clib >=0.2.6\n    - networkx <4\n    - cachecontrol-with-filecache\n    - cwl-utils >=0.41\n    #htcondor reqs\n    - python-htcondor >=23.6.0,<25\n    #kubernetes reqs\n    - python-kubernetes >=12.0.1,<36\n    - idna >=2\n    #wdl reqs\n    - miniwdl ==1.13.1\n    # - wdlparse ==0.1.0\n\ntests:\n  - python:\n      imports:\n        - toil\n        - toil.batchSystems\n        - toil.cwl\n        - toil.fileStores\n        - toil.jobStores\n        - toil.jobStores.aws\n        - toil.lib\n        - toil.lib.encryption\n        - toil.provisioners\n        - toil.provisioners.aws\n        - toil.server\n        - toil.server.api_spec\n        - toil.server.cli\n        - toil.server.wes\n        - toil.utils\n        - toil.wdl\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - requirements:\n      run:\n        - pip\n        - python ${{ python_min }}.*\n        - pytest >=9,<10\n        - pytest-xdist\n        - pytest-timeout >=1.4.2,<3\n        - pytest-httpserver >=1.1.3,<2\n        - cwltest >=2.7.20260814150058\n        - rsync\n        - nodejs\n        - edit_distance\n        - util-linux  # for the \"rev\" command\n    files:\n      source:\n        - setup.cfg\n    script:\n      env:\n        TOIL_SKIP_ONLINE: \"true\"\n        TOIL_TEST_QUICK: \"true\"\n        TOIL_SKIP_DOCKER: \"true\"\n        TOIL_HISTORY: \"0\"\n        slow_tests: \"or test_url_to_optional_file or test_rm_tmpdir or testImportReadFileCompatibility or testPromises2 or testServices or testJobDeletions or testDynamic or testSimultaneousReadsUncachedStream or testServiceWithCheckpoints\"\n      content: |\n        toil --help\n        _toil_worker --help\n        toil-cwl-runner --help\n        pytest -n auto --dist worksteal --durations=10 -k \"not (testVirtualEnv or testBuiltIn or test_retrieve_task_directory ${slow_tests})\" --pyargs toil.test\n        # testVirtualEnv: the Toil Conda package is not installed as a VirtualEnv\n        # testBuiltIn: tests are not run from a source checkout\n        # test_retrieve_task_directory: unknown failure reason\n\nabout:\n  summary: A scalable, efficient, cross-platform and easy-to-use workflow engine in pure Python\n  license: Apache-2.0\n  license_file: LICENSE\n  homepage: https://toil.ucsc-cgl.org/\n  repository: https://github.com/DataBiosphere/toil\n  documentation: https://toil.readthedocs.io/en/latest/\n\nextra:\n  recipe-maintainers:\n    - sameeul\n    - mr-c\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -432,10 +644,17 @@
     "test": {
       "__set__": true,
       "elements": [
+        "cwltest",
+        "edit_distance",
+        "nodejs",
         "pip",
         "pytest",
+        "pytest-httpserver",
+        "pytest-timeout",
+        "pytest-xdist",
         "python",
-        "rsync"
+        "rsync",
+        "util-linux"
       ]
     }
   },
@@ -449,7 +668,7 @@
       "__set__": true,
       "elements": [
         "pip",
-        "python 3.10",
+        "python 3.11.*",
         "setuptools >=65.5.1,<83",
         "wheel"
       ]
@@ -463,12 +682,12 @@
         "cachecontrol-with-filecache",
         "coloredlogs >=15,<16",
         "configargparse >=1.7,<2",
-        "cwl-utils >=0.36",
-        "cwltool ==3.1.20260108082145",
-        "dill >=0.3.2,<0.4",
+        "cwl-utils >=0.41",
+        "cwltool ==3.3.20260925135507",
+        "dill >=0.3.2,<0.5",
         "docker-py >=6.1.0,<8",
         "enlighten >=1.5.2,<2",
-        "galaxy-tool-util <26",
+        "galaxy-tool-util <27",
         "google-auth >=2.18.1,<3",
         "google-cloud-storage >=2,<=2.8.0",
         "idna >=2",
@@ -480,12 +699,12 @@
         "psutil >=6.1.0,<8",
         "pynacl >=1.4.0,<2",
         "pypubsub >=4.0.3,<5",
-        "python >=3.10",
+        "python >=3.11",
         "python-dateutil",
         "python-htcondor >=23.6.0,<25",
         "python-kubernetes >=12.0.1,<36",
         "pyyaml >=6,<7",
-        "requests >2,<=2.32.5",
+        "requests >2,<=2.33.1",
         "ruamel.yaml >=0.15",
         "ruamel.yaml >=0.15,<=0.19.1",
         "ruamel.yaml.clib >=0.2.6",
@@ -497,10 +716,17 @@
     "test": {
       "__set__": true,
       "elements": [
+        "cwltest >=2.7.20260814150058",
+        "edit_distance",
+        "nodejs",
         "pip",
-        "pytest",
-        "python 3.10",
-        "rsync"
+        "pytest >=9,<10",
+        "pytest-httpserver >=1.1.3,<2",
+        "pytest-timeout >=1.4.2,<3",
+        "pytest-xdist",
+        "python 3.11.*",
+        "rsync",
+        "util-linux"
       ]
     }
   },
