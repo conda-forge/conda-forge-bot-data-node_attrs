@@ -37,8 +37,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "f79ea556591e8f08b141668f493d66b4fad0840f",
-  "feedstock_hash_ts": 1790359953,
+  "feedstock_hash": "bf77c6b3c4e8131f414ab4fc45c95d0bdc893a7e",
+  "feedstock_hash_ts": 1790874429,
   "feedstock_name": "postgresql",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -49,7 +49,7 @@
       "summary": "multi-ouput recipe for postgresql"
     },
     "build": {
-      "number": "2"
+      "number": "3"
     },
     "extra": {
       "recipe-maintainers": [
@@ -90,7 +90,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "liburing",
             "libxml2-devel",
@@ -121,7 +120,10 @@
             "$PREFIX/bin/initdb",
             "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
             "$PREFIX/bin/pg_ctl stop",
-            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1"
+            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ],
           "requirements": [
             "binutils"
@@ -132,7 +134,40 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.so",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -155,7 +190,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -208,7 +242,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "krb5",
             "openldap",
@@ -224,7 +257,10 @@
             "test -f $PREFIX/lib/libpq.so.5",
             "test -f $PREFIX/lib/libpq.so",
             "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ]
         }
       }
@@ -248,7 +284,6 @@
         "llvm-tools 21.*"
       ],
       "host": [
-        "llvm 21.*",
         "icu",
         "liburing",
         "libxml2-devel",
@@ -310,7 +345,6 @@
         "libuuid",
         "libxml2-devel",
         "libxslt",
-        "llvm",
         "lz4-c",
         "openldap",
         "openssl",
@@ -327,6 +361,7 @@
       "__set__": true,
       "elements": [
         "krb5",
+        "libllvm21",
         "libpq",
         "openldap",
         "openssl",
@@ -352,7 +387,7 @@
       "summary": "multi-ouput recipe for postgresql"
     },
     "build": {
-      "number": "2"
+      "number": "3"
     },
     "extra": {
       "recipe-maintainers": [
@@ -393,7 +428,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "liburing",
             "libxml2-devel",
@@ -424,7 +458,10 @@
             "$PREFIX/bin/initdb",
             "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
             "$PREFIX/bin/pg_ctl stop",
-            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1"
+            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ],
           "requirements": [
             "binutils"
@@ -435,7 +472,40 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.so",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -458,7 +528,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -511,7 +580,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "krb5",
             "openldap",
@@ -527,7 +595,10 @@
             "test -f $PREFIX/lib/libpq.so.5",
             "test -f $PREFIX/lib/libpq.so",
             "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ]
         }
       }
@@ -551,7 +622,6 @@
         "llvm-tools 21.*"
       ],
       "host": [
-        "llvm 21.*",
         "icu",
         "liburing",
         "libxml2-devel",
@@ -613,7 +683,6 @@
         "libuuid",
         "libxml2-devel",
         "libxslt",
-        "llvm",
         "lz4-c",
         "openldap",
         "openssl",
@@ -630,6 +699,7 @@
       "__set__": true,
       "elements": [
         "krb5",
+        "libllvm21",
         "libpq",
         "openldap",
         "openssl",
@@ -655,7 +725,7 @@
       "summary": "multi-ouput recipe for postgresql"
     },
     "build": {
-      "number": "2"
+      "number": "3"
     },
     "extra": {
       "recipe-maintainers": [
@@ -696,7 +766,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "liburing",
             "libxml2-devel",
@@ -727,7 +796,10 @@
             "$PREFIX/bin/initdb",
             "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
             "$PREFIX/bin/pg_ctl stop",
-            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1"
+            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ],
           "requirements": [
             "binutils"
@@ -738,7 +810,40 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.so",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -761,7 +866,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -814,7 +918,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "krb5",
             "openldap",
@@ -830,7 +933,10 @@
             "test -f $PREFIX/lib/libpq.so.5",
             "test -f $PREFIX/lib/libpq.so",
             "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ]
         }
       }
@@ -854,7 +960,6 @@
         "llvm-tools 21.*"
       ],
       "host": [
-        "llvm 21.*",
         "icu",
         "liburing",
         "libxml2-devel",
@@ -916,7 +1021,6 @@
         "libuuid",
         "libxml2-devel",
         "libxslt",
-        "llvm",
         "lz4-c",
         "openldap",
         "openssl",
@@ -933,6 +1037,7 @@
       "__set__": true,
       "elements": [
         "krb5",
+        "libllvm21",
         "libpq",
         "openldap",
         "openssl",
@@ -958,7 +1063,7 @@
       "summary": "multi-ouput recipe for postgresql"
     },
     "build": {
-      "number": "2"
+      "number": "3"
     },
     "extra": {
       "recipe-maintainers": [
@@ -999,7 +1104,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "liburing",
             "libxml2-devel",
@@ -1030,7 +1134,10 @@
             "$PREFIX/bin/initdb",
             "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
             "$PREFIX/bin/pg_ctl stop",
-            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1"
+            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ],
           "requirements": [
             "binutils"
@@ -1041,489 +1148,597 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
         },
-        "build": {
-          "run_exports": [
-            "postgresql-plpython"
-          ]
-        },
-        "name": "postgresql-plpython",
+        "build": null,
+        "name": "postgresql-jit",
         "requirements": {
           "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "libxml2-devel",
-            "libxslt",
-            "krb5",
-            "openldap",
-            "openssl",
-            "lz4-c",
-            "zlib",
-            "zstd",
-            "libuuid",
-            "readline",
-            "postgresql",
-            "python",
-            "libpython"
+            "make"
           ],
           "run": [
             "postgresql",
-            "python"
+            "libllvm21 21.*"
           ]
         },
-        "script": "install_plpython.sh",
-        "test": {
-          "commands": null
-        }
-      },
-      {
-        "about": {
-          "license": "PostgreSQL",
-          "license_file": "COPYRIGHT",
-          "summary": "The postgres runtime libraries and utilities (not the server itself)"
-        },
-        "build": {
-          "run_exports": [
-            "libpq"
-          ]
-        },
-        "name": "libpq",
-        "requirements": {
-          "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "krb5",
-            "openldap",
-            "openssl",
-            "tzcode",
-            "tzdata"
-          ]
-        },
-        "script": "install_runtime.sh",
+        "script": "install_jit.sh",
         "test": {
           "commands": [
-            "test -f $PREFIX/lib/libpq.so.5.18",
-            "test -f $PREFIX/lib/libpq.so.5",
-            "test -f $PREFIX/lib/libpq.so",
-            "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
-          ]
-        }
-      },
-      {
-        "about": {
-          "license": "PostgreSQL",
-          "license_file": "COPYRIGHT",
-          "summary": "PostgreSQL is a powerful, open source object-relational database system."
-        },
-        "build": {
-          "run_exports": [
-            "libpq"
-          ]
-        },
-        "name": "postgresql",
-        "requirements": {
-          "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "liburing",
-            "libxml2-devel",
-            "libxslt",
-            "krb5",
-            "openldap",
-            "openssl",
-            "lz4-c",
-            "zlib",
-            "zstd",
-            "readline",
-            "tzcode",
-            "tzdata",
-            "libpq"
-          ],
-          "run": [
-            "libpq",
-            "tzcode",
-            "tzdata"
-          ]
-        },
-        "script": "install_db.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/bin/postgres",
-            "$PREFIX/bin/postgres --help",
-            "export PGDATA=$SRC_DIR/test_postgres",
+            "test -f $PREFIX/lib/llvmjit.so",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
             "$PREFIX/bin/initdb",
             "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
-            "$PREFIX/bin/pg_ctl stop",
-            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1"
-          ],
-          "requirements": [
-            "binutils"
-          ]
-        }
-      },
-      {
-        "about": {
-          "license": "PostgreSQL",
-          "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
-        },
-        "build": {
-          "run_exports": [
-            "postgresql-plpython"
-          ]
-        },
-        "name": "postgresql-plpython",
-        "requirements": {
-          "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "libxml2-devel",
-            "libxslt",
-            "krb5",
-            "openldap",
-            "openssl",
-            "lz4-c",
-            "zlib",
-            "zstd",
-            "libuuid",
-            "readline",
-            "postgresql",
-            "python",
-            "libpython"
-          ],
-          "run": [
-            "postgresql",
-            "python"
-          ]
-        },
-        "script": "install_plpython.sh",
-        "test": {
-          "commands": null
-        }
-      },
-      {
-        "about": {
-          "license": "PostgreSQL",
-          "license_file": "COPYRIGHT",
-          "summary": "The postgres runtime libraries and utilities (not the server itself)"
-        },
-        "build": {
-          "run_exports": [
-            "libpq"
-          ]
-        },
-        "name": "libpq",
-        "requirements": {
-          "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "krb5",
-            "openldap",
-            "openssl",
-            "tzcode",
-            "tzdata"
-          ]
-        },
-        "script": "install_runtime.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/lib/libpq.so.5.18",
-            "test -f $PREFIX/lib/libpq.so.5",
-            "test -f $PREFIX/lib/libpq.so",
-            "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
-          ]
-        }
-      },
-      {
-        "about": {
-          "license": "PostgreSQL",
-          "license_file": "COPYRIGHT",
-          "summary": "PostgreSQL is a powerful, open source object-relational database system."
-        },
-        "build": {
-          "run_exports": [
-            "libpq"
-          ]
-        },
-        "name": "postgresql",
-        "requirements": {
-          "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "liburing",
-            "libxml2-devel",
-            "libxslt",
-            "krb5",
-            "openldap",
-            "openssl",
-            "lz4-c",
-            "zlib",
-            "zstd",
-            "readline",
-            "tzcode",
-            "tzdata",
-            "libpq"
-          ],
-          "run": [
-            "libpq",
-            "tzcode",
-            "tzdata"
-          ]
-        },
-        "script": "install_db.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/bin/postgres",
-            "$PREFIX/bin/postgres --help",
-            "export PGDATA=$SRC_DIR/test_postgres",
-            "$PREFIX/bin/initdb",
-            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
-            "$PREFIX/bin/pg_ctl stop",
-            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1"
-          ],
-          "requirements": [
-            "binutils"
-          ]
-        }
-      },
-      {
-        "about": {
-          "license": "PostgreSQL",
-          "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
-        },
-        "build": {
-          "run_exports": [
-            "postgresql-plpython"
-          ]
-        },
-        "name": "postgresql-plpython",
-        "requirements": {
-          "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "libxml2-devel",
-            "libxslt",
-            "krb5",
-            "openldap",
-            "openssl",
-            "lz4-c",
-            "zlib",
-            "zstd",
-            "libuuid",
-            "readline",
-            "postgresql",
-            "python",
-            "libpython"
-          ],
-          "run": [
-            "postgresql",
-            "python"
-          ]
-        },
-        "script": "install_plpython.sh",
-        "test": {
-          "commands": null
-        }
-      },
-      {
-        "about": {
-          "license": "PostgreSQL",
-          "license_file": "COPYRIGHT",
-          "summary": "The postgres runtime libraries and utilities (not the server itself)"
-        },
-        "build": {
-          "run_exports": [
-            "libpq"
-          ]
-        },
-        "name": "libpq",
-        "requirements": {
-          "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "krb5",
-            "openldap",
-            "openssl",
-            "tzcode",
-            "tzdata"
-          ]
-        },
-        "script": "install_runtime.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/lib/libpq.so.5.18",
-            "test -f $PREFIX/lib/libpq.so.5",
-            "test -f $PREFIX/lib/libpq.so",
-            "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
-          ]
-        }
-      },
-      {
-        "about": {
-          "license": "PostgreSQL",
-          "license_file": "COPYRIGHT",
-          "summary": "PostgreSQL is a powerful, open source object-relational database system."
-        },
-        "build": {
-          "run_exports": [
-            "libpq"
-          ]
-        },
-        "name": "postgresql",
-        "requirements": {
-          "build": [
-            "gnuconfig",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "make",
-            "pkg-config",
-            "bison",
-            "icu",
-            "clang 21.*",
-            "llvmdev 21.*",
-            "llvm-tools 21.*"
-          ],
-          "host": [
-            "llvm 21.*",
-            "icu",
-            "libxml2-devel",
-            "libxslt",
-            "krb5",
-            "openldap",
-            "openssl",
-            "lz4-c",
-            "zlib",
-            "zstd",
-            "readline",
-            "tzcode",
-            "tzdata",
-            "libpq"
-          ],
-          "run": [
-            "libpq",
-            "tzcode",
-            "tzdata"
-          ]
-        },
-        "script": "install_db.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/bin/postgres",
-            "$PREFIX/bin/postgres --help",
-            "export PGDATA=$SRC_DIR/test_postgres",
-            "$PREFIX/bin/initdb",
-            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
             "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
+        },
+        "build": {
+          "run_exports": [
+            "postgresql-plpython"
+          ]
+        },
+        "name": "postgresql-plpython",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "libxml2-devel",
+            "libxslt",
+            "krb5",
+            "openldap",
+            "openssl",
+            "lz4-c",
+            "zlib",
+            "zstd",
+            "libuuid",
+            "readline",
+            "postgresql",
+            "python",
+            "libpython"
+          ],
+          "run": [
+            "postgresql",
+            "python"
+          ]
+        },
+        "script": "install_plpython.sh",
+        "test": {
+          "commands": null
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The postgres runtime libraries and utilities (not the server itself)"
+        },
+        "build": {
+          "run_exports": [
+            "libpq"
+          ]
+        },
+        "name": "libpq",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "krb5",
+            "openldap",
+            "openssl",
+            "tzcode",
+            "tzdata"
+          ]
+        },
+        "script": "install_runtime.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libpq.so.5.18",
+            "test -f $PREFIX/lib/libpq.so.5",
+            "test -f $PREFIX/lib/libpq.so",
+            "test -f $PREFIX/bin/pg_config",
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "PostgreSQL is a powerful, open source object-relational database system."
+        },
+        "build": {
+          "run_exports": [
+            "libpq"
+          ]
+        },
+        "name": "postgresql",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "liburing",
+            "libxml2-devel",
+            "libxslt",
+            "krb5",
+            "openldap",
+            "openssl",
+            "lz4-c",
+            "zlib",
+            "zstd",
+            "readline",
+            "tzcode",
+            "tzdata",
+            "libpq"
+          ],
+          "run": [
+            "libpq",
+            "tzcode",
+            "tzdata"
+          ]
+        },
+        "script": "install_db.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/bin/postgres",
+            "$PREFIX/bin/postgres --help",
+            "export PGDATA=$SRC_DIR/test_postgres",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/pg_ctl stop",
+            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
+          ],
+          "requirements": [
+            "binutils"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.so",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
+        },
+        "build": {
+          "run_exports": [
+            "postgresql-plpython"
+          ]
+        },
+        "name": "postgresql-plpython",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "libxml2-devel",
+            "libxslt",
+            "krb5",
+            "openldap",
+            "openssl",
+            "lz4-c",
+            "zlib",
+            "zstd",
+            "libuuid",
+            "readline",
+            "postgresql",
+            "python",
+            "libpython"
+          ],
+          "run": [
+            "postgresql",
+            "python"
+          ]
+        },
+        "script": "install_plpython.sh",
+        "test": {
+          "commands": null
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The postgres runtime libraries and utilities (not the server itself)"
+        },
+        "build": {
+          "run_exports": [
+            "libpq"
+          ]
+        },
+        "name": "libpq",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "krb5",
+            "openldap",
+            "openssl",
+            "tzcode",
+            "tzdata"
+          ]
+        },
+        "script": "install_runtime.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libpq.so.5.18",
+            "test -f $PREFIX/lib/libpq.so.5",
+            "test -f $PREFIX/lib/libpq.so",
+            "test -f $PREFIX/bin/pg_config",
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "PostgreSQL is a powerful, open source object-relational database system."
+        },
+        "build": {
+          "run_exports": [
+            "libpq"
+          ]
+        },
+        "name": "postgresql",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "liburing",
+            "libxml2-devel",
+            "libxslt",
+            "krb5",
+            "openldap",
+            "openssl",
+            "lz4-c",
+            "zlib",
+            "zstd",
+            "readline",
+            "tzcode",
+            "tzdata",
+            "libpq"
+          ],
+          "run": [
+            "libpq",
+            "tzcode",
+            "tzdata"
+          ]
+        },
+        "script": "install_db.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/bin/postgres",
+            "$PREFIX/bin/postgres --help",
+            "export PGDATA=$SRC_DIR/test_postgres",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/pg_ctl stop",
+            "nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
+          ],
+          "requirements": [
+            "binutils"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.so",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
+        },
+        "build": {
+          "run_exports": [
+            "postgresql-plpython"
+          ]
+        },
+        "name": "postgresql-plpython",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "libxml2-devel",
+            "libxslt",
+            "krb5",
+            "openldap",
+            "openssl",
+            "lz4-c",
+            "zlib",
+            "zstd",
+            "libuuid",
+            "readline",
+            "postgresql",
+            "python",
+            "libpython"
+          ],
+          "run": [
+            "postgresql",
+            "python"
+          ]
+        },
+        "script": "install_plpython.sh",
+        "test": {
+          "commands": null
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The postgres runtime libraries and utilities (not the server itself)"
+        },
+        "build": {
+          "run_exports": [
+            "libpq"
+          ]
+        },
+        "name": "libpq",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "krb5",
+            "openldap",
+            "openssl",
+            "tzcode",
+            "tzdata"
+          ]
+        },
+        "script": "install_runtime.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libpq.so.5.18",
+            "test -f $PREFIX/lib/libpq.so.5",
+            "test -f $PREFIX/lib/libpq.so",
+            "test -f $PREFIX/bin/pg_config",
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.so",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "PostgreSQL is a powerful, open source object-relational database system."
+        },
+        "build": {
+          "run_exports": [
+            "libpq"
+          ]
+        },
+        "name": "postgresql",
+        "requirements": {
+          "build": [
+            "gnuconfig",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "make",
+            "pkg-config",
+            "bison",
+            "icu",
+            "clang 21.*",
+            "llvmdev 21.*",
+            "llvm-tools 21.*"
+          ],
+          "host": [
+            "icu",
+            "libxml2-devel",
+            "libxslt",
+            "krb5",
+            "openldap",
+            "openssl",
+            "lz4-c",
+            "zlib",
+            "zstd",
+            "readline",
+            "tzcode",
+            "tzdata",
+            "libpq"
+          ],
+          "run": [
+            "libpq",
+            "tzcode",
+            "tzdata"
+          ]
+        },
+        "script": "install_db.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/bin/postgres",
+            "$PREFIX/bin/postgres --help",
+            "export PGDATA=$SRC_DIR/test_postgres",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/pg_ctl stop",
+            "test ! -e $PREFIX/lib/llvmjit.dylib",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ],
           "requirements": null
         }
@@ -1532,7 +1747,40 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.dylib",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -1555,7 +1803,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -1608,7 +1855,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "krb5",
             "openldap",
@@ -1623,7 +1869,10 @@
             "test -f $PREFIX/lib/libpq.5.dylib",
             "test -f $PREFIX/lib/libpq.dylib",
             "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.dylib",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ]
         }
       },
@@ -1654,7 +1903,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -1683,7 +1931,10 @@
             "export PGDATA=$SRC_DIR/test_postgres",
             "$PREFIX/bin/initdb",
             "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
-            "$PREFIX/bin/pg_ctl stop"
+            "$PREFIX/bin/pg_ctl stop",
+            "test ! -e $PREFIX/lib/llvmjit.dylib",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ],
           "requirements": null
         }
@@ -1692,7 +1943,40 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.dylib",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -1715,7 +1999,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -1768,7 +2051,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "krb5",
             "openldap",
@@ -1783,7 +2065,10 @@
             "test -f $PREFIX/lib/libpq.5.dylib",
             "test -f $PREFIX/lib/libpq.dylib",
             "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.dylib",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ]
         }
       },
@@ -1807,10 +2092,10 @@
             "cxx_compiler_stub",
             "ninja",
             "perl 5.*",
+            "m2-base",
             "m2-bison",
             "m2-diffutils",
             "m2-flex",
-            "posix",
             "icu"
           ],
           "host": [
@@ -1841,7 +2126,38 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": {
+          "skip": true
+        },
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [],
+          "run": [
+            "postgresql"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -1861,7 +2177,6 @@
             "m2-bison",
             "m2-diffutils",
             "m2-flex",
-            "posix",
             "icu"
           ],
           "host": [
@@ -1907,10 +2222,10 @@
             "cxx_compiler_stub",
             "ninja",
             "perl 5.*",
+            "m2-base",
             "m2-bison",
             "m2-diffutils",
             "m2-flex",
-            "posix",
             "icu"
           ],
           "host": [
@@ -1955,7 +2270,6 @@
         "m2-flex"
       ],
       "host": [
-        "llvm 21.*",
         "icu",
         "liburing",
         "libxml2-devel",
@@ -2002,7 +2316,7 @@
       "summary": "multi-ouput recipe for postgresql"
     },
     "build": {
-      "number": "2"
+      "number": "3"
     },
     "extra": {
       "recipe-maintainers": [
@@ -2043,7 +2357,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -2072,7 +2385,10 @@
             "export PGDATA=$SRC_DIR/test_postgres",
             "$PREFIX/bin/initdb",
             "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
-            "$PREFIX/bin/pg_ctl stop"
+            "$PREFIX/bin/pg_ctl stop",
+            "test ! -e $PREFIX/lib/llvmjit.dylib",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ],
           "requirements": null
         }
@@ -2081,7 +2397,40 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.dylib",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -2104,7 +2453,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -2157,7 +2505,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "krb5",
             "openldap",
@@ -2172,7 +2519,10 @@
             "test -f $PREFIX/lib/libpq.5.dylib",
             "test -f $PREFIX/lib/libpq.dylib",
             "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.dylib",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ]
         }
       }
@@ -2196,7 +2546,6 @@
         "llvm-tools 21.*"
       ],
       "host": [
-        "llvm 21.*",
         "icu",
         "libxml2-devel",
         "libxslt",
@@ -2256,7 +2605,6 @@
         "libuuid",
         "libxml2-devel",
         "libxslt",
-        "llvm",
         "lz4-c",
         "openldap",
         "openssl",
@@ -2273,6 +2621,7 @@
       "__set__": true,
       "elements": [
         "krb5",
+        "libllvm21",
         "libpq",
         "openldap",
         "openssl",
@@ -2296,7 +2645,7 @@
       "summary": "multi-ouput recipe for postgresql"
     },
     "build": {
-      "number": "2"
+      "number": "3"
     },
     "extra": {
       "recipe-maintainers": [
@@ -2337,7 +2686,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -2366,7 +2714,10 @@
             "export PGDATA=$SRC_DIR/test_postgres",
             "$PREFIX/bin/initdb",
             "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
-            "$PREFIX/bin/pg_ctl stop"
+            "$PREFIX/bin/pg_ctl stop",
+            "test ! -e $PREFIX/lib/llvmjit.dylib",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ],
           "requirements": null
         }
@@ -2375,7 +2726,40 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": null,
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [
+            "make"
+          ],
+          "run": [
+            "postgresql",
+            "libllvm21 21.*"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit.dylib",
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -2398,7 +2782,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "libxml2-devel",
             "libxslt",
@@ -2451,7 +2834,6 @@
             "llvm-tools 21.*"
           ],
           "host": [
-            "llvm 21.*",
             "icu",
             "krb5",
             "openldap",
@@ -2466,7 +2848,10 @@
             "test -f $PREFIX/lib/libpq.5.dylib",
             "test -f $PREFIX/lib/libpq.dylib",
             "test -f $PREFIX/bin/pg_config",
-            "$PREFIX/bin/pg_config"
+            "$PREFIX/bin/pg_config",
+            "test ! -e $PREFIX/lib/llvmjit.dylib",
+            "test ! -e $PREFIX/lib/llvmjit_types.bc",
+            "test ! -e $PREFIX/lib/bitcode"
           ]
         }
       }
@@ -2490,7 +2875,6 @@
         "llvm-tools 21.*"
       ],
       "host": [
-        "llvm 21.*",
         "icu",
         "libxml2-devel",
         "libxslt",
@@ -2550,7 +2934,6 @@
         "libuuid",
         "libxml2-devel",
         "libxslt",
-        "llvm",
         "lz4-c",
         "openldap",
         "openssl",
@@ -2567,6 +2950,7 @@
       "__set__": true,
       "elements": [
         "krb5",
+        "libllvm21",
         "libpq",
         "openldap",
         "openssl",
@@ -2587,6 +2971,7 @@
     "elements": [
       "libpq",
       "postgresql",
+      "postgresql-jit",
       "postgresql-plpython",
       "postgresql-split"
     ]
@@ -2603,7 +2988,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/postgresql.json"
   },
-  "raw_meta_yaml": "{% set version = \"18.6\" %}\n{% set pqver = '.'.join((\"5\", version.split('.')[0])) %}\n{% set llvm_version = \"21\" %}\n\npackage:\n  name: postgresql-split\n  version: \"{{ version }}\"\n\nsource:\n  url: https://ftp.postgresql.org/pub/source/v{{ version }}/postgresql-{{ version }}.tar.bz2\n  sha256: 555610c24d53e4316da5b7d3fc25c279d96856d5e0e23ee308c328c5fa881d9f\n  patches:\n    - patches/0002-disable-new-dtags.patch\n    - patches/fix_gssapi_setenv_win.patch  # [win]\n    - patches/fix_auth_setenv_win.patch  # [win]\n    - patches/fix_x509_name_win.patch  # [win]\n\nbuild:\n  number: 2\n\nrequirements:\n  build:\n    - python                                 # [build_platform != target_platform]\n    - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n    - gnuconfig        # [unix]\n    - meson            # [win]\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n    - make             # [unix]\n    - pkg-config       # [unix]\n    - bison            # [unix]\n    - ninja            # [win]\n    - perl 5.*         # [win]\n    - m2-base          # [win]\n    - m2-bison         # [win]\n    - m2-diffutils     # [win]\n    - m2-flex          # [win]\n    - icu\n    - clang {{ llvm_version }}.*       # [unix]\n    - llvmdev {{ llvm_version }}.*     # [unix]\n    - llvm-tools {{ llvm_version }}.*  # [unix]\n  host:\n    - llvm {{ llvm_version }}.*        # [unix]\n    - icu\n    - liburing        # [linux]\n    - libxml2-devel\n    - libxslt\n    - krb5\n    - openldap        # [not win]\n    - openssl\n    - lz4-c\n    - zlib\n    - zstd\n    - vc              # [win]\n    - libuuid         # [not win]\n    - readline        # [not win]\n    - tzcode          # [not win]\n    - tzdata          # [not win]\n  run:\n    - krb5\n    - openldap        # [not win]\n    - openssl\n    - readline        # [not win]\n    - tzcode          # [not win]\n    - tzdata          # [not win]\n\noutputs:\n  - name: postgresql\n    build:\n      run_exports:\n        - {{ pin_subpackage('libpq') }}\n    requirements:\n      build:\n        - gnuconfig            # [unix]\n        - meson                # [win]\n        # solely for sake of lining up vc versions and other runtimes\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - make                 # [unix]\n        - pkg-config           # [unix]\n        - bison                # [unix]\n        - ninja                # [win]\n        - perl 5.*             # [win]\n        - m2-bison             # [win]\n        - m2-diffutils         # [win]\n        - m2-flex              # [win]\n        - posix                # [win]\n        - icu\n        - clang {{ llvm_version }}.*       # [unix]\n        - llvmdev {{ llvm_version }}.*     # [unix]\n        - llvm-tools {{ llvm_version }}.*  # [unix]\n      host:\n        # these are here for sake of run_exports taking effect\n        - llvm {{ llvm_version }}.*        # [unix]\n        - icu\n        - liburing            # [linux]\n        - libxml2-devel\n        - libxslt\n        - krb5\n        - openldap            # [not win]\n        - openssl\n        - lz4-c\n        - zlib\n        - zstd\n        - readline            # [not win]\n        - tzcode              # [not win]\n        - tzdata              # [not win]\n        - {{ pin_subpackage('libpq', exact=True) }}\n      run:\n        - {{ pin_subpackage('libpq', exact=True) }}\n        - tzcode              # [not win]\n        - tzdata              # [not win]\n\n    test:\n      commands:\n        - test -f $PREFIX/bin/postgres                    # [unix]\n        - $PREFIX/bin/postgres --help                     # [unix]\n        - IF NOT EXIST %LIBRARY_BIN%\\postgres.exe EXIT 1  # [win]\n        - postgres --help                                 # [win]\n        # run a simple initdb check on unix\n        - export PGDATA=$SRC_DIR/test_postgres                                # [unix]\n        - $PREFIX/bin/initdb                                                  # [unix]\n        - $PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile  # [unix]\n        - $PREFIX/bin/pg_ctl stop                                             # [unix]\n        # Make sure that postgres contains `palloc0` symbol\n        - nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1             # [linux]\n\n      requirements:\n        - binutils   # [linux]\n    script: install_db.sh  # [unix]\n    script: install_db.bat  # [win]\n    about:\n      summary: PostgreSQL is a powerful, open source object-relational database system.\n      license: PostgreSQL\n      license_file: COPYRIGHT\n\n  - name: postgresql-plpython\n    build:\n      run_exports:\n        - {{ pin_subpackage('postgresql-plpython') }}\n      # needs packaging help on windows\n      skip: true  # [win]\n    requirements:\n      build:\n        - python                                 # [build_platform != target_platform]\n        - libpython                              # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n        - gnuconfig              # [unix]\n        - meson                  # [win]\n        # solely for sake of lining up vc versions and other runtimes\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - make                   # [unix]\n        - pkg-config             # [unix]\n        - bison                  # [unix]\n        - ninja                  # [win]\n        - perl 5.*               # [win]\n        - m2-bison               # [win]\n        - m2-diffutils           # [win]\n        - m2-flex                # [win]\n        - posix                  # [win]\n        - icu\n        - clang {{ llvm_version }}.*       # [unix]\n        - llvmdev {{ llvm_version }}.*     # [unix]\n        - llvm-tools {{ llvm_version }}.*  # [unix]\n      host:\n        # these are here for sake of run_exports taking effect\n        - llvm {{ llvm_version }}.*        # [unix]\n        - icu\n        - libxml2-devel\n        - libxslt\n        - krb5\n        - openldap               # [not win]\n        - openssl\n        - lz4-c\n        - zlib\n        - zstd\n        - vc                     # [win]\n        - libuuid                # [not win]\n        - readline               # [not win]\n        - {{ pin_subpackage('postgresql', exact=True) }}\n        - python\n        - libpython\n      run:\n        - {{ pin_subpackage('postgresql', exact=True) }}\n        - python\n    script: install_plpython.sh  # [unix]\n    test:\n      commands:\n    about:\n      summary: The plpythonu postgresql extension\n      license: PostgreSQL\n      license_file: COPYRIGHT\n\n  - name: libpq\n    build:\n      run_exports:\n        - {{ pin_subpackage('libpq') }}\n    requirements:\n      build:\n        - gnuconfig              # [unix]\n        - meson                  # [win]\n        # solely for sake of lining up vc versions and other runtimes\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - make                   # [unix]\n        - pkg-config             # [unix]\n        - bison                  # [unix]\n        - ninja                  # [win]\n        - perl 5.*               # [win]\n        - m2-bison               # [win]\n        - m2-diffutils           # [win]\n        - m2-flex                # [win]\n        - posix                  # [win]\n        - icu\n        - clang {{ llvm_version }}.*       # [unix]\n        - llvmdev {{ llvm_version }}.*     # [unix]\n        - llvm-tools {{ llvm_version }}.*  # [unix]\n      host:\n        # these are here for sake of run_exports taking effect\n        - llvm {{ llvm_version }}.*        # [unix]\n        - icu\n        - krb5\n        - openldap               # [not win]\n        - openssl\n        - tzcode                 # [not win]\n        - tzdata                 # [not win]\n    script: install_runtime.sh   # [unix]\n    script: install_runtime.bat  # [win]\n    test:\n      commands:\n        - test -f $PREFIX/lib/libpq.so.{{ pqver }}         # [linux]\n        - test -f $PREFIX/lib/libpq.so.5                   # [linux]\n        - test -f $PREFIX/lib/libpq.so                     # [linux]\n        - test -f $PREFIX/lib/libpq.5.dylib                # [osx]\n        - test -f $PREFIX/lib/libpq.dylib                  # [osx]\n        - IF NOT EXIST %LIBRARY_BIN%\\libpq.dll EXIT 1      # [win]\n        - test -f $PREFIX/bin/pg_config                    # [unix]\n        - $PREFIX/bin/pg_config                            # [unix]\n        - IF NOT EXIST %LIBRARY_BIN%\\pg_config.exe EXIT 1  # [win]\n        - pg_config                                        # [win]\n    about:\n      summary: The postgres runtime libraries and utilities (not the server itself)\n      license: PostgreSQL\n      license_file: COPYRIGHT\n\nabout:\n  home: http://www.postgresql.org/\n  license: PostgreSQL\n  license_file: COPYRIGHT\n  summary: multi-ouput recipe for postgresql\n\nextra:\n  recipe-maintainers:\n    - akrherz\n    - flaviomartins\n    - gillins\n    - msarahan\n    - ocefpaf\n    - mariusvniekerk\n    - sodre\n",
+  "raw_meta_yaml": "{% set version = \"18.6\" %}\n{% set pqver = '.'.join((\"5\", version.split('.')[0])) %}\n{% set llvm_version = \"21\" %}\n\npackage:\n  name: postgresql-split\n  version: \"{{ version }}\"\n\nsource:\n  url: https://ftp.postgresql.org/pub/source/v{{ version }}/postgresql-{{ version }}.tar.bz2\n  sha256: 555610c24d53e4316da5b7d3fc25c279d96856d5e0e23ee308c328c5fa881d9f\n  patches:\n    - patches/0002-disable-new-dtags.patch\n    - patches/fix_gssapi_setenv_win.patch  # [win]\n    - patches/fix_auth_setenv_win.patch  # [win]\n    - patches/fix_x509_name_win.patch  # [win]\n\nbuild:\n  number: 3\n\nrequirements:\n  build:\n    - python                                 # [build_platform != target_platform]\n    - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n    - gnuconfig        # [unix]\n    - meson            # [win]\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n    - make             # [unix]\n    - pkg-config       # [unix]\n    - bison            # [unix]\n    - ninja            # [win]\n    - perl 5.*         # [win]\n    - m2-base          # [win]\n    - m2-bison         # [win]\n    - m2-diffutils     # [win]\n    - m2-flex          # [win]\n    - icu\n    - clang {{ llvm_version }}.*       # [unix]\n    - llvmdev {{ llvm_version }}.*     # [unix]\n    - llvm-tools {{ llvm_version }}.*  # [unix]\n  host:\n    - icu\n    - liburing        # [linux]\n    - libxml2-devel\n    - libxslt\n    - krb5\n    - openldap        # [not win]\n    - openssl\n    - lz4-c\n    - zlib\n    - zstd\n    - vc              # [win]\n    - libuuid         # [not win]\n    - readline        # [not win]\n    - tzcode          # [not win]\n    - tzdata          # [not win]\n  run:\n    - krb5\n    - openldap        # [not win]\n    - openssl\n    - readline        # [not win]\n    - tzcode          # [not win]\n    - tzdata          # [not win]\n\noutputs:\n  - name: postgresql\n    build:\n      run_exports:\n        - {{ pin_subpackage('libpq') }}\n    requirements:\n      build:\n        - gnuconfig            # [unix]\n        - meson                # [win]\n        # solely for sake of lining up vc versions and other runtimes\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - make                 # [unix]\n        - pkg-config           # [unix]\n        - bison                # [unix]\n        - ninja                # [win]\n        - perl 5.*             # [win]\n        - m2-base              # [win]\n        - m2-bison             # [win]\n        - m2-diffutils         # [win]\n        - m2-flex              # [win]\n        - icu\n        - clang {{ llvm_version }}.*       # [unix]\n        - llvmdev {{ llvm_version }}.*     # [unix]\n        - llvm-tools {{ llvm_version }}.*  # [unix]\n      host:\n        # these are here for sake of run_exports taking effect\n        - icu\n        - liburing            # [linux]\n        - libxml2-devel\n        - libxslt\n        - krb5\n        - openldap            # [not win]\n        - openssl\n        - lz4-c\n        - zlib\n        - zstd\n        - readline            # [not win]\n        - tzcode              # [not win]\n        - tzdata              # [not win]\n        - {{ pin_subpackage('libpq', exact=True) }}\n      run:\n        - {{ pin_subpackage('libpq', exact=True) }}\n        - tzcode              # [not win]\n        - tzdata              # [not win]\n\n    test:\n      commands:\n        - test -f $PREFIX/bin/postgres                    # [unix]\n        - $PREFIX/bin/postgres --help                     # [unix]\n        - IF NOT EXIST %LIBRARY_BIN%\\postgres.exe EXIT 1  # [win]\n        - postgres --help                                 # [win]\n        # run a simple initdb check on unix\n        - export PGDATA=$SRC_DIR/test_postgres                                # [unix]\n        - $PREFIX/bin/initdb                                                  # [unix]\n        - $PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile  # [unix]\n        - $PREFIX/bin/pg_ctl stop                                             # [unix]\n        # Make sure that postgres contains `palloc0` symbol\n        - nm -D $PREFIX/bin/postgres | grep -q palloc0 || exit 1             # [linux]\n        # Make sure that llvmjit is not installed with this package\n        - test ! -e $PREFIX/lib/llvmjit.so                # [linux]\n        - test ! -e $PREFIX/lib/llvmjit.dylib             # [osx]\n        - test ! -e $PREFIX/lib/llvmjit_types.bc          # [unix]\n        - test ! -e $PREFIX/lib/bitcode                   # [unix]\n      requirements:\n        - binutils   # [linux]\n    script: install_db.sh  # [unix]\n    script: install_db.bat  # [win]\n    about:\n      summary: PostgreSQL is a powerful, open source object-relational database system.\n      license: PostgreSQL\n      license_file: COPYRIGHT\n\n  - name: postgresql-jit\n    build:\n      skip: true  # [win or build_platform != target_platform]\n    script: install_jit.sh\n    requirements:\n      build:\n        - make  # [unix]\n      run:\n        - {{ pin_subpackage('postgresql', exact=True) }}\n        - libllvm{{ llvm_version }} {{ llvm_version }}.*  # [unix]\n    test:\n      commands:\n        - test -f $PREFIX/lib/llvmjit.so                  # [linux]\n        - test -f $PREFIX/lib/llvmjit.dylib               # [osx]\n        - test -f $PREFIX/lib/llvmjit_types.bc\n        - test -d $PREFIX/lib/bitcode\n        - export PGDATA=$SRC_DIR/test_postgres_jit\n        - $PREFIX/bin/initdb\n        - $PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile\n        - $PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit\n        - $PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t\n        - $PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'\n        - $PREFIX/bin/pg_ctl stop\n    about:\n      summary: Optional LLVM JIT provider for PostgreSQL\n      license: PostgreSQL\n      license_file: COPYRIGHT\n\n  - name: postgresql-plpython\n    build:\n      run_exports:\n        - {{ pin_subpackage('postgresql-plpython') }}\n      # needs packaging help on windows\n      skip: true  # [win]\n    requirements:\n      build:\n        - python                                 # [build_platform != target_platform]\n        - libpython                              # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n        - gnuconfig              # [unix]\n        - meson                  # [win]\n        # solely for sake of lining up vc versions and other runtimes\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - make                   # [unix]\n        - pkg-config             # [unix]\n        - bison                  # [unix]\n        - ninja                  # [win]\n        - perl 5.*               # [win]\n        - m2-bison               # [win]\n        - m2-diffutils           # [win]\n        - m2-flex                # [win]\n        - icu\n        - clang {{ llvm_version }}.*       # [unix]\n        - llvmdev {{ llvm_version }}.*     # [unix]\n        - llvm-tools {{ llvm_version }}.*  # [unix]\n      host:\n        # these are here for sake of run_exports taking effect\n        - icu\n        - libxml2-devel\n        - libxslt\n        - krb5\n        - openldap               # [not win]\n        - openssl\n        - lz4-c\n        - zlib\n        - zstd\n        - vc                     # [win]\n        - libuuid                # [not win]\n        - readline               # [not win]\n        - {{ pin_subpackage('postgresql', exact=True) }}\n        - python\n        - libpython\n      run:\n        - {{ pin_subpackage('postgresql', exact=True) }}\n        - python\n    script: install_plpython.sh  # [unix]\n    test:\n      commands:\n    about:\n      summary: The plpython postgresql extension\n      license: PostgreSQL\n      license_file: COPYRIGHT\n\n  - name: libpq\n    build:\n      run_exports:\n        - {{ pin_subpackage('libpq') }}\n    requirements:\n      build:\n        - gnuconfig              # [unix]\n        - meson                  # [win]\n        # solely for sake of lining up vc versions and other runtimes\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - make                   # [unix]\n        - pkg-config             # [unix]\n        - bison                  # [unix]\n        - ninja                  # [win]\n        - perl 5.*               # [win]\n        - m2-base                # [win]\n        - m2-bison               # [win]\n        - m2-diffutils           # [win]\n        - m2-flex                # [win]\n        - icu\n        - clang {{ llvm_version }}.*       # [unix]\n        - llvmdev {{ llvm_version }}.*     # [unix]\n        - llvm-tools {{ llvm_version }}.*  # [unix]\n      host:\n        # these are here for sake of run_exports taking effect\n        - icu\n        - krb5\n        - openldap               # [not win]\n        - openssl\n        - tzcode                 # [not win]\n        - tzdata                 # [not win]\n    script: install_runtime.sh   # [unix]\n    script: install_runtime.bat  # [win]\n    test:\n      commands:\n        - test -f $PREFIX/lib/libpq.so.{{ pqver }}         # [linux]\n        - test -f $PREFIX/lib/libpq.so.5                   # [linux]\n        - test -f $PREFIX/lib/libpq.so                     # [linux]\n        - test -f $PREFIX/lib/libpq.5.dylib                # [osx]\n        - test -f $PREFIX/lib/libpq.dylib                  # [osx]\n        - IF NOT EXIST %LIBRARY_BIN%\\libpq.dll EXIT 1      # [win]\n        - test -f $PREFIX/bin/pg_config                    # [unix]\n        - $PREFIX/bin/pg_config                            # [unix]\n        - IF NOT EXIST %LIBRARY_BIN%\\pg_config.exe EXIT 1  # [win]\n        - pg_config                                        # [win]\n        # Make sure llvmjit is not installed with this package\n        - test ! -e $PREFIX/lib/llvmjit.so                 # [linux]\n        - test ! -e $PREFIX/lib/llvmjit.dylib              # [osx]\n        - test ! -e $PREFIX/lib/llvmjit_types.bc           # [unix]\n        - test ! -e $PREFIX/lib/bitcode                    # [unix]\n    about:\n      summary: The postgres runtime libraries and utilities (not the server itself)\n      license: PostgreSQL\n      license_file: COPYRIGHT\n\nabout:\n  home: http://www.postgresql.org/\n  license: PostgreSQL\n  license_file: COPYRIGHT\n  summary: multi-ouput recipe for postgresql\n\nextra:\n  recipe-maintainers:\n    - akrherz\n    - flaviomartins\n    - gillins\n    - msarahan\n    - ocefpaf\n    - mariusvniekerk\n    - sodre\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2615,13 +3000,13 @@
       "gnuconfig",
       "icu",
       "krb5",
+      "libllvm21",
       "libpq",
       "libpython",
       "liburing",
       "libuuid",
       "libxml2-devel",
       "libxslt",
-      "llvm",
       "llvm-tools",
       "llvmdev",
       "lz4-c",
@@ -2636,7 +3021,6 @@
       "openssl",
       "perl",
       "pkg-config",
-      "posix",
       "postgresql",
       "python",
       "readline",
@@ -2668,8 +3052,7 @@
         "meson",
         "ninja",
         "perl",
-        "pkg-config",
-        "posix"
+        "pkg-config"
       ]
     },
     "host": {
@@ -2686,7 +3069,6 @@
         "libuuid",
         "libxml2-devel",
         "libxslt",
-        "llvm",
         "lz4-c",
         "openldap",
         "openssl",
@@ -2707,6 +3089,7 @@
         "c_stdlib_stub",
         "cxx_compiler_stub",
         "krb5",
+        "libllvm21",
         "libpq",
         "openldap",
         "openssl",
@@ -2747,8 +3130,7 @@
         "meson",
         "ninja",
         "perl 5.*",
-        "pkg-config",
-        "posix"
+        "pkg-config"
       ]
     },
     "host": {
@@ -2762,7 +3144,6 @@
         "libuuid",
         "libxml2-devel",
         "libxslt",
-        "llvm 21.*",
         "lz4-c",
         "openldap",
         "openssl",
@@ -2780,6 +3161,7 @@
       "__set__": true,
       "elements": [
         "krb5",
+        "libllvm21 21.*",
         "libpq",
         "openldap",
         "openssl",
@@ -2810,7 +3192,7 @@
       "summary": "multi-ouput recipe for postgresql"
     },
     "build": {
-      "number": "2"
+      "number": "3"
     },
     "extra": {
       "recipe-maintainers": [
@@ -2844,10 +3226,10 @@
             "cxx_compiler_stub",
             "ninja",
             "perl 5.*",
+            "m2-base",
             "m2-bison",
             "m2-diffutils",
             "m2-flex",
-            "posix",
             "icu"
           ],
           "host": [
@@ -2878,7 +3260,38 @@
         "about": {
           "license": "PostgreSQL",
           "license_file": "COPYRIGHT",
-          "summary": "The plpythonu postgresql extension"
+          "summary": "Optional LLVM JIT provider for PostgreSQL"
+        },
+        "build": {
+          "skip": true
+        },
+        "name": "postgresql-jit",
+        "requirements": {
+          "build": [],
+          "run": [
+            "postgresql"
+          ]
+        },
+        "script": "install_jit.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/llvmjit_types.bc",
+            "test -d $PREFIX/lib/bitcode",
+            "export PGDATA=$SRC_DIR/test_postgres_jit",
+            "$PREFIX/bin/initdb",
+            "$PREFIX/bin/pg_ctl -l $PGDATA/logfile start || cat $PGDATA/logfile",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SELECT setting FROM pg_settings WHERE name = 'jit_provider';\" | grep -x llvmjit",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SELECT pg_jit_available();\" | grep -x t",
+            "$PREFIX/bin/psql -d postgres -Atqc \"SET jit = on; SET jit_above_cost = 0; EXPLAIN ANALYZE SELECT sum(i) FROM generate_series(1, 10000000) AS i;\" | grep -q 'JIT:'",
+            "$PREFIX/bin/pg_ctl stop"
+          ]
+        }
+      },
+      {
+        "about": {
+          "license": "PostgreSQL",
+          "license_file": "COPYRIGHT",
+          "summary": "The plpython postgresql extension"
         },
         "build": {
           "run_exports": [
@@ -2898,7 +3311,6 @@
             "m2-bison",
             "m2-diffutils",
             "m2-flex",
-            "posix",
             "icu"
           ],
           "host": [
@@ -2944,10 +3356,10 @@
             "cxx_compiler_stub",
             "ninja",
             "perl 5.*",
+            "m2-base",
             "m2-bison",
             "m2-diffutils",
             "m2-flex",
-            "posix",
             "icu"
           ],
           "host": [
@@ -3026,8 +3438,7 @@
         "m2-flex",
         "meson",
         "ninja",
-        "perl",
-        "posix"
+        "perl"
       ]
     },
     "host": {
