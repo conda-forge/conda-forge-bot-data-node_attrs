@@ -28,8 +28,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "ac182a87aaa8a16da148afe1566aa5a68f699787",
-  "feedstock_hash_ts": 1790700645,
+  "feedstock_hash": "b2e528c3b622a6af5a09ccb0e4f52d4a20c18b9f",
+  "feedstock_hash_ts": 1790836720,
   "feedstock_name": "headroom-ai",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -58,6 +58,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "pb01ka",
         "soapy1",
         "rxm7706"
       ]
@@ -365,6 +366,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "pb01ka",
         "soapy1",
         "rxm7706"
       ]
@@ -1232,6 +1234,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "pb01ka",
         "soapy1",
         "rxm7706"
       ]
@@ -1538,6 +1541,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "pb01ka",
         "soapy1",
         "rxm7706"
       ]
@@ -1835,7 +1839,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/headroom-ai.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: 0.39.1\n\npackage:\n  name: headroom-ai\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/h/headroom-ai/headroom_ai-${{ version }}.tar.gz\n  sha256: 204f4970730896a66f5ba567236d0f050650e14602bc756dbcc0357ac660b695\n\nbuild:\n  number: 0\n  skip:\n    # litellm pulls the compiled fastuuid, which ships py311+ on macOS while\n    # linux gets py310 too. \n    - osx and match(python, \"<3.11\")\n  script:\n    # tree-sitter's unicode.h needs le16toh/be16toh from <endian.h>, which the\n    # cos7 sysroot (glibc 2.17) only exposes under _BSD_SOURCE. Our default\n    # CFLAGS set _POSIX_C_SOURCE + _DEFAULT_SOURCE, but this glibc predates\n    # _DEFAULT_SOURCE, so _BSD_SOURCE never gets auto-enabled. _GNU_SOURCE\n    # forces it on. Only required for linux\n    - if: linux\n      then:\n        - export CFLAGS=\"${CFLAGS} -D_GNU_SOURCE\"\n    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n    - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  python:\n    entry_points:\n      - headroom = headroom.cli:main\n\nrequirements:\n  build:\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ compiler(\"rust\") }}\n    - cargo-bundle-licenses\n  host:\n    - python\n    - maturin >=1.5,<2.0\n    - pip\n  run:\n    - python\n    - tiktoken >=0.5.0\n    - pydantic >=2.0.0\n    - click >=8.3.3\n    - rich >=13.0.0\n    - opentelemetry-api >=1.24.0\n    - pyyaml >=6.0\n    - tomlkit >=0.13.0,<1.0\n    - if: match(python, \"<3.11\")\n      then:\n        - tomli >=2.0.0\n    - litellm >=1.96.2,<2.0\n    - ast-grep >=0.30.0,!=0.44.1\n\ntests:\n  - python:\n      imports:\n        - headroom\n        - headroom._core\n      # ast-grep-cli is satisfied by the conda ast-grep binary package,\n      # which leaves no ast-grep-cli dist-info -> pip check cannot pass.\n      pip_check: false\n  - script:\n      - headroom --help\n\nabout:\n  summary: The Context Optimization Layer for LLM Applications - Cut costs by 50-90%\n  description: |\n    Headroom compresses tool outputs, logs, files, and RAG chunks before\n    they reach the LLM — 60-95% fewer tokens, same answers. It ships as a\n    Python library (SmartCrusher, ContentRouter, CodeCompressor, CCR,\n    TOIN compressors with a Rust core), a transparent proxy, and an MCP\n    server.\n\n    This package provides the core library and CLI. Upstream optional\n    extras (proxy server, MCP, tree-sitter code compression, ML/Kompress,\n    memory/vector stacks, OCR, LangChain/Agno integrations) are not\n    included; install their dependencies separately as needed.\n  homepage: https://headroom-docs.vercel.app\n  repository: https://github.com/headroomlabs-ai/headroom\n  documentation: https://headroom-docs.vercel.app/docs\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - NOTICE\n    - THIRDPARTY.yml\n\nextra:\n  recipe-maintainers:\n    - soapy1\n    - rxm7706\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: 0.39.1\n\npackage:\n  name: headroom-ai\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/h/headroom-ai/headroom_ai-${{ version }}.tar.gz\n  sha256: 204f4970730896a66f5ba567236d0f050650e14602bc756dbcc0357ac660b695\n\nbuild:\n  number: 0\n  skip:\n    # litellm pulls the compiled fastuuid, which ships py311+ on macOS while\n    # linux gets py310 too. \n    - osx and match(python, \"<3.11\")\n  script:\n    # tree-sitter's unicode.h needs le16toh/be16toh from <endian.h>, which the\n    # cos7 sysroot (glibc 2.17) only exposes under _BSD_SOURCE. Our default\n    # CFLAGS set _POSIX_C_SOURCE + _DEFAULT_SOURCE, but this glibc predates\n    # _DEFAULT_SOURCE, so _BSD_SOURCE never gets auto-enabled. _GNU_SOURCE\n    # forces it on. Only required for linux\n    - if: linux\n      then:\n        - export CFLAGS=\"${CFLAGS} -D_GNU_SOURCE\"\n    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n    - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  python:\n    entry_points:\n      - headroom = headroom.cli:main\n\nrequirements:\n  build:\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ compiler(\"rust\") }}\n    - cargo-bundle-licenses\n  host:\n    - python\n    - maturin >=1.5,<2.0\n    - pip\n  run:\n    - python\n    - tiktoken >=0.5.0\n    - pydantic >=2.0.0\n    - click >=8.3.3\n    - rich >=13.0.0\n    - opentelemetry-api >=1.24.0\n    - pyyaml >=6.0\n    - tomlkit >=0.13.0,<1.0\n    - if: match(python, \"<3.11\")\n      then:\n        - tomli >=2.0.0\n    - litellm >=1.96.2,<2.0\n    - ast-grep >=0.30.0,!=0.44.1\n\ntests:\n  - python:\n      imports:\n        - headroom\n        - headroom._core\n      # ast-grep-cli is satisfied by the conda ast-grep binary package,\n      # which leaves no ast-grep-cli dist-info -> pip check cannot pass.\n      pip_check: false\n  - script:\n      - headroom --help\n\nabout:\n  summary: The Context Optimization Layer for LLM Applications - Cut costs by 50-90%\n  description: |\n    Headroom compresses tool outputs, logs, files, and RAG chunks before\n    they reach the LLM — 60-95% fewer tokens, same answers. It ships as a\n    Python library (SmartCrusher, ContentRouter, CodeCompressor, CCR,\n    TOIN compressors with a Rust core), a transparent proxy, and an MCP\n    server.\n\n    This package provides the core library and CLI. Upstream optional\n    extras (proxy server, MCP, tree-sitter code compression, ML/Kompress,\n    memory/vector stacks, OCR, LangChain/Agno integrations) are not\n    included; install their dependencies separately as needed.\n  homepage: https://headroom-docs.vercel.app\n  repository: https://github.com/headroomlabs-ai/headroom\n  documentation: https://headroom-docs.vercel.app/docs\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - NOTICE\n    - THIRDPARTY.yml\n\nextra:\n  recipe-maintainers:\n    - pb01ka\n    - soapy1\n    - rxm7706\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1972,6 +1976,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "pb01ka",
         "soapy1",
         "rxm7706"
       ]
