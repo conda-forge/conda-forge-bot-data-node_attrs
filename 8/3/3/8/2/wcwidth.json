@@ -1,17 +1,17 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- true\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_is_abi3falsepython3.14.____cp314t.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - is_abi3\n",
+  "ci_support_migrations": {
+    "python314t": {
+      "migration_number": 1,
+      "migrator_ts": 1755739493
+    }
+  },
   "conda-forge.yml": {
     "bot": {
       "automerge": false,
       "inspection": "update-grayskull"
-    },
-    "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
     },
     "conda_build": {
       "pkg_format": "2"
@@ -24,29 +24,34 @@
       "tooling_branch_name": "main"
     },
     "provider": {
+      "linux_aarch64": "default",
+      "linux_ppc64le": "default",
+      "linux_riscv64": "default",
+      "osx_arm64": "default",
       "win_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "367e38eae3cd26780a78a4d6c76b42e83d54a41b",
-  "feedstock_hash_ts": 1790369997,
+  "feedstock_hash": "014bb1ccf587a70a91941cdf3dca060992c1876e",
+  "feedstock_hash_ts": 1790889795,
   "feedstock_name": "wcwidth",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "home": "https://github.com/jquast/wcwidth",
+      "dev_url": "https://github.com/jquast/wcwidth",
+      "home": "https://pypi.org/project/wcwidth",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "Measures the displayed width of unicode strings in a terminal"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "version_independent": true
       },
       "script": {
-        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
+        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies",
         "env": {
           "CIBUILDWHEEL": "1"
         }
@@ -60,6 +65,66 @@
     },
     "outputs": [
       {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
         "build": {
           "python": {
             "version_independent": true
@@ -72,16 +137,31 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -90,17 +170,159 @@
               ],
               "python_version": [
                 "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
                 "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61",
+            "python 3.14.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "python >=3.14",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.14.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -116,19 +338,24 @@
         "c_stdlib_stub"
       ],
       "host": [
-        "python",
-        "python-abi3",
         "pip",
-        "setuptools"
+        "python",
+        "setuptools >=61",
+        "python 3.11.*",
+        "python-abi3",
+        "python 3.14.*"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3",
+        "python >=3.14"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5",
-      "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -151,32 +378,36 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python"
       ]
     }
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "home": "https://github.com/jquast/wcwidth",
+      "dev_url": "https://github.com/jquast/wcwidth",
+      "home": "https://pypi.org/project/wcwidth",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "Measures the displayed width of unicode strings in a terminal"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "version_independent": true
       },
       "script": {
-        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
+        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies",
         "env": {
           "CIBUILDWHEEL": "1"
         }
@@ -189,6 +420,69 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_linux-aarch64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
       {
         "build": {
           "python": {
@@ -205,16 +499,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -223,17 +532,28 @@
               ],
               "python_version": [
                 "3.11.*",
-                "*"
+                "3.14.*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -252,19 +572,22 @@
         "crossenv"
       ],
       "host": [
-        "python",
-        "python-abi3",
         "pip",
-        "setuptools"
+        "python",
+        "setuptools >=61",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5",
-      "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -290,32 +613,36 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python"
       ]
     }
   },
   "linux_ppc64le_meta_yaml": {
     "about": {
-      "home": "https://github.com/jquast/wcwidth",
+      "dev_url": "https://github.com/jquast/wcwidth",
+      "home": "https://pypi.org/project/wcwidth",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "Measures the displayed width of unicode strings in a terminal"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "version_independent": true
       },
       "script": {
-        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
+        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies",
         "env": {
           "CIBUILDWHEEL": "1"
         }
@@ -328,6 +655,69 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_linux-ppc64le",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
       {
         "build": {
           "python": {
@@ -344,16 +734,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -362,17 +767,28 @@
               ],
               "python_version": [
                 "3.11.*",
-                "*"
+                "3.14.*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -391,19 +807,22 @@
         "crossenv"
       ],
       "host": [
-        "python",
-        "python-abi3",
         "pip",
-        "setuptools"
+        "python",
+        "setuptools >=61",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5",
-      "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
@@ -429,32 +848,33 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python"
       ]
     }
   },
   "meta_yaml": {
     "about": {
-      "home": "https://github.com/jquast/wcwidth",
+      "dev_url": "https://github.com/jquast/wcwidth",
+      "home": "https://pypi.org/project/wcwidth",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "Measures the displayed width of unicode strings in a terminal"
     },
     "build": {
-      "number": "1",
-      "python": {
-        "version_independent": true
-      },
+      "number": "2",
       "script": {
-        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
+        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies",
         "env": {
           "CIBUILDWHEEL": "1"
         }
@@ -468,6 +888,66 @@
     },
     "outputs": [
       {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
         "build": {
           "python": {
             "version_independent": true
@@ -480,16 +960,31 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -498,17 +993,222 @@
               ],
               "python_version": [
                 "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
                 "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61",
+            "python 3.14.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "python >=3.14",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.14.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_linux-aarch64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -529,16 +1229,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -547,17 +1262,91 @@
               ],
               "python_version": [
                 "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_linux-ppc64le",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
                 "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -578,16 +1367,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -596,17 +1400,91 @@
               ],
               "python_version": [
                 "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_osx-64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
                 "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -627,16 +1505,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -645,17 +1538,91 @@
               ],
               "python_version": [
                 "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_osx-arm64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
                 "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -676,16 +1643,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -694,17 +1676,91 @@
               ],
               "python_version": [
                 "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_win-64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
                 "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -725,16 +1781,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -743,17 +1814,91 @@
               ],
               "python_version": [
                 "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"%SP_DIR%/wcwidth/_wcwidth_c.pyd\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_win-arm64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
                 "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit %SP_DIR%/wcwidth/_wcwidth_c.pyd -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -774,16 +1919,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.14.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.14",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -791,18 +1951,28 @@
                 "wcwidth._wcwidth_c"
               ],
               "python_version": [
-                "3.14.*",
-                "*"
+                "3.14.*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit %SP_DIR%/wcwidth/_wcwidth_c.pyd -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.14.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"%SP_DIR%/wcwidth/_wcwidth_c.pyd\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -826,37 +1996,43 @@
         "cross-python_win-arm64"
       ],
       "host": [
-        "python",
-        "python-abi3",
         "pip",
-        "setuptools"
+        "python",
+        "setuptools >=61",
+        "python 3.11.*",
+        "python-abi3",
+        "python 3.14.*"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3",
+        "python >=3.14"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5",
-      "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
     }
   },
   "name": "wcwidth",
   "osx_64_meta_yaml": {
     "about": {
-      "home": "https://github.com/jquast/wcwidth",
+      "dev_url": "https://github.com/jquast/wcwidth",
+      "home": "https://pypi.org/project/wcwidth",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "Measures the displayed width of unicode strings in a terminal"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "version_independent": true
       },
       "script": {
-        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
+        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies",
         "env": {
           "CIBUILDWHEEL": "1"
         }
@@ -869,6 +2045,69 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_osx-64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
       {
         "build": {
           "python": {
@@ -885,16 +2124,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -903,17 +2157,28 @@
               ],
               "python_version": [
                 "3.11.*",
-                "*"
+                "3.14.*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -932,19 +2197,22 @@
         "crossenv"
       ],
       "host": [
-        "python",
-        "python-abi3",
         "pip",
-        "setuptools"
+        "python",
+        "setuptools >=61",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5",
-      "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -970,32 +2238,36 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python"
       ]
     }
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "home": "https://github.com/jquast/wcwidth",
+      "dev_url": "https://github.com/jquast/wcwidth",
+      "home": "https://pypi.org/project/wcwidth",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "Measures the displayed width of unicode strings in a terminal"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "version_independent": true
       },
       "script": {
-        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
+        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies",
         "env": {
           "CIBUILDWHEEL": "1"
         }
@@ -1008,6 +2280,69 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_osx-arm64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
       {
         "build": {
           "python": {
@@ -1024,16 +2359,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -1042,17 +2392,28 @@
               ],
               "python_version": [
                 "3.11.*",
-                "*"
+                "3.14.*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -1071,19 +2432,22 @@
         "crossenv"
       ],
       "host": [
-        "python",
-        "python-abi3",
         "pip",
-        "setuptools"
+        "python",
+        "setuptools >=61",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5",
-      "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -1109,14 +2473,17 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python"
       ]
     }
   },
@@ -1139,7 +2506,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/wcwidth.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.9.1\"\n\npackage:\n  name: wcwidth\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/w/wcwidth/wcwidth-${{ version }}.tar.gz\n  sha256: 5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5\n\nbuild:\n  number: 1\n  python:\n    version_independent: true\n  script:\n    env:\n      # makes the C extension mandatory instead of silently falling back to pure Python\n      CIBUILDWHEEL: \"1\"\n    content: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  skip: not (match(python, python_min ~ \".*\") and is_abi3)\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - crossenv\n  host:\n    - python\n    - python-abi3\n    - pip\n    - setuptools\n  run:\n    - python\n\ntests:\n  - python:\n      imports:\n        - wcwidth\n        - wcwidth._wcwidth_c\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - requirements:\n      run:\n        - abi3audit\n    script:\n      - if: unix\n        then: abi3audit $SP_DIR/wcwidth/_wcwidth_c.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n        else: abi3audit %SP_DIR%/wcwidth/_wcwidth_c.pyd -s -v --assume-minimum-abi3 ${{ python_min }}\n\nabout:\n  summary: Measures the displayed width of unicode strings in a terminal\n  license: MIT\n  license_file: LICENSE\n  homepage: https://github.com/jquast/wcwidth\n\nextra:\n  recipe-maintainers:\n    - ocefpaf\n    - timkpaine\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.9.1\"\n  # a known-not-minimum python\n  python_check_max: \"3.14\"\n  # remove undiscoverable tests\n  unlink_tests: test_check_release.py\n  # skip tests of repo files\n  pytest_k: |-\n    not (cmake_and_setuptools_source_lists_parity or version_matches)\n\npackage:\n  name: wcwidth\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-${{ version }}.tar.gz\n  sha256: 5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5\n\nbuild:\n  number: 2\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      # makes the C extension mandatory instead of silently falling back to pure Python\n      CIBUILDWHEEL: \"1\"\n    content:\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ stdlib(\"c\") }}\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - crossenv\n  host:\n    - pip\n    - python\n    - setuptools >=61\n    - if: is_abi3\n      then:\n        - python ${{ python_min }}.*\n        - python-abi3\n  run:\n    - python\n    - if: is_abi3\n      then:\n        - python >=${{ python_min }}\n        - python-abi3\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - etc/conda/test-files/wcwidth/**\n      site_packages:\n        - wcwidth/**\n        - wcwidth-${{ version }}.dist-info/**\n  - python:\n      imports:\n        - wcwidth\n        - wcwidth._wcwidth_c\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then:\n            - ${{ python_min }}.*\n            - ${{ python_check_max }}.*\n          else:\n            - \"*\"\n  - files:\n      source:\n        - tests/**\n    requirements:\n      run:\n        - pytest\n        - if: is_abi3\n          then:\n            - abi3audit\n            - python ${{ python_min }}.*\n    script:\n      - python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"\n      - pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"\n      - if: is_abi3\n        then:\n          - if: unix\n            then: abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/wcwidth/_wcwidth_c.abi3.so\"\n            else: abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"%SP_DIR%/wcwidth/_wcwidth_c.pyd\"\n\nabout:\n  summary: Measures the displayed width of unicode strings in a terminal\n  license: MIT\n  license_file: LICENSE\n  homepage: https://pypi.org/project/wcwidth\n  repository: https://github.com/jquast/wcwidth\n\nextra:\n  recipe-maintainers:\n    - ocefpaf\n    - timkpaine\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1192,14 +2559,17 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cross-python",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python"
       ]
     }
   },
@@ -1225,44 +2595,53 @@
       "elements": [
         "pip",
         "python",
+        "python 3.11.*",
+        "python 3.14.*",
         "python-abi3",
-        "setuptools"
+        "setuptools >=61"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python >=3.14",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python 3.11.*",
+        "python 3.14.*"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz",
+  "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz",
   "version": "0.9.1",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/wcwidth.json"
   },
   "win_64_meta_yaml": {
     "about": {
-      "home": "https://github.com/jquast/wcwidth",
+      "dev_url": "https://github.com/jquast/wcwidth",
+      "home": "https://pypi.org/project/wcwidth",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "Measures the displayed width of unicode strings in a terminal"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "version_independent": true
       },
       "script": {
-        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
+        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies",
         "env": {
           "CIBUILDWHEEL": "1"
         }
@@ -1275,6 +2654,69 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_win-64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
       {
         "build": {
           "python": {
@@ -1291,16 +2733,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -1309,17 +2766,28 @@
               ],
               "python_version": [
                 "3.11.*",
-                "*"
+                "3.14.*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit %SP_DIR%/wcwidth/_wcwidth_c.pyd -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"%SP_DIR%/wcwidth/_wcwidth_c.pyd\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -1338,19 +2806,22 @@
         "crossenv"
       ],
       "host": [
-        "python",
-        "python-abi3",
         "pip",
-        "setuptools"
+        "python",
+        "setuptools >=61",
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5",
-      "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -1376,32 +2847,36 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python"
       ]
     }
   },
   "win_arm64_meta_yaml": {
     "about": {
-      "home": "https://github.com/jquast/wcwidth",
+      "dev_url": "https://github.com/jquast/wcwidth",
+      "home": "https://pypi.org/project/wcwidth",
       "license": "MIT",
       "license_family": "MIT",
       "license_file": "LICENSE",
       "summary": "Measures the displayed width of unicode strings in a terminal"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "version_independent": true
       },
       "script": {
-        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
+        "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --check-build-dependencies",
         "env": {
           "CIBUILDWHEEL": "1"
         }
@@ -1414,6 +2889,69 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "wcwidth",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "python",
+            "cross-python_win-arm64",
+            "crossenv"
+          ],
+          "host": [
+            "pip",
+            "python",
+            "setuptools >=61"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "wcwidth",
+                "wcwidth._wcwidth_c"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "0.9.1"
+      },
       {
         "build": {
           "python": {
@@ -1430,16 +2968,31 @@
             "crossenv"
           ],
           "host": [
-            "python",
-            "python-abi3",
             "pip",
-            "setuptools"
+            "python",
+            "setuptools >=61",
+            "python 3.14.*",
+            "python-abi3"
           ],
           "run": [
-            "python"
+            "python",
+            "python >=3.14",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/wcwidth/**"
+              ],
+              "site_packages": [
+                "wcwidth/**",
+                "wcwidth-0.9.1.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
@@ -1447,18 +3000,28 @@
                 "wcwidth._wcwidth_c"
               ],
               "python_version": [
-                "3.14.*",
-                "*"
+                "3.14.*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "abi3audit"
+            "files": {
+              "source": [
+                "tests/**"
               ]
             },
-            "script": "abi3audit %SP_DIR%/wcwidth/_wcwidth_c.pyd -s -v --assume-minimum-abi3 ${{ python_min }}"
+            "requirements": {
+              "run": [
+                "pytest",
+                "abi3audit",
+                "python 3.14.*"
+              ]
+            },
+            "script": [
+              "python -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"%SP_DIR%/wcwidth/_wcwidth_c.pyd\""
+            ]
           }
         ],
         "version": "0.9.1"
@@ -1477,19 +3040,22 @@
         "crossenv"
       ],
       "host": [
-        "python",
-        "python-abi3",
         "pip",
-        "setuptools"
+        "python",
+        "setuptools >=61",
+        "python 3.14.*",
+        "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.14",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "5823209b0d43af322ce698c689380d7c15ca31fa8e6e3be8459f27031bef0af5",
-      "url": "https://pypi.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/w/wcwidth/wcwidth-0.9.1.tar.gz"
     }
   },
   "win_arm64_requirements": {
@@ -1515,14 +3081,17 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "abi3audit",
-        "pip"
+        "pip",
+        "pytest",
+        "python"
       ]
     }
   }
