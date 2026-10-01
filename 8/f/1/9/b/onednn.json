@@ -20,8 +20,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "1982edc8f0c496bb2a6e1888056bcfc3168bd3d2",
-  "feedstock_hash_ts": 1790888251,
+  "feedstock_hash": "df5eab0e83857e96696b94db156b5d4b19139997",
+  "feedstock_hash_ts": 1790892475,
   "feedstock_name": "onednn",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -45,9 +45,9 @@
     "extra": {
       "feedstock-name": "onednn",
       "recipe-maintainers": [
+        "mzhukova",
         "xhochy",
-        "densamoilov",
-        "spalicki"
+        "densamoilov"
       ]
     },
     "outputs": [
@@ -351,9 +351,9 @@
     "extra": {
       "feedstock-name": "onednn",
       "recipe-maintainers": [
+        "mzhukova",
         "xhochy",
-        "densamoilov",
-        "spalicki"
+        "densamoilov"
       ]
     },
     "outputs": [
@@ -481,9 +481,9 @@
     "extra": {
       "feedstock-name": "onednn",
       "recipe-maintainers": [
+        "mzhukova",
         "xhochy",
-        "densamoilov",
-        "spalicki"
+        "densamoilov"
       ]
     },
     "outputs": [
@@ -611,9 +611,9 @@
     "extra": {
       "feedstock-name": "onednn",
       "recipe-maintainers": [
+        "mzhukova",
         "xhochy",
-        "densamoilov",
-        "spalicki"
+        "densamoilov"
       ]
     },
     "outputs": [
@@ -1453,9 +1453,9 @@
     "extra": {
       "feedstock-name": "onednn",
       "recipe-maintainers": [
+        "mzhukova",
         "xhochy",
-        "densamoilov",
-        "spalicki"
+        "densamoilov"
       ]
     },
     "outputs": [
@@ -1704,9 +1704,9 @@
     "extra": {
       "feedstock-name": "onednn",
       "recipe-maintainers": [
+        "mzhukova",
         "xhochy",
-        "densamoilov",
-        "spalicki"
+        "densamoilov"
       ]
     },
     "outputs": [
@@ -1900,7 +1900,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/onednn.json"
   },
-  "raw_meta_yaml": "context:\n  name: oneDNN\n  version: \"3.12.1\"\n  build: 0\n  desc_omp: In this package oneDNN is built with the OpenMP CPU runtime.\n  desc_tbb: In this package oneDNN is built with the TBB CPU runtime.\n  desc_threadpool: |\n    In this package oneDNN is built with the Threadpool CPU runtime.\n    oneDNN requires the user to implement a Threadpool interface to enable\n    the library to perform computations using multiple threads.\n  desc_dpcpp: In this package oneDNN is built with the DPC++ CPU and GPU runtimes.\n\nrecipe:\n  name: onednn-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/oneapi-src/${{ name }}/archive/v${{ version }}.tar.gz\n  sha256: e1db6e9c3771ba137a6e9292c31870471362977760d0ca00adef2fd39e23840b\n\nbuild:\n  number: ${{ build }}\n  variant:\n    down_prioritize_variant: ${{ 1 if dnnl_cpu_runtime != \"omp\" else 0 }}\n\noutputs:\n  - package:\n      name: onednn\n      version: ${{ version }}\n    build:\n      string: ${{ dnnl_cpu_runtime }}_h${{ hash }}_${{ build }}\n      script: build-onednn\n    requirements:\n      build:\n        - cmake\n        - ninja\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - if: dnnl_cpu_runtime == \"dpcpp\"\n          then: ${{ compiler('dpcpp') }}\n        - ${{ stdlib(\"c\") }}\n        - if: osx\n          then: llvm-openmp\n      host:\n        - if: dnnl_cpu_runtime in (\"tbb\", \"dpcpp\")\n          then: tbb-devel\n      run_exports:\n        - ${{ pin_subpackage(\"onednn\", upper_bound=\"x\") }}\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f ${PREFIX}/lib/libdnnl${SHLIB_EXT}\n              - test -f ${PREFIX}/include/oneapi/dnnl/dnnl.h\n          - if: win\n            then:\n              - if not exist %LIBRARY_PREFIX%\\\\bin\\\\dnnl.dll exit 1\n              - if not exist %LIBRARY_PREFIX%\\\\lib\\\\dnnl.lib exit 1\n              - if not exist %LIBRARY_PREFIX%\\\\include\\\\dnnl.h exit 1\n    about:\n      license: Apache-2.0\n      license_file:\n        - THIRD-PARTY-PROGRAMS\n        - LICENSE\n      summary: oneAPI Deep Neural Network Library (oneDNN)\n      description: |\n        oneAPI Deep Neural Network Library (oneDNN) is an open-source\n        cross-platform performance library of basic building blocks for deep\n        learning applications.\n\n        oneDNN is intended for deep learning applications and framework\n        developers interested in improving application performance.\n        Deep learning practitioners should use one of the applications\n        enabled with oneDNN.\n\n        ${{\n          desc_omp if dnnl_cpu_runtime == \"omp\" else\n          desc_tbb if dnnl_cpu_runtime == \"tbb\" else\n          desc_threadpool if dnnl_cpu_runtime == \"threadpool\" else\n          desc_dpcpp if dnnl_cpu_runtime == \"dpcpp\"\n        }}\n\n        For more information please read oneDNN developer guide:\n        https://oneapi-src.github.io/oneDNN/\n      homepage: https://github.com/oneapi-src/oneDNN\n  - package:\n      name: onednn-${{ dnnl_cpu_runtime_name }}\n      version: ${{ version }}\n    build:\n      string: ${{ dnnl_cpu_runtime }}_h${{ hash }}_${{ build }}\n    requirements:\n      host:\n        - ${{ pin_subpackage('onednn', exact=True) }}\n      run:\n        - ${{ pin_subpackage('onednn', exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage(\"onednn\", upper_bound=\"x\") }}\n    tests:\n      - script:\n          - exit 0\n    about:\n      license: Apache-2.0\n      license_file: LICENSE\n      summary: oneAPI Deep Neural Network Library (oneDNN)\n      description: |\n        oneAPI Deep Neural Network Library (oneDNN) is an open-source\n        cross-platform performance library of basic building blocks for deep\n        learning applications.\n\n        oneDNN is intended for deep learning applications and framework\n        developers interested in improving application performance.\n        Deep learning practitioners should use one of the applications\n        enabled with oneDNN.\n\n        ${{\n          desc_omp if dnnl_cpu_runtime == \"omp\" else\n          desc_tbb if dnnl_cpu_runtime == \"tbb\" else\n          desc_threadpool if dnnl_cpu_runtime == \"threadpool\" else\n          desc_dpcpp if dnnl_cpu_runtime == \"dpcpp\"\n        }}\n\n        For more information please read oneDNN developer guide:\n        https://oneapi-src.github.io/oneDNN/\n      homepage: https://github.com/oneapi-src/oneDNN\n\nabout:\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - THIRD-PARTY-PROGRAMS\n  summary: oneAPI Deep Neural Network Library (oneDNN)\n  homepage: https://github.com/oneapi-src/oneDNN\n\nextra:\n  feedstock-name: onednn\n  recipe-maintainers:\n    - xhochy\n    - densamoilov\n    - spalicki\n",
+  "raw_meta_yaml": "context:\n  name: oneDNN\n  version: \"3.12.1\"\n  build: 0\n  desc_omp: In this package oneDNN is built with the OpenMP CPU runtime.\n  desc_tbb: In this package oneDNN is built with the TBB CPU runtime.\n  desc_threadpool: |\n    In this package oneDNN is built with the Threadpool CPU runtime.\n    oneDNN requires the user to implement a Threadpool interface to enable\n    the library to perform computations using multiple threads.\n  desc_dpcpp: In this package oneDNN is built with the DPC++ CPU and GPU runtimes.\n\nrecipe:\n  name: onednn-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/oneapi-src/${{ name }}/archive/v${{ version }}.tar.gz\n  sha256: e1db6e9c3771ba137a6e9292c31870471362977760d0ca00adef2fd39e23840b\n\nbuild:\n  number: ${{ build }}\n  variant:\n    down_prioritize_variant: ${{ 1 if dnnl_cpu_runtime != \"omp\" else 0 }}\n\noutputs:\n  - package:\n      name: onednn\n      version: ${{ version }}\n    build:\n      string: ${{ dnnl_cpu_runtime }}_h${{ hash }}_${{ build }}\n      script: build-onednn\n    requirements:\n      build:\n        - cmake\n        - ninja\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - if: dnnl_cpu_runtime == \"dpcpp\"\n          then: ${{ compiler('dpcpp') }}\n        - ${{ stdlib(\"c\") }}\n        - if: osx\n          then: llvm-openmp\n      host:\n        - if: dnnl_cpu_runtime in (\"tbb\", \"dpcpp\")\n          then: tbb-devel\n      run_exports:\n        - ${{ pin_subpackage(\"onednn\", upper_bound=\"x\") }}\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f ${PREFIX}/lib/libdnnl${SHLIB_EXT}\n              - test -f ${PREFIX}/include/oneapi/dnnl/dnnl.h\n          - if: win\n            then:\n              - if not exist %LIBRARY_PREFIX%\\\\bin\\\\dnnl.dll exit 1\n              - if not exist %LIBRARY_PREFIX%\\\\lib\\\\dnnl.lib exit 1\n              - if not exist %LIBRARY_PREFIX%\\\\include\\\\dnnl.h exit 1\n    about:\n      license: Apache-2.0\n      license_file:\n        - THIRD-PARTY-PROGRAMS\n        - LICENSE\n      summary: oneAPI Deep Neural Network Library (oneDNN)\n      description: |\n        oneAPI Deep Neural Network Library (oneDNN) is an open-source\n        cross-platform performance library of basic building blocks for deep\n        learning applications.\n\n        oneDNN is intended for deep learning applications and framework\n        developers interested in improving application performance.\n        Deep learning practitioners should use one of the applications\n        enabled with oneDNN.\n\n        ${{\n          desc_omp if dnnl_cpu_runtime == \"omp\" else\n          desc_tbb if dnnl_cpu_runtime == \"tbb\" else\n          desc_threadpool if dnnl_cpu_runtime == \"threadpool\" else\n          desc_dpcpp if dnnl_cpu_runtime == \"dpcpp\"\n        }}\n\n        For more information please read oneDNN developer guide:\n        https://oneapi-src.github.io/oneDNN/\n      homepage: https://github.com/oneapi-src/oneDNN\n  - package:\n      name: onednn-${{ dnnl_cpu_runtime_name }}\n      version: ${{ version }}\n    build:\n      string: ${{ dnnl_cpu_runtime }}_h${{ hash }}_${{ build }}\n    requirements:\n      host:\n        - ${{ pin_subpackage('onednn', exact=True) }}\n      run:\n        - ${{ pin_subpackage('onednn', exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage(\"onednn\", upper_bound=\"x\") }}\n    tests:\n      - script:\n          - exit 0\n    about:\n      license: Apache-2.0\n      license_file: LICENSE\n      summary: oneAPI Deep Neural Network Library (oneDNN)\n      description: |\n        oneAPI Deep Neural Network Library (oneDNN) is an open-source\n        cross-platform performance library of basic building blocks for deep\n        learning applications.\n\n        oneDNN is intended for deep learning applications and framework\n        developers interested in improving application performance.\n        Deep learning practitioners should use one of the applications\n        enabled with oneDNN.\n\n        ${{\n          desc_omp if dnnl_cpu_runtime == \"omp\" else\n          desc_tbb if dnnl_cpu_runtime == \"tbb\" else\n          desc_threadpool if dnnl_cpu_runtime == \"threadpool\" else\n          desc_dpcpp if dnnl_cpu_runtime == \"dpcpp\"\n        }}\n\n        For more information please read oneDNN developer guide:\n        https://oneapi-src.github.io/oneDNN/\n      homepage: https://github.com/oneapi-src/oneDNN\n\nabout:\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - THIRD-PARTY-PROGRAMS\n  summary: oneAPI Deep Neural Network Library (oneDNN)\n  homepage: https://github.com/oneapi-src/oneDNN\n\nextra:\n  feedstock-name: onednn\n  recipe-maintainers:\n    - mzhukova\n    - xhochy\n    - densamoilov\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2012,9 +2012,9 @@
     "extra": {
       "feedstock-name": "onednn",
       "recipe-maintainers": [
+        "mzhukova",
         "xhochy",
-        "densamoilov",
-        "spalicki"
+        "densamoilov"
       ]
     },
     "outputs": [
