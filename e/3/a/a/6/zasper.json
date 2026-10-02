@@ -4,6 +4,10 @@
   "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "build_platform": {
+      "linux_aarch64": "linux_64",
+      "osx_arm64": "osx_64"
+    },
     "conda_build": {
       "error_overlinking": true
     },
@@ -11,10 +15,11 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
-    }
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "ef49eb96cd2fe8effc545103f5cd2b954dc944fe",
-  "feedstock_hash_ts": 1790093872,
+  "feedstock_hash": "ef27044aa69cbd81248b9c85a77fcea00a963dda",
+  "feedstock_hash_ts": 1790953924,
   "feedstock_name": "zasper",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -30,11 +35,12 @@
       "summary": "Zasper: High Performance IDE for Jupyter Notebooks"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": [
         "export GOROOT=$(go env GOROOT) && go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper",
         "make init",
         "make build",
+        "mkdir -p \"$PREFIX/bin\"",
         "install -m755 zasper \"$PREFIX/bin/zasper\"",
         "chmod -R u+w $(go env GOPATH) && rm -r $(go env GOPATH)"
       ]
@@ -50,7 +56,7 @@
     },
     "requirements": {
       "build": [
-        "go >=1.26",
+        "go-nocgo_compiler_stub >=1.26",
         "nodejs >=22.12",
         "make",
         "go-licenses"
@@ -75,8 +81,8 @@
     "build": {
       "__set__": true,
       "elements": [
-        "go",
         "go-licenses",
+        "go-nocgo_compiler_stub",
         "make",
         "nodejs"
       ]
@@ -110,14 +116,16 @@
       "summary": "Zasper: High Performance IDE for Jupyter Notebooks"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": [
         "export GOROOT=$(go env GOROOT) && go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper",
         "make init",
         "make build",
+        "mkdir -p \"$PREFIX/bin\"",
         "install -m755 zasper \"$PREFIX/bin/zasper\"",
         "chmod -R u+w $(go env GOPATH) && rm -r $(go env GOPATH)",
         "go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper",
+        "if not exist %PREFIX%\\bin mkdir %PREFIX%\\bin",
         "copy /Y zasper.exe %PREFIX%\\bin\\zasper.exe"
       ]
     },
@@ -132,7 +140,7 @@
     },
     "requirements": {
       "build": [
-        "go >=1.26",
+        "go-nocgo_compiler_stub >=1.26",
         "nodejs >=22.12",
         "make",
         "go-licenses"
@@ -167,11 +175,12 @@
       "summary": "Zasper: High Performance IDE for Jupyter Notebooks"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": [
         "export GOROOT=$(go env GOROOT) && go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper",
         "make init",
         "make build",
+        "mkdir -p \"$PREFIX/bin\"",
         "install -m755 zasper \"$PREFIX/bin/zasper\"",
         "chmod -R u+w $(go env GOPATH) && rm -r $(go env GOPATH)"
       ]
@@ -187,7 +196,7 @@
     },
     "requirements": {
       "build": [
-        "go >=1.26",
+        "go-nocgo_compiler_stub >=1.26",
         "nodejs >=22.12",
         "make",
         "go-licenses"
@@ -212,8 +221,8 @@
     "build": {
       "__set__": true,
       "elements": [
-        "go",
         "go-licenses",
+        "go-nocgo_compiler_stub",
         "make",
         "nodejs"
       ]
@@ -249,12 +258,12 @@
   "pr_info": {
     "__lazy_json__": "pr_info/zasper.json"
   },
-  "raw_meta_yaml": "{% set name = \"zasper\" %}\n{% set version = \"2.0.0\" %}\n{% set tag = \"v2.0.0\" %}\n\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/zasper-io/zasper/archive/refs/tags/{{ tag }}.tar.gz\n  sha256: 22db95b675193c1cddc440c445b1338f3fbc9385578d000e822dc928a36835c8\n\n\nbuild:\n  number: 0\n  script:\n    # go-licenses skips every dependency as standard library unless GOROOT is set\n    - export GOROOT=$(go env GOROOT) && go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper  # [unix]\n    - go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper  # [win]\n    - make init\n    - make build\n    - install -m755 zasper \"$PREFIX/bin/zasper\"  # [not win]\n    - copy /Y zasper.exe %PREFIX%\\bin\\zasper.exe  # [win]\n    # Clear out cache to avoid file not removable warnings\n    - chmod -R u+w $(go env GOPATH) && rm -r $(go env GOPATH)  # [unix]\n\n\nrequirements:\n  build:\n    - go >=1.26\n    - nodejs >=22.12\n    - make\n    - go-licenses\n  run:\n    - python\n    - ipykernel\n\ntest:\n  commands:\n    - zasper --version\n\nabout:\n  home: https://github.com/zasper-io/zasper\n  license: AGPL-3.0-only\n  license_file:\n    - LICENSE\n    - license-files/\n  summary: \"Zasper: High Performance IDE for Jupyter Notebooks\"\n  dev_url: https://github.com/zasper-io/zasper\n  doc_url: https://zasper.io/docs\n\nextra:\n  recipe-maintainers:\n    - prasunanand\n",
+  "raw_meta_yaml": "{% set name = \"zasper\" %}\n{% set version = \"2.0.0\" %}\n{% set tag = \"v2.0.0\" %}\n\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/zasper-io/zasper/archive/refs/tags/{{ tag }}.tar.gz\n  sha256: 22db95b675193c1cddc440c445b1338f3fbc9385578d000e822dc928a36835c8\n\n\nbuild:\n  number: 1\n  script:\n    # go-licenses skips every dependency as standard library unless GOROOT is set\n    - export GOROOT=$(go env GOROOT) && go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper  # [unix]\n    - go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper  # [win]\n    - make init\n    - make build\n    - mkdir -p \"$PREFIX/bin\"  # [not win]\n    - install -m755 zasper \"$PREFIX/bin/zasper\"  # [not win]\n    - if not exist %PREFIX%\\bin mkdir %PREFIX%\\bin  # [win]\n    - copy /Y zasper.exe %PREFIX%\\bin\\zasper.exe  # [win]\n    # Clear out cache to avoid file not removable warnings\n    - chmod -R u+w $(go env GOPATH) && rm -r $(go env GOPATH)  # [unix]\n\n\nrequirements:\n  build:\n    - {{ compiler(\"go-nocgo\") }} >=1.26\n    - nodejs >=22.12\n    - make\n    - go-licenses\n  run:\n    - python\n    - ipykernel\n\ntest:\n  commands:\n    - zasper --version\n\nabout:\n  home: https://github.com/zasper-io/zasper\n  license: AGPL-3.0-only\n  license_file:\n    - LICENSE\n    - license-files/\n  summary: \"Zasper: High Performance IDE for Jupyter Notebooks\"\n  dev_url: https://github.com/zasper-io/zasper\n  doc_url: https://zasper.io/docs\n\nextra:\n  recipe-maintainers:\n    - prasunanand\n",
   "req": {
     "__set__": true,
     "elements": [
-      "go",
       "go-licenses",
+      "go-nocgo_compiler_stub",
       "ipykernel",
       "make",
       "nodejs",
@@ -265,22 +274,19 @@
     "build": {
       "__set__": true,
       "elements": [
-        "go",
         "go-licenses",
+        "go-nocgo_compiler_stub",
         "make",
         "nodejs"
       ]
     },
     "host": {
       "__set__": true,
-      "elements": [
-        "go"
-      ]
+      "elements": []
     },
     "run": {
       "__set__": true,
       "elements": [
-        "go",
         "ipykernel",
         "python"
       ]
@@ -295,8 +301,8 @@
     "build": {
       "__set__": true,
       "elements": [
-        "go >=1.26",
         "go-licenses",
+        "go-nocgo_compiler_stub >=1.26",
         "make",
         "nodejs >=22.12"
       ]
@@ -335,11 +341,12 @@
       "summary": "Zasper: High Performance IDE for Jupyter Notebooks"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": [
         "go-licenses save . --save_path=license-files --ignore github.com/zasper-io/zasper",
         "make init",
         "make build",
+        "if not exist %PREFIX%\\bin mkdir %PREFIX%\\bin",
         "copy /Y zasper.exe %PREFIX%\\bin\\zasper.exe"
       ]
     },
@@ -354,7 +361,7 @@
     },
     "requirements": {
       "build": [
-        "go >=1.26",
+        "go-nocgo_compiler_stub >=1.26",
         "nodejs >=22.12",
         "make",
         "go-licenses"
@@ -379,8 +386,8 @@
     "build": {
       "__set__": true,
       "elements": [
-        "go",
         "go-licenses",
+        "go-nocgo_compiler_stub",
         "make",
         "nodejs"
       ]
