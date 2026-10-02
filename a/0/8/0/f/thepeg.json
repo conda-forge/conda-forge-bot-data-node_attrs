@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfastjet_cxx:\n- '3.5'\ngsl:\n- '2.8'\nhepmc2:\n- '2.06'\nlhapdf:\n- '6.5'\nlibboost_devel:\n- '1.90'\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
+  "ci_support_linux_64_.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfastjet_cxx:\n- '3.5'\ngsl:\n- '2.8'\nhepmc3:\n- '3.3'\nlhapdf:\n- '6.5'\nlibboost_devel:\n- '1.90'\nrivet:\n- '4.1'\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
   "ci_support_migrations": {
     "gsl28": {
       "migration_number": 1,
@@ -28,8 +28,8 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "feec8b1547e2f41fe19983fe5a2601863a139f09",
-  "feedstock_hash_ts": 1790951975,
+  "feedstock_hash": "d501d91e089c295e5954536c0cdebc68f792dede",
+  "feedstock_hash_ts": 1790973388,
   "feedstock_name": "thepeg",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,7 +44,7 @@
       "summary": "Toolkit for High Energy Physics Event Generation - ThePEG"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "run_exports": {
         "weak": [
           "thepeg"
@@ -52,7 +52,7 @@
       },
       "script": [
         "cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config",
-        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-lhapdf=${PREFIX} --with-boost=${PREFIX}",
+        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-hepmcversion=3 --with-lhapdf=${PREFIX} --with-rivet=${PREFIX} --with-boost=${PREFIX}",
         "make -j${CPU_COUNT} CXX=$CXX",
         "make check",
         "make install",
@@ -91,22 +91,18 @@
             "fastjet-cxx",
             "fastjet-cxx-devel",
             "gsl",
-            "hepmc2",
+            "hepmc3",
             "lhapdf",
             "libboost-devel",
+            "rivet",
             "zlib"
           ],
           "run": [
-            "fastjet-cxx-devel"
+            "fastjet-cxx-devel",
+            "grep"
           ]
         },
         "tests": [
-          {
-            "script": [
-              "runThePEG --version",
-              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\""
-            ]
-          },
           {
             "package_contents": {
               "bin": [
@@ -116,17 +112,50 @@
               ],
               "files": [
                 "lib/ThePEG/FastJetFinder.so",
+                "lib/ThePEG/RivetAnalysis.so",
                 "lib/ThePEG/*.so",
                 "lib/ThePEG/*.so.*",
                 "lib/ThePEG/ThePEGDefaults-2.3.0.rpo",
                 "lib/ThePEG/ThePEGDefaults.rpo",
-                "share/*"
+                "share/*",
+                "etc/conda/test-files/thepeg/*"
               ],
               "include": [
                 "ThePEG/*/*"
               ],
               "strict": true
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_rivet.in"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "sed"
+              ]
+            },
+            "script": [
+              "thepeg-config --help",
+              "thepeg-config --prefix",
+              "thepeg-config --datadir",
+              "thepeg-config --libdir",
+              "thepeg-config --includedir",
+              "thepeg-config --cppflags",
+              "thepeg-config --ldflags",
+              "thepeg-config --ldlibs",
+              "thepeg-config --rivet-include",
+              "thepeg-config --fastjet-include",
+              "thepeg-config --rivet-libs",
+              "thepeg-config --fastjet-libs",
+              "runThePEG --version",
+              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"",
+              "setupThePEG --exitonerror test_rivet.in",
+              "runThePEG RivetTest.run",
+              "grep \"/MC_XS/\" RivetTest.yoda"
+            ]
           }
         ],
         "version": "2.3.0"
@@ -148,13 +177,15 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ],
       "run": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "schema_version": 1,
@@ -162,7 +193,10 @@
       "patches": [
         "fix-libtool-darwin-allow-undefined-flag-for-macOS-11.patch",
         "fix-C-17-compatibility-of-Config-std.h-with-libc.patch",
-        "remove-whitespace-in-literal-operator-declarations.patch"
+        "remove-whitespace-in-literal-operator-declarations.patch",
+        "fix-hardcoded-install-paths-for-relocated-prefixes.patch",
+        "fix-thepeg-config-exit-status-and-use-grep-E.patch",
+        "add-support-for-Rivet-4.patch"
       ],
       "sha256": "ac35979ae89c29608ca92c156a49ff68aace7a5a12a0c92f0a01a833d2d34572",
       "url": "https://thepeg.hepforge.org/downloads/ThePEG-2.3.0.tar.bz2"
@@ -185,21 +219,25 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "sed"
+      ]
     }
   },
   "linux_aarch64_meta_yaml": {
@@ -214,7 +252,7 @@
       "summary": "Toolkit for High Energy Physics Event Generation - ThePEG"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "run_exports": {
         "weak": [
           "thepeg"
@@ -222,7 +260,7 @@
       },
       "script": [
         "cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config",
-        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-lhapdf=${PREFIX} --with-boost=${PREFIX}",
+        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-hepmcversion=3 --with-lhapdf=${PREFIX} --with-rivet=${PREFIX} --with-boost=${PREFIX}",
         "make -j${CPU_COUNT} CXX=$CXX",
         "make check",
         "make install",
@@ -261,22 +299,18 @@
             "fastjet-cxx",
             "fastjet-cxx-devel",
             "gsl",
-            "hepmc2",
+            "hepmc3",
             "lhapdf",
             "libboost-devel",
+            "rivet",
             "zlib"
           ],
           "run": [
-            "fastjet-cxx-devel"
+            "fastjet-cxx-devel",
+            "grep"
           ]
         },
         "tests": [
-          {
-            "script": [
-              "runThePEG --version",
-              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\""
-            ]
-          },
           {
             "package_contents": {
               "bin": [
@@ -286,17 +320,50 @@
               ],
               "files": [
                 "lib/ThePEG/FastJetFinder.so",
+                "lib/ThePEG/RivetAnalysis.so",
                 "lib/ThePEG/*.so",
                 "lib/ThePEG/*.so.*",
                 "lib/ThePEG/ThePEGDefaults-2.3.0.rpo",
                 "lib/ThePEG/ThePEGDefaults.rpo",
-                "share/*"
+                "share/*",
+                "etc/conda/test-files/thepeg/*"
               ],
               "include": [
                 "ThePEG/*/*"
               ],
               "strict": true
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_rivet.in"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "sed"
+              ]
+            },
+            "script": [
+              "thepeg-config --help",
+              "thepeg-config --prefix",
+              "thepeg-config --datadir",
+              "thepeg-config --libdir",
+              "thepeg-config --includedir",
+              "thepeg-config --cppflags",
+              "thepeg-config --ldflags",
+              "thepeg-config --ldlibs",
+              "thepeg-config --rivet-include",
+              "thepeg-config --fastjet-include",
+              "thepeg-config --rivet-libs",
+              "thepeg-config --fastjet-libs",
+              "runThePEG --version",
+              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"",
+              "setupThePEG --exitonerror test_rivet.in",
+              "runThePEG RivetTest.run",
+              "grep \"/MC_XS/\" RivetTest.yoda"
+            ]
           }
         ],
         "version": "2.3.0"
@@ -318,13 +385,15 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ],
       "run": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "schema_version": 1,
@@ -332,7 +401,10 @@
       "patches": [
         "fix-libtool-darwin-allow-undefined-flag-for-macOS-11.patch",
         "fix-C-17-compatibility-of-Config-std.h-with-libc.patch",
-        "remove-whitespace-in-literal-operator-declarations.patch"
+        "remove-whitespace-in-literal-operator-declarations.patch",
+        "fix-hardcoded-install-paths-for-relocated-prefixes.patch",
+        "fix-thepeg-config-exit-status-and-use-grep-E.patch",
+        "add-support-for-Rivet-4.patch"
       ],
       "sha256": "ac35979ae89c29608ca92c156a49ff68aace7a5a12a0c92f0a01a833d2d34572",
       "url": "https://thepeg.hepforge.org/downloads/ThePEG-2.3.0.tar.bz2"
@@ -355,21 +427,25 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "sed"
+      ]
     }
   },
   "meta_yaml": {
@@ -384,7 +460,7 @@
       "summary": "Toolkit for High Energy Physics Event Generation - ThePEG"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "run_exports": {
         "weak": [
           "thepeg"
@@ -392,7 +468,7 @@
       },
       "script": [
         "cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config",
-        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-lhapdf=${PREFIX} --with-boost=${PREFIX}",
+        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-hepmcversion=3 --with-lhapdf=${PREFIX} --with-rivet=${PREFIX} --with-boost=${PREFIX}",
         "make -j${CPU_COUNT} CXX=$CXX",
         "make check",
         "make install",
@@ -431,22 +507,18 @@
             "fastjet-cxx",
             "fastjet-cxx-devel",
             "gsl",
-            "hepmc2",
+            "hepmc3",
             "lhapdf",
             "libboost-devel",
+            "rivet",
             "zlib"
           ],
           "run": [
-            "fastjet-cxx-devel"
+            "fastjet-cxx-devel",
+            "grep"
           ]
         },
         "tests": [
-          {
-            "script": [
-              "runThePEG --version",
-              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\""
-            ]
-          },
           {
             "package_contents": {
               "bin": [
@@ -456,17 +528,50 @@
               ],
               "files": [
                 "lib/ThePEG/FastJetFinder.so",
+                "lib/ThePEG/RivetAnalysis.so",
                 "lib/ThePEG/*.so",
                 "lib/ThePEG/*.so.*",
                 "lib/ThePEG/ThePEGDefaults-2.3.0.rpo",
                 "lib/ThePEG/ThePEGDefaults.rpo",
-                "share/*"
+                "share/*",
+                "etc/conda/test-files/thepeg/*"
               ],
               "include": [
                 "ThePEG/*/*"
               ],
               "strict": true
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_rivet.in"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "sed"
+              ]
+            },
+            "script": [
+              "thepeg-config --help",
+              "thepeg-config --prefix",
+              "thepeg-config --datadir",
+              "thepeg-config --libdir",
+              "thepeg-config --includedir",
+              "thepeg-config --cppflags",
+              "thepeg-config --ldflags",
+              "thepeg-config --ldlibs",
+              "thepeg-config --rivet-include",
+              "thepeg-config --fastjet-include",
+              "thepeg-config --rivet-libs",
+              "thepeg-config --fastjet-libs",
+              "runThePEG --version",
+              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"",
+              "setupThePEG --exitonerror test_rivet.in",
+              "runThePEG RivetTest.run",
+              "grep \"/MC_XS/\" RivetTest.yoda"
+            ]
           }
         ],
         "version": "2.3.0"
@@ -492,22 +597,18 @@
             "fastjet-cxx",
             "fastjet-cxx-devel",
             "gsl",
-            "hepmc2",
+            "hepmc3",
             "lhapdf",
             "libboost-devel",
+            "rivet",
             "zlib"
           ],
           "run": [
-            "fastjet-cxx-devel"
+            "fastjet-cxx-devel",
+            "grep"
           ]
         },
         "tests": [
-          {
-            "script": [
-              "runThePEG --version",
-              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\""
-            ]
-          },
           {
             "package_contents": {
               "bin": [
@@ -517,17 +618,50 @@
               ],
               "files": [
                 "lib/ThePEG/FastJetFinder.so",
+                "lib/ThePEG/RivetAnalysis.so",
                 "lib/ThePEG/*.so",
                 "lib/ThePEG/*.so.*",
                 "lib/ThePEG/ThePEGDefaults-2.3.0.rpo",
                 "lib/ThePEG/ThePEGDefaults.rpo",
-                "share/*"
+                "share/*",
+                "etc/conda/test-files/thepeg/*"
               ],
               "include": [
                 "ThePEG/*/*"
               ],
               "strict": true
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_rivet.in"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "sed"
+              ]
+            },
+            "script": [
+              "thepeg-config --help",
+              "thepeg-config --prefix",
+              "thepeg-config --datadir",
+              "thepeg-config --libdir",
+              "thepeg-config --includedir",
+              "thepeg-config --cppflags",
+              "thepeg-config --ldflags",
+              "thepeg-config --ldlibs",
+              "thepeg-config --rivet-include",
+              "thepeg-config --fastjet-include",
+              "thepeg-config --rivet-libs",
+              "thepeg-config --fastjet-libs",
+              "runThePEG --version",
+              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"",
+              "setupThePEG --exitonerror test_rivet.in",
+              "runThePEG RivetTest.run",
+              "grep \"/MC_XS/\" RivetTest.yoda"
+            ]
           }
         ],
         "version": "2.3.0"
@@ -553,22 +687,18 @@
             "fastjet-cxx",
             "fastjet-cxx-devel",
             "gsl",
-            "hepmc2",
+            "hepmc3",
             "lhapdf",
             "libboost-devel",
+            "rivet",
             "zlib"
           ],
           "run": [
-            "fastjet-cxx-devel"
+            "fastjet-cxx-devel",
+            "grep"
           ]
         },
         "tests": [
-          {
-            "script": [
-              "runThePEG --version",
-              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\""
-            ]
-          },
           {
             "package_contents": {
               "bin": [
@@ -578,17 +708,50 @@
               ],
               "files": [
                 "lib/ThePEG/FastJetFinder.so",
+                "lib/ThePEG/RivetAnalysis.so",
                 "lib/ThePEG/*.so",
                 "lib/ThePEG/*.dylib",
                 "lib/ThePEG/ThePEGDefaults-2.3.0.rpo",
                 "lib/ThePEG/ThePEGDefaults.rpo",
-                "share/*"
+                "share/*",
+                "etc/conda/test-files/thepeg/*"
               ],
               "include": [
                 "ThePEG/*/*"
               ],
               "strict": true
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_rivet.in"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "sed"
+              ]
+            },
+            "script": [
+              "thepeg-config --help",
+              "thepeg-config --prefix",
+              "thepeg-config --datadir",
+              "thepeg-config --libdir",
+              "thepeg-config --includedir",
+              "thepeg-config --cppflags",
+              "thepeg-config --ldflags",
+              "thepeg-config --ldlibs",
+              "thepeg-config --rivet-include",
+              "thepeg-config --fastjet-include",
+              "thepeg-config --rivet-libs",
+              "thepeg-config --fastjet-libs",
+              "runThePEG --version",
+              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"",
+              "setupThePEG --exitonerror test_rivet.in",
+              "runThePEG RivetTest.run",
+              "grep \"/MC_XS/\" RivetTest.yoda"
+            ]
           }
         ],
         "version": "2.3.0"
@@ -614,22 +777,18 @@
             "fastjet-cxx",
             "fastjet-cxx-devel",
             "gsl",
-            "hepmc2",
+            "hepmc3",
             "lhapdf",
             "libboost-devel",
+            "rivet",
             "zlib"
           ],
           "run": [
-            "fastjet-cxx-devel"
+            "fastjet-cxx-devel",
+            "grep"
           ]
         },
         "tests": [
-          {
-            "script": [
-              "runThePEG --version",
-              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\""
-            ]
-          },
           {
             "package_contents": {
               "bin": [
@@ -639,17 +798,50 @@
               ],
               "files": [
                 "lib/ThePEG/FastJetFinder.so",
+                "lib/ThePEG/RivetAnalysis.so",
                 "lib/ThePEG/*.so",
                 "lib/ThePEG/*.dylib",
                 "lib/ThePEG/ThePEGDefaults-2.3.0.rpo",
                 "lib/ThePEG/ThePEGDefaults.rpo",
-                "share/*"
+                "share/*",
+                "etc/conda/test-files/thepeg/*"
               ],
               "include": [
                 "ThePEG/*/*"
               ],
               "strict": true
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_rivet.in"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "sed"
+              ]
+            },
+            "script": [
+              "thepeg-config --help",
+              "thepeg-config --prefix",
+              "thepeg-config --datadir",
+              "thepeg-config --libdir",
+              "thepeg-config --includedir",
+              "thepeg-config --cppflags",
+              "thepeg-config --ldflags",
+              "thepeg-config --ldlibs",
+              "thepeg-config --rivet-include",
+              "thepeg-config --fastjet-include",
+              "thepeg-config --rivet-libs",
+              "thepeg-config --fastjet-libs",
+              "runThePEG --version",
+              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"",
+              "setupThePEG --exitonerror test_rivet.in",
+              "runThePEG RivetTest.run",
+              "grep \"/MC_XS/\" RivetTest.yoda"
+            ]
           }
         ],
         "version": "2.3.0"
@@ -671,13 +863,15 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ],
       "run": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "schema_version": 1,
@@ -685,7 +879,10 @@
       "patches": [
         "fix-libtool-darwin-allow-undefined-flag-for-macOS-11.patch",
         "fix-C-17-compatibility-of-Config-std.h-with-libc.patch",
-        "remove-whitespace-in-literal-operator-declarations.patch"
+        "remove-whitespace-in-literal-operator-declarations.patch",
+        "fix-hardcoded-install-paths-for-relocated-prefixes.patch",
+        "fix-thepeg-config-exit-status-and-use-grep-E.patch",
+        "add-support-for-Rivet-4.patch"
       ],
       "sha256": "ac35979ae89c29608ca92c156a49ff68aace7a5a12a0c92f0a01a833d2d34572",
       "url": "https://thepeg.hepforge.org/downloads/ThePEG-2.3.0.tar.bz2"
@@ -704,7 +901,7 @@
       "summary": "Toolkit for High Energy Physics Event Generation - ThePEG"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "run_exports": {
         "weak": [
           "thepeg"
@@ -712,7 +909,7 @@
       },
       "script": [
         "cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config",
-        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-lhapdf=${PREFIX} --with-boost=${PREFIX}",
+        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-hepmcversion=3 --with-lhapdf=${PREFIX} --with-rivet=${PREFIX} --with-boost=${PREFIX}",
         "make -j${CPU_COUNT} CXX=$CXX",
         "make check",
         "make install",
@@ -751,22 +948,18 @@
             "fastjet-cxx",
             "fastjet-cxx-devel",
             "gsl",
-            "hepmc2",
+            "hepmc3",
             "lhapdf",
             "libboost-devel",
+            "rivet",
             "zlib"
           ],
           "run": [
-            "fastjet-cxx-devel"
+            "fastjet-cxx-devel",
+            "grep"
           ]
         },
         "tests": [
-          {
-            "script": [
-              "runThePEG --version",
-              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\""
-            ]
-          },
           {
             "package_contents": {
               "bin": [
@@ -776,17 +969,50 @@
               ],
               "files": [
                 "lib/ThePEG/FastJetFinder.so",
+                "lib/ThePEG/RivetAnalysis.so",
                 "lib/ThePEG/*.so",
                 "lib/ThePEG/*.dylib",
                 "lib/ThePEG/ThePEGDefaults-2.3.0.rpo",
                 "lib/ThePEG/ThePEGDefaults.rpo",
-                "share/*"
+                "share/*",
+                "etc/conda/test-files/thepeg/*"
               ],
               "include": [
                 "ThePEG/*/*"
               ],
               "strict": true
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_rivet.in"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "sed"
+              ]
+            },
+            "script": [
+              "thepeg-config --help",
+              "thepeg-config --prefix",
+              "thepeg-config --datadir",
+              "thepeg-config --libdir",
+              "thepeg-config --includedir",
+              "thepeg-config --cppflags",
+              "thepeg-config --ldflags",
+              "thepeg-config --ldlibs",
+              "thepeg-config --rivet-include",
+              "thepeg-config --fastjet-include",
+              "thepeg-config --rivet-libs",
+              "thepeg-config --fastjet-libs",
+              "runThePEG --version",
+              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"",
+              "setupThePEG --exitonerror test_rivet.in",
+              "runThePEG RivetTest.run",
+              "grep \"/MC_XS/\" RivetTest.yoda"
+            ]
           }
         ],
         "version": "2.3.0"
@@ -808,13 +1034,15 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ],
       "run": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "schema_version": 1,
@@ -822,7 +1050,10 @@
       "patches": [
         "fix-libtool-darwin-allow-undefined-flag-for-macOS-11.patch",
         "fix-C-17-compatibility-of-Config-std.h-with-libc.patch",
-        "remove-whitespace-in-literal-operator-declarations.patch"
+        "remove-whitespace-in-literal-operator-declarations.patch",
+        "fix-hardcoded-install-paths-for-relocated-prefixes.patch",
+        "fix-thepeg-config-exit-status-and-use-grep-E.patch",
+        "add-support-for-Rivet-4.patch"
       ],
       "sha256": "ac35979ae89c29608ca92c156a49ff68aace7a5a12a0c92f0a01a833d2d34572",
       "url": "https://thepeg.hepforge.org/downloads/ThePEG-2.3.0.tar.bz2"
@@ -845,21 +1076,25 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "sed"
+      ]
     }
   },
   "osx_arm64_meta_yaml": {
@@ -874,7 +1109,7 @@
       "summary": "Toolkit for High Energy Physics Event Generation - ThePEG"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "run_exports": {
         "weak": [
           "thepeg"
@@ -882,7 +1117,7 @@
       },
       "script": [
         "cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config",
-        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-lhapdf=${PREFIX} --with-boost=${PREFIX}",
+        "./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-hepmcversion=3 --with-lhapdf=${PREFIX} --with-rivet=${PREFIX} --with-boost=${PREFIX}",
         "make -j${CPU_COUNT} CXX=$CXX",
         "make check",
         "make install",
@@ -921,22 +1156,18 @@
             "fastjet-cxx",
             "fastjet-cxx-devel",
             "gsl",
-            "hepmc2",
+            "hepmc3",
             "lhapdf",
             "libboost-devel",
+            "rivet",
             "zlib"
           ],
           "run": [
-            "fastjet-cxx-devel"
+            "fastjet-cxx-devel",
+            "grep"
           ]
         },
         "tests": [
-          {
-            "script": [
-              "runThePEG --version",
-              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\""
-            ]
-          },
           {
             "package_contents": {
               "bin": [
@@ -946,17 +1177,50 @@
               ],
               "files": [
                 "lib/ThePEG/FastJetFinder.so",
+                "lib/ThePEG/RivetAnalysis.so",
                 "lib/ThePEG/*.so",
                 "lib/ThePEG/*.dylib",
                 "lib/ThePEG/ThePEGDefaults-2.3.0.rpo",
                 "lib/ThePEG/ThePEGDefaults.rpo",
-                "share/*"
+                "share/*",
+                "etc/conda/test-files/thepeg/*"
               ],
               "include": [
                 "ThePEG/*/*"
               ],
               "strict": true
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_rivet.in"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "sed"
+              ]
+            },
+            "script": [
+              "thepeg-config --help",
+              "thepeg-config --prefix",
+              "thepeg-config --datadir",
+              "thepeg-config --libdir",
+              "thepeg-config --includedir",
+              "thepeg-config --cppflags",
+              "thepeg-config --ldflags",
+              "thepeg-config --ldlibs",
+              "thepeg-config --rivet-include",
+              "thepeg-config --fastjet-include",
+              "thepeg-config --rivet-libs",
+              "thepeg-config --fastjet-libs",
+              "runThePEG --version",
+              "test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"",
+              "setupThePEG --exitonerror test_rivet.in",
+              "runThePEG RivetTest.run",
+              "grep \"/MC_XS/\" RivetTest.yoda"
+            ]
           }
         ],
         "version": "2.3.0"
@@ -978,13 +1242,15 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ],
       "run": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "schema_version": 1,
@@ -992,7 +1258,10 @@
       "patches": [
         "fix-libtool-darwin-allow-undefined-flag-for-macOS-11.patch",
         "fix-C-17-compatibility-of-Config-std.h-with-libc.patch",
-        "remove-whitespace-in-literal-operator-declarations.patch"
+        "remove-whitespace-in-literal-operator-declarations.patch",
+        "fix-hardcoded-install-paths-for-relocated-prefixes.patch",
+        "fix-thepeg-config-exit-status-and-use-grep-E.patch",
+        "add-support-for-Rivet-4.patch"
       ],
       "sha256": "ac35979ae89c29608ca92c156a49ff68aace7a5a12a0c92f0a01a833d2d34572",
       "url": "https://thepeg.hepforge.org/downloads/ThePEG-2.3.0.tar.bz2"
@@ -1015,21 +1284,25 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "sed"
+      ]
     }
   },
   "outputs_names": {
@@ -1048,7 +1321,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/thepeg.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"2.3.0\"\n\npackage:\n  name: thepeg\n  version: ${{ version }}\n\nsource:\n  url: https://thepeg.hepforge.org/downloads/ThePEG-${{ version }}.tar.bz2\n  sha256: ac35979ae89c29608ca92c156a49ff68aace7a5a12a0c92f0a01a833d2d34572\n  patches:\n    - fix-libtool-darwin-allow-undefined-flag-for-macOS-11.patch\n    - fix-C-17-compatibility-of-Config-std.h-with-libc.patch\n    - remove-whitespace-in-literal-operator-declarations.patch\n\nbuild:\n  number: 2\n  skip:\n    - win\n  script:\n    # Get an updated config.sub and config.guess\n    # c.f. https://conda-forge.org/docs/how-to/advanced/cross-compilation/#autotools\n    # ThePEG sets AC_CONFIG_AUX_DIR([Config]) in configure.ac, so configure looks for them in Config/\n    - cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config\n    - ./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-lhapdf=${PREFIX} --with-boost=${PREFIX}\n    - make -j${CPU_COUNT} CXX=$CXX\n    - make check\n    - make install\n    - rm -rf \"${PREFIX}/lib/ThePEG/Makefile\" \"${PREFIX}/lib/ThePEG/Makefile.common\" \"${PREFIX}/share/ThePEG/Doc\"\n    - rm -f \"${PREFIX}/lib/ThePEG/runThePEG-${{ version }}\" \"${PREFIX}/lib/ThePEG/setupThePEG-${{ version }}\"\n\nrequirements:\n  build:\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - gnuconfig\n    - make\n    - time\n  host:\n    - fastjet-cxx  # pick up global pinning\n    - fastjet-cxx-devel\n    - gsl\n    - hepmc2\n    - lhapdf\n    - libboost-devel\n    - zlib\n  run:\n    # thepeg-config --fastjet-include/--fastjet-libs point at FastJet headers and link libraries\n    - fastjet-cxx-devel\n  run_exports:\n    - ${{ pin_subpackage(\"thepeg\", upper_bound=\"x.x\") }}\n\ntests:\n  - script:\n      - runThePEG --version\n      - test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"\n  - package_contents:\n      bin:\n        - runThePEG\n        - setupThePEG\n        - thepeg-config\n      include:\n        - ThePEG/*/*\n      # Use files over lib as lib globs get the platform shared library extension\n      # appended, but the libtool '-module' plugins are named .so on macOS as well\n      files:\n        # Guard against FastJet support being silently disabled at configure time\n        - lib/ThePEG/FastJetFinder.so\n        - lib/ThePEG/*.so\n        - if: linux\n          then: lib/ThePEG/*.so.*\n        - if: osx\n          then: lib/ThePEG/*.dylib\n        - lib/ThePEG/ThePEGDefaults-${{ version }}.rpo\n        - lib/ThePEG/ThePEGDefaults.rpo\n        - share/*\n      strict: true\n\nabout:\n  homepage: https://thepeg.hepforge.org/\n  summary: 'Toolkit for High Energy Physics Event Generation - ThePEG'\n  description: |\n    ThePEG is a general toolkit for implementing physics models of event generation in high energy\n    particle collisions. It defines a general structure of event generation in terms of abstract base\n    classes like hard partonic matrix elements, parton showers and the decay of unstable particles.\n  license: GPL-3.0-or-later\n  license_file: COPYING\n  documentation: https://thepeg.hepforge.org/doxygen/\n  repository: https://repo.hepforge.org/source/thepeghg/\n\nextra:\n  recipe-maintainers:\n    - utk4r-sh\n    - GiacomoXT\n    - vvsagar\n    - AlexanderHeidelbach\n    - conda-forge/hepmc3\n",
+  "raw_meta_yaml": "context:\n  version: \"2.3.0\"\n\npackage:\n  name: thepeg\n  version: ${{ version }}\n\nsource:\n  url: https://thepeg.hepforge.org/downloads/ThePEG-${{ version }}.tar.bz2\n  sha256: ac35979ae89c29608ca92c156a49ff68aace7a5a12a0c92f0a01a833d2d34572\n  patches:\n    - fix-libtool-darwin-allow-undefined-flag-for-macOS-11.patch\n    - fix-C-17-compatibility-of-Config-std.h-with-libc.patch\n    - remove-whitespace-in-literal-operator-declarations.patch\n    - fix-hardcoded-install-paths-for-relocated-prefixes.patch\n    - fix-thepeg-config-exit-status-and-use-grep-E.patch\n    # TODO: Drop after move to a release with Rivet 4 support (patch is a backport)\n    - add-support-for-Rivet-4.patch\n\nbuild:\n  number: 3\n  skip:\n    - win\n  script:\n    # Get an updated config.sub and config.guess\n    # c.f. https://conda-forge.org/docs/how-to/advanced/cross-compilation/#autotools\n    # ThePEG sets AC_CONFIG_AUX_DIR([Config]) in configure.ac, so configure looks for them in Config/\n    - cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config\n    # Rivet is built against HepMC3, and ThePEG passes its HepMC events directly to Rivet,\n    # so ThePEG has to use HepMC3 as well (configure defaults to HepMC2)\n    - ./configure --prefix=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-hepmc=${PREFIX} --with-hepmcversion=3 --with-lhapdf=${PREFIX} --with-rivet=${PREFIX} --with-boost=${PREFIX}\n    - make -j${CPU_COUNT} CXX=$CXX\n    - make check\n    - make install\n    - rm -rf \"${PREFIX}/lib/ThePEG/Makefile\" \"${PREFIX}/lib/ThePEG/Makefile.common\" \"${PREFIX}/share/ThePEG/Doc\"\n    - rm -f \"${PREFIX}/lib/ThePEG/runThePEG-${{ version }}\" \"${PREFIX}/lib/ThePEG/setupThePEG-${{ version }}\"\n\nrequirements:\n  build:\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - gnuconfig\n    - make\n    - time\n  host:\n    - fastjet-cxx  # pick up global pinning\n    - fastjet-cxx-devel\n    - gsl\n    - hepmc3\n    - lhapdf\n    - libboost-devel\n    - rivet\n    - zlib\n  run:\n    # thepeg-config --fastjet-include/--fastjet-libs point at FastJet headers and link libraries\n    - fastjet-cxx-devel\n    # thepeg-config parses its options with grep\n    - grep\n  run_exports:\n    - ${{ pin_subpackage(\"thepeg\", upper_bound=\"x.x\") }}\n\ntests:\n  - package_contents:\n      bin:\n        - runThePEG\n        - setupThePEG\n        - thepeg-config\n      include:\n        - ThePEG/*/*\n      # Use files over lib as lib globs get the platform shared library extension\n      # appended, but the libtool '-module' plugins are named .so on macOS as well\n      files:\n        # Guard against FastJet support being silently disabled at configure time\n        - lib/ThePEG/FastJetFinder.so\n        # Guard against Rivet support being silently disabled at configure time\n        - lib/ThePEG/RivetAnalysis.so\n        - lib/ThePEG/*.so\n        - if: linux\n          then: lib/ThePEG/*.so.*\n        - if: osx\n          then: lib/ThePEG/*.dylib\n        - lib/ThePEG/ThePEGDefaults-${{ version }}.rpo\n        - lib/ThePEG/ThePEGDefaults.rpo\n        - share/*\n        - etc/conda/test-files/thepeg/*\n      strict: true\n\n  - script:\n      - thepeg-config --help\n      - thepeg-config --prefix\n      - thepeg-config --datadir\n      - thepeg-config --libdir\n      - thepeg-config --includedir\n      - thepeg-config --cppflags\n      - thepeg-config --ldflags\n      - thepeg-config --ldlibs\n      - thepeg-config --rivet-include\n      - thepeg-config --fastjet-include\n      - thepeg-config --rivet-libs\n      - thepeg-config --fastjet-libs\n\n      - runThePEG --version\n      - test -f \"$(thepeg-config --fastjet-include | sed 's/^-I//')/fastjet/ClusterSequence.hh\"\n      # Load RivetAnalysis.so and run a Rivet analysis in-process end to end\n      - setupThePEG --exitonerror test_rivet.in\n      - runThePEG RivetTest.run\n      - grep \"/MC_XS/\" RivetTest.yoda\n    requirements:\n      run:\n        - sed\n    files:\n      recipe:\n        - test_rivet.in\n\nabout:\n  homepage: https://thepeg.hepforge.org/\n  summary: 'Toolkit for High Energy Physics Event Generation - ThePEG'\n  description: |\n    ThePEG is a general toolkit for implementing physics models of event generation in high energy\n    particle collisions. It defines a general structure of event generation in terms of abstract base\n    classes like hard partonic matrix elements, parton showers and the decay of unstable particles.\n  license: GPL-3.0-or-later\n  license_file: COPYING\n  documentation: https://thepeg.hepforge.org/doxygen/\n  repository: https://repo.hepforge.org/source/thepeghg/\n\nextra:\n  recipe-maintainers:\n    - utk4r-sh\n    - GiacomoXT\n    - vvsagar\n    - AlexanderHeidelbach\n    - conda-forge/hepmc3\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1057,11 +1330,13 @@
       "fastjet-cxx",
       "fastjet-cxx-devel",
       "gnuconfig",
+      "grep",
       "gsl",
-      "hepmc2",
+      "hepmc3",
       "lhapdf",
       "libboost-devel",
       "make",
+      "rivet",
       "time",
       "zlib"
     ]
@@ -1085,9 +1360,10 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ]
     },
@@ -1096,12 +1372,15 @@
       "elements": [
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "sed"
+      ]
     }
   },
   "strong_exports": false,
@@ -1122,21 +1401,25 @@
         "fastjet-cxx",
         "fastjet-cxx-devel",
         "gsl",
-        "hepmc2",
+        "hepmc3",
         "lhapdf",
         "libboost-devel",
+        "rivet",
         "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "fastjet-cxx-devel"
+        "fastjet-cxx-devel",
+        "grep"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "sed"
+      ]
     }
   },
   "url": "https://thepeg.hepforge.org/downloads/ThePEG-2.3.0.tar.bz2",
