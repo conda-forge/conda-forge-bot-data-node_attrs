@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
@@ -13,8 +13,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "dc3ed770e31b143eb73146aa4e9cb6eec21ff98d",
-  "feedstock_hash_ts": 1777048543,
+  "feedstock_hash": "0b9ff8dcbb973f849e49b34be498001b23844ec0",
+  "feedstock_hash_ts": 1790963061,
   "feedstock_name": "hip",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -23,19 +23,20 @@
       "license": "NCSA",
       "license_family": "MIT",
       "license_file": [
-        "clr/LICENCE",
-        "hip/LICENSE.txt",
+        "clr/LICENSE.md",
+        "hip/LICENSE.md",
         "hipcc/amd/hipcc/LICENSE.txt"
       ],
       "summary": "HIP: C++ Heterogeneous-Compute Interface for Portability "
     },
     "build": {
-      "number": "2"
+      "number": "0"
     },
     "extra": {
       "recipe-maintainers": [
         "isuruf",
-        "zklaus"
+        "zklaus",
+        "conda-forge/rocm-core"
       ]
     },
     "outputs": [
@@ -48,7 +49,7 @@
           "lib/libamdhip64.so*",
           "lib/libhiprtc.so*",
           "lib/libhiprtc-builtins.so*",
-          "share/doc/hip/LICENSE.txt"
+          "share/doc/hip/LICENSE.md"
         ],
         "name": "hip-runtime-amd",
         "requirements": {
@@ -59,19 +60,21 @@
           ],
           "host": [
             "numactl",
-            "rocm-comgr 6.3.*",
-            "rocr-runtime 6.3.*"
+            "rocm-core 7.2.4.*",
+            "rocm-comgr 7.2.*",
+            "rocr-runtime 7.2.*"
           ],
           "run": [
-            "libnuma",
-            "rocm-comgr 6.3.*",
-            "rocr-runtime 6.3.*"
+            "rocm-comgr 7.2.*",
+            "rocr-runtime 7.2.*",
+            "rocm-device-libs 7.2.*"
           ]
         },
         "test": {
           "commands": [
             "test -f $PREFIX/lib/.hipInfo",
-            "test -f $PREFIX/lib/libamdhip64.so"
+            "test -f $PREFIX/lib/libamdhip64.so",
+            "test -f $PREFIX/lib/libamdhip64.so.7"
           ]
         }
       },
@@ -82,7 +85,7 @@
           "bin/roc-obj",
           "bin/roc-obj-extract",
           "bin/roc-obj-ls",
-          "include/hip/amd_detail/*.h",
+          "include/hip/amd_detail/*",
           "include/hip/*.h",
           "lib/cmake/hip/FindHIP.cmake",
           "lib/cmake/hip/FindHIP/*.cmake",
@@ -102,7 +105,13 @@
           "commands": [
             "test -f $PREFIX/share/hip/version",
             "test -f $PREFIX/lib/cmake/hip/FindHIP.cmake",
-            "test -f $PREFIX/include/hip/hip_common.h"
+            "test -f $PREFIX/include/hip/hip_common.h",
+            "cmake-package-check hip --targets hip::host hip::device"
+          ],
+          "requires": [
+            "cmake-package-check",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
           ]
         }
       },
@@ -113,7 +122,9 @@
           "bin/hipcc.pl",
           "bin/hipconfig*",
           "bin/hipvars.pm",
-          "share/doc/hipcc/*"
+          "share/doc/hipcc/*",
+          "etc/conda/activate.d/hip_activate.sh",
+          "etc/conda/deactivate.d/hip_deactivate.sh"
         ],
         "name": "hipcc",
         "requirements": {
@@ -127,26 +138,96 @@
           ],
           "run": [
             "hip-devel",
-            "clang",
-            "clangxx",
-            "llvm-tools",
+            "clang 22.*",
+            "clangxx 22.*",
+            "llvm-tools 22.*",
             "perl",
             "python *",
-            "rocminfo 6.3.*"
+            "rocm-core 7.2.4.*",
+            "rocminfo 7.2.*",
+            "rocm-device-libs 7.2.*",
+            "lld 22.*",
+            "clang-tools 22.*",
+            "compiler-rt 22.*"
           ]
         },
         "test": {
           "commands": [
             "export HIP_PLATFORM=amd",
             "$PREFIX/bin/hipcc --offload-arch=gfx803 --version",
-            "$PREFIX/bin/hipconfig"
+            "$PREFIX/bin/hipconfig",
+            "hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip"
+          ],
+          "files": [
+            "test"
+          ]
+        }
+      },
+      {
+        "files": [
+          "etc/conda/activate.d/hip-rocm-clang_activate.sh",
+          "etc/conda/deactivate.d/hip-rocm-clang_deactivate.sh"
+        ],
+        "name": "hip-rocm-clang_linux-64",
+        "requirements": {
+          "run": [
+            "hipcc"
+          ]
+        },
+        "run_exports": {
+          "strong": [
+            "rocm-core 7.2.*",
+            "hip-runtime-amd"
+          ]
+        },
+        "test": {
+          "commands": [
+            "cmake-package-check hip --targets hip::host hip::device",
+            "cmake -B./test/test_cmake_enable_hip_build -S./test/test_cmake_enable_hip -GNinja",
+            "hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip",
+            "$HIPCXX --version"
+          ],
+          "files": [
+            "test"
+          ],
+          "requires": [
+            "cmake-package-check",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "name": "hip-compiler",
+        "requirements": {
+          "run": [
+            "hip-rocm-clang_linux-64"
+          ]
+        },
+        "test": {
+          "commands": [
+            "cmake-package-check hip --targets hip::host hip::device",
+            "cmake -B./test/test_cmake_enable_hip_build -S./test/test_cmake_enable_hip -GNinja",
+            "hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip"
+          ],
+          "files": [
+            "test"
+          ],
+          "requires": [
+            "cmake-package-check",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja"
           ]
         }
       },
       {
         "files": [
           "lib/libamdocl64.so*",
-          "share/doc/opencl/LICENSE.txt"
+          "share/doc/opencl/LICENSE.md"
         ],
         "name": "rocm-opencl",
         "requirements": {
@@ -157,13 +238,13 @@
           ],
           "host": [
             "numactl",
-            "rocm-comgr 6.3.3",
-            "rocr-runtime 6.3.3"
+            "rocm-core 7.2.4.*",
+            "rocm-comgr 7.2.*",
+            "rocr-runtime 7.2.*"
           ],
           "run": [
-            "rocm-comgr",
-            "rocr-runtime",
-            "libnuma"
+            "rocm-comgr 7.2.*",
+            "rocr-runtime 7.2.*"
           ]
         },
         "test": {
@@ -192,7 +273,7 @@
     ],
     "package": {
       "name": "hip",
-      "version": "6.3.3"
+      "version": "7.2.4"
     },
     "requirements": {
       "build": [
@@ -206,18 +287,19 @@
         "python *"
       ],
       "host": [
-        "clangdev 19.*",
+        "clangdev 22.*",
         "numactl",
-        "llvmdev 19.*",
+        "llvmdev 22.*",
         "ocl-icd",
-        "rocm-comgr 6.3.*",
-        "rocr-runtime 6.3.*",
-        "rocm-cmake 6.3.*",
+        "rocm-core 7.2.4.*",
+        "rocm-comgr 7.2.*",
+        "rocr-runtime 7.2.*",
+        "rocm-cmake 7.2.*",
         "zlib",
-        "rocminfo 6.3.*",
-        "xorg-xorgproto",
-        "xorg-libx11",
+        "rocminfo 7.2.*",
         "libgl-devel",
+        "libopengl-devel",
+        "libglx-devel",
         "libegl-devel"
       ]
     },
@@ -225,26 +307,26 @@
     "source": [
       {
         "folder": "hip",
-        "sha256": "aa3a5466304d1dbee0d976b50fccb710dd12e2e1d5534793396447c0ff845e2c",
-        "url": "https://github.com/ROCm/HIP/archive/refs/tags/rocm-6.3.3.tar.gz"
+        "sha256": "76c3d6909e531f30b84c908984891559d221d8c427d44abc88be5dbb123f9ad6",
+        "url": "https://github.com/ROCm/rocm-systems/releases/download/rocm-7.2.4/hip.tar.gz"
       },
       {
         "folder": "clr",
         "patches": [
-          "0001-Mark-raw-strings.patch"
+          "0001-Mark-raw-strings.patch",
+          "0004-hip-config-optional-tools.patch"
         ],
-        "sha256": "8e5adca8f8c2d99d4a4e49605dd6b56b7881b762ee8ce15b4a7000e3cd982fec",
-        "url": "https://github.com/ROCm/clr/archive/refs/tags/rocm-6.3.3.tar.gz"
+        "sha256": "c9670697ee47b2d33dde84e4c815a62f594061da9ff184b133b87a227a1a1f02",
+        "url": "https://github.com/ROCm/rocm-systems/releases/download/rocm-7.2.4/clr.tar.gz"
       },
       {
         "folder": "hipcc",
         "patches": [
-          "0001-Make-cmake-rocm-detection-required.patch",
           "0002-Fix-cmake-backward-compatibility.patch",
-          "hipcc-path.diff"
+          "0003-hipcc-path.diff"
         ],
-        "sha256": "4df9aba24e574edf23844c0d2d9dda112811db5c2b08c9428604a21b819eb23d",
-        "url": "https://github.com/ROCm/llvm-project/archive/refs/tags/rocm-6.3.3.tar.gz"
+        "sha256": "526b5fe23417c41acbeb2273e470887b4593f48a297a8d9c1a1aa730d556f9fb",
+        "url": "https://github.com/ROCm/llvm-project/archive/refs/tags/rocm-7.2.4.tar.gz"
       }
     ]
   },
@@ -269,15 +351,16 @@
         "hip-devel",
         "libegl-devel",
         "libgl-devel",
+        "libglx-devel",
+        "libopengl-devel",
         "llvmdev",
         "numactl",
         "ocl-icd",
         "rocm-cmake",
         "rocm-comgr",
+        "rocm-core",
         "rocminfo",
         "rocr-runtime",
-        "xorg-libx11",
-        "xorg-xorgproto",
         "zlib"
       ]
     },
@@ -285,15 +368,21 @@
       "__set__": true,
       "elements": [
         "clang",
+        "clang-tools",
         "clangxx",
+        "compiler-rt",
         "hip-devel",
+        "hip-rocm-clang_linux-64",
         "hip-runtime-amd",
-        "libnuma",
+        "hipcc",
+        "lld",
         "llvm-tools",
         "ocl-icd",
         "perl",
         "python",
         "rocm-comgr",
+        "rocm-core",
+        "rocm-device-libs",
         "rocm-opencl",
         "rocminfo",
         "rocr-runtime"
@@ -301,7 +390,13 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cmake-package-check",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
   "meta_yaml": {
@@ -310,19 +405,20 @@
       "license": "NCSA",
       "license_family": "MIT",
       "license_file": [
-        "clr/LICENCE",
-        "hip/LICENSE.txt",
+        "clr/LICENSE.md",
+        "hip/LICENSE.md",
         "hipcc/amd/hipcc/LICENSE.txt"
       ],
       "summary": "HIP: C++ Heterogeneous-Compute Interface for Portability "
     },
     "build": {
-      "number": "2"
+      "number": "0"
     },
     "extra": {
       "recipe-maintainers": [
         "isuruf",
-        "zklaus"
+        "zklaus",
+        "conda-forge/rocm-core"
       ]
     },
     "outputs": [
@@ -335,7 +431,7 @@
           "lib/libamdhip64.so*",
           "lib/libhiprtc.so*",
           "lib/libhiprtc-builtins.so*",
-          "share/doc/hip/LICENSE.txt"
+          "share/doc/hip/LICENSE.md"
         ],
         "name": "hip-runtime-amd",
         "requirements": {
@@ -346,19 +442,21 @@
           ],
           "host": [
             "numactl",
-            "rocm-comgr 6.3.*",
-            "rocr-runtime 6.3.*"
+            "rocm-core 7.2.4.*",
+            "rocm-comgr 7.2.*",
+            "rocr-runtime 7.2.*"
           ],
           "run": [
-            "libnuma",
-            "rocm-comgr 6.3.*",
-            "rocr-runtime 6.3.*"
+            "rocm-comgr 7.2.*",
+            "rocr-runtime 7.2.*",
+            "rocm-device-libs 7.2.*"
           ]
         },
         "test": {
           "commands": [
             "test -f $PREFIX/lib/.hipInfo",
-            "test -f $PREFIX/lib/libamdhip64.so"
+            "test -f $PREFIX/lib/libamdhip64.so",
+            "test -f $PREFIX/lib/libamdhip64.so.7"
           ]
         }
       },
@@ -369,7 +467,7 @@
           "bin/roc-obj",
           "bin/roc-obj-extract",
           "bin/roc-obj-ls",
-          "include/hip/amd_detail/*.h",
+          "include/hip/amd_detail/*",
           "include/hip/*.h",
           "lib/cmake/hip/FindHIP.cmake",
           "lib/cmake/hip/FindHIP/*.cmake",
@@ -389,7 +487,13 @@
           "commands": [
             "test -f $PREFIX/share/hip/version",
             "test -f $PREFIX/lib/cmake/hip/FindHIP.cmake",
-            "test -f $PREFIX/include/hip/hip_common.h"
+            "test -f $PREFIX/include/hip/hip_common.h",
+            "cmake-package-check hip --targets hip::host hip::device"
+          ],
+          "requires": [
+            "cmake-package-check",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
           ]
         }
       },
@@ -400,7 +504,9 @@
           "bin/hipcc.pl",
           "bin/hipconfig*",
           "bin/hipvars.pm",
-          "share/doc/hipcc/*"
+          "share/doc/hipcc/*",
+          "etc/conda/activate.d/hip_activate.sh",
+          "etc/conda/deactivate.d/hip_deactivate.sh"
         ],
         "name": "hipcc",
         "requirements": {
@@ -414,26 +520,96 @@
           ],
           "run": [
             "hip-devel",
-            "clang",
-            "clangxx",
-            "llvm-tools",
+            "clang 22.*",
+            "clangxx 22.*",
+            "llvm-tools 22.*",
             "perl",
             "python *",
-            "rocminfo 6.3.*"
+            "rocm-core 7.2.4.*",
+            "rocminfo 7.2.*",
+            "rocm-device-libs 7.2.*",
+            "lld 22.*",
+            "clang-tools 22.*",
+            "compiler-rt 22.*"
           ]
         },
         "test": {
           "commands": [
             "export HIP_PLATFORM=amd",
             "$PREFIX/bin/hipcc --offload-arch=gfx803 --version",
-            "$PREFIX/bin/hipconfig"
+            "$PREFIX/bin/hipconfig",
+            "hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip"
+          ],
+          "files": [
+            "test"
+          ]
+        }
+      },
+      {
+        "files": [
+          "etc/conda/activate.d/hip-rocm-clang_activate.sh",
+          "etc/conda/deactivate.d/hip-rocm-clang_deactivate.sh"
+        ],
+        "name": "hip-rocm-clang_linux-64",
+        "requirements": {
+          "run": [
+            "hipcc"
+          ]
+        },
+        "run_exports": {
+          "strong": [
+            "rocm-core 7.2.*",
+            "hip-runtime-amd"
+          ]
+        },
+        "test": {
+          "commands": [
+            "cmake-package-check hip --targets hip::host hip::device",
+            "cmake -B./test/test_cmake_enable_hip_build -S./test/test_cmake_enable_hip -GNinja",
+            "hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip",
+            "$HIPCXX --version"
+          ],
+          "files": [
+            "test"
+          ],
+          "requires": [
+            "cmake-package-check",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "name": "hip-compiler",
+        "requirements": {
+          "run": [
+            "hip-rocm-clang_linux-64"
+          ]
+        },
+        "test": {
+          "commands": [
+            "cmake-package-check hip --targets hip::host hip::device",
+            "cmake -B./test/test_cmake_enable_hip_build -S./test/test_cmake_enable_hip -GNinja",
+            "hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip"
+          ],
+          "files": [
+            "test"
+          ],
+          "requires": [
+            "cmake-package-check",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja"
           ]
         }
       },
       {
         "files": [
           "lib/libamdocl64.so*",
-          "share/doc/opencl/LICENSE.txt"
+          "share/doc/opencl/LICENSE.md"
         ],
         "name": "rocm-opencl",
         "requirements": {
@@ -444,13 +620,13 @@
           ],
           "host": [
             "numactl",
-            "rocm-comgr 6.3.3",
-            "rocr-runtime 6.3.3"
+            "rocm-core 7.2.4.*",
+            "rocm-comgr 7.2.*",
+            "rocr-runtime 7.2.*"
           ],
           "run": [
-            "rocm-comgr",
-            "rocr-runtime",
-            "libnuma"
+            "rocm-comgr 7.2.*",
+            "rocr-runtime 7.2.*"
           ]
         },
         "test": {
@@ -479,7 +655,7 @@
     ],
     "package": {
       "name": "hip",
-      "version": "6.3.3"
+      "version": "7.2.4"
     },
     "requirements": {
       "build": [
@@ -493,18 +669,19 @@
         "python *"
       ],
       "host": [
-        "clangdev 19.*",
+        "clangdev 22.*",
         "numactl",
-        "llvmdev 19.*",
+        "llvmdev 22.*",
         "ocl-icd",
-        "rocm-comgr 6.3.*",
-        "rocr-runtime 6.3.*",
-        "rocm-cmake 6.3.*",
+        "rocm-core 7.2.4.*",
+        "rocm-comgr 7.2.*",
+        "rocr-runtime 7.2.*",
+        "rocm-cmake 7.2.*",
         "zlib",
-        "rocminfo 6.3.*",
-        "xorg-xorgproto",
-        "xorg-libx11",
+        "rocminfo 7.2.*",
         "libgl-devel",
+        "libopengl-devel",
+        "libglx-devel",
         "libegl-devel"
       ]
     },
@@ -512,26 +689,26 @@
     "source": [
       {
         "folder": "hip",
-        "sha256": "aa3a5466304d1dbee0d976b50fccb710dd12e2e1d5534793396447c0ff845e2c",
-        "url": "https://github.com/ROCm/HIP/archive/refs/tags/rocm-6.3.3.tar.gz"
+        "sha256": "76c3d6909e531f30b84c908984891559d221d8c427d44abc88be5dbb123f9ad6",
+        "url": "https://github.com/ROCm/rocm-systems/releases/download/rocm-7.2.4/hip.tar.gz"
       },
       {
         "folder": "clr",
         "patches": [
-          "0001-Mark-raw-strings.patch"
+          "0001-Mark-raw-strings.patch",
+          "0004-hip-config-optional-tools.patch"
         ],
-        "sha256": "8e5adca8f8c2d99d4a4e49605dd6b56b7881b762ee8ce15b4a7000e3cd982fec",
-        "url": "https://github.com/ROCm/clr/archive/refs/tags/rocm-6.3.3.tar.gz"
+        "sha256": "c9670697ee47b2d33dde84e4c815a62f594061da9ff184b133b87a227a1a1f02",
+        "url": "https://github.com/ROCm/rocm-systems/releases/download/rocm-7.2.4/clr.tar.gz"
       },
       {
         "folder": "hipcc",
         "patches": [
-          "0001-Make-cmake-rocm-detection-required.patch",
           "0002-Fix-cmake-backward-compatibility.patch",
-          "hipcc-path.diff"
+          "0003-hipcc-path.diff"
         ],
-        "sha256": "4df9aba24e574edf23844c0d2d9dda112811db5c2b08c9428604a21b819eb23d",
-        "url": "https://github.com/ROCm/llvm-project/archive/refs/tags/rocm-6.3.3.tar.gz"
+        "sha256": "526b5fe23417c41acbeb2273e470887b4593f48a297a8d9c1a1aa730d556f9fb",
+        "url": "https://github.com/ROCm/llvm-project/archive/refs/tags/rocm-7.2.4.tar.gz"
       }
     ]
   },
@@ -539,7 +716,9 @@
   "outputs_names": {
     "__set__": true,
     "elements": [
+      "hip-compiler",
       "hip-devel",
+      "hip-rocm-clang_linux-64",
       "hip-runtime-amd",
       "hipcc",
       "rocm-opencl",
@@ -553,23 +732,29 @@
   "pr_info": {
     "__lazy_json__": "pr_info/hip.json"
   },
-  "raw_meta_yaml": "{% set name = \"hip\" %}\n{% set version = \"6.3.3\" %}\n{% set major_version = version.split('.')[0] %}\n{% set minor_version = version.split('.')[1] %}\n{% set major_minor_version = \".\".join(version.split(\".\")[:2]) %}\n{% set patch_version = version.split('.')[2] %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  - url: https://github.com/ROCm/HIP/archive/refs/tags/rocm-{{ version }}.tar.gz\n    sha256: aa3a5466304d1dbee0d976b50fccb710dd12e2e1d5534793396447c0ff845e2c\n    folder: hip\n\n  - url: https://github.com/ROCm/clr/archive/refs/tags/rocm-{{ version }}.tar.gz\n    sha256: 8e5adca8f8c2d99d4a4e49605dd6b56b7881b762ee8ce15b4a7000e3cd982fec\n    folder: clr\n    patches:\n      - 0001-Mark-raw-strings.patch\n\n  - url: https://github.com/ROCm/llvm-project/archive/refs/tags/rocm-{{ version }}.tar.gz\n    sha256: 4df9aba24e574edf23844c0d2d9dda112811db5c2b08c9428604a21b819eb23d\n    folder: hipcc\n    patches:\n      - 0001-Make-cmake-rocm-detection-required.patch\n      - 0002-Fix-cmake-backward-compatibility.patch\n      - hipcc-path.diff\n\nbuild:\n  number: 2\n  skip: true  # [not linux]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n    - cmake\n    - make\n    - cppheaderparser\n    - wget\n    - python *\n  host:\n    - clangdev 19.*\n    - numactl\n    - llvmdev 19.*\n    - ocl-icd\n    - rocm-comgr {{ major_minor_version }}.*\n    - rocr-runtime {{ major_minor_version }}.*\n    - rocm-cmake {{ major_minor_version }}.*\n    - zlib\n    - rocminfo {{ major_minor_version }}.*\n    - xorg-xorgproto\n    - xorg-libx11\n    - libgl-devel\n    - libegl-devel\n\noutputs:\n  - name: hip-runtime-amd\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cxx') }}\n      host:\n        - numactl\n        - rocm-comgr {{ major_minor_version }}.*\n        - rocr-runtime {{ major_minor_version }}.*\n      run:\n        - libnuma  # to work around missing run_exports in numactl\n        - rocm-comgr {{ major_minor_version }}.*\n        - rocr-runtime {{ major_minor_version }}.*\n    files:\n      - lib/.hipInfo\n      - lib/cmake/hip/hip-targets*.cmake\n      - lib/cmake/hip-lang/*.cmake\n      - lib/cmake/hiprtc/*.cmake\n      - lib/libamdhip64.so*\n      - lib/libhiprtc.so*\n      - lib/libhiprtc-builtins.so*\n      - share/doc/hip/LICENSE.txt\n    test:\n      commands:\n        - test -f $PREFIX/lib/.hipInfo\n        - test -f $PREFIX/lib/libamdhip64.so\n\n  - name: hip-devel\n    requirements:\n      run:\n        - {{ pin_subpackage(\"hip-runtime-amd\") }}\n    run_exports:\n      - {{ pin_subpackage(\"hip-runtime-amd\") }}\n    files:\n      - bin/hipcc_cmake_linker_helper\n      - bin/hipdemangleatp\n      - bin/roc-obj\n      - bin/roc-obj-extract\n      - bin/roc-obj-ls\n      - include/hip/amd_detail/*.h\n      - include/hip/*.h\n      - lib/cmake/hip/FindHIP.cmake\n      - lib/cmake/hip/FindHIP/*.cmake\n      - lib/cmake/hip/hip-config*.cmake\n      - share/hip/version\n    test:\n      commands:\n        - test -f $PREFIX/share/hip/version\n        - test -f $PREFIX/lib/cmake/hip/FindHIP.cmake\n        - test -f $PREFIX/include/hip/hip_common.h\n\n  - name: hipcc\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cxx') }}\n      host:\n        - {{ pin_subpackage(\"hip-devel\", exact=True) }}\n      run:\n        - {{ pin_subpackage(\"hip-devel\", exact=True) }}\n        - clang\n        - clangxx\n        - llvm-tools\n        - perl\n        - python *\n        - rocminfo {{ major_minor_version }}.*\n    files:\n      - bin/hipcc\n      - bin/hipcc.bin\n      - bin/hipcc.pl\n      - bin/hipconfig*\n      - bin/hipvars.pm\n      - share/doc/hipcc/*\n    test:\n      commands:\n        - export HIP_PLATFORM=amd\n        - $PREFIX/bin/hipcc --offload-arch=gfx803 --version\n        - $PREFIX/bin/hipconfig\n\n  - name: rocm-opencl\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cxx') }}\n      host:\n        - numactl\n        - rocm-comgr {{ version }}\n        - rocr-runtime {{ version }}\n      run:\n        - {{ pin_compatible(\"rocm-comgr\") }}\n        - {{ pin_compatible(\"rocr-runtime\") }}\n        - libnuma\n    files:\n      - lib/libamdocl64.so*\n      - share/doc/opencl/LICENSE.txt\n    test:\n      commands:\n        - test -f $PREFIX/lib/libamdocl64.so\n\n  - name: rocm-opencl-runtime\n    requirements:\n      run:\n        - {{ pin_subpackage(\"rocm-opencl\", exact=True) }}\n        - ocl-icd                 # [linux]\n        - khronos-ocl-icd-loader  # [not linux]\n    files:\n      - etc/OpenCL/vendors/amdocl64.icd\n    test:\n      commands:\n        - test -f $PREFIX/etc/OpenCL/vendors/amdocl64.icd\n\nabout:\n  home: https://github.com/ROCm/HIP\n  license: NCSA\n  license_family: MIT\n  license_file:\n    - clr/LICENCE\n    - hip/LICENSE.txt\n    - hipcc/amd/hipcc/LICENSE.txt\n  summary: 'HIP: C++ Heterogeneous-Compute Interface for Portability '\n\nextra:\n  recipe-maintainers:\n    - isuruf\n    - zklaus\n",
+  "raw_meta_yaml": "{% set name = \"hip\" %}\n{% set version = \"7.2.4\" %}\n{% set major_version = version.split('.')[0] %}\n{% set minor_version = version.split('.')[1] %}\n{% set major_minor_version = \".\".join(version.split(\".\")[:2]) %}\n{% set patch_version = version.split('.')[2] %}\n{% set llvm_major_version = \"22\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  - url: https://github.com/ROCm/rocm-systems/releases/download/rocm-{{ version }}/hip.tar.gz\n    sha256: 76c3d6909e531f30b84c908984891559d221d8c427d44abc88be5dbb123f9ad6\n    folder: hip\n\n  - url: https://github.com/ROCm/rocm-systems/releases/download/rocm-{{ version }}/clr.tar.gz\n    sha256: c9670697ee47b2d33dde84e4c815a62f594061da9ff184b133b87a227a1a1f02\n    folder: clr\n    patches:\n      - 0001-Mark-raw-strings.patch\n      - 0004-hip-config-optional-tools.patch\n\n  - url: https://github.com/ROCm/llvm-project/archive/refs/tags/rocm-{{ version }}.tar.gz\n    sha256: 526b5fe23417c41acbeb2273e470887b4593f48a297a8d9c1a1aa730d556f9fb\n    folder: hipcc\n    patches:\n      - 0002-Fix-cmake-backward-compatibility.patch\n      - 0003-hipcc-path.diff\n\nbuild:\n  number: 0\n  skip: true  # [not linux]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n    - cmake\n    - make\n    - cppheaderparser\n    - wget\n    - python *\n  host:\n    - clangdev {{ llvm_major_version }}.*\n    - numactl\n    - llvmdev {{ llvm_major_version }}.*\n    - ocl-icd\n    - rocm-core {{ version }}.*\n    - rocm-comgr {{ major_minor_version }}.*\n    - rocr-runtime {{ major_minor_version }}.*\n    - rocm-cmake {{ major_minor_version }}.*\n    - zlib\n    - rocminfo {{ major_minor_version }}.*\n    - libgl-devel\n    - libopengl-devel\n    - libglx-devel\n    - libegl-devel\n\noutputs:\n  - name: hip-runtime-amd\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cxx') }}\n      host:\n        - numactl\n        - rocm-core {{ version }}.*\n        - rocm-comgr {{ major_minor_version }}.*\n        - rocr-runtime {{ major_minor_version }}.*\n      run:\n        - rocm-comgr {{ major_minor_version }}.*\n        - rocr-runtime {{ major_minor_version }}.*\n        - rocm-device-libs {{ major_minor_version }}.*\n    files:\n      - lib/.hipInfo\n      - lib/cmake/hip/hip-targets*.cmake\n      - lib/cmake/hip-lang/*.cmake\n      - lib/cmake/hiprtc/*.cmake\n      - lib/libamdhip64.so*\n      - lib/libhiprtc.so*\n      - lib/libhiprtc-builtins.so*\n      - share/doc/hip/LICENSE.md\n    test:\n      commands:\n        - test -f $PREFIX/lib/.hipInfo\n        - test -f $PREFIX/lib/libamdhip64.so\n        - test -f $PREFIX/lib/libamdhip64.so.{{ major_version }}\n\n  - name: hip-devel\n    requirements:\n      run:\n        - {{ pin_subpackage(\"hip-runtime-amd\") }}\n    run_exports:\n      - {{ pin_subpackage(\"hip-runtime-amd\") }}\n    files:\n      - bin/hipcc_cmake_linker_helper\n      - bin/hipdemangleatp\n      - bin/roc-obj\n      - bin/roc-obj-extract\n      - bin/roc-obj-ls\n      - include/hip/amd_detail/*\n      - include/hip/*.h\n      - lib/cmake/hip/FindHIP.cmake\n      - lib/cmake/hip/FindHIP/*.cmake\n      - lib/cmake/hip/hip-config*.cmake\n      - share/hip/version\n    test:\n      commands:\n        - test -f $PREFIX/share/hip/version\n        - test -f $PREFIX/lib/cmake/hip/FindHIP.cmake\n        - test -f $PREFIX/include/hip/hip_common.h\n        - cmake-package-check hip --targets hip::host hip::device\n      requires:\n        - cmake-package-check\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n\n  - name: hipcc\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cxx') }}\n      host:\n        - {{ pin_subpackage(\"hip-devel\", exact=True) }}\n      run:\n        - {{ pin_subpackage(\"hip-devel\", exact=True) }}\n        - clang {{ llvm_major_version }}.*\n        - clangxx {{ llvm_major_version }}.*\n        - llvm-tools {{ llvm_major_version }}.*\n        - perl\n        - python *\n        - rocm-core {{ version }}.*\n        - rocminfo {{ major_minor_version }}.*\n        # rocm-device-libs, lld and clang-tools are required for HIP compilation\n        - rocm-device-libs {{ major_minor_version }}.*\n        - lld {{ llvm_major_version }}.*\n        - clang-tools {{ llvm_major_version }}.*\n        - compiler-rt {{ llvm_major_version }}.*\n    files:\n      - bin/hipcc\n      - bin/hipcc.bin\n      - bin/hipcc.pl\n      - bin/hipconfig*\n      - bin/hipvars.pm\n      - share/doc/hipcc/*\n      - etc/conda/activate.d/hip_activate.sh\n      - etc/conda/deactivate.d/hip_deactivate.sh\n    test:\n      commands:\n        - export HIP_PLATFORM=amd\n        - $PREFIX/bin/hipcc --offload-arch=gfx803 --version\n        - $PREFIX/bin/hipconfig\n        - hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip\n      files:\n        - test\n\n  # This package provides the files and activation scripts needed to compile HIP code\n  # inside conda-build and rattler-build using {{ compiler('hip') }} and targeting the\n  # amd/rocm HIP platform\n  - name: hip-rocm-clang_linux-64\n    requirements:\n      run:\n        - {{ pin_subpackage(\"hipcc\", exact=True) }}\n    run_exports:\n      strong:\n        - rocm-core {{ major_minor_version }}.*\n        - {{ pin_subpackage(\"hip-runtime-amd\") }}\n    files:\n      - etc/conda/activate.d/hip-rocm-clang_activate.sh\n      - etc/conda/deactivate.d/hip-rocm-clang_deactivate.sh\n    test:\n      commands:\n        - cmake-package-check hip --targets hip::host hip::device\n        - cmake -B./test/test_cmake_enable_hip_build -S./test/test_cmake_enable_hip -GNinja\n        - hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip\n        - $HIPCXX --version\n      requires:\n        - cmake-package-check\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - cmake\n        - ninja\n      files:\n        - test\n\n  # This metapackage provides the compiler outside conda-build and rattler-build.\n  - name: hip-compiler\n    requirements:\n      run:\n        - {{ pin_subpackage(\"hip-rocm-clang_linux-64\", exact=True) }}\n    test:\n      commands:\n        - cmake-package-check hip --targets hip::host hip::device\n        - cmake -B./test/test_cmake_enable_hip_build -S./test/test_cmake_enable_hip -GNinja\n        - hipcc --offload-arch=gfx942 ./test/test_cmake_enable_hip/main_hip_smoke_test.hip\n      requires:\n        - cmake-package-check\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - cmake\n        - ninja\n      files:\n        - test\n\n  - name: rocm-opencl\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cxx') }}\n      host:\n        - numactl\n        - rocm-core {{ version }}.*\n        - rocm-comgr {{ major_minor_version }}.*\n        - rocr-runtime {{ major_minor_version }}.*\n      run:\n        - rocm-comgr {{ major_minor_version }}.*\n        - rocr-runtime {{ major_minor_version }}.*\n    files:\n      - lib/libamdocl64.so*\n      - share/doc/opencl/LICENSE.md\n    test:\n      commands:\n        - test -f $PREFIX/lib/libamdocl64.so\n\n  - name: rocm-opencl-runtime\n    requirements:\n      run:\n        - {{ pin_subpackage(\"rocm-opencl\", exact=True) }}\n        - ocl-icd                 # [linux]\n        - khronos-ocl-icd-loader  # [not linux]\n    files:\n      - etc/OpenCL/vendors/amdocl64.icd\n    test:\n      commands:\n        - test -f $PREFIX/etc/OpenCL/vendors/amdocl64.icd\n\nabout:\n  home: https://github.com/ROCm/HIP\n  license: NCSA\n  license_family: MIT\n  license_file:\n    - clr/LICENSE.md\n    - hip/LICENSE.md\n    - hipcc/amd/hipcc/LICENSE.txt\n  summary: 'HIP: C++ Heterogeneous-Compute Interface for Portability '\n\nextra:\n  recipe-maintainers:\n    - isuruf\n    - zklaus\n    - conda-forge/rocm-core\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
       "c_stdlib_stub",
       "clang",
+      "clang-tools",
       "clangdev",
       "clangxx",
       "cmake",
+      "compiler-rt",
       "cppheaderparser",
       "cxx_compiler_stub",
       "hip-devel",
+      "hip-rocm-clang_linux-64",
       "hip-runtime-amd",
+      "hipcc",
       "libegl-devel",
       "libgl-devel",
-      "libnuma",
+      "libglx-devel",
+      "libopengl-devel",
+      "lld",
       "llvm-tools",
       "llvmdev",
       "make",
@@ -579,12 +764,12 @@
       "python",
       "rocm-cmake",
       "rocm-comgr",
+      "rocm-core",
+      "rocm-device-libs",
       "rocm-opencl",
       "rocminfo",
       "rocr-runtime",
       "wget",
-      "xorg-libx11",
-      "xorg-xorgproto",
       "zlib"
     ]
   },
@@ -612,15 +797,16 @@
         "hip-devel",
         "libegl-devel",
         "libgl-devel",
+        "libglx-devel",
+        "libopengl-devel",
         "llvmdev",
         "numactl",
         "ocl-icd",
         "rocm-cmake",
         "rocm-comgr",
+        "rocm-core",
         "rocminfo",
         "rocr-runtime",
-        "xorg-libx11",
-        "xorg-xorgproto",
         "zlib"
       ]
     },
@@ -630,16 +816,22 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "clang",
+        "clang-tools",
         "clangxx",
+        "compiler-rt",
         "cxx_compiler_stub",
         "hip-devel",
+        "hip-rocm-clang_linux-64",
         "hip-runtime-amd",
-        "libnuma",
+        "hipcc",
+        "lld",
         "llvm-tools",
         "ocl-icd",
         "perl",
         "python",
         "rocm-comgr",
+        "rocm-core",
+        "rocm-device-libs",
         "rocm-opencl",
         "rocminfo",
         "rocr-runtime"
@@ -647,7 +839,13 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cmake-package-check",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
   "strong_exports": false,
@@ -668,51 +866,60 @@
     "host": {
       "__set__": true,
       "elements": [
-        "clangdev 19.*",
+        "clangdev 22.*",
         "hip-devel",
         "libegl-devel",
         "libgl-devel",
-        "llvmdev 19.*",
+        "libglx-devel",
+        "libopengl-devel",
+        "llvmdev 22.*",
         "numactl",
         "ocl-icd",
-        "rocm-cmake 6.3.*",
-        "rocm-comgr 6.3.*",
-        "rocm-comgr 6.3.3",
-        "rocminfo 6.3.*",
-        "rocr-runtime 6.3.*",
-        "rocr-runtime 6.3.3",
-        "xorg-libx11",
-        "xorg-xorgproto",
+        "rocm-cmake 7.2.*",
+        "rocm-comgr 7.2.*",
+        "rocm-core 7.2.4.*",
+        "rocminfo 7.2.*",
+        "rocr-runtime 7.2.*",
         "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "clang",
-        "clangxx",
+        "clang 22.*",
+        "clang-tools 22.*",
+        "clangxx 22.*",
+        "compiler-rt 22.*",
         "hip-devel",
+        "hip-rocm-clang_linux-64",
         "hip-runtime-amd",
-        "libnuma",
-        "llvm-tools",
+        "hipcc",
+        "lld 22.*",
+        "llvm-tools 22.*",
         "ocl-icd",
         "perl",
         "python *",
-        "rocm-comgr",
-        "rocm-comgr 6.3.*",
+        "rocm-comgr 7.2.*",
+        "rocm-core 7.2.4.*",
+        "rocm-device-libs 7.2.*",
         "rocm-opencl",
-        "rocminfo 6.3.*",
-        "rocr-runtime",
-        "rocr-runtime 6.3.*"
+        "rocminfo 7.2.*",
+        "rocr-runtime 7.2.*"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cmake-package-check",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
-  "url": "https://github.com/ROCm/HIP/archive/refs/tags/rocm-6.3.3.tar.gz",
-  "version": "6.3.3",
+  "url": "https://github.com/ROCm/rocm-systems/releases/download/rocm-7.2.4/hip.tar.gz",
+  "version": "7.2.4",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/hip.json"
   }
