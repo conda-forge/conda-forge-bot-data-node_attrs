@@ -18,13 +18,19 @@
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
-    }
+    },
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "3ebb233c3c3353c2eaa73ab47ba1a7fdfb1fa629",
-  "feedstock_hash_ts": 1791010784,
+  "feedstock_hash": "d329bb6205894ffb76e21fc81a0f28ac0982a186",
+  "feedstock_hash_ts": 1791041507,
   "feedstock_name": "herwig",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -39,7 +45,7 @@
       "summary": "Multi-purpose particle physics event generator"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "run_exports": {
         "weak": [
           "herwig"
@@ -116,7 +122,6 @@
                 "ufo2herwig"
               ],
               "files": [
-                "lib/Herwig/libHerwigAPI.so",
                 "lib/Herwig/Herwig.so",
                 "lib/Herwig/Hw*.so",
                 "share/Herwig/HerwigDefaults.rpo",
@@ -124,6 +129,9 @@
               ],
               "include": [
                 "Herwig/API/HerwigAPI.h"
+              ],
+              "lib": [
+                "Herwig/libHerwigAPI"
               ]
             }
           },
@@ -173,13 +181,206 @@
     "source": {
       "patches": [
         "determine-length-of-compiled-in-install-paths-at-run.patch",
-        "link-against-an-external-looptools-library.patch"
+        "link-against-an-external-looptools-library.patch",
+        "replace-std-random_shuffle-which-is-removed-in-C-17.patch"
       ],
       "sha256": "5933545ddff7fde2bea86fa61943fba5d4be50ba993c336e9a372529a2f2b164",
       "url": "https://herwig.hepforge.org/downloads/Herwig-7.2.0.tar.bz2"
     }
   },
   "linux_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "autoconf",
+        "automake",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "gnuconfig",
+        "libtool",
+        "make",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "fastjet-cxx",
+        "fastjet-cxx-devel",
+        "gsl",
+        "libboost-headers",
+        "looptools",
+        "thepeg"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "Herwig provides significantly improved and extended physics capabilities when compared to both its predecessors,\nHERWIG 6 and Herwig++ 2, while keeping the key model motivations such as coherent parton showers (including\nangular-ordered and dipole-based evolution), the cluster hadronization model, an eikonal multiple-interaction model,\nhighly flexible BSM capabilities and improved perturbative input using next-to-leading order QCD.\n\nThe default PDF sets used by Herwig are not distributed with the package and need to be installed with\n`lhapdf install CT14lo CT14nlo`.",
+      "dev_url": "https://repo.hepforge.org/source/herwighg/",
+      "doc_url": "https://herwig.hepforge.org/doxygen/",
+      "home": "https://herwig.hepforge.org/",
+      "license": "GPL-3.0-or-later",
+      "license_family": "GPL-3.0-or-later",
+      "license_file": "COPYING",
+      "summary": "Multi-purpose particle physics event generator"
+    },
+    "build": {
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "herwig"
+        ]
+      },
+      "script": [
+        "export LHAPDF_DATA_PATH=\"${SRC_DIR}/pdfsets\"",
+        "export LDFLAGS=\"${LDFLAGS} -Wl,-rpath,${PREFIX}/lib/ThePEG\"",
+        "rm -rf Looptools/{A,B,C,D,E,util}",
+        "autoreconf --force --install",
+        "cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config",
+        "./configure --help",
+        "./configure --prefix=${PREFIX} --with-thepeg=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-boost=${PREFIX}",
+        "make -j${CPU_COUNT}",
+        "make install"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "utk4r-sh",
+        "GiacomoXT",
+        "vvsagar",
+        "AlexanderHeidelbach",
+        "conda-forge/hepmc3"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "herwig"
+            ]
+          }
+        },
+        "name": "herwig",
+        "requirements": {
+          "build": [
+            "fortran_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config",
+            "gnuconfig",
+            "autoconf",
+            "automake",
+            "libtool"
+          ],
+          "host": [
+            "fastjet-cxx",
+            "fastjet-cxx-devel",
+            "gsl",
+            "libboost-headers",
+            "looptools",
+            "thepeg 2.2.*"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "Herwig",
+                "herwig-config",
+                "herwig-combinedistributions",
+                "herwig-combineruns",
+                "herwig-makedistributions",
+                "herwig-mergegrids",
+                "gosam2herwig",
+                "mg2herwig",
+                "slha2herwig",
+                "ufo2herwig"
+              ],
+              "files": [
+                "lib/Herwig/Herwig.so",
+                "lib/Herwig/Hw*.so",
+                "share/Herwig/HerwigDefaults.rpo",
+                "share/Herwig/LHC.in"
+              ],
+              "include": [
+                "Herwig/API/HerwigAPI.h"
+              ],
+              "lib": [
+                "Herwig/libHerwigAPI"
+              ]
+            }
+          },
+          {
+            "script": [
+              "Herwig --version",
+              "lhapdf install CT14lo CT14nlo &> /dev/null",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-Matchbox.in",
+              "Herwig run LHC-Matchbox.run -N 100",
+              "cp ${PREFIX}/share/Herwig/CMSSM40.1.1.slha .",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-MSSM.in"
+            ]
+          }
+        ],
+        "version": "7.2.0"
+      }
+    ],
+    "package": {
+      "name": "herwig",
+      "version": "7.2.0"
+    },
+    "requirements": {
+      "build": [
+        "fortran_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config",
+        "gnuconfig",
+        "autoconf",
+        "automake",
+        "libtool"
+      ],
+      "host": [
+        "fastjet-cxx",
+        "fastjet-cxx-devel",
+        "gsl",
+        "libboost-headers",
+        "looptools",
+        "thepeg 2.2.*"
+      ],
+      "run": [
+        "python"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "determine-length-of-compiled-in-install-paths-at-run.patch",
+        "link-against-an-external-looptools-library.patch",
+        "replace-std-random_shuffle-which-is-removed-in-C-17.patch"
+      ],
+      "sha256": "5933545ddff7fde2bea86fa61943fba5d4be50ba993c336e9a372529a2f2b164",
+      "url": "https://herwig.hepforge.org/downloads/Herwig-7.2.0.tar.bz2"
+    }
+  },
+  "linux_aarch64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
@@ -228,7 +429,7 @@
       "summary": "Multi-purpose particle physics event generator"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "run_exports": {
         "weak": [
           "herwig"
@@ -305,7 +506,6 @@
                 "ufo2herwig"
               ],
               "files": [
-                "lib/Herwig/libHerwigAPI.so",
                 "lib/Herwig/Herwig.so",
                 "lib/Herwig/Hw*.so",
                 "share/Herwig/HerwigDefaults.rpo",
@@ -313,6 +513,234 @@
               ],
               "include": [
                 "Herwig/API/HerwigAPI.h"
+              ],
+              "lib": [
+                "Herwig/libHerwigAPI"
+              ]
+            }
+          },
+          {
+            "script": [
+              "Herwig --version",
+              "lhapdf install CT14lo CT14nlo &> /dev/null",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-Matchbox.in",
+              "Herwig run LHC-Matchbox.run -N 100",
+              "cp ${PREFIX}/share/Herwig/CMSSM40.1.1.slha .",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-MSSM.in"
+            ]
+          }
+        ],
+        "version": "7.2.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "herwig"
+            ]
+          }
+        },
+        "name": "herwig",
+        "requirements": {
+          "build": [
+            "fortran_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config",
+            "gnuconfig",
+            "autoconf",
+            "automake",
+            "libtool"
+          ],
+          "host": [
+            "fastjet-cxx",
+            "fastjet-cxx-devel",
+            "gsl",
+            "libboost-headers",
+            "looptools",
+            "thepeg 2.2.*"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "Herwig",
+                "herwig-config",
+                "herwig-combinedistributions",
+                "herwig-combineruns",
+                "herwig-makedistributions",
+                "herwig-mergegrids",
+                "gosam2herwig",
+                "mg2herwig",
+                "slha2herwig",
+                "ufo2herwig"
+              ],
+              "files": [
+                "lib/Herwig/Herwig.so",
+                "lib/Herwig/Hw*.so",
+                "share/Herwig/HerwigDefaults.rpo",
+                "share/Herwig/LHC.in"
+              ],
+              "include": [
+                "Herwig/API/HerwigAPI.h"
+              ],
+              "lib": [
+                "Herwig/libHerwigAPI"
+              ]
+            }
+          },
+          {
+            "script": [
+              "Herwig --version",
+              "lhapdf install CT14lo CT14nlo &> /dev/null",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-Matchbox.in",
+              "Herwig run LHC-Matchbox.run -N 100",
+              "cp ${PREFIX}/share/Herwig/CMSSM40.1.1.slha .",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-MSSM.in"
+            ]
+          }
+        ],
+        "version": "7.2.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "herwig"
+            ]
+          }
+        },
+        "name": "herwig",
+        "requirements": {
+          "build": [
+            "fortran_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config",
+            "gnuconfig",
+            "autoconf",
+            "automake",
+            "libtool"
+          ],
+          "host": [
+            "fastjet-cxx",
+            "fastjet-cxx-devel",
+            "gsl",
+            "libboost-headers",
+            "looptools",
+            "thepeg 2.2.*"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "Herwig",
+                "herwig-config",
+                "herwig-combinedistributions",
+                "herwig-combineruns",
+                "herwig-makedistributions",
+                "herwig-mergegrids",
+                "gosam2herwig",
+                "mg2herwig",
+                "slha2herwig",
+                "ufo2herwig"
+              ],
+              "files": [
+                "lib/Herwig/Herwig.so",
+                "lib/Herwig/Hw*.so",
+                "share/Herwig/HerwigDefaults.rpo",
+                "share/Herwig/LHC.in"
+              ],
+              "include": [
+                "Herwig/API/HerwigAPI.h"
+              ],
+              "lib": [
+                "Herwig/libHerwigAPI"
+              ]
+            }
+          },
+          {
+            "script": [
+              "Herwig --version",
+              "lhapdf install CT14lo CT14nlo &> /dev/null",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-Matchbox.in",
+              "Herwig run LHC-Matchbox.run -N 100",
+              "cp ${PREFIX}/share/Herwig/CMSSM40.1.1.slha .",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-MSSM.in"
+            ]
+          }
+        ],
+        "version": "7.2.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "herwig"
+            ]
+          }
+        },
+        "name": "herwig",
+        "requirements": {
+          "build": [
+            "fortran_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config",
+            "gnuconfig",
+            "autoconf",
+            "automake",
+            "libtool"
+          ],
+          "host": [
+            "fastjet-cxx",
+            "fastjet-cxx-devel",
+            "gsl",
+            "libboost-headers",
+            "looptools",
+            "thepeg 2.2.*"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "Herwig",
+                "herwig-config",
+                "herwig-combinedistributions",
+                "herwig-combineruns",
+                "herwig-makedistributions",
+                "herwig-mergegrids",
+                "gosam2herwig",
+                "mg2herwig",
+                "slha2herwig",
+                "ufo2herwig"
+              ],
+              "files": [
+                "lib/Herwig/Herwig.so",
+                "lib/Herwig/Hw*.so",
+                "share/Herwig/HerwigDefaults.rpo",
+                "share/Herwig/LHC.in"
+              ],
+              "include": [
+                "Herwig/API/HerwigAPI.h"
+              ],
+              "lib": [
+                "Herwig/libHerwigAPI"
               ]
             }
           },
@@ -362,13 +790,398 @@
     "source": {
       "patches": [
         "determine-length-of-compiled-in-install-paths-at-run.patch",
-        "link-against-an-external-looptools-library.patch"
+        "link-against-an-external-looptools-library.patch",
+        "replace-std-random_shuffle-which-is-removed-in-C-17.patch"
       ],
       "sha256": "5933545ddff7fde2bea86fa61943fba5d4be50ba993c336e9a372529a2f2b164",
       "url": "https://herwig.hepforge.org/downloads/Herwig-7.2.0.tar.bz2"
     }
   },
   "name": "herwig",
+  "osx_64_meta_yaml": {
+    "about": {
+      "description": "Herwig provides significantly improved and extended physics capabilities when compared to both its predecessors,\nHERWIG 6 and Herwig++ 2, while keeping the key model motivations such as coherent parton showers (including\nangular-ordered and dipole-based evolution), the cluster hadronization model, an eikonal multiple-interaction model,\nhighly flexible BSM capabilities and improved perturbative input using next-to-leading order QCD.\n\nThe default PDF sets used by Herwig are not distributed with the package and need to be installed with\n`lhapdf install CT14lo CT14nlo`.",
+      "dev_url": "https://repo.hepforge.org/source/herwighg/",
+      "doc_url": "https://herwig.hepforge.org/doxygen/",
+      "home": "https://herwig.hepforge.org/",
+      "license": "GPL-3.0-or-later",
+      "license_family": "GPL-3.0-or-later",
+      "license_file": "COPYING",
+      "summary": "Multi-purpose particle physics event generator"
+    },
+    "build": {
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "herwig"
+        ]
+      },
+      "script": [
+        "export LHAPDF_DATA_PATH=\"${SRC_DIR}/pdfsets\"",
+        "export LDFLAGS=\"${LDFLAGS} -Wl,-rpath,${PREFIX}/lib/ThePEG\"",
+        "rm -rf Looptools/{A,B,C,D,E,util}",
+        "autoreconf --force --install",
+        "cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config",
+        "./configure --help",
+        "./configure --prefix=${PREFIX} --with-thepeg=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-boost=${PREFIX}",
+        "make -j${CPU_COUNT}",
+        "make install"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "utk4r-sh",
+        "GiacomoXT",
+        "vvsagar",
+        "AlexanderHeidelbach",
+        "conda-forge/hepmc3"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "herwig"
+            ]
+          }
+        },
+        "name": "herwig",
+        "requirements": {
+          "build": [
+            "fortran_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config",
+            "gnuconfig",
+            "autoconf",
+            "automake",
+            "libtool"
+          ],
+          "host": [
+            "fastjet-cxx",
+            "fastjet-cxx-devel",
+            "gsl",
+            "libboost-headers",
+            "looptools",
+            "thepeg 2.2.*"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "Herwig",
+                "herwig-config",
+                "herwig-combinedistributions",
+                "herwig-combineruns",
+                "herwig-makedistributions",
+                "herwig-mergegrids",
+                "gosam2herwig",
+                "mg2herwig",
+                "slha2herwig",
+                "ufo2herwig"
+              ],
+              "files": [
+                "lib/Herwig/Herwig.so",
+                "lib/Herwig/Hw*.so",
+                "share/Herwig/HerwigDefaults.rpo",
+                "share/Herwig/LHC.in"
+              ],
+              "include": [
+                "Herwig/API/HerwigAPI.h"
+              ],
+              "lib": [
+                "Herwig/libHerwigAPI"
+              ]
+            }
+          },
+          {
+            "script": [
+              "Herwig --version",
+              "lhapdf install CT14lo CT14nlo &> /dev/null",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-Matchbox.in",
+              "Herwig run LHC-Matchbox.run -N 100",
+              "cp ${PREFIX}/share/Herwig/CMSSM40.1.1.slha .",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-MSSM.in"
+            ]
+          }
+        ],
+        "version": "7.2.0"
+      }
+    ],
+    "package": {
+      "name": "herwig",
+      "version": "7.2.0"
+    },
+    "requirements": {
+      "build": [
+        "fortran_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config",
+        "gnuconfig",
+        "autoconf",
+        "automake",
+        "libtool"
+      ],
+      "host": [
+        "fastjet-cxx",
+        "fastjet-cxx-devel",
+        "gsl",
+        "libboost-headers",
+        "looptools",
+        "thepeg 2.2.*"
+      ],
+      "run": [
+        "python"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "determine-length-of-compiled-in-install-paths-at-run.patch",
+        "link-against-an-external-looptools-library.patch",
+        "replace-std-random_shuffle-which-is-removed-in-C-17.patch"
+      ],
+      "sha256": "5933545ddff7fde2bea86fa61943fba5d4be50ba993c336e9a372529a2f2b164",
+      "url": "https://herwig.hepforge.org/downloads/Herwig-7.2.0.tar.bz2"
+    }
+  },
+  "osx_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "autoconf",
+        "automake",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "gnuconfig",
+        "libtool",
+        "make",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "fastjet-cxx",
+        "fastjet-cxx-devel",
+        "gsl",
+        "libboost-headers",
+        "looptools",
+        "thepeg"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "description": "Herwig provides significantly improved and extended physics capabilities when compared to both its predecessors,\nHERWIG 6 and Herwig++ 2, while keeping the key model motivations such as coherent parton showers (including\nangular-ordered and dipole-based evolution), the cluster hadronization model, an eikonal multiple-interaction model,\nhighly flexible BSM capabilities and improved perturbative input using next-to-leading order QCD.\n\nThe default PDF sets used by Herwig are not distributed with the package and need to be installed with\n`lhapdf install CT14lo CT14nlo`.",
+      "dev_url": "https://repo.hepforge.org/source/herwighg/",
+      "doc_url": "https://herwig.hepforge.org/doxygen/",
+      "home": "https://herwig.hepforge.org/",
+      "license": "GPL-3.0-or-later",
+      "license_family": "GPL-3.0-or-later",
+      "license_file": "COPYING",
+      "summary": "Multi-purpose particle physics event generator"
+    },
+    "build": {
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "herwig"
+        ]
+      },
+      "script": [
+        "export LHAPDF_DATA_PATH=\"${SRC_DIR}/pdfsets\"",
+        "export LDFLAGS=\"${LDFLAGS} -Wl,-rpath,${PREFIX}/lib/ThePEG\"",
+        "rm -rf Looptools/{A,B,C,D,E,util}",
+        "autoreconf --force --install",
+        "cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config",
+        "./configure --help",
+        "./configure --prefix=${PREFIX} --with-thepeg=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-boost=${PREFIX}",
+        "make -j${CPU_COUNT}",
+        "make install"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "utk4r-sh",
+        "GiacomoXT",
+        "vvsagar",
+        "AlexanderHeidelbach",
+        "conda-forge/hepmc3"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "herwig"
+            ]
+          }
+        },
+        "name": "herwig",
+        "requirements": {
+          "build": [
+            "fortran_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config",
+            "gnuconfig",
+            "autoconf",
+            "automake",
+            "libtool"
+          ],
+          "host": [
+            "fastjet-cxx",
+            "fastjet-cxx-devel",
+            "gsl",
+            "libboost-headers",
+            "looptools",
+            "thepeg 2.2.*"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "Herwig",
+                "herwig-config",
+                "herwig-combinedistributions",
+                "herwig-combineruns",
+                "herwig-makedistributions",
+                "herwig-mergegrids",
+                "gosam2herwig",
+                "mg2herwig",
+                "slha2herwig",
+                "ufo2herwig"
+              ],
+              "files": [
+                "lib/Herwig/Herwig.so",
+                "lib/Herwig/Hw*.so",
+                "share/Herwig/HerwigDefaults.rpo",
+                "share/Herwig/LHC.in"
+              ],
+              "include": [
+                "Herwig/API/HerwigAPI.h"
+              ],
+              "lib": [
+                "Herwig/libHerwigAPI"
+              ]
+            }
+          },
+          {
+            "script": [
+              "Herwig --version",
+              "lhapdf install CT14lo CT14nlo &> /dev/null",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-Matchbox.in",
+              "Herwig run LHC-Matchbox.run -N 100",
+              "cp ${PREFIX}/share/Herwig/CMSSM40.1.1.slha .",
+              "Herwig read ${PREFIX}/share/Herwig/LHC-MSSM.in"
+            ]
+          }
+        ],
+        "version": "7.2.0"
+      }
+    ],
+    "package": {
+      "name": "herwig",
+      "version": "7.2.0"
+    },
+    "requirements": {
+      "build": [
+        "fortran_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config",
+        "gnuconfig",
+        "autoconf",
+        "automake",
+        "libtool"
+      ],
+      "host": [
+        "fastjet-cxx",
+        "fastjet-cxx-devel",
+        "gsl",
+        "libboost-headers",
+        "looptools",
+        "thepeg 2.2.*"
+      ],
+      "run": [
+        "python"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "determine-length-of-compiled-in-install-paths-at-run.patch",
+        "link-against-an-external-looptools-library.patch",
+        "replace-std-random_shuffle-which-is-removed-in-C-17.patch"
+      ],
+      "sha256": "5933545ddff7fde2bea86fa61943fba5d4be50ba993c336e9a372529a2f2b164",
+      "url": "https://herwig.hepforge.org/downloads/Herwig-7.2.0.tar.bz2"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "autoconf",
+        "automake",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "gnuconfig",
+        "libtool",
+        "make",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "fastjet-cxx",
+        "fastjet-cxx-devel",
+        "gsl",
+        "libboost-headers",
+        "looptools",
+        "thepeg"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -377,12 +1190,15 @@
   },
   "parsing_error": false,
   "platforms": [
-    "linux_64"
+    "linux_64",
+    "linux_aarch64",
+    "osx_64",
+    "osx_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/herwig.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"7.2.0\"\n\npackage:\n  name: herwig\n  version: ${{ version }}\n\nsource:\n  - url: https://herwig.hepforge.org/downloads/Herwig-${{ version }}.tar.bz2\n    sha256: 5933545ddff7fde2bea86fa61943fba5d4be50ba993c336e9a372529a2f2b164\n    patches:\n      - determine-length-of-compiled-in-install-paths-at-run.patch\n      - link-against-an-external-looptools-library.patch\n  # 'make install' runs 'Herwig init' to create the default repository\n  # HerwigDefaults.rpo, which fails if the default PDF sets are not installed.\n  # The PDF sets are only used during the build and are not packaged.\n  - url: https://lhapdfsets.web.cern.ch/current/CT14lo.tar.gz\n    sha256: 5554b2f66027accc3fe38b55b846d5c7c6d771283868187870bf9c86e5c46678\n    target_directory: pdfsets/CT14lo\n  - url: https://lhapdfsets.web.cern.ch/current/CT14nlo.tar.gz\n    sha256: ad62063067e1d73942b1aadcaff2e50a6b2e2d28ad989e8bd3eee5f48e05f18c\n    target_directory: pdfsets/CT14nlo\n\nbuild:\n  number: 2\n  skip:\n    - win\n    - osx\n  script:\n    - export LHAPDF_DATA_PATH=\"${SRC_DIR}/pdfsets\"\n    # libThePEG is installed under lib/ThePEG, which is not on the default rpath\n    - export LDFLAGS=\"${LDFLAGS} -Wl,-rpath,${PREFIX}/lib/ThePEG\"\n\n    # Herwig bundles a modified copy of LoopTools 2.13. Remove its sources so that\n    # only the looptools library can be used, and regenerate the build system\n    # for the patched Looptools/Makefile.am.\n    # Herwig's changes to the removed sources do not affect results, and its C++\n    # interface (Herwig::Looptools) is kept. Results with LoopTools 2.16 agree\n    # with the bundled copy to a relative difference of 1.5e-14.\n    - rm -rf Looptools/{A,B,C,D,E,util}\n    - autoreconf --force --install\n\n    # Get an updated config.sub and config.guess\n    # Herwig sets AC_CONFIG_AUX_DIR([Config]) in configure.ac, so configure looks for them in Config/\n    - cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config\n\n    - ./configure --help\n    - ./configure --prefix=${PREFIX} --with-thepeg=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-boost=${PREFIX}\n    - make -j${CPU_COUNT}\n    - make install\n\nrequirements:\n  build:\n    - ${{ compiler(\"fortran\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ stdlib(\"c\") }}\n    - make\n    - pkg-config\n    - gnuconfig\n    - autoconf\n    - automake\n    - libtool\n  host:\n    - fastjet-cxx  # pick up global pinning\n    # Provides fastjet-config, which configure uses to find FastJet\n    - fastjet-cxx-devel\n    - gsl\n    - libboost-headers\n    - looptools\n    # Herwig 7.2 is the release series for ThePEG 2.2\n    - thepeg 2.2.*\n  run:\n    - python\n  run_exports:\n    - ${{ pin_subpackage(\"herwig\", upper_bound=\"x.x\") }}\n\ntests:\n  - package_contents:\n      bin:\n        - Herwig\n        - herwig-config\n        - herwig-combinedistributions\n        - herwig-combineruns\n        - herwig-makedistributions\n        - herwig-mergegrids\n        - gosam2herwig\n        - mg2herwig\n        - slha2herwig\n        - ufo2herwig\n      include:\n        - Herwig/API/HerwigAPI.h\n      files:\n        - lib/Herwig/libHerwigAPI.so\n        - lib/Herwig/Herwig.so\n        - lib/Herwig/Hw*.so\n        - share/Herwig/HerwigDefaults.rpo\n        - share/Herwig/LHC.in\n  - script:\n      - Herwig --version\n      # The default PDF sets are not shipped with the package\n      - lhapdf install CT14lo CT14nlo &> /dev/null\n      - Herwig read ${PREFIX}/share/Herwig/LHC-Matchbox.in\n      - Herwig run LHC-Matchbox.run -N 100\n      # The loop induced Higgs decays of the MSSM use LoopTools\n      - cp ${PREFIX}/share/Herwig/CMSSM40.1.1.slha .\n      - Herwig read ${PREFIX}/share/Herwig/LHC-MSSM.in\n\nabout:\n  homepage: https://herwig.hepforge.org/\n  summary: 'Multi-purpose particle physics event generator'\n  description: |\n    Herwig provides significantly improved and extended physics capabilities when compared to both its predecessors,\n    HERWIG 6 and Herwig++ 2, while keeping the key model motivations such as coherent parton showers (including\n    angular-ordered and dipole-based evolution), the cluster hadronization model, an eikonal multiple-interaction model,\n    highly flexible BSM capabilities and improved perturbative input using next-to-leading order QCD.\n\n    The default PDF sets used by Herwig are not distributed with the package and need to be installed with\n    `lhapdf install CT14lo CT14nlo`.\n  license: GPL-3.0-or-later\n  license_file: COPYING\n  documentation: https://herwig.hepforge.org/doxygen/\n  repository: https://repo.hepforge.org/source/herwighg/\n\nextra:\n  recipe-maintainers:\n    - utk4r-sh\n    - GiacomoXT\n    - vvsagar\n    - AlexanderHeidelbach\n    - conda-forge/hepmc3\n",
+  "raw_meta_yaml": "context:\n  version: \"7.2.0\"\n\npackage:\n  name: herwig\n  version: ${{ version }}\n\nsource:\n  - url: https://herwig.hepforge.org/downloads/Herwig-${{ version }}.tar.bz2\n    sha256: 5933545ddff7fde2bea86fa61943fba5d4be50ba993c336e9a372529a2f2b164\n    patches:\n      - determine-length-of-compiled-in-install-paths-at-run.patch\n      - link-against-an-external-looptools-library.patch\n      - replace-std-random_shuffle-which-is-removed-in-C-17.patch\n  # 'make install' runs 'Herwig init' to create the default repository\n  # HerwigDefaults.rpo, which fails if the default PDF sets are not installed.\n  # The PDF sets are only used during the build and are not packaged.\n  - url: https://lhapdfsets.web.cern.ch/current/CT14lo.tar.gz\n    sha256: 5554b2f66027accc3fe38b55b846d5c7c6d771283868187870bf9c86e5c46678\n    target_directory: pdfsets/CT14lo\n  - url: https://lhapdfsets.web.cern.ch/current/CT14nlo.tar.gz\n    sha256: ad62063067e1d73942b1aadcaff2e50a6b2e2d28ad989e8bd3eee5f48e05f18c\n    target_directory: pdfsets/CT14nlo\n\nbuild:\n  number: 3\n  skip:\n    - win\n  script:\n    - export LHAPDF_DATA_PATH=\"${SRC_DIR}/pdfsets\"\n    # libThePEG is installed under lib/ThePEG, which is not on the default rpath\n    - export LDFLAGS=\"${LDFLAGS} -Wl,-rpath,${PREFIX}/lib/ThePEG\"\n\n    # Herwig bundles a modified copy of LoopTools 2.13. Remove its sources so that\n    # only the looptools library can be used, and regenerate the build system\n    # for the patched Looptools/Makefile.am.\n    # Herwig's changes to the removed sources do not affect results, and its C++\n    # interface (Herwig::Looptools) is kept. Results with LoopTools 2.16 agree\n    # with the bundled copy to a relative difference of 1.5e-14.\n    - rm -rf Looptools/{A,B,C,D,E,util}\n    - autoreconf --force --install\n\n    # Get an updated config.sub and config.guess\n    # Herwig sets AC_CONFIG_AUX_DIR([Config]) in configure.ac, so configure looks for them in Config/\n    - cp $BUILD_PREFIX/share/gnuconfig/config.* ./Config\n\n    - ./configure --help\n    - ./configure --prefix=${PREFIX} --with-thepeg=${PREFIX} --with-fastjet=${PREFIX} --with-gsl=${PREFIX} --with-boost=${PREFIX}\n    - make -j${CPU_COUNT}\n    - make install\n\nrequirements:\n  build:\n    - ${{ compiler(\"fortran\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ stdlib(\"c\") }}\n    - make\n    - pkg-config\n    - gnuconfig\n    - autoconf\n    - automake\n    - libtool\n  host:\n    - fastjet-cxx  # pick up global pinning\n    # Provides fastjet-config, which configure uses to find FastJet\n    - fastjet-cxx-devel\n    - gsl\n    - libboost-headers\n    - looptools\n    # Herwig 7.2 is the release series for ThePEG 2.2\n    - thepeg 2.2.*\n  run:\n    - python\n  run_exports:\n    - ${{ pin_subpackage(\"herwig\", upper_bound=\"x.x\") }}\n\ntests:\n  - package_contents:\n      bin:\n        - Herwig\n        - herwig-config\n        - herwig-combinedistributions\n        - herwig-combineruns\n        - herwig-makedistributions\n        - herwig-mergegrids\n        - gosam2herwig\n        - mg2herwig\n        - slha2herwig\n        - ufo2herwig\n      include:\n        - Herwig/API/HerwigAPI.h\n      lib:\n        - Herwig/libHerwigAPI\n      # Use files over lib as lib globs get the platform shared library extension\n      # appended, but the libtool '-module' plugins are named .so on macOS as well\n      files:\n        - lib/Herwig/Herwig.so\n        - lib/Herwig/Hw*.so\n        - share/Herwig/HerwigDefaults.rpo\n        - share/Herwig/LHC.in\n  - script:\n      - Herwig --version\n      # The default PDF sets are not shipped with the package\n      - lhapdf install CT14lo CT14nlo &> /dev/null\n      - Herwig read ${PREFIX}/share/Herwig/LHC-Matchbox.in\n      - Herwig run LHC-Matchbox.run -N 100\n      # The loop induced Higgs decays of the MSSM use LoopTools\n      - cp ${PREFIX}/share/Herwig/CMSSM40.1.1.slha .\n      - Herwig read ${PREFIX}/share/Herwig/LHC-MSSM.in\n\nabout:\n  homepage: https://herwig.hepforge.org/\n  summary: 'Multi-purpose particle physics event generator'\n  description: |\n    Herwig provides significantly improved and extended physics capabilities when compared to both its predecessors,\n    HERWIG 6 and Herwig++ 2, while keeping the key model motivations such as coherent parton showers (including\n    angular-ordered and dipole-based evolution), the cluster hadronization model, an eikonal multiple-interaction model,\n    highly flexible BSM capabilities and improved perturbative input using next-to-leading order QCD.\n\n    The default PDF sets used by Herwig are not distributed with the package and need to be installed with\n    `lhapdf install CT14lo CT14nlo`.\n  license: GPL-3.0-or-later\n  license_file: COPYING\n  documentation: https://herwig.hepforge.org/doxygen/\n  repository: https://repo.hepforge.org/source/herwighg/\n\nextra:\n  recipe-maintainers:\n    - utk4r-sh\n    - GiacomoXT\n    - vvsagar\n    - AlexanderHeidelbach\n    - conda-forge/hepmc3\n",
   "req": {
     "__set__": true,
     "elements": [
