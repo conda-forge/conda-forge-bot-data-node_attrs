@@ -1,10 +1,18 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_c_stdlib_version2.17python3.10.____cpythonroot_base6.36.8.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nhdf5:\n- 1.14.6\nlibboost_headers:\n- '1.90'\nlibitk_devel:\n- '5.4'\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.10.* *_cpython\nroot_base:\n- 6.36.8\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - c_stdlib_version\n",
+  "ci_support_linux_64_c_compiler_version14c_stdlib_version2.17cuda_compiler_version12.9cxx_compiler_version14python3.11.____cpythonroot_base6.36.10.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nhdf5:\n- 1.14.6\nlibboost_headers:\n- '1.90'\nlibitk_devel:\n- '5.4'\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\nroot_base:\n- 6.36.10\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n",
+  "ci_support_migrations": {
+    "libboost190": {
+      "migration_number": 1,
+      "migrator_ts": 1776998221.848913
+    }
+  },
   "conda-forge.yml": {
-    "azure": {
-      "free_disk_space": true
+    "bot": {
+      "version_updates": {
+        "allowed_tag_globs": "rel_*"
+      }
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
@@ -14,12 +22,16 @@
       "tooling_branch_name": "main"
     },
     "provider": {
-      "osx_arm64": "azure"
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
     },
-    "test": "native_and_emulated"
+    "test": "native_and_emulated",
+    "workflow_settings": {
+      "free_disk_space": "quick"
+    }
   },
-  "feedstock_hash": "eb4e628560e381dfaf3f497519fe206f867f5049",
-  "feedstock_hash_ts": 1777403230,
+  "feedstock_hash": "f2be8480b3c55f26f9ab23b7b3a9757b963976da",
+  "feedstock_hash_ts": 1791064990,
   "feedstock_name": "stir",
   "linux_64_meta_yaml": {
     "about": {
@@ -33,11 +45,8 @@
       "summary": "Software for Tomographic Image Reconstruction"
     },
     "build": {
-      "number": "1",
+      "number": "201",
       "script": {
-        "env": {
-          "cuda_compiler_version": "None"
-        },
         "file": "build"
       }
     },
@@ -57,10 +66,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -70,11 +80,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -112,7 +127,220 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -125,7 +353,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -135,7 +363,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -177,7 +405,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -190,7 +418,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -200,7 +428,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -242,7 +470,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -255,7 +483,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -265,7 +493,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -307,7 +535,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -320,7 +548,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -330,7 +558,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -372,7 +600,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -382,10 +610,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -395,11 +624,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==13.4",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -437,7 +671,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -447,10 +681,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -460,11 +695,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==13.4",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -502,7 +742,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -512,10 +752,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -525,11 +766,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==13.4",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -567,7 +813,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -577,10 +823,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -590,11 +837,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==13.4",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -632,87 +884,23 @@
             ]
           }
         ],
-        "version": "6.3.1"
-      },
-      {
-        "build": null,
-        "name": "stir",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "libgomp",
-            "cmake",
-            "ninja",
-            "swig"
-          ],
-          "host": [
-            "libboost-headers",
-            "hdf5",
-            "python",
-            "numpy",
-            "libitk-devel",
-            "libitk",
-            "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
-          ],
-          "run": [
-            "python",
-            "libboost-headers",
-            "libitk-devel",
-            "libparallelproj"
-          ]
-        },
-        "tests": [
-          {
-            "files": {
-              "source": [
-                "recon_test_pack",
-                "examples",
-                "src/swig/test/python"
-              ]
-            },
-            "requirements": {
-              "run": [
-                "pytest",
-                "matplotlib"
-              ]
-            },
-            "script": [
-              "stir_config --config-dir",
-              "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
-              "cd ..",
-              "pytest src/swig/test/python"
-            ]
-          }
-        ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       }
     ],
     "package": {
       "name": "stir",
-      "version": "6.3.1"
+      "version": "6.4.0"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
+        "cuda_compiler_stub",
         "libgomp",
         "cmake",
         "ninja",
-        "swig"
+        "swig >=4.2,<4.5"
       ],
       "host": [
         "libboost-headers",
@@ -722,14 +910,21 @@
         "libitk-devel",
         "libitk",
         "nlohmann_json",
-        "libparallelproj <2.0",
-        "root_base"
+        "cuda-version ==12.9",
+        "cuda-driver-dev",
+        "cuda-cudart-dev",
+        "libparallelproj <3.0",
+        "root_base",
+        "cuda-version ==13.4"
       ],
       "run": [
         "python",
+        "__cuda",
+        "cuda-version ==12.9",
         "libboost-headers",
         "libitk-devel",
-        "libparallelproj"
+        "libparallelproj",
+        "cuda-version ==13.4"
       ]
     },
     "schema_version": 1,
@@ -744,6 +939,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cuda_compiler_stub",
         "cxx_compiler_stub",
         "libgomp",
         "ninja",
@@ -753,6 +949,9 @@
     "host": {
       "__set__": true,
       "elements": [
+        "cuda-cudart-dev",
+        "cuda-driver-dev",
+        "cuda-version",
         "hdf5",
         "libboost-headers",
         "libitk",
@@ -767,6 +966,957 @@
     "run": {
       "__set__": true,
       "elements": [
+        "__cuda",
+        "cuda-version",
+        "libboost-headers",
+        "libitk-devel",
+        "libparallelproj",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "matplotlib",
+        "pytest"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "STIR is Open Source software for use in tomographic imaging.\nIts aim is to provide a Multi-Platform Object-Oriented framework for all data manipulations in tomographic imaging.\nCheck the recipe at https://github.com/conda-forge/stir-feedstock/blob/main/recipe/recipe.yaml\nto see which dependencies are included in this conda package.\n\nThis package contains all STIR utilities and Python support. It is built with ITK on all platforms\nand (where supported) ROOT on Linux and OSX.",
+      "dev_url": "https://github.com/UCL/STIR",
+      "doc_url": "https://stir.sourceforge.net/documentation",
+      "home": "https://stir.sourceforge.net/",
+      "license": "Apache-2.0 AND LicenseRef-PARAPET-license",
+      "license_family": "Apache-2.0 AND LicenseRef-PARAPET-license",
+      "license_file": "LICENSE.txt",
+      "summary": "Software for Tomographic Image Reconstruction"
+    },
+    "build": {
+      "number": "201",
+      "script": {
+        "file": "build"
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "KrisThielemans",
+        "paskino",
+        "casperdcl"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      }
+    ],
+    "package": {
+      "name": "stir",
+      "version": "6.4.0"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "cuda_compiler_stub",
+        "libgomp",
+        "cmake",
+        "ninja",
+        "swig >=4.2,<4.5"
+      ],
+      "host": [
+        "libboost-headers",
+        "hdf5",
+        "python",
+        "numpy",
+        "libitk-devel",
+        "libitk",
+        "nlohmann_json",
+        "cuda-version ==12.9",
+        "cuda-driver-dev",
+        "cuda-cudart-dev",
+        "libparallelproj <3.0",
+        "root_base",
+        "cuda-version ==13.4"
+      ],
+      "run": [
+        "python",
+        "__cuda",
+        "cuda-version ==12.9",
+        "libboost-headers",
+        "libitk-devel",
+        "libparallelproj",
+        "cuda-version ==13.4"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "git_url": "https://github.com/UCL/STIR.git"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cuda_compiler_stub",
+        "cxx_compiler_stub",
+        "libgomp",
+        "ninja",
+        "swig"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "cuda-cudart-dev",
+        "cuda-driver-dev",
+        "cuda-version",
+        "hdf5",
+        "libboost-headers",
+        "libitk",
+        "libitk-devel",
+        "libparallelproj",
+        "nlohmann_json",
+        "numpy",
+        "python",
+        "root_base"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "__cuda",
+        "cuda-version",
         "libboost-headers",
         "libitk-devel",
         "libparallelproj",
@@ -795,9 +1945,6 @@
     "build": {
       "number": "1",
       "script": {
-        "env": {
-          "cuda_compiler_version": "None"
-        },
         "file": "build"
       }
     },
@@ -817,10 +1964,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -830,11 +1978,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -872,7 +2025,220 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -885,7 +2251,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -895,7 +2261,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -937,7 +2303,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -950,7 +2316,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -960,7 +2326,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1002,7 +2368,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1015,7 +2381,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1025,7 +2391,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1067,7 +2433,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1080,7 +2446,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1090,7 +2456,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1132,7 +2498,575 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "libgomp",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "hdf5",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==12.9",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "root_base"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
+              "./run_test_listmode_recon.sh",
+              "./run_test_simulate_and_recon_with_motion.sh",
+              "./run_scatter_tests.sh",
+              "./run_tests.sh --nointbp",
+              "./run_test_zoom_image.sh",
+              "./run_root_GATE.sh",
+              "cd SPECT",
+              "./run_SPECT_tests.sh",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1145,7 +3079,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1155,7 +3089,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1197,7 +3131,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1210,7 +3144,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1220,7 +3154,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1262,7 +3196,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1275,7 +3209,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1285,7 +3219,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1327,7 +3261,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1340,7 +3274,7 @@
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1350,7 +3284,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1392,7 +3326,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1402,10 +3336,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1415,11 +3350,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==13.4",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -1457,7 +3397,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1467,10 +3407,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1480,11 +3421,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==13.4",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -1522,7 +3468,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1532,10 +3478,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1545,11 +3492,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==13.4",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -1587,7 +3539,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1597,10 +3549,11 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
+            "cuda_compiler_stub",
             "libgomp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1610,11 +3563,16 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "cuda-version ==13.4",
+            "cuda-driver-dev",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==13.4",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -1652,7 +3610,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1662,10 +3620,10 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1675,7 +3633,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1717,7 +3675,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1727,10 +3685,10 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1740,7 +3698,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1782,7 +3740,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1792,10 +3750,10 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1805,7 +3763,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1847,7 +3805,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1857,10 +3815,10 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -1870,7 +3828,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1912,7 +3870,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1922,20 +3880,19 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -1977,7 +3934,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -1987,20 +3944,19 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -2042,7 +3998,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2052,20 +4008,19 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -2107,7 +4062,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2117,20 +4072,19 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -2172,7 +4126,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2182,24 +4136,27 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==12.9",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -2223,21 +4180,13 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2247,24 +4196,27 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==12.9",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -2288,21 +4240,13 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2312,24 +4256,27 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==12.9",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -2353,21 +4300,13 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2377,21 +4316,319 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==12.9",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==12.9",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
@@ -2418,36 +4655,195 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
       }
     ],
     "package": {
       "name": "stir",
-      "version": "6.3.1"
+      "version": "6.4.0"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
+        "cuda_compiler_stub",
         "libgomp",
         "cmake",
         "ninja",
-        "swig"
+        "swig >=4.2,<4.5",
+        "llvm-openmp"
       ],
       "host": [
         "libboost-headers",
@@ -2457,14 +4853,22 @@
         "libitk-devel",
         "libitk",
         "nlohmann_json",
-        "libparallelproj <2.0",
-        "root_base"
+        "cuda-version ==12.9",
+        "cuda-driver-dev",
+        "cuda-cudart-dev",
+        "libparallelproj <3.0",
+        "root_base",
+        "cuda-version ==13.4",
+        "zlib"
       ],
       "run": [
         "python",
+        "__cuda",
+        "cuda-version ==12.9",
         "libboost-headers",
         "libitk-devel",
-        "libparallelproj"
+        "libparallelproj",
+        "cuda-version ==13.4"
       ]
     },
     "schema_version": 1,
@@ -2487,9 +4891,6 @@
     "build": {
       "number": "1",
       "script": {
-        "env": {
-          "cuda_compiler_version": "None"
-        },
         "file": "build"
       }
     },
@@ -2509,10 +4910,10 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -2522,7 +4923,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -2564,7 +4965,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2574,10 +4975,10 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -2587,7 +4988,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -2629,7 +5030,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2639,10 +5040,10 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -2652,7 +5053,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -2694,7 +5095,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -2704,10 +5105,10 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
@@ -2717,7 +5118,7 @@
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -2759,87 +5160,22 @@
             ]
           }
         ],
-        "version": "6.3.1"
-      },
-      {
-        "build": null,
-        "name": "stir",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "libgomp",
-            "cmake",
-            "ninja",
-            "swig"
-          ],
-          "host": [
-            "libboost-headers",
-            "hdf5",
-            "python",
-            "numpy",
-            "libitk-devel",
-            "libitk",
-            "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
-          ],
-          "run": [
-            "python",
-            "libboost-headers",
-            "libitk-devel",
-            "libparallelproj"
-          ]
-        },
-        "tests": [
-          {
-            "files": {
-              "source": [
-                "recon_test_pack",
-                "examples",
-                "src/swig/test/python"
-              ]
-            },
-            "requirements": {
-              "run": [
-                "pytest",
-                "matplotlib"
-              ]
-            },
-            "script": [
-              "stir_config --config-dir",
-              "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
-              "cd ..",
-              "pytest src/swig/test/python"
-            ]
-          }
-        ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       }
     ],
     "package": {
       "name": "stir",
-      "version": "6.3.1"
+      "version": "6.4.0"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "libgomp",
+        "llvm-openmp",
         "cmake",
         "ninja",
-        "swig"
+        "swig >=4.2,<4.5"
       ],
       "host": [
         "libboost-headers",
@@ -2849,7 +5185,7 @@
         "libitk-devel",
         "libitk",
         "nlohmann_json",
-        "libparallelproj <2.0",
+        "libparallelproj <3.0",
         "root_base"
       ],
       "run": [
@@ -2872,7 +5208,7 @@
         "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
-        "libgomp",
+        "llvm-openmp",
         "ninja",
         "swig"
       ]
@@ -2922,9 +5258,6 @@
     "build": {
       "number": "1",
       "script": {
-        "env": {
-          "cuda_compiler_version": "None"
-        },
         "file": "build"
       }
     },
@@ -2944,20 +5277,19 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -2999,7 +5331,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -3009,20 +5341,19 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -3064,7 +5395,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -3074,20 +5405,19 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -3129,7 +5459,7 @@
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -3139,20 +5469,19 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "llvm-openmp",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
+            "libparallelproj <3.0",
             "root_base"
           ],
           "run": [
@@ -3194,97 +5523,31 @@
             ]
           }
         ],
-        "version": "6.3.1"
-      },
-      {
-        "build": null,
-        "name": "stir",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "libgomp",
-            "cmake",
-            "ninja",
-            "swig"
-          ],
-          "host": [
-            "libboost-headers",
-            "hdf5",
-            "python",
-            "numpy",
-            "libitk-devel",
-            "libitk",
-            "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
-          ],
-          "run": [
-            "python",
-            "libboost-headers",
-            "libitk-devel",
-            "libparallelproj"
-          ]
-        },
-        "tests": [
-          {
-            "files": {
-              "source": [
-                "recon_test_pack",
-                "examples",
-                "src/swig/test/python"
-              ]
-            },
-            "requirements": {
-              "run": [
-                "pytest",
-                "matplotlib"
-              ]
-            },
-            "script": [
-              "stir_config --config-dir",
-              "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
-              "cd ..",
-              "pytest src/swig/test/python"
-            ]
-          }
-        ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       }
     ],
     "package": {
       "name": "stir",
-      "version": "6.3.1"
+      "version": "6.4.0"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "libgomp",
+        "llvm-openmp",
         "cmake",
         "ninja",
-        "swig"
+        "swig >=4.2,<4.5"
       ],
       "host": [
         "libboost-headers",
-        "hdf5",
         "python",
         "numpy",
         "libitk-devel",
         "libitk",
         "nlohmann_json",
-        "libparallelproj <2.0",
+        "libparallelproj <3.0",
         "root_base"
       ],
       "run": [
@@ -3307,7 +5570,7 @@
         "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
-        "libgomp",
+        "llvm-openmp",
         "ninja",
         "swig"
       ]
@@ -3315,7 +5578,6 @@
     "host": {
       "__set__": true,
       "elements": [
-        "hdf5",
         "libboost-headers",
         "libitk",
         "libitk-devel",
@@ -3349,9 +5611,10 @@
       "stir"
     ]
   },
-  "parsing_error": "feedstock parsing error: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error CalledProcessError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n                 ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 765, in load_feedstock_local\n    return populate_feedstock_attributes(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 418, in populate_feedstock_attributes\n    parse_recipe_yaml(\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 361, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 528, in parse_recipe_yaml_local\n    rendered_recipes = _render_recipe_yaml(\n                       ^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 643, in _render_recipe_yaml\n    res.check_returncode()\n  File \"/opt/conda/lib/python3.12/subprocess.py\", line 502, in check_returncode\n    raise CalledProcessError(self.returncode, self.args, self.stdout,\nsubprocess.CalledProcessError: Command '['rattler-build', 'build', '--render-only', '--variant-config', '/tmp/tmpa1ih89r4/stir-feedstock-main/.ci_support/linux_64_c_compiler_version14c_stdlib_version2.17cxx_compiler_version14python3.11.____cpythonroot_base6.36.10.yaml', '--target-platform', 'linux-64']' returned non-zero exit status 1.\n\nTraceback (most recent call last):\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/make_graph.py\", line 140, in try_load_feedstock\n    data = load_feedstock(name, attrs.data, mark_not_archived=mark_not_archived)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 886, in load_feedstock\n    return load_feedstock_containerized(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 838, in load_feedstock_containerized\n    data = run_container_operation(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/micromamba/envs/conda-forge-bot/lib/python3.12/site-packages/conda_forge_feedstock_ops/container_utils.py\", line 218, in run_container_operation\n    raise ContainerRuntimeError(\nconda_forge_feedstock_ops.container_utils.ContainerRuntimeError: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error CalledProcessError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n                 ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 765, in load_feedstock_local\n    return populate_feedstock_attributes(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 418, in populate_feedstock_attributes\n    parse_recipe_yaml(\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 361, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 528, in parse_recipe_yaml_local\n    rendered_recipes = _render_recipe_yaml(\n                       ^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 643, in _render_recipe_yaml\n    res.check_returncode()\n  File \"/opt/conda/lib/python3.12/subprocess.py\", line 502, in check_returncode\n    raise CalledProcessError(self.returncode, self.args, self.stdout,\nsubprocess.CalledProcessError: Command '['rattler-build', 'build', '--render-only', '--variant-config', '/tmp/tmpa1ih89r4/stir-feedstock-main/.ci_support/linux_64_c_compiler_version14c_stdlib_version2.17cxx_compiler_version14python3.11.____cpythonroot_base6.36.10.yaml', '--target-platform', 'linux-64']' returned non-zero exit status 1.\n\n",
+  "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
     "osx_arm64",
     "win_64"
@@ -3359,13 +5622,18 @@
   "pr_info": {
     "__lazy_json__": "pr_info/stir.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: STIR\n  version: \"6.3.1\"\n  build_number: 1\n\n  cuda_version: ${{ env.get(\"CONDA_OVERRIDE_CUDA\", default=\"None\") }}\n  with_cuda: ${{ \"true\" if cuda_version != \"None\" else \"\" }}\n  cuda_major: ${{ (cuda_version | split(\".\") | first) if with_cuda else \"0\" }}\n  cuda_build_prefix: ${{ \"cuda\" ~ (cuda_compiler_version | version_to_buildstring) if with_cuda else \"cpu\" }}\n\npackage:\n  name: ${{ name | lower }}\n  version: ${{ version }}\n\nsource:\n  git: https://github.com/UCL/STIR.git\n  tag: rel_${{ version }}\n\nbuild:\n  number: ${{ build_number + 200 if with_cuda else build_number }}\n  # Don't support ROOT 6.38.00 as it caused segfaults in\n  # https://github.com/conda-forge/stir-feedstock/pull/153\n  skip:\n    - match(root_base, \">=6.38\")\n  string: ${{ cuda_build_prefix }}_h${{ hash }}_${{ build_number + 200 if with_cuda else build_number }}\n  variant:\n    use_keys:\n      - ${{ \"cuda\" if with_cuda }}\n    down_prioritize_variant: ${{ 0 if with_cuda else 1 }}\n  script:\n    file: build\n    env:\n      cuda_compiler_version: ${{ cuda_version }}\nrequirements:\n  ignore_run_exports:\n    by_name:\n      - cudatoolkit\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - ${{ compiler('cxx') }}\n    - if: with_cuda\n      then: ${{ compiler('cuda') }}\n    - if: osx\n      then: llvm-openmp\n    - if: linux\n      then: libgomp\n    - cmake\n    - ninja\n    - swig\n  host:\n    - libboost-headers\n    - if: not win and not (osx and arm64)\n      then: hdf5\n    - python\n    - numpy\n    - libitk-devel\n    - libitk\n    - nlohmann_json\n    - if: with_cuda\n      then:\n        - cuda-version ==${{ cuda_version }}\n        - if: (cuda_major | int) >= 12\n          then:\n            - if: linux\n              then: cuda-driver-dev\n            - cuda-cudart-dev\n    - libparallelproj <2.0\n    - if: not win\n      then: root_base\n      else: zlib\n  run:\n    - python\n    - if: with_cuda\n      then:\n        - __cuda\n        - cuda-version ==${{ cuda_version }}\n    # Needed for developers, see https://github.com/conda-forge/stir-feedstock/issues/120\n    - libboost-headers\n    - libitk-devel\n    - libparallelproj\n\ntests:\n  - script:\n      - stir_config --config-dir\n      - cd recon_test_pack\n      - if: not win\n        then:\n          # use ugly work-around to avoid the next test to run CUDA tests\n          - env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh\n          - ./run_test_listmode_recon.sh\n          - ./run_test_simulate_and_recon_with_motion.sh\n          - ./run_scatter_tests.sh\n          - ./run_tests.sh --nointbp\n          - ./run_test_zoom_image.sh\n          - ./run_root_GATE.sh\n          - cd SPECT\n          - ./run_SPECT_tests.sh\n          - cd ..\n        else:\n          - run_tests\n      - cd ..\n      - pytest src/swig/test/python\n    requirements:\n      run:\n        - pytest\n        - matplotlib\n    files:\n      source:\n        - recon_test_pack\n        - examples\n        - src/swig/test/python\n\nabout:\n  homepage: https://stir.sourceforge.net/\n  license: Apache-2.0 AND LicenseRef-PARAPET-license\n  license_file: LICENSE.txt\n  summary: Software for Tomographic Image Reconstruction\n  description: |\n    STIR is Open Source software for use in tomographic imaging.\n    Its aim is to provide a Multi-Platform Object-Oriented framework for all data manipulations in tomographic imaging.\n    Check the recipe at https://github.com/conda-forge/stir-feedstock/blob/main/recipe/recipe.yaml\n    to see which dependencies are included in this conda package.\n\n    This package contains all STIR utilities and Python support. It is built with ITK on all platforms\n    and (where supported) ROOT on Linux and OSX.\n  documentation: https://stir.sourceforge.net/documentation\n  repository: https://github.com/UCL/STIR\n\nextra:\n  recipe-maintainers:\n    - KrisThielemans\n    - paskino\n    - casperdcl\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: STIR\n  version: \"6.4.0\"\n  build_number: 1\n  with_cuda: ${{ cuda_compiler_version is defined and cuda_compiler_version != \"None\" }}\n  cuda_major: ${{ (cuda_compiler_version | split(\".\") | first) if with_cuda else \"0\" }}\n  cuda_build_prefix: ${{ \"cuda\" ~ (cuda_compiler_version | version_to_buildstring) if with_cuda else \"cpu\" }}\n\npackage:\n  name: ${{ name | lower }}\n  version: ${{ version }}\n\nsource:\n  git: https://github.com/UCL/STIR.git\n  tag: rel_${{ version }}\n\nbuild:\n  number: ${{ build_number + 200 if with_cuda else build_number }}\n  # Don't support ROOT 6.38.00 as it caused segfaults in\n  # https://github.com/conda-forge/stir-feedstock/pull/153\n  skip:\n    - match(root_base, \">=6.38\")\n  string: ${{ cuda_build_prefix }}_h${{ hash }}_${{ build_number + 200 if with_cuda else build_number }}\n  variant:\n    use_keys:\n      - ${{ \"cuda\" if with_cuda }}\n    down_prioritize_variant: ${{ 0 if with_cuda else 1 }}\n  script:\n    file: build\nrequirements:\n  ignore_run_exports:\n    by_name:\n      - cudatoolkit\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - ${{ compiler('cxx') }}\n    - if: with_cuda\n      then: ${{ compiler('cuda') }}\n    - if: osx\n      then: llvm-openmp\n    - if: linux\n      then: libgomp\n    - cmake\n    - ninja\n    # current releases of STIR don't support SWIG 4.5 yet. TODO update once moving to STIR 6.5\n    - swig >=4.2,<4.5\n  host:\n    - libboost-headers\n    - if: not win and not (osx and arm64)\n      then: hdf5\n    - python\n    - numpy\n    - libitk-devel\n    - libitk\n    - nlohmann_json\n    - if: with_cuda\n      then:\n        - cuda-version ==${{ cuda_compiler_version }}\n        - if: (cuda_major | int) >= 12\n          then:\n            - if: linux\n              then: cuda-driver-dev\n            - cuda-cudart-dev\n    - libparallelproj <3.0\n    - if: not win\n      then: root_base\n      else: zlib\n  run:\n    - python\n    - if: with_cuda\n      then:\n        - __cuda\n        - cuda-version ==${{ cuda_compiler_version }}\n    # Needed for developers, see https://github.com/conda-forge/stir-feedstock/issues/120\n    - libboost-headers\n    - libitk-devel\n    - libparallelproj\n\ntests:\n  - script:\n      - stir_config --config-dir\n      - cd recon_test_pack\n      - if: not win\n        then:\n          # use ugly work-around to avoid the next test to run CUDA tests\n          - env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh\n          - ./run_test_listmode_recon.sh\n          - ./run_test_simulate_and_recon_with_motion.sh\n          - ./run_scatter_tests.sh\n          - ./run_tests.sh --nointbp\n          - ./run_test_zoom_image.sh\n          - ./run_root_GATE.sh\n          - cd SPECT\n          - ./run_SPECT_tests.sh\n          - cd ..\n        else:\n          - run_tests\n      - cd ..\n      - pytest src/swig/test/python\n    requirements:\n      run:\n        - pytest\n        - matplotlib\n    files:\n      source:\n        - recon_test_pack\n        - examples\n        - src/swig/test/python\n\nabout:\n  homepage: https://stir.sourceforge.net/\n  license: Apache-2.0 AND LicenseRef-PARAPET-license\n  license_file: LICENSE.txt\n  summary: Software for Tomographic Image Reconstruction\n  description: |\n    STIR is Open Source software for use in tomographic imaging.\n    Its aim is to provide a Multi-Platform Object-Oriented framework for all data manipulations in tomographic imaging.\n    Check the recipe at https://github.com/conda-forge/stir-feedstock/blob/main/recipe/recipe.yaml\n    to see which dependencies are included in this conda package.\n\n    This package contains all STIR utilities and Python support. It is built with ITK on all platforms\n    and (where supported) ROOT on Linux and OSX.\n  documentation: https://stir.sourceforge.net/documentation\n  repository: https://github.com/UCL/STIR\n\nextra:\n  recipe-maintainers:\n    - KrisThielemans\n    - paskino\n    - casperdcl\n",
   "req": {
     "__set__": true,
     "elements": [
+      "__cuda",
       "c_compiler_stub",
       "c_stdlib_stub",
       "cmake",
+      "cuda-cudart-dev",
+      "cuda-driver-dev",
+      "cuda-version",
+      "cuda_compiler_stub",
       "cxx_compiler_stub",
       "hdf5",
       "libboost-headers",
@@ -3373,12 +5641,14 @@
       "libitk",
       "libitk-devel",
       "libparallelproj",
+      "llvm-openmp",
       "ninja",
       "nlohmann_json",
       "numpy",
       "python",
       "root_base",
-      "swig"
+      "swig",
+      "zlib"
     ]
   },
   "requirements": {
@@ -3388,8 +5658,10 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cuda_compiler_stub",
         "cxx_compiler_stub",
         "libgomp",
+        "llvm-openmp",
         "ninja",
         "swig"
       ]
@@ -3400,6 +5672,10 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "ctng-compilers",
+        "cuda-cudart-dev",
+        "cuda-driver-dev",
+        "cuda-version",
+        "cuda_compiler_stub",
         "cxx_compiler_stub",
         "hdf5",
         "libboost-headers",
@@ -3408,20 +5684,26 @@
         "libparallelproj",
         "nlohmann_json",
         "numpy",
+        "openmp",
         "python",
-        "root_base"
+        "root_base",
+        "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "__cuda",
         "c_compiler_stub",
         "c_stdlib_stub",
         "ctng-compilers",
+        "cuda-version",
+        "cuda_compiler_stub",
         "cxx_compiler_stub",
         "libboost-headers",
         "libitk-devel",
         "libparallelproj",
+        "openmp",
         "python"
       ]
     },
@@ -3441,29 +5723,39 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cuda_compiler_stub",
         "cxx_compiler_stub",
         "libgomp",
+        "llvm-openmp",
         "ninja",
-        "swig"
+        "swig >=4.2,<4.5"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "cuda-cudart-dev",
+        "cuda-driver-dev",
+        "cuda-version ==12.9",
+        "cuda-version ==13.4",
         "hdf5",
         "libboost-headers",
         "libitk",
         "libitk-devel",
-        "libparallelproj <2.0",
+        "libparallelproj <3.0",
         "nlohmann_json",
         "numpy",
         "python",
-        "root_base"
+        "root_base",
+        "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "__cuda",
+        "cuda-version ==12.9",
+        "cuda-version ==13.4",
         "libboost-headers",
         "libitk-devel",
         "libparallelproj",
@@ -3479,7 +5771,7 @@
     }
   },
   "url": null,
-  "version": "6.3.1",
+  "version": "6.4.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/stir.json"
   },
@@ -3497,9 +5789,6 @@
     "build": {
       "number": "1",
       "script": {
-        "env": {
-          "cuda_compiler_version": "None"
-        },
         "file": "build"
       }
     },
@@ -3519,24 +5808,27 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==12.9",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -3560,21 +5852,13 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -3584,24 +5868,27 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==12.9",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -3625,21 +5912,13 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -3649,24 +5928,27 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==12.9",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -3690,21 +5972,13 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -3714,24 +5988,27 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==12.9",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
+            "__cuda",
+            "cuda-version ==12.9",
             "libboost-headers",
             "libitk-devel",
             "libparallelproj"
@@ -3755,21 +6032,13 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
       },
       {
         "build": null,
@@ -3779,21 +6048,259 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "cxx_compiler_stub",
-            "libgomp",
+            "cuda_compiler_stub",
             "cmake",
             "ninja",
-            "swig"
+            "swig >=4.2,<4.5"
           ],
           "host": [
             "libboost-headers",
-            "hdf5",
             "python",
             "numpy",
             "libitk-devel",
             "libitk",
             "nlohmann_json",
-            "libparallelproj <2.0",
-            "root_base"
+            "cuda-version ==13.4",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "cuda-version ==13.4",
+            "cuda-cudart-dev",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "__cuda",
+            "cuda-version ==13.4",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "zlib"
           ],
           "run": [
             "python",
@@ -3820,53 +6327,215 @@
             "script": [
               "stir_config --config-dir",
               "cd recon_test_pack",
-              "env TRAVIS=disable_cuda_tests ./run_test_simulate_and_recon.sh",
-              "./run_test_listmode_recon.sh",
-              "./run_test_simulate_and_recon_with_motion.sh",
-              "./run_scatter_tests.sh",
-              "./run_tests.sh --nointbp",
-              "./run_test_zoom_image.sh",
-              "./run_root_GATE.sh",
-              "cd SPECT",
-              "./run_SPECT_tests.sh",
+              "run_tests",
               "cd ..",
               "pytest src/swig/test/python"
             ]
           }
         ],
-        "version": "6.3.1"
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
+      },
+      {
+        "build": null,
+        "name": "stir",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "swig >=4.2,<4.5"
+          ],
+          "host": [
+            "libboost-headers",
+            "python",
+            "numpy",
+            "libitk-devel",
+            "libitk",
+            "nlohmann_json",
+            "libparallelproj <3.0",
+            "zlib"
+          ],
+          "run": [
+            "python",
+            "libboost-headers",
+            "libitk-devel",
+            "libparallelproj"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "recon_test_pack",
+                "examples",
+                "src/swig/test/python"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "matplotlib"
+              ]
+            },
+            "script": [
+              "stir_config --config-dir",
+              "cd recon_test_pack",
+              "run_tests",
+              "cd ..",
+              "pytest src/swig/test/python"
+            ]
+          }
+        ],
+        "version": "6.4.0"
       }
     ],
     "package": {
       "name": "stir",
-      "version": "6.3.1"
+      "version": "6.4.0"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "libgomp",
+        "cuda_compiler_stub",
         "cmake",
         "ninja",
-        "swig"
+        "swig >=4.2,<4.5"
       ],
       "host": [
         "libboost-headers",
-        "hdf5",
         "python",
         "numpy",
         "libitk-devel",
         "libitk",
         "nlohmann_json",
-        "libparallelproj <2.0",
-        "root_base"
+        "cuda-version ==12.9",
+        "cuda-cudart-dev",
+        "libparallelproj <3.0",
+        "zlib",
+        "cuda-version ==13.4"
       ],
       "run": [
         "python",
+        "__cuda",
+        "cuda-version ==12.9",
         "libboost-headers",
         "libitk-devel",
-        "libparallelproj"
+        "libparallelproj",
+        "cuda-version ==13.4"
       ]
     },
     "schema_version": 1,
@@ -3881,8 +6550,8 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cuda_compiler_stub",
         "cxx_compiler_stub",
-        "libgomp",
         "ninja",
         "swig"
       ]
@@ -3890,7 +6559,8 @@
     "host": {
       "__set__": true,
       "elements": [
-        "hdf5",
+        "cuda-cudart-dev",
+        "cuda-version",
         "libboost-headers",
         "libitk",
         "libitk-devel",
@@ -3898,12 +6568,14 @@
         "nlohmann_json",
         "numpy",
         "python",
-        "root_base"
+        "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "__cuda",
+        "cuda-version",
         "libboost-headers",
         "libitk-devel",
         "libparallelproj",
