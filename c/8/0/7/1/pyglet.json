@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.10'\n",
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -16,11 +16,17 @@
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
+    "noarch_platforms": [
+      "linux_64",
+      "osx_64",
+      "win_64"
+    ],
     "provider": {
       "linux_aarch64": "default",
       "linux_ppc64le": "default",
@@ -28,23 +34,23 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "561f96a3ed2f12a0d34f1c13e56dfe33d0f72106",
-  "feedstock_hash_ts": 1782670541,
+  "feedstock_hash": "c0ffc972982ec737a52feb2bab8ffbe92fe7c325",
+  "feedstock_hash_ts": 1791056998,
   "feedstock_name": "pyglet",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/pyglet/pyglet",
-      "home": "http://pyglet.org",
+      "home": "http://pyglet.org/",
       "license": "BSD-3-Clause",
-      "license_family": "BSD",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE",
       "summary": "Cross-platform windowing and multimedia library"
     },
     "build": {
       "noarch": "python",
       "number": "0",
-      "script": "PYTHON -m pip install . -vv"
+      "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
     },
     "extra": {
       "recipe-maintainers": [
@@ -54,40 +60,75 @@
         "hmaarrfk"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "pyglet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "flit-core >=3.2,<4"
+          ],
+          "run": [
+            "python >=3.11",
+            "freetype",
+            "ffmpeg >=4.0.0,<10",
+            "__linux",
+            "libgl-devel"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "recipe": [
+                "run_tests.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "libglu",
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "python run_tests.py"
+            ]
+          }
+        ],
+        "version": "2.1.16"
+      }
+    ],
     "package": {
       "name": "pyglet",
-      "version": "2.1.15"
+      "version": "2.1.16"
     },
     "requirements": {
       "host": [
-        "python 3.10",
+        "python 3.11.*",
         "pip",
-        "flit-core"
+        "flit-core >=3.2,<4"
       ],
       "run": [
-        "python >=3.10",
+        "python >=3.11",
         "freetype",
-        "ffmpeg >=4.0.0"
+        "ffmpeg >=4.0.0,<10",
+        "__linux",
+        "libgl-devel"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "0ef34fe730808a97e48c24dd6ed4ff614024b980955ed8dbc2dd01ededaa08cb",
-      "url": "https://pypi.org/packages/source/p/pyglet/pyglet-2.1.15.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "xvfb-run --server-args=\":99 -screen 0 1024x768x24 -ac +extension GLX -noreset\" python run_tests.py"
+      "patches": [
+        "0001-Add-compatibility-for-ffmpeg-9.0.patch"
       ],
-      "files": [
-        "run_tests.py"
-      ],
-      "requires": [
-        "libglu",
-        "python 3.10",
-        "pip"
-      ]
+      "sha256": "ca90ee05532ced8330b8a8087ac2a7b69589b7fa7fb67f85aabe24aaf4ae42c0",
+      "url": "https://pypi.org/packages/source/p/pyglet/pyglet-2.1.16.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -106,8 +147,10 @@
     "run": {
       "__set__": true,
       "elements": [
+        "__linux",
         "ffmpeg",
         "freetype",
+        "libgl-devel",
         "python"
       ]
     },
@@ -123,16 +166,16 @@
   "meta_yaml": {
     "about": {
       "dev_url": "https://github.com/pyglet/pyglet",
-      "home": "http://pyglet.org",
+      "home": "http://pyglet.org/",
       "license": "BSD-3-Clause",
-      "license_family": "BSD",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE",
       "summary": "Cross-platform windowing and multimedia library"
     },
     "build": {
       "noarch": "python",
       "number": "0",
-      "script": "PYTHON -m pip install . -vv"
+      "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
     },
     "extra": {
       "recipe-maintainers": [
@@ -142,43 +185,280 @@
         "hmaarrfk"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "pyglet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "flit-core >=3.2,<4"
+          ],
+          "run": [
+            "python >=3.11",
+            "freetype",
+            "ffmpeg >=4.0.0,<10",
+            "__linux",
+            "libgl-devel"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "recipe": [
+                "run_tests.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "libglu",
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "python run_tests.py"
+            ]
+          }
+        ],
+        "version": "2.1.16"
+      },
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "pyglet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "flit-core >=3.2,<4"
+          ],
+          "run": [
+            "python >=3.11",
+            "freetype",
+            "ffmpeg >=4.0.0,<10",
+            "__osx"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "recipe": [
+                "run_tests.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "python run_tests.py"
+            ]
+          }
+        ],
+        "version": "2.1.16"
+      },
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "pyglet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "flit-core >=3.2,<4"
+          ],
+          "run": [
+            "python >=3.11",
+            "freetype",
+            "ffmpeg >=4.0.0,<10",
+            "__win"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "recipe": [
+                "run_tests.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "python run_tests.py"
+            ]
+          }
+        ],
+        "version": "2.1.16"
+      }
+    ],
     "package": {
       "name": "pyglet",
-      "version": "2.1.15"
+      "version": "2.1.16"
     },
     "requirements": {
       "host": [
-        "python 3.10",
+        "python 3.11.*",
         "pip",
-        "flit-core"
+        "flit-core >=3.2,<4"
       ],
       "run": [
-        "python >=3.10",
+        "python >=3.11",
         "freetype",
-        "ffmpeg >=4.0.0"
+        "ffmpeg >=4.0.0,<10",
+        "__linux",
+        "libgl-devel",
+        "__osx",
+        "__win"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "0ef34fe730808a97e48c24dd6ed4ff614024b980955ed8dbc2dd01ededaa08cb",
-      "url": "https://pypi.org/packages/source/p/pyglet/pyglet-2.1.15.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check",
-        "xvfb-run --server-args=\":99 -screen 0 1024x768x24 -ac +extension GLX -noreset\" python run_tests.py"
+      "patches": [
+        "0001-Add-compatibility-for-ffmpeg-9.0.patch"
       ],
-      "files": [
-        "run_tests.py"
-      ],
-      "requires": [
-        "libglu",
-        "python 3.10",
-        "pip"
-      ]
+      "sha256": "ca90ee05532ced8330b8a8087ac2a7b69589b7fa7fb67f85aabe24aaf4ae42c0",
+      "url": "https://pypi.org/packages/source/p/pyglet/pyglet-2.1.16.tar.gz"
     }
   },
   "name": "pyglet",
+  "osx_64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/pyglet/pyglet",
+      "home": "http://pyglet.org/",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE",
+      "summary": "Cross-platform windowing and multimedia library"
+    },
+    "build": {
+      "noarch": "python",
+      "number": "0",
+      "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "mwcraig",
+        "jakirkham",
+        "bitcraft",
+        "hmaarrfk"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "pyglet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "flit-core >=3.2,<4"
+          ],
+          "run": [
+            "python >=3.11",
+            "freetype",
+            "ffmpeg >=4.0.0,<10",
+            "__osx"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "recipe": [
+                "run_tests.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "python run_tests.py"
+            ]
+          }
+        ],
+        "version": "2.1.16"
+      }
+    ],
+    "package": {
+      "name": "pyglet",
+      "version": "2.1.16"
+    },
+    "requirements": {
+      "host": [
+        "python 3.11.*",
+        "pip",
+        "flit-core >=3.2,<4"
+      ],
+      "run": [
+        "python >=3.11",
+        "freetype",
+        "ffmpeg >=4.0.0,<10",
+        "__osx"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "0001-Add-compatibility-for-ffmpeg-9.0.patch"
+      ],
+      "sha256": "ca90ee05532ced8330b8a8087ac2a7b69589b7fa7fb67f85aabe24aaf4ae42c0",
+      "url": "https://pypi.org/packages/source/p/pyglet/pyglet-2.1.16.tar.gz"
+    }
+  },
+  "osx_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": []
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "flit-core",
+        "pip",
+        "python"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "__osx",
+        "ffmpeg",
+        "freetype",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "pip",
+        "python"
+      ]
+    }
+  },
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -187,18 +467,24 @@
   },
   "parsing_error": false,
   "platforms": [
-    "linux_64"
+    "linux_64",
+    "osx_64",
+    "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/pyglet.json"
   },
-  "raw_meta_yaml": "{% set version = \"2.1.15\" %}\n\npackage:\n  name: pyglet\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/p/pyglet/pyglet-{{ version }}.tar.gz\n  sha256: 0ef34fe730808a97e48c24dd6ed4ff614024b980955ed8dbc2dd01ededaa08cb\n\nbuild:\n  number: 0\n  script: {{ PYTHON }} -m pip install . -vv\n  noarch: python\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip\n    - flit-core\n  run:\n    - python >={{ python_min }}\n    - freetype\n    - ffmpeg >=4.0.0\n\ntest:\n  # We moved all \"import ...\" tests to `run_tests.py` because on Linux, we\n  # need to run the tests through xvfb-run as some of them require a\n  # (virtual) display. On Windows and macOS, on the other hand, we can run the\n  # test script directly.\n  requires:\n    - libglu  # [linux]\n    - python {{ python_min }}\n    - pip\n  files:\n    - run_tests.py\n  commands:\n    - pip check\n    - python run_tests.py  # [not linux]\n    - xvfb-run --server-args=\":99 -screen 0 1024x768x24 -ac +extension GLX -noreset\" python run_tests.py  # [linux]\n\nabout:\n  home: http://pyglet.org\n  license: BSD-3-Clause\n  license_family: BSD\n  license_file: LICENSE\n  summary: Cross-platform windowing and multimedia library\n  dev_url: https://github.com/pyglet/pyglet\n\nextra:\n  recipe-maintainers:\n    - mwcraig\n    - jakirkham\n    - bitcraft\n    - hmaarrfk  # just a maintainer to help move things forward. Happy to retire myself\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"2.1.16\"\n\npackage:\n  name: pyglet\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/p/pyglet/pyglet-${{ version }}.tar.gz\n  sha256: ca90ee05532ced8330b8a8087ac2a7b69589b7fa7fb67f85aabe24aaf4ae42c0\n  patches:\n    # FFmpeg 9 support, https://github.com/pyglet/pyglet/pull/1499\n    - 0001-Add-compatibility-for-ffmpeg-9.0.patch\n\nbuild:\n  number: 0\n  noarch: python\n  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - flit-core >=3.2,<4\n  run:\n    - python >=${{ python_min }}\n    - freetype\n    # pyglet only knows the FFmpeg 4-9 library names (avutil-56 .. avutil-61);\n    # 9 is supported through the backported patch\n    - ffmpeg >=4.0.0,<10\n    - if: linux\n      then: __linux\n    - if: osx\n      then: __osx\n    - if: win\n      then: __win\n    # pyglet dlopens the unversioned libGL.so, which only libgl-devel provides\n    - if: linux\n      then: libgl-devel\n\ntests:\n  # All \"import ...\" tests live in `run_tests.py`. Imports that need a\n  # display are skipped on Linux, so no (virtual) X server is required.\n  - files:\n      recipe:\n        - run_tests.py\n    requirements:\n      run:\n        - if: linux\n          then: libglu\n        - python ${{ python_min }}.*\n        - pip\n    script:\n      - pip check\n      - python run_tests.py\n\nabout:\n  license: BSD-3-Clause\n  license_file: LICENSE\n  summary: Cross-platform windowing and multimedia library\n  homepage: http://pyglet.org\n  repository: https://github.com/pyglet/pyglet\n\nextra:\n  recipe-maintainers:\n    - mwcraig\n    - jakirkham\n    - bitcraft\n    - hmaarrfk  # just a maintainer to help move things forward. Happy to retire myself\n",
   "req": {
     "__set__": true,
     "elements": [
+      "__linux",
+      "__osx",
+      "__win",
       "ffmpeg",
       "flit-core",
       "freetype",
+      "libgl-devel",
       "pip",
       "python"
     ]
@@ -219,8 +505,12 @@
     "run": {
       "__set__": true,
       "elements": [
+        "__linux",
+        "__osx",
+        "__win",
         "ffmpeg",
         "freetype",
+        "libgl-devel",
         "python"
       ]
     },
@@ -242,17 +532,21 @@
     "host": {
       "__set__": true,
       "elements": [
-        "flit-core",
+        "flit-core >=3.2,<4",
         "pip",
-        "python 3.10"
+        "python 3.11.*"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "ffmpeg >=4.0.0",
+        "__linux",
+        "__osx",
+        "__win",
+        "ffmpeg >=4.0.0,<10",
         "freetype",
-        "python >=3.10"
+        "libgl-devel",
+        "python >=3.11"
       ]
     },
     "test": {
@@ -260,13 +554,133 @@
       "elements": [
         "libglu",
         "pip",
-        "python 3.10"
+        "python 3.11.*"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/p/pyglet/pyglet-2.1.15.tar.gz",
-  "version": "2.1.15",
+  "url": "https://pypi.org/packages/source/p/pyglet/pyglet-2.1.16.tar.gz",
+  "version": "2.1.16",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/pyglet.json"
+  },
+  "win_64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/pyglet/pyglet",
+      "home": "http://pyglet.org/",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE",
+      "summary": "Cross-platform windowing and multimedia library"
+    },
+    "build": {
+      "noarch": "python",
+      "number": "0",
+      "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "mwcraig",
+        "jakirkham",
+        "bitcraft",
+        "hmaarrfk"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "pyglet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "flit-core >=3.2,<4"
+          ],
+          "run": [
+            "python >=3.11",
+            "freetype",
+            "ffmpeg >=4.0.0,<10",
+            "__win"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "recipe": [
+                "run_tests.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "python run_tests.py"
+            ]
+          }
+        ],
+        "version": "2.1.16"
+      }
+    ],
+    "package": {
+      "name": "pyglet",
+      "version": "2.1.16"
+    },
+    "requirements": {
+      "host": [
+        "python 3.11.*",
+        "pip",
+        "flit-core >=3.2,<4"
+      ],
+      "run": [
+        "python >=3.11",
+        "freetype",
+        "ffmpeg >=4.0.0,<10",
+        "__win"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "0001-Add-compatibility-for-ffmpeg-9.0.patch"
+      ],
+      "sha256": "ca90ee05532ced8330b8a8087ac2a7b69589b7fa7fb67f85aabe24aaf4ae42c0",
+      "url": "https://pypi.org/packages/source/p/pyglet/pyglet-2.1.16.tar.gz"
+    }
+  },
+  "win_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": []
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "flit-core",
+        "pip",
+        "python"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "__win",
+        "ffmpeg",
+        "freetype",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "pip",
+        "python"
+      ]
+    }
   }
 }
