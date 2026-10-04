@@ -1,11 +1,15 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_is_abi3falsepython3.14.____cp314t.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\nopenssl:\n- '3.5'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.10'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - is_abi3\n",
+  "ci_support_linux_64_channel_sourcesconda-forgeis_abi3falsepython3.14.____cp314t.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - channel_sources\n  - is_abi3\n",
   "ci_support_migrations": {
     "python314t": {
       "migration_number": 1,
       "migrator_ts": 1755739493
+    },
+    "python315": {
+      "migration_number": 1,
+      "migrator_ts": 1755739490
     }
   },
   "conda-forge.yml": {
@@ -14,17 +18,19 @@
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
       "linux_aarch64": "default",
+      "linux_riscv64": "default",
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "022095871e3c270536b579553fac65776e5a7018",
-  "feedstock_hash_ts": 1786475372,
+  "feedstock_hash": "2d3e93024ec33e1216981940dda47b2a147074c6",
+  "feedstock_hash_ts": 1791130388,
   "feedstock_name": "delta-kernel-rust-sharing-wrapper",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -37,22 +43,21 @@
       "summary": "This adds a thin python bindings via maturin and pyo3 for delta-kernel-rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
-          "OPENSSL_DIR": "$PREFIX",
           "PYTHONIOENCODING": "utf-8",
           "PYTHONLEGACYTEXTENCODING": "utf-8"
         }
@@ -78,7 +83,6 @@
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python"
           ],
@@ -88,9 +92,21 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -118,24 +134,145 @@
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python",
-            "python-abi3",
-            "python 3.10.*"
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python >=3.10"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
               ],
               "python_version": [
-                "3.10.*",
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
+            ]
+          }
+        ],
+        "version": "0.3.3"
+      },
+      {
+        "build": null,
+        "name": "delta-kernel-rust-sharing-wrapper",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "cargo-auditable",
+            "make"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "script": "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\""
+          }
+        ],
+        "version": "0.3.3"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "delta-kernel-rust-sharing-wrapper",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "cargo-auditable",
+            "make"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python",
+            "python 3.14.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "python >=3.14",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
                 "3.14.*"
               ]
             }
@@ -149,8 +286,7 @@
             },
             "script": [
               "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
             ]
           }
         ],
@@ -172,21 +308,23 @@
       ],
       "host": [
         "maturin >=1.0,<2.0",
-        "openssl",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3",
-        "python 3.10.*"
+        "python 3.14.*"
       ],
       "run": [
         "python",
-        "python >=3.10"
+        "python >=3.11",
+        "python-abi3",
+        "python >=3.14"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "1ce82f9d18c66faaacca7f7a9a77b5210255a4d5bc6d61b8410f6bd5a9f37623",
-      "url": "https://pypi.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -205,7 +343,6 @@
       "__set__": true,
       "elements": [
         "maturin",
-        "openssl",
         "pip",
         "python",
         "python-abi3"
@@ -214,7 +351,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -236,22 +374,21 @@
       "summary": "This adds a thin python bindings via maturin and pyo3 for delta-kernel-rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
-          "OPENSSL_DIR": "$PREFIX",
           "PYTHONIOENCODING": "utf-8",
           "PYTHONLEGACYTEXTENCODING": "utf-8"
         }
@@ -273,11 +410,13 @@
             "c_stdlib_stub",
             "cargo-bundle-licenses",
             "cargo-auditable",
-            "make"
+            "make",
+            "cross-python_linux-aarch64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python"
           ],
@@ -287,9 +426,21 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -313,28 +464,41 @@
             "c_stdlib_stub",
             "cargo-bundle-licenses",
             "cargo-auditable",
-            "make"
+            "make",
+            "cross-python_linux-aarch64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python",
-            "python-abi3",
-            "python 3.10.*"
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python >=3.10"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
               ],
               "python_version": [
-                "3.10.*",
+                "3.11.*",
                 "3.14.*"
               ]
             }
@@ -343,13 +507,12 @@
             "requirements": {
               "run": [
                 "abi3audit",
-                "python 3.14.*"
+                "python 3.11.*"
               ]
             },
             "script": [
               "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
             ]
           }
         ],
@@ -367,25 +530,28 @@
         "c_stdlib_stub",
         "cargo-bundle-licenses",
         "cargo-auditable",
-        "make"
+        "make",
+        "cross-python_linux-aarch64",
+        "crossenv",
+        "python"
       ],
       "host": [
         "maturin >=1.0,<2.0",
-        "openssl",
         "pip",
         "python",
-        "python-abi3",
-        "python 3.10.*"
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
-        "python >=3.10"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "1ce82f9d18c66faaacca7f7a9a77b5210255a4d5bc6d61b8410f6bd5a9f37623",
-      "url": "https://pypi.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -396,7 +562,10 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "crossenv",
         "make",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -404,7 +573,6 @@
       "__set__": true,
       "elements": [
         "maturin",
-        "openssl",
         "pip",
         "python",
         "python-abi3"
@@ -413,7 +581,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -435,21 +604,20 @@
       "summary": "This adds a thin python bindings via maturin and pyo3 for delta-kernel-rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
           "set CARGO_HOME=c:\\.cg",
-          "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\""
+          "copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\""
         ],
         "env": {
           "CARGO": "cargo-auditable-wrapper.bat",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
-          "OPENSSL_DIR": "%LIBRARY_PREFIX%",
           "PYTHONIOENCODING": "utf-8",
           "PYTHONLEGACYTEXTENCODING": "utf-8"
         }
@@ -475,7 +643,6 @@
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python"
           ],
@@ -485,9 +652,21 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -515,24 +694,34 @@
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python",
-            "python-abi3",
-            "python 3.10.*"
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python >=3.10"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
               ],
               "python_version": [
-                "3.10.*",
+                "3.11.*",
                 "3.14.*"
               ]
             }
@@ -541,13 +730,12 @@
             "requirements": {
               "run": [
                 "abi3audit",
-                "python 3.14.*"
+                "python 3.11.*"
               ]
             },
             "script": [
               "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
             ]
           }
         ],
@@ -567,7 +755,6 @@
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python"
           ],
@@ -577,9 +764,21 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -607,24 +806,33 @@
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python",
-            "python-abi3",
-            "python 3.10.*"
+            "python 3.14.*",
+            "python-abi3"
           ],
           "run": [
-            "python >=3.10"
+            "python",
+            "python >=3.14",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
               ],
               "python_version": [
-                "3.10.*",
                 "3.14.*"
               ]
             }
@@ -638,192 +846,7 @@
             },
             "script": [
               "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
-            ]
-          }
-        ],
-        "version": "0.3.3"
-      },
-      {
-        "build": null,
-        "name": "delta-kernel-rust-sharing-wrapper",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "rust_compiler_stub",
-            "c_stdlib_stub",
-            "cargo-bundle-licenses",
-            "cargo-auditable",
-            "make"
-          ],
-          "host": [
-            "maturin >=1.0,<2.0",
-            "openssl",
-            "pip",
-            "python"
-          ],
-          "run": [
-            "python"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "delta_kernel_rust_sharing_wrapper"
-              ]
-            }
-          },
-          {
-            "script": "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\""
-          }
-        ],
-        "version": "0.3.3"
-      },
-      {
-        "build": {
-          "python": {
-            "version_independent": true
-          }
-        },
-        "name": "delta-kernel-rust-sharing-wrapper",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "rust_compiler_stub",
-            "c_stdlib_stub",
-            "cargo-bundle-licenses",
-            "cargo-auditable",
-            "make"
-          ],
-          "host": [
-            "maturin >=1.0,<2.0",
-            "openssl",
-            "pip",
-            "python",
-            "python-abi3",
-            "python 3.10.*"
-          ],
-          "run": [
-            "python >=3.10"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "delta_kernel_rust_sharing_wrapper"
-              ],
-              "python_version": [
-                "3.10.*",
-                "3.14.*"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "abi3audit",
-                "python 3.14.*"
-              ]
-            },
-            "script": [
-              "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
-            ]
-          }
-        ],
-        "version": "0.3.3"
-      },
-      {
-        "build": null,
-        "name": "delta-kernel-rust-sharing-wrapper",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "rust_compiler_stub",
-            "c_stdlib_stub",
-            "cargo-bundle-licenses",
-            "cargo-auditable",
-            "make"
-          ],
-          "host": [
-            "maturin >=1.0,<2.0",
-            "openssl",
-            "pip",
-            "python"
-          ],
-          "run": [
-            "python"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "delta_kernel_rust_sharing_wrapper"
-              ]
-            }
-          },
-          {
-            "script": "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\""
-          }
-        ],
-        "version": "0.3.3"
-      },
-      {
-        "build": {
-          "python": {
-            "version_independent": true
-          }
-        },
-        "name": "delta-kernel-rust-sharing-wrapper",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "rust_compiler_stub",
-            "c_stdlib_stub",
-            "cargo-bundle-licenses",
-            "cargo-auditable",
-            "make"
-          ],
-          "host": [
-            "maturin >=1.0,<2.0",
-            "openssl",
-            "pip",
-            "python",
-            "python-abi3",
-            "python 3.10.*"
-          ],
-          "run": [
-            "python >=3.10"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "delta_kernel_rust_sharing_wrapper"
-              ],
-              "python_version": [
-                "3.10.*",
-                "3.14.*"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "abi3audit",
-                "python 3.14.*"
-              ]
-            },
-            "script": [
-              "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
             ]
           }
         ],
@@ -840,11 +863,12 @@
             "cargo-bundle-licenses",
             "cargo-auditable",
             "make",
-            "perl"
+            "cross-python_linux-aarch64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python"
           ],
@@ -854,9 +878,21 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -881,28 +917,40 @@
             "cargo-bundle-licenses",
             "cargo-auditable",
             "make",
-            "perl"
+            "cross-python_linux-aarch64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python",
-            "python-abi3",
-            "python 3.10.*"
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python >=3.10"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
               ],
               "python_version": [
-                "3.10.*",
+                "3.11.*",
                 "3.14.*"
               ]
             }
@@ -911,13 +959,368 @@
             "requirements": {
               "run": [
                 "abi3audit",
-                "python 3.14.*"
+                "python 3.11.*"
               ]
             },
             "script": [
               "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
+            ]
+          }
+        ],
+        "version": "0.3.3"
+      },
+      {
+        "build": null,
+        "name": "delta-kernel-rust-sharing-wrapper",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "cargo-auditable",
+            "make",
+            "cross-python_osx-64",
+            "crossenv",
+            "python"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "script": "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\""
+          }
+        ],
+        "version": "0.3.3"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "delta-kernel-rust-sharing-wrapper",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "cargo-auditable",
+            "make",
+            "cross-python_osx-64",
+            "crossenv",
+            "python"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
+            ]
+          }
+        ],
+        "version": "0.3.3"
+      },
+      {
+        "build": null,
+        "name": "delta-kernel-rust-sharing-wrapper",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "cargo-auditable",
+            "make",
+            "cross-python_osx-arm64",
+            "crossenv",
+            "python"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "script": "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\""
+          }
+        ],
+        "version": "0.3.3"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "delta-kernel-rust-sharing-wrapper",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "cargo-auditable",
+            "make",
+            "cross-python_osx-arm64",
+            "crossenv",
+            "python"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
+            ]
+          }
+        ],
+        "version": "0.3.3"
+      },
+      {
+        "build": null,
+        "name": "delta-kernel-rust-sharing-wrapper",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "cargo-auditable",
+            "make",
+            "perl",
+            "cross-python_win-64",
+            "crossenv",
+            "python"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "script": "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\""
+          }
+        ],
+        "version": "0.3.3"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "delta-kernel-rust-sharing-wrapper",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "cargo-auditable",
+            "make",
+            "perl",
+            "cross-python_win-64",
+            "crossenv",
+            "python"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.14.*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} %SP_DIR%\\delta_kernel_rust_sharing_wrapper\\delta_kernel_rust_sharing_wrapper.pyd"
             ]
           }
         ],
@@ -936,25 +1339,33 @@
         "cargo-bundle-licenses",
         "cargo-auditable",
         "make",
-        "perl"
+        "cross-python_linux-aarch64",
+        "crossenv",
+        "python",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "perl",
+        "cross-python_win-64"
       ],
       "host": [
         "maturin >=1.0,<2.0",
-        "openssl",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3",
-        "python 3.10.*"
+        "python 3.14.*"
       ],
       "run": [
         "python",
-        "python >=3.10"
+        "python >=3.11",
+        "python-abi3",
+        "python >=3.14"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "1ce82f9d18c66faaacca7f7a9a77b5210255a4d5bc6d61b8410f6bd5a9f37623",
-      "url": "https://pypi.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
     }
   },
   "name": "delta-kernel-rust-sharing-wrapper",
@@ -968,22 +1379,21 @@
       "summary": "This adds a thin python bindings via maturin and pyo3 for delta-kernel-rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
-          "OPENSSL_DIR": "$PREFIX",
           "PYTHONIOENCODING": "utf-8",
           "PYTHONLEGACYTEXTENCODING": "utf-8"
         }
@@ -1005,11 +1415,13 @@
             "c_stdlib_stub",
             "cargo-bundle-licenses",
             "cargo-auditable",
-            "make"
+            "make",
+            "cross-python_osx-64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python"
           ],
@@ -1019,9 +1431,21 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1045,28 +1469,41 @@
             "c_stdlib_stub",
             "cargo-bundle-licenses",
             "cargo-auditable",
-            "make"
+            "make",
+            "cross-python_osx-64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python",
-            "python-abi3",
-            "python 3.10.*"
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python >=3.10"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
               ],
               "python_version": [
-                "3.10.*",
+                "3.11.*",
                 "3.14.*"
               ]
             }
@@ -1075,13 +1512,12 @@
             "requirements": {
               "run": [
                 "abi3audit",
-                "python 3.14.*"
+                "python 3.11.*"
               ]
             },
             "script": [
               "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
             ]
           }
         ],
@@ -1099,25 +1535,28 @@
         "c_stdlib_stub",
         "cargo-bundle-licenses",
         "cargo-auditable",
-        "make"
+        "make",
+        "cross-python_osx-64",
+        "crossenv",
+        "python"
       ],
       "host": [
         "maturin >=1.0,<2.0",
-        "openssl",
         "pip",
         "python",
-        "python-abi3",
-        "python 3.10.*"
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
-        "python >=3.10"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "1ce82f9d18c66faaacca7f7a9a77b5210255a4d5bc6d61b8410f6bd5a9f37623",
-      "url": "https://pypi.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -1128,7 +1567,10 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_osx-64",
+        "crossenv",
         "make",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1136,7 +1578,6 @@
       "__set__": true,
       "elements": [
         "maturin",
-        "openssl",
         "pip",
         "python",
         "python-abi3"
@@ -1145,7 +1586,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1167,22 +1609,21 @@
       "summary": "This adds a thin python bindings via maturin and pyo3 for delta-kernel-rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
-          "OPENSSL_DIR": "$PREFIX",
           "PYTHONIOENCODING": "utf-8",
           "PYTHONLEGACYTEXTENCODING": "utf-8"
         }
@@ -1204,11 +1645,13 @@
             "c_stdlib_stub",
             "cargo-bundle-licenses",
             "cargo-auditable",
-            "make"
+            "make",
+            "cross-python_osx-arm64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python"
           ],
@@ -1218,9 +1661,21 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1244,28 +1699,41 @@
             "c_stdlib_stub",
             "cargo-bundle-licenses",
             "cargo-auditable",
-            "make"
+            "make",
+            "cross-python_osx-arm64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python",
-            "python-abi3",
-            "python 3.10.*"
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python >=3.10"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
               ],
               "python_version": [
-                "3.10.*",
+                "3.11.*",
                 "3.14.*"
               ]
             }
@@ -1274,13 +1742,12 @@
             "requirements": {
               "run": [
                 "abi3audit",
-                "python 3.14.*"
+                "python 3.11.*"
               ]
             },
             "script": [
               "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so"
             ]
           }
         ],
@@ -1298,25 +1765,28 @@
         "c_stdlib_stub",
         "cargo-bundle-licenses",
         "cargo-auditable",
-        "make"
+        "make",
+        "cross-python_osx-arm64",
+        "crossenv",
+        "python"
       ],
       "host": [
         "maturin >=1.0,<2.0",
-        "openssl",
         "pip",
         "python",
-        "python-abi3",
-        "python 3.10.*"
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
-        "python >=3.10"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "1ce82f9d18c66faaacca7f7a9a77b5210255a4d5bc6d61b8410f6bd5a9f37623",
-      "url": "https://pypi.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -1327,7 +1797,10 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_osx-arm64",
+        "crossenv",
         "make",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1335,7 +1808,6 @@
       "__set__": true,
       "elements": [
         "maturin",
-        "openssl",
         "pip",
         "python",
         "python-abi3"
@@ -1344,7 +1816,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1373,7 +1846,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/delta-kernel-rust-sharing-wrapper.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.3.3\"\n  maturin_min: \"1.0\"\n  maturin_max: \"2.0\"\n  python_check_max: \"3.14\"\n  abi3_bin: ${{ \"abi3.so\" if unix else \"pyd\" }}\n\npackage:\n  name: delta-kernel-rust-sharing-wrapper\n  version: ${{ version }}\n\nsource:\n  - url: https://pypi.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-${{ version }}.tar.gz\n    sha256: 1ce82f9d18c66faaacca7f7a9a77b5210255a4d5bc6d61b8410f6bd5a9f37623\n  - url: https://raw.githubusercontent.com/delta-io/delta-sharing/refs/heads/main/LICENSE.txt\n    sha256: 5a2ae634be68464e407b80dbece9d8d822926c9b2cbdb1e801f5d27929589802\n\nbuild:\n  number: 0\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO: cargo-auditable-wrapper${{ \".bat\" if win }}\n      PYTHONIOENCODING: utf-8\n      PYTHONLEGACYTEXTENCODING: utf-8\n      OPENSSL_DIR: ${{ \"$PREFIX\" if unix else \"%LIBRARY_PREFIX%\" }}\n    content:\n      - if: win\n        then:\n          - set CARGO_HOME=c:\\.cg\n          - copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"\n        else:\n          - cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-bundle-licenses\n    - cargo-auditable\n    - make\n    - if: win\n      then:\n        - perl\n  host:\n    - maturin >=${{ maturin_min }},<${{ maturin_max }}\n    - openssl\n    - pip\n    - python\n    - if: is_abi3\n      then:\n        - python-abi3\n        - python ${{ python_min }}.*\n  run:\n    - if: is_abi3\n      then:\n        - python >=${{ python_min }}\n      else:\n        - python\n  ignore_run_exports:\n    by_name:\n      - if: is_abi3\n        then:\n          - python_abi\n\ntests:\n  - if: is_abi3\n    then:\n      - python:\n          imports: delta_kernel_rust_sharing_wrapper\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - ${{ python_check_max }}.*\n    else:\n      - python:\n          imports: delta_kernel_rust_sharing_wrapper\n          pip_check: true\n  - requirements:\n      run:\n        - if: is_abi3\n          then:\n            - abi3audit\n            - python ${{ python_check_max }}.*\n    script:\n      - python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"\n      - if: is_abi3\n        then:\n          - cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper\n          - abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}\n\nabout:\n  homepage: https://pypi.org/project/delta-kernel-rust-sharing-wrapper\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  summary: This adds a thin python bindings via maturin and pyo3 for delta-kernel-rust.\n  repository: https://github.com/delta-io/delta-sharing/tree/main/python/delta-kernel-rust-sharing-wrapper\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.3.3\"\n  maturin_min: \"1.0\"\n  maturin_max: \"2.0\"\n  cargo_wrapper: cargo-auditable-wrapper${{ \".sh\" if unix else \".bat\" }}\n  python_check_max: \"3.14\"\n\npackage:\n  name: delta-kernel-rust-sharing-wrapper\n  version: ${{ version }}\n\nsource:\n  - url: https://files.pythonhosted.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-${{ version }}.tar.gz\n    sha256: 1ce82f9d18c66faaacca7f7a9a77b5210255a4d5bc6d61b8410f6bd5a9f37623\n  - url: https://raw.githubusercontent.com/delta-io/delta-sharing/refs/heads/main/LICENSE.txt\n    sha256: 5a2ae634be68464e407b80dbece9d8d822926c9b2cbdb1e801f5d27929589802\n\nbuild:\n  number: 1\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO: ${{ cargo_wrapper }}\n      PYTHONIOENCODING: utf-8\n      PYTHONLEGACYTEXTENCODING: utf-8\n    content:\n      - if: win\n        then:\n          - set CARGO_HOME=c:\\.cg\n          - copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\"\n        else:\n          - cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-bundle-licenses\n    - cargo-auditable\n    - make\n    - if: win\n      then:\n        - perl\n    - if: build_platform != target_platform\n      then:\n        - cross-python_${{ target_platform }}\n        - crossenv\n        - python\n  host:\n    - maturin >=${{ maturin_min }},<${{ maturin_max }}\n    - pip\n    - python\n    - if: is_abi3\n      then:\n        - python ${{ python_min }}.*\n        - python-abi3\n  run:\n    - python\n    - if: is_abi3\n      then:\n        - python >=${{ python_min }}\n        - python-abi3\n\ntests:\n  - package_contents:\n      strict: true\n      site_packages:\n        - delta_kernel_rust_sharing_wrapper/**\n        - delta_kernel_rust_sharing_wrapper-${{ version }}.dist-info/**\n  - python:\n      imports: delta_kernel_rust_sharing_wrapper\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then:\n            - ${{ python_min }}.*\n            - ${{ python_check_max }}.*\n          else:\n            - \"*\"\n  - requirements:\n      run:\n        - if: is_abi3\n          then:\n            - abi3audit\n            - python ${{ python_min }}.*\n    script:\n      - python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"\n      - if: is_abi3\n        then:\n          - if: unix\n            then: abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} ${SP_DIR}/delta_kernel_rust_sharing_wrapper/delta_kernel_rust_sharing_wrapper.abi3.so\n            else: abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} %SP_DIR%\\delta_kernel_rust_sharing_wrapper\\delta_kernel_rust_sharing_wrapper.pyd\n\nabout:\n  homepage: https://pypi.org/project/delta-kernel-rust-sharing-wrapper\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  summary: This adds a thin python bindings via maturin and pyo3 for delta-kernel-rust.\n  repository: https://github.com/delta-io/delta-sharing/tree/main/python/delta-kernel-rust-sharing-wrapper\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1381,9 +1854,13 @@
       "c_stdlib_stub",
       "cargo-auditable",
       "cargo-bundle-licenses",
+      "cross-python_linux-aarch64",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
+      "cross-python_win-64",
+      "crossenv",
       "make",
       "maturin",
-      "openssl",
       "perl",
       "pip",
       "python",
@@ -1399,8 +1876,14 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "crossenv",
         "make",
         "perl",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1409,8 +1892,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "maturin",
-        "openssl",
         "pip",
         "python",
         "python-abi3"
@@ -1421,7 +1904,9 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "python"
+        "cross-python",
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1442,8 +1927,14 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "crossenv",
         "make",
         "perl",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1451,10 +1942,10 @@
       "__set__": true,
       "elements": [
         "maturin >=1.0,<2.0",
-        "openssl",
         "pip",
         "python",
-        "python 3.10.*",
+        "python 3.11.*",
+        "python 3.14.*",
         "python-abi3"
       ]
     },
@@ -1462,7 +1953,9 @@
       "__set__": true,
       "elements": [
         "python",
-        "python >=3.10"
+        "python >=3.11",
+        "python >=3.14",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1470,11 +1963,12 @@
       "elements": [
         "abi3audit",
         "pip",
+        "python 3.11.*",
         "python 3.14.*"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz",
+  "url": "https://files.pythonhosted.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz",
   "version": "0.3.3",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/delta-kernel-rust-sharing-wrapper.json"
@@ -1489,22 +1983,21 @@
       "summary": "This adds a thin python bindings via maturin and pyo3 for delta-kernel-rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
           "set CARGO_HOME=c:\\.cg",
-          "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"",
-          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check",
+          "copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\"",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
         ],
         "env": {
           "CARGO": "cargo-auditable-wrapper.bat",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
-          "OPENSSL_DIR": "%LIBRARY_PREFIX%",
           "PYTHONIOENCODING": "utf-8",
           "PYTHONLEGACYTEXTENCODING": "utf-8"
         }
@@ -1527,11 +2020,13 @@
             "cargo-bundle-licenses",
             "cargo-auditable",
             "make",
-            "perl"
+            "perl",
+            "cross-python_win-64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python"
           ],
@@ -1541,9 +2036,21 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1568,28 +2075,41 @@
             "cargo-bundle-licenses",
             "cargo-auditable",
             "make",
-            "perl"
+            "perl",
+            "cross-python_win-64",
+            "crossenv",
+            "python"
           ],
           "host": [
             "maturin >=1.0,<2.0",
-            "openssl",
             "pip",
             "python",
-            "python-abi3",
-            "python 3.10.*"
+            "python 3.11.*",
+            "python-abi3"
           ],
           "run": [
-            "python >=3.10"
+            "python",
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "site_packages": [
+                "delta_kernel_rust_sharing_wrapper/**",
+                "delta_kernel_rust_sharing_wrapper-0.3.3.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "delta_kernel_rust_sharing_wrapper"
               ],
               "python_version": [
-                "3.10.*",
+                "3.11.*",
                 "3.14.*"
               ]
             }
@@ -1598,13 +2118,12 @@
             "requirements": {
               "run": [
                 "abi3audit",
-                "python 3.14.*"
+                "python 3.11.*"
               ]
             },
             "script": [
               "python -c \"from importlib.metadata import version; assert version('delta-kernel-rust-sharing-wrapper') == '${{ version }}'\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}\" && cd delta_kernel_rust_sharing_wrapper",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} delta_kernel_rust_sharing_wrapper.${{ abi3_bin }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} %SP_DIR%\\delta_kernel_rust_sharing_wrapper\\delta_kernel_rust_sharing_wrapper.pyd"
             ]
           }
         ],
@@ -1623,25 +2142,28 @@
         "cargo-bundle-licenses",
         "cargo-auditable",
         "make",
-        "perl"
+        "perl",
+        "cross-python_win-64",
+        "crossenv",
+        "python"
       ],
       "host": [
         "maturin >=1.0,<2.0",
-        "openssl",
         "pip",
         "python",
-        "python-abi3",
-        "python 3.10.*"
+        "python 3.11.*",
+        "python-abi3"
       ],
       "run": [
         "python",
-        "python >=3.10"
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "1ce82f9d18c66faaacca7f7a9a77b5210255a4d5bc6d61b8410f6bd5a9f37623",
-      "url": "https://pypi.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/d/delta-kernel-rust-sharing-wrapper/delta_kernel_rust_sharing_wrapper-0.3.3.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -1652,8 +2174,11 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_win-64",
+        "crossenv",
         "make",
         "perl",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1661,7 +2186,6 @@
       "__set__": true,
       "elements": [
         "maturin",
-        "openssl",
         "pip",
         "python",
         "python-abi3"
@@ -1670,7 +2194,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
