@@ -1,18 +1,14 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nlibblas:\n- 3.9.* *netlib\nlibcblas:\n- 3.9.* *netlib\nlibhwloc:\n- 2.13.0\nliblapack:\n- 3.9.* *netlib\nliblapacke:\n- 3.9.* *netlib\nlibscotch:\n- 7.0.11\nmetis:\n- 5.1.0\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nlibblas:\n- 3.9.* *netlib\nlibcblas:\n- 3.9.* *netlib\nlibhwloc:\n- 2.15.0\nliblapack:\n- 3.9.* *netlib\nliblapacke:\n- 3.9.* *netlib\nlibscotch:\n- 7.0.11\nmetis:\n- 5.1.0\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\n",
   "ci_support_migrations": {
-    "libhwloc2130": {
+    "libhwloc2150": {
       "migration_number": 1,
-      "migrator_ts": 1770751044.5536265
+      "migrator_ts": 1790367786.589459
     }
   },
   "conda-forge.yml": {
-    "build_platform": {
-      "linux_aarch64": "linux_64",
-      "osx_arm64": "osx_64"
-    },
     "conda_build": {
       "error_overlinking": true
     },
@@ -23,10 +19,14 @@
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
+    },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "3eb542b1ca8020cb16da064b7527ea7f05e0dc21",
-  "feedstock_hash_ts": 1789824518,
+  "feedstock_hash": "d0cd31c59ce14be245cfe24e97e115caf0255378",
+  "feedstock_hash_ts": 1791186157,
   "feedstock_name": "pastix",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -41,7 +41,7 @@
       "summary": "library for solving sparse real and complex linear systems of equations"
     },
     "build": {
-      "number": "8",
+      "number": "9",
       "run_exports": {
         "weak": [
           "libpastix"
@@ -237,7 +237,7 @@
       "summary": "library for solving sparse real and complex linear systems of equations"
     },
     "build": {
-      "number": "8",
+      "number": "9",
       "run_exports": {
         "weak": [
           "libpastix"
@@ -374,7 +374,7 @@
       "summary": "library for solving sparse real and complex linear systems of equations"
     },
     "build": {
-      "number": "8",
+      "number": "9",
       "run_exports": {
         "weak": [
           "libpastix"
@@ -569,7 +569,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pastix.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: 6.4.0\n  python_min: \"3.10\"\n\nrecipe:\n  name: pastix-split\n  version: ${{ version }}\n\nsource:\n  url: https://files.inria.fr/pastix/releases/v6/pastix-${{ version }}.tar.gz\n  sha256: 891d426188eed56c1075fb34d2d80132593a1536ffc05cf333567f68a4811e55\n  patches:\n    - patches/split_python.patch\n    - patches/fix_warning.patch\n\nbuild:\n  number: 8\n  skip:\n    - win\n    - osx\n\noutputs:\n  - package:\n      name: libpastix\n      version: ${{ version }}\n    build:\n      dynamic_linking:\n        missing_dso_allowlist:\n          - \"*/libcuda.so*\"\n      script:\n        file: build_libpastix.sh\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libpastix', upper_bound='x.x') }}\n      build:\n        - if: unix\n          then:\n            - ${{ compiler('c') }}\n            - ${{ compiler('cxx') }}\n            - ${{ compiler('fortran') }}\n            - ${{ stdlib('c') }}\n        - if: win\n          then:\n            - ${{ compiler('m2w64_c') }}\n            - ${{ compiler('m2w64_cxx') }}\n            - ${{ compiler('m2w64_fortran') }}\n            - ${{ stdlib('m2w64_c') }}\n        - cmake\n        - ninja\n        - pkg-config\n      host:\n        - libblas\n        - libcblas\n        - liblapack\n        - liblapacke\n        - libscotch\n        - libhwloc\n        - metis\n    tests:\n      - script:\n          content:\n            - if: unix\n              then: test -f $PREFIX/lib/libpastix${{ SHLIB_EXT }}\n            - if: win\n              then: if not exist %LIBRARY_PREFIX%\\pastix%SHLIB_EXT% exit 1\n\n  - package:\n      name: pastix\n      version: ${{ version }}\n    build:\n      noarch: python\n      skip:\n        - not linux64\n      script:\n        file: build_python.sh\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('fortran') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n        - pkg-config\n      host:\n        - python >=${{ python_min }}\n        - ${{ pin_subpackage('libpastix', upper_bound='x.x.x') }}\n      run:\n        - python >=${{ python_min }}\n        - numpy\n        - scipy\n        - ${{ pin_subpackage('libpastix', upper_bound='x.x.x') }}\n    tests:\n      - python:\n          imports:\n            - pastix\n            - spm\n      - script:\n          content: pip check\n        requirements:\n          run:\n            - pip\n            - python >=${{ python_min }}\n\nabout:\n  homepage: https://solverstack.gitlabpages.inria.fr/pastix/\n  summary: library for solving sparse real and complex linear systems of equations\n  license: LGPL-3.0-or-later\n  license_file: LICENSE\n  description: |\n    PaStiX (Parallel Sparse matriX package) is a scientific library that\n    provides a high performance parallel solver for very large sparse linear\n    systems based on direct methods. Numerical algorithms are implemented\n    in single or double precision (real or complex) using LLt, LDLt and LU\n    with static pivoting (for non symmetric matrices having a symmetric pattern).\n    This solver also provides some low-rank compression methods to reduce the\n    memory footprint and/or the time-to-solution.\n  documentation: https://solverstack.gitlabpages.inria.fr/pastix/\n  repository: https://gitlab.inria.fr/solverstack/pastix\n\nextra:\n  recipe-maintainers:\n    - looooo\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: 6.4.0\n  python_min: \"3.10\"\n\nrecipe:\n  name: pastix-split\n  version: ${{ version }}\n\nsource:\n  url: https://files.inria.fr/pastix/releases/v6/pastix-${{ version }}.tar.gz\n  sha256: 891d426188eed56c1075fb34d2d80132593a1536ffc05cf333567f68a4811e55\n  patches:\n    - patches/split_python.patch\n    - patches/fix_warning.patch\n\nbuild:\n  number: 9\n  skip:\n    - win\n    - osx\n\noutputs:\n  - package:\n      name: libpastix\n      version: ${{ version }}\n    build:\n      dynamic_linking:\n        missing_dso_allowlist:\n          - \"*/libcuda.so*\"\n      script:\n        file: build_libpastix.sh\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libpastix', upper_bound='x.x') }}\n      build:\n        - if: unix\n          then:\n            - ${{ compiler('c') }}\n            - ${{ compiler('cxx') }}\n            - ${{ compiler('fortran') }}\n            - ${{ stdlib('c') }}\n        - if: win\n          then:\n            - ${{ compiler('m2w64_c') }}\n            - ${{ compiler('m2w64_cxx') }}\n            - ${{ compiler('m2w64_fortran') }}\n            - ${{ stdlib('m2w64_c') }}\n        - cmake\n        - ninja\n        - pkg-config\n      host:\n        - libblas\n        - libcblas\n        - liblapack\n        - liblapacke\n        - libscotch\n        - libhwloc\n        - metis\n    tests:\n      - script:\n          content:\n            - if: unix\n              then: test -f $PREFIX/lib/libpastix${{ SHLIB_EXT }}\n            - if: win\n              then: if not exist %LIBRARY_PREFIX%\\pastix%SHLIB_EXT% exit 1\n\n  - package:\n      name: pastix\n      version: ${{ version }}\n    build:\n      noarch: python\n      skip:\n        - not linux64\n      script:\n        file: build_python.sh\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('fortran') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n        - pkg-config\n      host:\n        - python >=${{ python_min }}\n        - ${{ pin_subpackage('libpastix', upper_bound='x.x.x') }}\n      run:\n        - python >=${{ python_min }}\n        - numpy\n        - scipy\n        - ${{ pin_subpackage('libpastix', upper_bound='x.x.x') }}\n    tests:\n      - python:\n          imports:\n            - pastix\n            - spm\n      - script:\n          content: pip check\n        requirements:\n          run:\n            - pip\n            - python >=${{ python_min }}\n\nabout:\n  homepage: https://solverstack.gitlabpages.inria.fr/pastix/\n  summary: library for solving sparse real and complex linear systems of equations\n  license: LGPL-3.0-or-later\n  license_file: LICENSE\n  description: |\n    PaStiX (Parallel Sparse matriX package) is a scientific library that\n    provides a high performance parallel solver for very large sparse linear\n    systems based on direct methods. Numerical algorithms are implemented\n    in single or double precision (real or complex) using LLt, LDLt and LU\n    with static pivoting (for non symmetric matrices having a symmetric pattern).\n    This solver also provides some low-rank compression methods to reduce the\n    memory footprint and/or the time-to-solution.\n  documentation: https://solverstack.gitlabpages.inria.fr/pastix/\n  repository: https://gitlab.inria.fr/solverstack/pastix\n\nextra:\n  recipe-maintainers:\n    - looooo\n",
   "req": {
     "__set__": true,
     "elements": [
