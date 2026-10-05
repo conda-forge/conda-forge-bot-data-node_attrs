@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nnumpy:\n- '2'\npython_min:\n- '3.11'\n",
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -10,6 +10,7 @@
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
@@ -19,27 +20,30 @@
       "win": "azure"
     }
   },
-  "feedstock_hash": "f2b6728aea7ec676c3702262134b4cb1e0b3fd31",
-  "feedstock_hash_ts": 1789070455,
+  "feedstock_hash": "dc55eb5f35521834070af016394dc9192b4ac5fd",
+  "feedstock_hash_ts": 1791208270,
   "feedstock_name": "pymor",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "home": "https://pymor.org",
-      "license": "BSD-2-Clause",
+      "description": "pyMOR is a software library for building model order reduction applications with the Python programming language. All algorithms in pyMOR are formulated in terms of abstract interfaces, allowing generic implementations to work with different backends, from NumPy/SciPy to external partial differential equation solver packages.",
+      "home": "https://pymor.org/",
+      "license": "BSD-2-Clause AND BSD-3-Clause",
+      "license_family": "BSD-2-Clause AND BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "pyMOR is a software library for building model order reduction applications with the Python programming language. All algorithms in pyMOR are formulated in terms of abstract interfaces, allowing generic implementations to work with different backends, from NumPy/SciPy to external partial differential equation solver packages.\n"
+      "summary": "Library for building model order reduction applications with Python"
     },
     "build": {
-      "entry_points": [
-        "pymor-demo = pymor.scripts.pymor_demo:run",
-        "pymor-vis = pymor.scripts.pymor_vis:run"
-      ],
       "noarch": "python",
-      "number": "0",
-      "script": [
-        "PYTHON -m pip install . --no-deps --ignore-installed -vvv"
-      ]
+      "number": "1",
+      "python": {
+        "entry_points": [
+          "pymor-config = pymor.scripts.pymor_config:run",
+          "pymor-demo = pymor.scripts.pymor_demo:run",
+          "pymor-vis = pymor.scripts.pymor_vis:run"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -49,25 +53,72 @@
         "sdrave"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pymor-config = pymor.scripts.pymor_config:run",
+              "pymor-demo = pymor.scripts.pymor_demo:run",
+              "pymor-vis = pymor.scripts.pymor_vis:run"
+            ]
+          }
+        },
+        "name": "pymor",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "hatchling"
+          ],
+          "run": [
+            "python >=3.11",
+            "cyclopts",
+            "diskcache",
+            "matplotlib-base >=3.5.0",
+            "numpy >=1.20.3,!=1.25.0",
+            "packaging",
+            "pillow",
+            "pygments",
+            "qtpy >=2.3.1",
+            "scipy >=1.8,!=1.15.0,!=1.15.1,!=1.15.2",
+            "threadpoolctl"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pymor",
+                "pymordemos"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "version": "2026.1.1"
+      }
+    ],
     "package": {
       "name": "pymor",
       "version": "2026.1.1"
     },
     "requirements": {
       "host": [
-        "python 3.10",
+        "python 3.11.*",
         "pip",
-        "numpy",
-        "packaging",
-        "pytest-runner",
-        "wheel",
         "hatchling"
       ],
       "run": [
-        "python >=3.10",
+        "python >=3.11",
         "cyclopts",
         "diskcache",
-        "matplotlib-base",
+        "matplotlib-base >=3.5.0",
         "numpy >=1.20.3,!=1.25.0",
         "packaging",
         "pillow",
@@ -77,25 +128,10 @@
         "threadpoolctl"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "3c13192c1453b1db1797cc67ef9938042dca48e2bcae6c828c36e925c55b0da7",
       "url": "https://files.pythonhosted.org/packages/source/p/pymor/pymor-2026.1.1.tar.gz"
-    },
-    "test": {
-      "imports": [
-        "pymor",
-        "pymordemos"
-      ],
-      "requires": [
-        "python 3.10",
-        "hypothesis[numpy,pytest] ==6.56.3",
-        "packaging",
-        "pytest >=7.2.1",
-        "pytest-cov",
-        "pytest-datadir",
-        "pytest-notebook"
-      ]
     }
   },
   "linux_64_requirements": {
@@ -107,12 +143,8 @@
       "__set__": true,
       "elements": [
         "hatchling",
-        "numpy",
-        "packaging",
         "pip",
-        "pytest-runner",
-        "python",
-        "wheel"
+        "python"
       ]
     },
     "run": {
@@ -134,33 +166,30 @@
     "test": {
       "__set__": true,
       "elements": [
-        "hypothesis",
-        "packaging",
-        "pytest",
-        "pytest-cov",
-        "pytest-datadir",
-        "pytest-notebook",
-        "python"
+        "pip"
       ]
     }
   },
   "meta_yaml": {
     "about": {
-      "home": "https://pymor.org",
-      "license": "BSD-2-Clause",
+      "description": "pyMOR is a software library for building model order reduction applications with the Python programming language. All algorithms in pyMOR are formulated in terms of abstract interfaces, allowing generic implementations to work with different backends, from NumPy/SciPy to external partial differential equation solver packages.",
+      "home": "https://pymor.org/",
+      "license": "BSD-2-Clause AND BSD-3-Clause",
+      "license_family": "BSD-2-Clause AND BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "pyMOR is a software library for building model order reduction applications with the Python programming language. All algorithms in pyMOR are formulated in terms of abstract interfaces, allowing generic implementations to work with different backends, from NumPy/SciPy to external partial differential equation solver packages.\n"
+      "summary": "Library for building model order reduction applications with Python"
     },
     "build": {
-      "entry_points": [
-        "pymor-demo = pymor.scripts.pymor_demo:run",
-        "pymor-vis = pymor.scripts.pymor_vis:run"
-      ],
       "noarch": "python",
-      "number": "0",
-      "script": [
-        "PYTHON -m pip install . --no-deps --ignore-installed -vvv"
-      ]
+      "number": "1",
+      "python": {
+        "entry_points": [
+          "pymor-config = pymor.scripts.pymor_config:run",
+          "pymor-demo = pymor.scripts.pymor_demo:run",
+          "pymor-vis = pymor.scripts.pymor_vis:run"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -170,25 +199,72 @@
         "sdrave"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pymor-config = pymor.scripts.pymor_config:run",
+              "pymor-demo = pymor.scripts.pymor_demo:run",
+              "pymor-vis = pymor.scripts.pymor_vis:run"
+            ]
+          }
+        },
+        "name": "pymor",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "hatchling"
+          ],
+          "run": [
+            "python >=3.11",
+            "cyclopts",
+            "diskcache",
+            "matplotlib-base >=3.5.0",
+            "numpy >=1.20.3,!=1.25.0",
+            "packaging",
+            "pillow",
+            "pygments",
+            "qtpy >=2.3.1",
+            "scipy >=1.8,!=1.15.0,!=1.15.1,!=1.15.2",
+            "threadpoolctl"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pymor",
+                "pymordemos"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "version": "2026.1.1"
+      }
+    ],
     "package": {
       "name": "pymor",
       "version": "2026.1.1"
     },
     "requirements": {
       "host": [
-        "python 3.10",
+        "python 3.11.*",
         "pip",
-        "numpy",
-        "packaging",
-        "pytest-runner",
-        "wheel",
         "hatchling"
       ],
       "run": [
-        "python >=3.10",
+        "python >=3.11",
         "cyclopts",
         "diskcache",
-        "matplotlib-base",
+        "matplotlib-base >=3.5.0",
         "numpy >=1.20.3,!=1.25.0",
         "packaging",
         "pillow",
@@ -198,25 +274,10 @@
         "threadpoolctl"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "3c13192c1453b1db1797cc67ef9938042dca48e2bcae6c828c36e925c55b0da7",
       "url": "https://files.pythonhosted.org/packages/source/p/pymor/pymor-2026.1.1.tar.gz"
-    },
-    "test": {
-      "imports": [
-        "pymor",
-        "pymordemos"
-      ],
-      "requires": [
-        "python 3.10",
-        "hypothesis[numpy,pytest] ==6.56.3",
-        "packaging",
-        "pytest >=7.2.1",
-        "pytest-cov",
-        "pytest-datadir",
-        "pytest-notebook"
-      ]
     }
   },
   "name": "pymor",
@@ -233,7 +294,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pymor.json"
   },
-  "raw_meta_yaml": "{% set name = \"pymor\" %}\n{% set version = \"2026.1.1\" %}\n{% set python_min = \"3.10\" %}\n\npackage:\n  name: {{ name }}\n  version: {{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz\n  sha256: 3c13192c1453b1db1797cc67ef9938042dca48e2bcae6c828c36e925c55b0da7\n\nbuild:\n  number: 0\n  noarch: python\n  script:\n    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv\n  entry_points:\n    - pymor-demo = pymor.scripts.pymor_demo:run\n    - pymor-vis = pymor.scripts.pymor_vis:run\n\nrequirements:\n\n  host:\n    - python {{ python_min }}\n    - pip\n    - numpy\n    - packaging\n    - pytest-runner\n    - wheel\n    - hatchling\n\n  run:\n    - python >={{ python_min }}\n    - cyclopts\n    - diskcache\n    - matplotlib-base\n    - numpy >=1.20.3,!=1.25.0\n    - packaging\n    - pillow\n    - pygments\n    - qtpy >=2.3.1\n    - scipy >=1.8,!=1.15.0,!=1.15.1,!=1.15.2\n    - threadpoolctl\n\ntest:\n  requires:\n    - python {{ python_min }}\n    - hypothesis[numpy,pytest] ==6.56.3\n    - packaging\n    - pytest >=7.2.1\n    - pytest-cov\n    - pytest-datadir\n    - pytest-notebook\n\n  imports:\n    - pymor\n    - pymordemos\n\nabout:\n  home: https://pymor.org\n  license: BSD-2-Clause\n  license_file: LICENSE.txt\n  summary: >\n    pyMOR is a software library for building model order reduction applications with the Python programming language. All algorithms in pyMOR are formulated in terms of abstract interfaces, allowing generic implementations to work with different backends, from NumPy/SciPy to external partial differential equation solver\n    packages.\n\nextra:\n  recipe-maintainers:\n    - HenKlei\n    - lbalicki\n    - pmli\n    - sdrave\n",
+  "raw_meta_yaml": "context:\n  version: \"2026.1.1\"\n  # python_min: \"3.10\"   # 3.10 is older the current conda-forge min\n\npackage:\n  name: pymor\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/p/pymor/pymor-${{ version }}.tar.gz\n  sha256: 3c13192c1453b1db1797cc67ef9938042dca48e2bcae6c828c36e925c55b0da7\n\nbuild:\n  number: 1\n  noarch: python\n  script: \"${{ PYTHON }} -m pip install . -vv\"\n  python:\n    entry_points:\n      - pymor-config = pymor.scripts.pymor_config:run\n      - pymor-demo = pymor.scripts.pymor_demo:run\n      - pymor-vis = pymor.scripts.pymor_vis:run\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - hatchling\n\n  run:\n    - python >=${{ python_min }}\n    - cyclopts\n    - diskcache\n    - matplotlib-base >=3.5.0\n    - numpy >=1.20.3,!=1.25.0\n    - packaging\n    - pillow\n    - pygments\n    - qtpy >=2.3.1\n    - scipy >=1.8,!=1.15.0,!=1.15.1,!=1.15.2\n    - threadpoolctl\n\ntests:\n  - python:\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n      imports:\n        - pymor\n        - pymordemos\n\nabout:\n  homepage: https://pymor.org\n  license: \"BSD-2-Clause AND BSD-3-Clause\"\n  license_file: LICENSE.txt\n  summary: \"Library for building model order reduction applications with Python\"\n  description: >\n    pyMOR is a software library for building model order reduction applications with the Python programming language. All algorithms in pyMOR are formulated in terms of abstract interfaces, allowing generic implementations to work with different backends, from NumPy/SciPy to external partial differential equation solver\n    packages.\n\nextra:\n  recipe-maintainers:\n    - HenKlei\n    - lbalicki\n    - pmli\n    - sdrave\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -246,12 +307,10 @@
       "pillow",
       "pip",
       "pygments",
-      "pytest-runner",
       "python",
       "qtpy",
       "scipy",
-      "threadpoolctl",
-      "wheel"
+      "threadpoolctl"
     ]
   },
   "requirements": {
@@ -263,12 +322,8 @@
       "__set__": true,
       "elements": [
         "hatchling",
-        "numpy",
-        "packaging",
         "pip",
-        "pytest-runner",
-        "python",
-        "wheel"
+        "python"
       ]
     },
     "run": {
@@ -290,13 +345,7 @@
     "test": {
       "__set__": true,
       "elements": [
-        "hypothesis",
-        "packaging",
-        "pytest",
-        "pytest-cov",
-        "pytest-datadir",
-        "pytest-notebook",
-        "python"
+        "pip"
       ]
     }
   },
@@ -310,12 +359,8 @@
       "__set__": true,
       "elements": [
         "hatchling",
-        "numpy",
-        "packaging",
         "pip",
-        "pytest-runner",
-        "python 3.10",
-        "wheel"
+        "python 3.11.*"
       ]
     },
     "run": {
@@ -323,12 +368,12 @@
       "elements": [
         "cyclopts",
         "diskcache",
-        "matplotlib-base",
+        "matplotlib-base >=3.5.0",
         "numpy >=1.20.3,!=1.25.0",
         "packaging",
         "pillow",
         "pygments",
-        "python >=3.10",
+        "python >=3.11",
         "qtpy >=2.3.1",
         "scipy >=1.8,!=1.15.0,!=1.15.1,!=1.15.2",
         "threadpoolctl"
@@ -337,13 +382,7 @@
     "test": {
       "__set__": true,
       "elements": [
-        "hypothesis[numpy,pytest] ==6.56.3",
-        "packaging",
-        "pytest >=7.2.1",
-        "pytest-cov",
-        "pytest-datadir",
-        "pytest-notebook",
-        "python 3.10"
+        "pip"
       ]
     }
   },
