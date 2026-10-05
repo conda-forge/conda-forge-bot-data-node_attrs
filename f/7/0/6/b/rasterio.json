@@ -1,34 +1,23 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.12.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibgdal_core:\n- '3.13'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\nproj:\n- '9.8'\npython:\n- 3.12.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_python3.12.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibgdal_core:\n- '3.13'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\nproj:\n- '9.8'\npython:\n- 3.12.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
   "ci_support_migrations": {
-    "libgdal_core313": {
-      "migration_number": 1,
-      "migrator_ts": 1778307238.8233724
-    },
-    "python314": {
-      "migration_number": 1,
-      "migrator_ts": 1724712607
-    },
     "python314t": {
       "migration_number": 1,
       "migrator_ts": 1755739493
     }
   },
   "conda-forge.yml": {
-    "azure": {
-      "store_build_artifacts": true
-    },
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
@@ -38,26 +27,35 @@
       "linux_aarch64": "default",
       "linux_ppc64le": "default",
       "osx": "azure",
+      "osx_arm64": "default",
       "win": "azure"
     },
-    "test": "native_and_emulated"
+    "test": "native_and_emulated",
+    "workflow_settings": {
+      "store_build_artifacts": true
+    }
   },
-  "feedstock_hash": "916a3919be4514e377b4aefb412323b79cc2d9f7",
-  "feedstock_hash_ts": 1786313474,
+  "feedstock_hash": "d5436289580508c82fd920ff38dd7f7f2b25cf4a",
+  "feedstock_hash_ts": 1791215090,
   "feedstock_name": "rasterio",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "home": "https://github.com/rasterio/rasterio",
+      "doc_url": "https://rasterio.readthedocs.io/",
+      "home": "https://pypi.org/project/rasterio/",
       "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "Rasterio reads and writes geospatial raster datasets"
+      "summary": "Fast and direct raster I/O for use with NumPy"
     },
     "build": {
-      "entry_points": [
-        "rio = rasterio.rio.main:main_group"
-      ],
-      "number": "1"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "rio = rasterio.rio.main:main_group"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -68,76 +66,406 @@
         "akrherz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      }
+    ],
     "package": {
       "name": "rasterio",
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "c_stdlib_stub"
       ],
       "host": [
         "python",
-        "pip",
-        "cython",
-        "numpy >=1.24",
         "libgdal-core",
         "proj",
-        "setuptools"
+        "setuptools >=77.0.3",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "pip"
       ],
       "run": [
         "python",
-        "setuptools >=0.9.8",
         "libgdal-core",
-        "affine",
-        "attrs",
-        "certifi",
-        "click >=4,!=8.2.*",
         "cligj >=0.5",
         "snuggs >=1.4.1",
         "click-plugins",
-        "proj"
+        "proj",
+        "affine",
+        "attrs",
+        "certifi",
+        "click >=4.0,!=8.2.*",
+        "numpy >=2",
+        "pyparsing >=3.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "eb8e7062fc0bcdef635e43fd1632b15aa983b71476bec1e1f75d618326fb9e4a",
-      "url": "https://github.com/rasterio/rasterio/archive/1.5.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "rio --help",
-        "rio info RECIPE_DIR/test_data/test.tif",
-        "$PYTHON -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_merge_out_of_range_nodata or test_rio_env_no_credentials)\" tests",
-        "pip check"
-      ],
-      "files": [
-        "test_data/test.tif"
-      ],
-      "imports": [
-        "rasterio"
-      ],
-      "requires": [
-        "pip",
-        "pytest >=2.8.2,<8",
-        "pytest-cov >=2.2.0",
-        "ipython >=2.0",
-        "aiohttp",
-        "boto3 >=1.2.4",
-        "fsspec >=2025.9.0",
-        "s3fs >=2025.9.0",
-        "hypothesis",
-        "libgdal-netcdf",
-        "matplotlib-base",
-        "packaging",
-        "requests",
-        "shapely"
-      ],
-      "source_files": [
-        "tests"
-      ]
+      "sha256": "a3342f6a5102d8bb07d831b2390e217a2fd84afc49efbfe3e7cf36801de99c63",
+      "url": "https://github.com/rasterio/rasterio/archive/refs/tags/1.5.2.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -171,9 +499,10 @@
         "click-plugins",
         "cligj",
         "libgdal-core",
+        "numpy",
         "proj",
+        "pyparsing",
         "python",
-        "setuptools",
         "snuggs"
       ]
     },
@@ -182,15 +511,16 @@
       "elements": [
         "aiohttp",
         "boto3",
+        "ca-certificates",
         "fsspec",
         "hypothesis",
-        "ipython",
         "libgdal-netcdf",
         "matplotlib-base",
         "packaging",
         "pip",
         "pytest",
         "pytest-cov",
+        "pytest-randomly",
         "requests",
         "s3fs",
         "shapely"
@@ -199,16 +529,21 @@
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "home": "https://github.com/rasterio/rasterio",
+      "doc_url": "https://rasterio.readthedocs.io/",
+      "home": "https://pypi.org/project/rasterio/",
       "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "Rasterio reads and writes geospatial raster datasets"
+      "summary": "Fast and direct raster I/O for use with NumPy"
     },
     "build": {
-      "entry_points": [
-        "rio = rasterio.rio.main:main_group"
-      ],
-      "number": "1"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "rio = rasterio.rio.main:main_group"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -219,76 +554,426 @@
         "akrherz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      }
+    ],
     "package": {
       "name": "rasterio",
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_linux-aarch64",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
         "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "c_stdlib_stub"
       ],
       "host": [
         "python",
-        "pip",
-        "cython",
-        "numpy >=1.24",
         "libgdal-core",
         "proj",
-        "setuptools"
+        "setuptools >=77.0.3",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "pip"
       ],
       "run": [
         "python",
-        "setuptools >=0.9.8",
         "libgdal-core",
-        "affine",
-        "attrs",
-        "certifi",
-        "click >=4,!=8.2.*",
         "cligj >=0.5",
         "snuggs >=1.4.1",
         "click-plugins",
-        "proj"
+        "proj",
+        "affine",
+        "attrs",
+        "certifi",
+        "click >=4.0,!=8.2.*",
+        "numpy >=2",
+        "pyparsing >=3.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "eb8e7062fc0bcdef635e43fd1632b15aa983b71476bec1e1f75d618326fb9e4a",
-      "url": "https://github.com/rasterio/rasterio/archive/1.5.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "rio --help",
-        "rio info RECIPE_DIR/test_data/test.tif",
-        "$PYTHON -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_merge_out_of_range_nodata or test_rio_env_no_credentials)\" tests",
-        "pip check"
-      ],
-      "files": [
-        "test_data/test.tif"
-      ],
-      "imports": [
-        "rasterio"
-      ],
-      "requires": [
-        "pip",
-        "pytest >=2.8.2,<8",
-        "pytest-cov >=2.2.0",
-        "ipython >=2.0",
-        "aiohttp",
-        "boto3 >=1.2.4",
-        "fsspec >=2025.9.0",
-        "s3fs >=2025.9.0",
-        "hypothesis",
-        "libgdal-netcdf",
-        "matplotlib-base",
-        "packaging",
-        "requests",
-        "shapely"
-      ],
-      "source_files": [
-        "tests"
-      ]
+      "sha256": "a3342f6a5102d8bb07d831b2390e217a2fd84afc49efbfe3e7cf36801de99c63",
+      "url": "https://github.com/rasterio/rasterio/archive/refs/tags/1.5.2.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -297,7 +982,11 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cross-python_linux-aarch64",
+        "cxx_compiler_stub",
+        "cython",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -322,9 +1011,10 @@
         "click-plugins",
         "cligj",
         "libgdal-core",
+        "numpy",
         "proj",
+        "pyparsing",
         "python",
-        "setuptools",
         "snuggs"
       ]
     },
@@ -333,15 +1023,16 @@
       "elements": [
         "aiohttp",
         "boto3",
+        "ca-certificates",
         "fsspec",
         "hypothesis",
-        "ipython",
         "libgdal-netcdf",
         "matplotlib-base",
         "packaging",
         "pip",
         "pytest",
         "pytest-cov",
+        "pytest-randomly",
         "requests",
         "s3fs",
         "shapely"
@@ -350,16 +1041,21 @@
   },
   "linux_ppc64le_meta_yaml": {
     "about": {
-      "home": "https://github.com/rasterio/rasterio",
+      "doc_url": "https://rasterio.readthedocs.io/",
+      "home": "https://pypi.org/project/rasterio/",
       "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "Rasterio reads and writes geospatial raster datasets"
+      "summary": "Fast and direct raster I/O for use with NumPy"
     },
     "build": {
-      "entry_points": [
-        "rio = rasterio.rio.main:main_group"
-      ],
-      "number": "1"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "rio = rasterio.rio.main:main_group"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -370,76 +1066,426 @@
         "akrherz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      }
+    ],
     "package": {
       "name": "rasterio",
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_linux-ppc64le",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
         "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "c_stdlib_stub"
       ],
       "host": [
         "python",
-        "pip",
-        "cython",
-        "numpy >=1.24",
         "libgdal-core",
         "proj",
-        "setuptools"
+        "setuptools >=77.0.3",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "pip"
       ],
       "run": [
         "python",
-        "setuptools >=0.9.8",
         "libgdal-core",
-        "affine",
-        "attrs",
-        "certifi",
-        "click >=4,!=8.2.*",
         "cligj >=0.5",
         "snuggs >=1.4.1",
         "click-plugins",
-        "proj"
+        "proj",
+        "affine",
+        "attrs",
+        "certifi",
+        "click >=4.0,!=8.2.*",
+        "numpy >=2",
+        "pyparsing >=3.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "eb8e7062fc0bcdef635e43fd1632b15aa983b71476bec1e1f75d618326fb9e4a",
-      "url": "https://github.com/rasterio/rasterio/archive/1.5.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "rio --help",
-        "rio info RECIPE_DIR/test_data/test.tif",
-        "$PYTHON -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_merge_out_of_range_nodata or test_rio_env_no_credentials)\" tests",
-        "pip check"
-      ],
-      "files": [
-        "test_data/test.tif"
-      ],
-      "imports": [
-        "rasterio"
-      ],
-      "requires": [
-        "pip",
-        "pytest >=2.8.2,<8",
-        "pytest-cov >=2.2.0",
-        "ipython >=2.0",
-        "aiohttp",
-        "boto3 >=1.2.4",
-        "fsspec >=2025.9.0",
-        "s3fs >=2025.9.0",
-        "hypothesis",
-        "libgdal-netcdf",
-        "matplotlib-base",
-        "packaging",
-        "requests",
-        "shapely"
-      ],
-      "source_files": [
-        "tests"
-      ]
+      "sha256": "a3342f6a5102d8bb07d831b2390e217a2fd84afc49efbfe3e7cf36801de99c63",
+      "url": "https://github.com/rasterio/rasterio/archive/refs/tags/1.5.2.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
@@ -448,7 +1494,11 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cross-python_linux-ppc64le",
+        "cxx_compiler_stub",
+        "cython",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -473,9 +1523,10 @@
         "click-plugins",
         "cligj",
         "libgdal-core",
+        "numpy",
         "proj",
+        "pyparsing",
         "python",
-        "setuptools",
         "snuggs"
       ]
     },
@@ -484,15 +1535,16 @@
       "elements": [
         "aiohttp",
         "boto3",
+        "ca-certificates",
         "fsspec",
         "hypothesis",
-        "ipython",
         "libgdal-netcdf",
         "matplotlib-base",
         "packaging",
         "pip",
         "pytest",
         "pytest-cov",
+        "pytest-randomly",
         "requests",
         "s3fs",
         "shapely"
@@ -501,16 +1553,21 @@
   },
   "meta_yaml": {
     "about": {
-      "home": "https://github.com/rasterio/rasterio",
+      "doc_url": "https://rasterio.readthedocs.io/",
+      "home": "https://pypi.org/project/rasterio/",
       "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "Rasterio reads and writes geospatial raster datasets"
+      "summary": "Fast and direct raster I/O for use with NumPy"
     },
     "build": {
-      "entry_points": [
-        "rio = rasterio.rio.main:main_group"
-      ],
-      "number": "1"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "rio = rasterio.rio.main:main_group"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -521,93 +1578,2314 @@
         "akrherz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      }
+    ],
     "package": {
       "name": "rasterio",
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
+        "cxx_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "python",
+        "cross-python_linux-aarch64",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64"
       ],
       "host": [
         "python",
-        "pip",
-        "cython",
-        "numpy >=1.24",
         "libgdal-core",
         "proj",
-        "setuptools"
+        "setuptools >=77.0.3",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "pip"
       ],
       "run": [
         "python",
-        "setuptools >=0.9.8",
         "libgdal-core",
-        "affine",
-        "attrs",
-        "certifi",
-        "click >=4,!=8.2.*",
         "cligj >=0.5",
         "snuggs >=1.4.1",
         "click-plugins",
-        "proj"
+        "proj",
+        "affine",
+        "attrs",
+        "certifi",
+        "click >=4.0,!=8.2.*",
+        "numpy >=2",
+        "pyparsing >=3.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "eb8e7062fc0bcdef635e43fd1632b15aa983b71476bec1e1f75d618326fb9e4a",
-      "url": "https://github.com/rasterio/rasterio/archive/1.5.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "rio --help",
-        "rio info RECIPE_DIR/test_data/test.tif",
-        "$PYTHON -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_merge_out_of_range_nodata or test_rio_env_no_credentials)\" tests",
-        "pip check",
-        "rio info RECIPE_DIR\\\\test_data\\\\test.tif",
-        "python -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_search_gdal_data_debian or test_decimated_no_use_overview or test_copyfiles_same_dataset_another_name or test_merge_out_of_range_nodata or test_rio_env_no_credentials)\" tests"
-      ],
-      "files": [
-        "test_data/test.tif"
-      ],
-      "imports": [
-        "rasterio"
-      ],
-      "requires": [
-        "pip",
-        "pytest >=2.8.2,<8",
-        "pytest-cov >=2.2.0",
-        "ipython >=2.0",
-        "aiohttp",
-        "boto3 >=1.2.4",
-        "fsspec >=2025.9.0",
-        "s3fs >=2025.9.0",
-        "hypothesis",
-        "libgdal-netcdf",
-        "matplotlib-base",
-        "packaging",
-        "requests",
-        "shapely"
-      ],
-      "source_files": [
-        "tests"
-      ]
+      "sha256": "a3342f6a5102d8bb07d831b2390e217a2fd84afc49efbfe3e7cf36801de99c63",
+      "url": "https://github.com/rasterio/rasterio/archive/refs/tags/1.5.2.tar.gz"
     }
   },
   "name": "rasterio",
   "osx_64_meta_yaml": {
     "about": {
-      "home": "https://github.com/rasterio/rasterio",
+      "doc_url": "https://rasterio.readthedocs.io/",
+      "home": "https://pypi.org/project/rasterio/",
       "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "Rasterio reads and writes geospatial raster datasets"
+      "summary": "Fast and direct raster I/O for use with NumPy"
     },
     "build": {
-      "entry_points": [
-        "rio = rasterio.rio.main:main_group"
-      ],
-      "number": "1"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "rio = rasterio.rio.main:main_group"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -618,76 +3896,426 @@
         "akrherz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      }
+    ],
     "package": {
       "name": "rasterio",
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_osx-64",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
         "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "c_stdlib_stub"
       ],
       "host": [
         "python",
-        "pip",
-        "cython",
-        "numpy >=1.24",
         "libgdal-core",
         "proj",
-        "setuptools"
+        "setuptools >=77.0.3",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "pip"
       ],
       "run": [
         "python",
-        "setuptools >=0.9.8",
         "libgdal-core",
-        "affine",
-        "attrs",
-        "certifi",
-        "click >=4,!=8.2.*",
         "cligj >=0.5",
         "snuggs >=1.4.1",
         "click-plugins",
-        "proj"
+        "proj",
+        "affine",
+        "attrs",
+        "certifi",
+        "click >=4.0,!=8.2.*",
+        "numpy >=2",
+        "pyparsing >=3.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "eb8e7062fc0bcdef635e43fd1632b15aa983b71476bec1e1f75d618326fb9e4a",
-      "url": "https://github.com/rasterio/rasterio/archive/1.5.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "rio --help",
-        "rio info RECIPE_DIR/test_data/test.tif",
-        "$PYTHON -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_merge_out_of_range_nodata or test_rio_env_no_credentials)\" tests",
-        "pip check"
-      ],
-      "files": [
-        "test_data/test.tif"
-      ],
-      "imports": [
-        "rasterio"
-      ],
-      "requires": [
-        "pip",
-        "pytest >=2.8.2,<8",
-        "pytest-cov >=2.2.0",
-        "ipython >=2.0",
-        "aiohttp",
-        "boto3 >=1.2.4",
-        "fsspec >=2025.9.0",
-        "s3fs >=2025.9.0",
-        "hypothesis",
-        "libgdal-netcdf",
-        "matplotlib-base",
-        "packaging",
-        "requests",
-        "shapely"
-      ],
-      "source_files": [
-        "tests"
-      ]
+      "sha256": "a3342f6a5102d8bb07d831b2390e217a2fd84afc49efbfe3e7cf36801de99c63",
+      "url": "https://github.com/rasterio/rasterio/archive/refs/tags/1.5.2.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -696,7 +4324,11 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cross-python_osx-64",
+        "cxx_compiler_stub",
+        "cython",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -721,9 +4353,10 @@
         "click-plugins",
         "cligj",
         "libgdal-core",
+        "numpy",
         "proj",
+        "pyparsing",
         "python",
-        "setuptools",
         "snuggs"
       ]
     },
@@ -732,15 +4365,16 @@
       "elements": [
         "aiohttp",
         "boto3",
+        "ca-certificates",
         "fsspec",
         "hypothesis",
-        "ipython",
         "libgdal-netcdf",
         "matplotlib-base",
         "packaging",
         "pip",
         "pytest",
         "pytest-cov",
+        "pytest-randomly",
         "requests",
         "s3fs",
         "shapely"
@@ -749,16 +4383,21 @@
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "home": "https://github.com/rasterio/rasterio",
+      "doc_url": "https://rasterio.readthedocs.io/",
+      "home": "https://pypi.org/project/rasterio/",
       "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "Rasterio reads and writes geospatial raster datasets"
+      "summary": "Fast and direct raster I/O for use with NumPy"
     },
     "build": {
-      "entry_points": [
-        "rio = rasterio.rio.main:main_group"
-      ],
-      "number": "1"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "rio = rasterio.rio.main:main_group"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -769,76 +4408,426 @@
         "akrherz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      }
+    ],
     "package": {
       "name": "rasterio",
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_osx-arm64",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
         "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "c_stdlib_stub"
       ],
       "host": [
         "python",
-        "pip",
-        "cython",
-        "numpy >=1.24",
         "libgdal-core",
         "proj",
-        "setuptools"
+        "setuptools >=77.0.3",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "pip"
       ],
       "run": [
         "python",
-        "setuptools >=0.9.8",
         "libgdal-core",
-        "affine",
-        "attrs",
-        "certifi",
-        "click >=4,!=8.2.*",
         "cligj >=0.5",
         "snuggs >=1.4.1",
         "click-plugins",
-        "proj"
+        "proj",
+        "affine",
+        "attrs",
+        "certifi",
+        "click >=4.0,!=8.2.*",
+        "numpy >=2",
+        "pyparsing >=3.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "eb8e7062fc0bcdef635e43fd1632b15aa983b71476bec1e1f75d618326fb9e4a",
-      "url": "https://github.com/rasterio/rasterio/archive/1.5.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "rio --help",
-        "rio info RECIPE_DIR/test_data/test.tif",
-        "$PYTHON -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_merge_out_of_range_nodata or test_rio_env_no_credentials)\" tests",
-        "pip check"
-      ],
-      "files": [
-        "test_data/test.tif"
-      ],
-      "imports": [
-        "rasterio"
-      ],
-      "requires": [
-        "pip",
-        "pytest >=2.8.2,<8",
-        "pytest-cov >=2.2.0",
-        "ipython >=2.0",
-        "aiohttp",
-        "boto3 >=1.2.4",
-        "fsspec >=2025.9.0",
-        "s3fs >=2025.9.0",
-        "hypothesis",
-        "libgdal-netcdf",
-        "matplotlib-base",
-        "packaging",
-        "requests",
-        "shapely"
-      ],
-      "source_files": [
-        "tests"
-      ]
+      "sha256": "a3342f6a5102d8bb07d831b2390e217a2fd84afc49efbfe3e7cf36801de99c63",
+      "url": "https://github.com/rasterio/rasterio/archive/refs/tags/1.5.2.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -847,7 +4836,11 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cross-python_osx-arm64",
+        "cxx_compiler_stub",
+        "cython",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -872,9 +4865,10 @@
         "click-plugins",
         "cligj",
         "libgdal-core",
+        "numpy",
         "proj",
+        "pyparsing",
         "python",
-        "setuptools",
         "snuggs"
       ]
     },
@@ -883,15 +4877,16 @@
       "elements": [
         "aiohttp",
         "boto3",
+        "ca-certificates",
         "fsspec",
         "hypothesis",
-        "ipython",
         "libgdal-netcdf",
         "matplotlib-base",
         "packaging",
         "pip",
         "pytest",
         "pytest-cov",
+        "pytest-randomly",
         "requests",
         "s3fs",
         "shapely"
@@ -916,7 +4911,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/rasterio.json"
   },
-  "raw_meta_yaml": "{% set tests_to_skip = \"test_merge_out_of_range_nodata or test_rio_env_no_credentials\" %}\n{% set version = \"1.5.1\" %}\n\npackage:\n  name: rasterio\n  version: {{ version }}\n\nsource:\n  url: https://github.com/rasterio/rasterio/archive/{{ version }}.tar.gz\n  sha256: eb8e7062fc0bcdef635e43fd1632b15aa983b71476bec1e1f75d618326fb9e4a\n\nbuild:\n  number: 1\n  skip: true  # [py<312]\n  entry_points:\n    - rio = rasterio.rio.main:main_group\n\nrequirements:\n  build:\n    - python                                 # [build_platform != target_platform]\n    - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n    - cython                                 # [build_platform != target_platform]\n    - numpy >=1.24                           # [build_platform != target_platform]\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n  host:\n    - python\n    - pip\n    - cython\n    - numpy >=1.24\n    - libgdal-core\n    - proj\n    - setuptools\n  run:\n    - python\n    - setuptools >=0.9.8\n    - libgdal-core\n    - affine\n    - attrs\n    - certifi\n    - click >=4,!=8.2.* # https://github.com/pallets/click/issues/2939\n    - cligj >=0.5\n    - snuggs >=1.4.1\n    - click-plugins\n    - proj\n\ntest:\n  source_files:\n    - tests\n  requires:\n    - pip\n    # awaiting upstream pytest=8 support\n    - pytest >=2.8.2,<8\n    - pytest-cov >=2.2.0\n    - ipython >=2.0\n    - aiohttp\n    - boto3 >=1.2.4\n    - fsspec >=2025.9.0\n    - s3fs >=2025.9.0\n    - hypothesis\n    - libgdal-netcdf\n    - matplotlib-base\n    - packaging\n    - requests\n    - shapely\n  files:\n    - test_data/test.tif\n  imports:\n    - rasterio\n  commands:\n    - rio --help\n    - rio info {{ RECIPE_DIR }}/test_data/test.tif  # [not win]\n    - rio info {{ RECIPE_DIR }}\\\\test_data\\\\test.tif  # [win]\n    # skip linux tests for cross-compiled targets\n    # xylar 2022-Jul-6: disabling test_search_gdal_data_debian and test_decimated_no_use_overview under win.\n    #                   test_decimated_no_use_overview fails because of trying to overwrite an existing file.\n    # Tests skipped on all platforms:\n    # - test_merge_out_of_range_nodata: unknown numpy 2 segfault.\n    # - test_rio_env_no_credentials: writes an indented AWS credentials file, which recent\n    #   botocore rejects with InvalidConfigError instead of reaching S3.\n    {% set tests_to_skip = \"test_merge_out_of_range_nodata or test_rio_env_no_credentials\" %}\n    - $PYTHON -m pytest -v -m \"not wheel\" -rxXs -k \"not ({{ tests_to_skip }})\" tests  # [linux and build_platform == target_platform]\n    - $PYTHON -m pytest -v -m \"not wheel\" -rxXs -k \"not ({{ tests_to_skip }})\" tests  # [osx]\n    - python -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_search_gdal_data_debian or test_decimated_no_use_overview or test_copyfiles_same_dataset_another_name or {{ tests_to_skip }})\" tests  # [win]\n    - pip check\nabout:\n  home: https://github.com/rasterio/rasterio\n  license: BSD-3-Clause\n  license_file: LICENSE.txt\n  summary: Rasterio reads and writes geospatial raster datasets\n\nextra:\n  recipe-maintainers:\n    - weiji14\n    - ocefpaf\n    - ceholden\n    - snowman2\n    - akrherz\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"1.5.2\"\n\npackage:\n  name: rasterio\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/rasterio/rasterio/archive/refs/tags/${{ version }}.tar.gz\n  sha256: a3342f6a5102d8bb07d831b2390e217a2fd84afc49efbfe3e7cf36801de99c63\n\nbuild:\n  number: 0\n  skip: match(python, \"<3.12\")\n  script: ${{ PYTHON }} -m pip install . -vv\n  python:\n    entry_points:\n      - rio = rasterio.rio.main:main_group\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - cython >=3.1,<=3.3\n        - numpy >=2,<3\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ stdlib(\"c\") }}\n  host:\n    - python\n    - libgdal-core\n    - proj\n    - setuptools >=77.0.3\n    - cython >=3.1,<=3.3\n    - numpy >=2,<3\n    - pip\n  run:\n    - python\n    - libgdal-core\n    - cligj >=0.5\n    - snuggs >=1.4.1\n    - click-plugins\n    - proj\n    - affine\n    - attrs\n    - certifi\n    - click >=4.0,!=8.2.*\n    - numpy >=2\n    - pyparsing >=3.0\n\ntests:\n  - python:\n      imports:\n        - rasterio\n      pip_check: true\n  - files:\n      recipe:\n        - test_data\n    script:\n      - rio --help\n      - rio info test_data/test.tif\n  - files:\n      recipe:\n        - run_test.py\n      source:\n       - tests/\n    requirements:\n      run:\n        - pytest\n        - pytest-cov >=2.2.0\n        - aiohttp\n        - boto3 >=1.2.4\n        - fsspec >=2025.9.0\n        - s3fs >=2025.9.0\n        - hypothesis\n        - libgdal-netcdf\n        - matplotlib-base\n        - packaging\n        - requests\n        - shapely\n        - ca-certificates\n        - pytest-randomly ==3.10.1\n    script:\n      - python -m pytest -v -m \"not wheel\" -rxXs tests/\n\nabout:\n  summary: Fast and direct raster I/O for use with NumPy\n  license: BSD-3-Clause\n  license_file: LICENSE.txt\n  homepage: https://pypi.org/project/rasterio/\n  documentation: https://rasterio.readthedocs.io/\n\nextra:\n  recipe-maintainers:\n    - weiji14\n    - ocefpaf\n    - ceholden\n    - snowman2\n    - akrherz\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -928,12 +4923,18 @@
       "click",
       "click-plugins",
       "cligj",
+      "cross-python_linux-aarch64",
+      "cross-python_linux-ppc64le",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
+      "cross-python_win-64",
       "cxx_compiler_stub",
       "cython",
       "libgdal-core",
       "numpy",
       "pip",
       "proj",
+      "pyparsing",
       "python",
       "setuptools",
       "snuggs"
@@ -945,7 +4946,15 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "cxx_compiler_stub",
+        "cython",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -953,6 +4962,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "cxx_compiler_stub",
         "cython",
         "libgdal-core",
@@ -974,11 +4984,13 @@
         "click",
         "click-plugins",
         "cligj",
+        "cross-python",
         "cxx_compiler_stub",
         "libgdal-core",
+        "numpy",
         "proj",
+        "pyparsing",
         "python",
-        "setuptools",
         "snuggs"
       ]
     },
@@ -987,15 +4999,16 @@
       "elements": [
         "aiohttp",
         "boto3",
+        "ca-certificates",
         "fsspec",
         "hypothesis",
-        "ipython",
         "libgdal-netcdf",
         "matplotlib-base",
         "packaging",
         "pip",
         "pytest",
         "pytest-cov",
+        "pytest-randomly",
         "requests",
         "s3fs",
         "shapely"
@@ -1009,19 +5022,27 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "cxx_compiler_stub",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "python"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "cython",
+        "cython >=3.1,<=3.3",
         "libgdal-core",
-        "numpy >=1.24",
+        "numpy >=2,<3",
         "pip",
         "proj",
         "python",
-        "setuptools"
+        "setuptools >=77.0.3"
       ]
     },
     "run": {
@@ -1030,13 +5051,14 @@
         "affine",
         "attrs",
         "certifi",
-        "click >=4,!=8.2.*",
+        "click >=4.0,!=8.2.*",
         "click-plugins",
         "cligj >=0.5",
         "libgdal-core",
+        "numpy >=2",
         "proj",
+        "pyparsing >=3.0",
         "python",
-        "setuptools >=0.9.8",
         "snuggs >=1.4.1"
       ]
     },
@@ -1045,38 +5067,44 @@
       "elements": [
         "aiohttp",
         "boto3 >=1.2.4",
+        "ca-certificates",
         "fsspec >=2025.9.0",
         "hypothesis",
-        "ipython >=2.0",
         "libgdal-netcdf",
         "matplotlib-base",
         "packaging",
         "pip",
-        "pytest >=2.8.2,<8",
+        "pytest",
         "pytest-cov >=2.2.0",
+        "pytest-randomly ==3.10.1",
         "requests",
         "s3fs >=2025.9.0",
         "shapely"
       ]
     }
   },
-  "url": "https://github.com/rasterio/rasterio/archive/1.5.1.tar.gz",
-  "version": "1.5.1",
+  "url": "https://github.com/rasterio/rasterio/archive/refs/tags/1.5.2.tar.gz",
+  "version": "1.5.2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/rasterio.json"
   },
   "win_64_meta_yaml": {
     "about": {
-      "home": "https://github.com/rasterio/rasterio",
+      "doc_url": "https://rasterio.readthedocs.io/",
+      "home": "https://pypi.org/project/rasterio/",
       "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE.txt",
-      "summary": "Rasterio reads and writes geospatial raster datasets"
+      "summary": "Fast and direct raster I/O for use with NumPy"
     },
     "build": {
-      "entry_points": [
-        "rio = rasterio.rio.main:main_group"
-      ],
-      "number": "1"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "rio = rasterio.rio.main:main_group"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1087,76 +5115,426 @@
         "akrherz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "rio = rasterio.rio.main:main_group"
+            ]
+          }
+        },
+        "name": "rasterio",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "libgdal-core",
+            "proj",
+            "setuptools >=77.0.3",
+            "cython >=3.1,<=3.3",
+            "numpy >=2,<3",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "libgdal-core",
+            "cligj >=0.5",
+            "snuggs >=1.4.1",
+            "click-plugins",
+            "proj",
+            "affine",
+            "attrs",
+            "certifi",
+            "click >=4.0,!=8.2.*",
+            "numpy >=2",
+            "pyparsing >=3.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "rasterio"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_data"
+              ]
+            },
+            "script": [
+              "rio --help",
+              "rio info test_data/test.tif"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "pytest-cov >=2.2.0",
+                "aiohttp",
+                "boto3 >=1.2.4",
+                "fsspec >=2025.9.0",
+                "s3fs >=2025.9.0",
+                "hypothesis",
+                "libgdal-netcdf",
+                "matplotlib-base",
+                "packaging",
+                "requests",
+                "shapely",
+                "ca-certificates",
+                "pytest-randomly ==3.10.1"
+              ]
+            },
+            "script": "python -m pytest -v -m \"not wheel\" -rxXs tests/"
+          }
+        ],
+        "version": "1.5.2"
+      }
+    ],
     "package": {
       "name": "rasterio",
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_win-64",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
         "c_compiler_stub",
-        "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "c_stdlib_stub"
       ],
       "host": [
         "python",
-        "pip",
-        "cython",
-        "numpy >=1.24",
         "libgdal-core",
         "proj",
-        "setuptools"
+        "setuptools >=77.0.3",
+        "cython >=3.1,<=3.3",
+        "numpy >=2,<3",
+        "pip"
       ],
       "run": [
         "python",
-        "setuptools >=0.9.8",
         "libgdal-core",
-        "affine",
-        "attrs",
-        "certifi",
-        "click >=4,!=8.2.*",
         "cligj >=0.5",
         "snuggs >=1.4.1",
         "click-plugins",
-        "proj"
+        "proj",
+        "affine",
+        "attrs",
+        "certifi",
+        "click >=4.0,!=8.2.*",
+        "numpy >=2",
+        "pyparsing >=3.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "eb8e7062fc0bcdef635e43fd1632b15aa983b71476bec1e1f75d618326fb9e4a",
-      "url": "https://github.com/rasterio/rasterio/archive/1.5.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "rio --help",
-        "rio info RECIPE_DIR\\\\test_data\\\\test.tif",
-        "python -m pytest -v -m \"not wheel\" -rxXs -k \"not (test_search_gdal_data_debian or test_decimated_no_use_overview or test_copyfiles_same_dataset_another_name or test_merge_out_of_range_nodata or test_rio_env_no_credentials)\" tests",
-        "pip check"
-      ],
-      "files": [
-        "test_data/test.tif"
-      ],
-      "imports": [
-        "rasterio"
-      ],
-      "requires": [
-        "pip",
-        "pytest >=2.8.2,<8",
-        "pytest-cov >=2.2.0",
-        "ipython >=2.0",
-        "aiohttp",
-        "boto3 >=1.2.4",
-        "fsspec >=2025.9.0",
-        "s3fs >=2025.9.0",
-        "hypothesis",
-        "libgdal-netcdf",
-        "matplotlib-base",
-        "packaging",
-        "requests",
-        "shapely"
-      ],
-      "source_files": [
-        "tests"
-      ]
+      "sha256": "a3342f6a5102d8bb07d831b2390e217a2fd84afc49efbfe3e7cf36801de99c63",
+      "url": "https://github.com/rasterio/rasterio/archive/refs/tags/1.5.2.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -1165,7 +5543,11 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cross-python_win-64",
+        "cxx_compiler_stub",
+        "cython",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -1190,9 +5572,10 @@
         "click-plugins",
         "cligj",
         "libgdal-core",
+        "numpy",
         "proj",
+        "pyparsing",
         "python",
-        "setuptools",
         "snuggs"
       ]
     },
@@ -1201,15 +5584,16 @@
       "elements": [
         "aiohttp",
         "boto3",
+        "ca-certificates",
         "fsspec",
         "hypothesis",
-        "ipython",
         "libgdal-netcdf",
         "matplotlib-base",
         "packaging",
         "pip",
         "pytest",
         "pytest-cov",
+        "pytest-randomly",
         "requests",
         "s3fs",
         "shapely"
