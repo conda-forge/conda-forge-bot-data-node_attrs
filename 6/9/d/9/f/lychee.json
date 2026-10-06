@@ -1,16 +1,11 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nopenssl:\n- '3.5'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
       "automerge": true
-    },
-    "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
     },
     "conda_build": {
       "error_overlinking": true
@@ -23,13 +18,14 @@
       "tooling_branch_name": "main"
     },
     "provider": {
-      "linux_aarch64": "azure",
-      "linux_ppc64le": "azure"
+      "linux_aarch64": "default",
+      "linux_ppc64le": "default",
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "21103084f7f4b5d9975a4c99a50f607f7fc80c7e",
-  "feedstock_hash_ts": 1777662671,
+  "feedstock_hash": "babe3b1a03404798c475a921394416f3a00ba4bd",
+  "feedstock_hash_ts": 1791278180,
   "feedstock_name": "lychee",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,7 +40,23 @@
       "summary": "Fast, async, resource-friendly link checker"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "cargo auditable install --bins --locked --no-track --profile=release --path=lychee-bin --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir -p \"${PREFIX}/share/bash-completion/completions\" \"${PREFIX}/share/elvish/lib\" \"${PREFIX}/share/fish/vendor_completions.d\" \"${PREFIX}/share/powershell/completions\" \"${PREFIX}/share/zsh/site-functions\"",
+          "lychee --generate complete-bash       > \"${PREFIX}/share/bash-completion/completions/lychee\"",
+          "lychee --generate complete-elvish     > \"${PREFIX}/share/elvish/lib/lychee.elv\"",
+          "lychee --generate complete-fish       > \"${PREFIX}/share/fish/vendor_completions.d/lychee.fish\"",
+          "lychee --generate complete-powershell > \"${PREFIX}/share/powershell/completions/lychee.ps1\"",
+          "lychee --generate complete-zsh        > \"${PREFIX}/share/zsh/site-functions/_lychee\""
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -61,19 +73,34 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "files": [
+                "share/bash-completion/completions/lychee",
+                "share/elvish/lib/lychee.elv",
+                "share/fish/vendor_completions.d/lychee.fish",
+                "share/powershell/completions/lychee.ps1",
+                "share/zsh/site-functions/_lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -89,11 +116,9 @@
         "rust_compiler_stub",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config"
-      ],
-      "host": [
-        "openssl"
       ]
     },
     "schema_version": 1,
@@ -108,6 +133,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config",
         "rust_compiler_stub"
@@ -115,9 +141,7 @@
     },
     "host": {
       "__set__": true,
-      "elements": [
-        "openssl"
-      ]
+      "elements": []
     },
     "run": {
       "__set__": true,
@@ -140,7 +164,17 @@
       "summary": "Fast, async, resource-friendly link checker"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "cargo auditable install --bins --locked --no-track --profile=release --path=lychee-bin --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -157,19 +191,27 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -185,11 +227,9 @@
         "rust_compiler_stub",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config"
-      ],
-      "host": [
-        "openssl"
       ]
     },
     "schema_version": 1,
@@ -204,6 +244,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config",
         "rust_compiler_stub"
@@ -211,9 +252,7 @@
     },
     "host": {
       "__set__": true,
-      "elements": [
-        "openssl"
-      ]
+      "elements": []
     },
     "run": {
       "__set__": true,
@@ -236,7 +275,23 @@
       "summary": "Fast, async, resource-friendly link checker"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "cargo auditable install --bins --locked --no-track --profile=release --path=lychee-bin --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "mkdir -p \"${PREFIX}/share/bash-completion/completions\" \"${PREFIX}/share/elvish/lib\" \"${PREFIX}/share/fish/vendor_completions.d\" \"${PREFIX}/share/powershell/completions\" \"${PREFIX}/share/zsh/site-functions\"",
+          "lychee --generate complete-bash       > \"${PREFIX}/share/bash-completion/completions/lychee\"",
+          "lychee --generate complete-elvish     > \"${PREFIX}/share/elvish/lib/lychee.elv\"",
+          "lychee --generate complete-fish       > \"${PREFIX}/share/fish/vendor_completions.d/lychee.fish\"",
+          "lychee --generate complete-powershell > \"${PREFIX}/share/powershell/completions/lychee.ps1\"",
+          "lychee --generate complete-zsh        > \"${PREFIX}/share/zsh/site-functions/_lychee\""
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -253,19 +308,34 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "files": [
+                "share/bash-completion/completions/lychee",
+                "share/elvish/lib/lychee.elv",
+                "share/fish/vendor_completions.d/lychee.fish",
+                "share/powershell/completions/lychee.ps1",
+                "share/zsh/site-functions/_lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -279,19 +349,27 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -305,19 +383,27 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -331,19 +417,27 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -357,24 +451,27 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
-            "requirements": {
-              "run": [
-                "m2-grep"
-              ]
-            },
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -390,11 +487,9 @@
         "rust_compiler_stub",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config"
-      ],
-      "host": [
-        "openssl"
       ]
     },
     "schema_version": 1,
@@ -416,7 +511,17 @@
       "summary": "Fast, async, resource-friendly link checker"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "cargo auditable install --bins --locked --no-track --profile=release --path=lychee-bin --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -433,19 +538,27 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -461,11 +574,9 @@
         "rust_compiler_stub",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config"
-      ],
-      "host": [
-        "openssl"
       ]
     },
     "schema_version": 1,
@@ -480,6 +591,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config",
         "rust_compiler_stub"
@@ -487,9 +599,7 @@
     },
     "host": {
       "__set__": true,
-      "elements": [
-        "openssl"
-      ]
+      "elements": []
     },
     "run": {
       "__set__": true,
@@ -512,7 +622,17 @@
       "summary": "Fast, async, resource-friendly link checker"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "cargo auditable install --bins --locked --no-track --profile=release --path=lychee-bin --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -529,19 +649,27 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -557,11 +685,9 @@
         "rust_compiler_stub",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config"
-      ],
-      "host": [
-        "openssl"
       ]
     },
     "schema_version": 1,
@@ -576,6 +702,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config",
         "rust_compiler_stub"
@@ -583,9 +710,7 @@
     },
     "host": {
       "__set__": true,
-      "elements": [
-        "openssl"
-      ]
+      "elements": []
     },
     "run": {
       "__set__": true,
@@ -613,14 +738,14 @@
   "pr_info": {
     "__lazy_json__": "pr_info/lychee.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.24.2\"\n\npackage:\n  name: lychee\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/lycheeverse/lychee/archive/refs/tags/lychee-v${{ version }}.tar.gz\n  sha256: 62687c0a84ceec76d17e30e494dcf8e65c7099a2e24a6a521a41854b8eb3759d\n\nbuild:\n  number: 0\n  skip: ppc64le\n\nrequirements:\n  build:\n    - ${{ compiler('rust') }}\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - cargo-bundle-licenses\n    - pkg-config\n  host:\n    - openssl\n\ntests:\n  - requirements:\n      run:\n        - if: win\n          then: m2-grep\n    script:\n      - lychee --version\n      - lychee --help\n\nabout:\n  license: Apache-2.0 OR MIT\n  license_file:\n    - LICENSE-APACHE\n    - LICENSE-MIT\n    - THIRDPARTY.yml\n  summary: Fast, async, resource-friendly link checker\n  description: |\n    Finds broken URLs and mail addresses inside Markdown, HTML,\n    reStructuredText, websites and more!\n\n\n  homepage: https://lychee.cli.rs\n  repository: https://github.com/lycheeverse/lychee\n  documentation: https://lychee.cli.rs/introduction\n\nextra:\n  recipe-maintainers:\n    - danielnachun\n    - egpbos\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.24.2\"\n\npackage:\n  name: lychee\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/lycheeverse/lychee/archive/refs/tags/lychee-v${{ version }}.tar.gz\n  sha256: 62687c0a84ceec76d17e30e494dcf8e65c7099a2e24a6a521a41854b8eb3759d\n\nbuild:\n  number: 1\n  skip: ppc64le\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    content:\n      - cargo auditable install --bins --locked --no-track --profile=release --path=lychee-bin --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      - if: build_platform == target_platform\n        then:\n          - if: unix\n            then:\n              - mkdir -p \"${PREFIX}/share/bash-completion/completions\" \"${PREFIX}/share/elvish/lib\" \"${PREFIX}/share/fish/vendor_completions.d\" \"${PREFIX}/share/powershell/completions\" \"${PREFIX}/share/zsh/site-functions\"\n              - lychee --generate complete-bash       > \"${PREFIX}/share/bash-completion/completions/lychee\"\n              - lychee --generate complete-elvish     > \"${PREFIX}/share/elvish/lib/lychee.elv\"\n              - lychee --generate complete-fish       > \"${PREFIX}/share/fish/vendor_completions.d/lychee.fish\"\n              - lychee --generate complete-powershell > \"${PREFIX}/share/powershell/completions/lychee.ps1\"\n              - lychee --generate complete-zsh        > \"${PREFIX}/share/zsh/site-functions/_lychee\"\n            else:\n              - md \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\" \"%LIBRARY_PREFIX%\\share\\elvish\\lib\" \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\" \"%LIBRARY_PREFIX%\\share\\powershell\\completions\" \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\"\n              - lychee --generate complete-bash       > \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\\lychee\"\n              - lychee --generate complete-elvish     > \"%LIBRARY_PREFIX%\\share\\elvish\\lib\\lychee.elv\"\n              - lychee --generate complete-fish       > \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\\lychee.fish\"\n              - lychee --generate complete-powershell > \"%LIBRARY_PREFIX%\\share\\powershell\\completions\\lychee.ps1\"\n              - lychee --generate complete-zsh        > \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\\_lychee\"\n\nrequirements:\n  build:\n    - ${{ compiler('rust') }}\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - pkg-config\n\ntests:\n  - package_contents:\n      strict: true\n      bin:\n        - lychee\n      files:\n        - if: build_platform == target_platform\n          then:\n            - ${{ 'Library/' if win }}share/bash-completion/completions/lychee\n            - ${{ 'Library/' if win }}share/elvish/lib/lychee.elv\n            - ${{ 'Library/' if win }}share/fish/vendor_completions.d/lychee.fish\n            - ${{ 'Library/' if win }}share/powershell/completions/lychee.ps1\n            - ${{ 'Library/' if win }}share/zsh/site-functions/_lychee\n  - script:\n      - lychee --help\n      - lychee --version\n      - lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}\n\n\nabout:\n  license: Apache-2.0 OR MIT\n  license_file:\n    - LICENSE-APACHE\n    - LICENSE-MIT\n    - THIRDPARTY.yml\n  summary: Fast, async, resource-friendly link checker\n  description: |\n    Finds broken URLs and mail addresses inside Markdown, HTML,\n    reStructuredText, websites and more!\n\n  homepage: https://lychee.cli.rs\n  repository: https://github.com/lycheeverse/lychee\n  documentation: https://lychee.cli.rs/introduction\n\nextra:\n  recipe-maintainers:\n    - danielnachun\n    - egpbos\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
       "c_stdlib_stub",
+      "cargo-auditable",
       "cargo-bundle-licenses",
-      "openssl",
       "pkg-config",
       "rust_compiler_stub"
     ]
@@ -631,6 +756,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config",
         "rust_compiler_stub"
@@ -640,8 +766,7 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "c_stdlib_stub",
-        "openssl"
+        "c_stdlib_stub"
       ]
     },
     "run": {
@@ -653,9 +778,7 @@
     },
     "test": {
       "__set__": true,
-      "elements": [
-        "m2-grep"
-      ]
+      "elements": []
     }
   },
   "strong_exports": false,
@@ -665,6 +788,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config",
         "rust_compiler_stub"
@@ -672,9 +796,7 @@
     },
     "host": {
       "__set__": true,
-      "elements": [
-        "openssl"
-      ]
+      "elements": []
     },
     "run": {
       "__set__": true,
@@ -682,9 +804,7 @@
     },
     "test": {
       "__set__": true,
-      "elements": [
-        "m2-grep"
-      ]
+      "elements": []
     }
   },
   "url": "https://github.com/lycheeverse/lychee/archive/refs/tags/lychee-v0.24.2.tar.gz",
@@ -704,7 +824,17 @@
       "summary": "Fast, async, resource-friendly link checker"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "cargo auditable install --bins --locked --no-track --profile=release --path=lychee-bin --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -721,24 +851,27 @@
             "rust_compiler_stub",
             "c_compiler_stub",
             "c_stdlib_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "pkg-config"
           ],
-          "host": [
-            "openssl"
-          ],
+          "host": [],
           "run": []
         },
         "tests": [
           {
-            "requirements": {
-              "run": [
-                "m2-grep"
-              ]
-            },
+            "package_contents": {
+              "bin": [
+                "lychee"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
+              "lychee --help",
               "lychee --version",
-              "lychee --help"
+              "lychee --version | ${{ 'grep -iE ' if unix else 'findstr /r /c:' }}${{ version | replace('.', '\\\\.') }}"
             ]
           }
         ],
@@ -754,11 +887,9 @@
         "rust_compiler_stub",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config"
-      ],
-      "host": [
-        "openssl"
       ]
     },
     "schema_version": 1,
@@ -773,6 +904,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cargo-auditable",
         "cargo-bundle-licenses",
         "pkg-config",
         "rust_compiler_stub"
@@ -780,9 +912,7 @@
     },
     "host": {
       "__set__": true,
-      "elements": [
-        "openssl"
-      ]
+      "elements": []
     },
     "run": {
       "__set__": true,
@@ -790,9 +920,7 @@
     },
     "test": {
       "__set__": true,
-      "elements": [
-        "m2-grep"
-      ]
+      "elements": []
     }
   }
 }
