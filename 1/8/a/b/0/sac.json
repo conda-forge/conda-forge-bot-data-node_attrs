@@ -1,0 +1,792 @@
+{
+  "archived": false,
+  "branch": "main",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibcurl:\n- '8'\nlibxml2_devel:\n- '2.15'\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
+  "ci_support_migrations": {},
+  "conda-forge.yml": {
+    "conda_build": {
+      "error_overlinking": true
+    },
+    "conda_build_tool": "rattler-build",
+    "conda_forge_output_validation": true,
+    "github": {
+      "branch_name": "main",
+      "tooling_branch_name": "main"
+    }
+  },
+  "feedstock_hash": "ebe95a3b3cecb90c5d865be2c6a5efa60efaf673",
+  "feedstock_hash_ts": 1791367237,
+  "feedstock_name": "sac",
+  "hash_type": "sha256",
+  "linux_64_meta_yaml": {
+    "about": {
+      "description": "SAC (Seismic Analysis Code) is a general purpose interactive program\ndesigned for the study of sequential signals, especially time series\ndata. It is used in seismology for reading and writing binary seismic\ndata files, for filtering, spectral analysis and deconvolution, and for\ninteractive display of waveforms.\n\nThis is the community maintained continuation of SAC. In addition to the\n`sac` interpreter the package contains the `saclst`, `sacswap`, `sgftops`,\n`bbfswap` and `sgfswap` utilities, the headers, and the auxiliary data\n(colour tables, travel-time tables, macros, ...) in the `aux` and `macros`\ndirectories of the installation prefix. SAC finds that data through the\n`SACAUX` environment variable, which is compiled into the binaries; the\n`bin/sacinit.sh` and `bin/sacinit.csh` scripts set `SACHOME`, `SACAUX` and\n`PATH` for a session.\n\nThe static libraries needed to link programs against SAC are in the\nseparate `sac-static` package.",
+      "dev_url": "https://github.com/EarthScope/sac-community",
+      "doc_url": "https://ds.iris.edu/files/sac-manual/index.html",
+      "home": "https://github.com/EarthScope/sac-community",
+      "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND LGPL-3.0-or-later",
+      "license_family": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND LGPL-3.0-or-later",
+      "license_file": "License",
+      "summary": "Seismic Analysis Code, community edition"
+    },
+    "build": {
+      "number": "0",
+      "script": "build.sh"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "claudiodsf"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "sac",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libcurl",
+            "libxml2-devel",
+            "xorg-libx11",
+            "xorg-libxpm",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "printf 'fg impulse npts 100 delta 0.01\\nw test.sac\\nquit\\n' > commands.m",
+              "sac commands.m",
+              "test \"$(saclst delta npts f test.sac | awk '{$1=$1};1')\" = \"test.sac 0.01 100\""
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "sac",
+                "sacinit.sh",
+                "saclst",
+                "sacswap",
+                "sgftops"
+              ],
+              "files": {
+                "exists": [
+                  "aux/messages",
+                  "macros/init.m",
+                  "lib/README_lib"
+                ],
+                "not_exists": [
+                  "lib/libsac.a",
+                  "lib/libsacio.a",
+                  "lib/sacio.a",
+                  "bin/sac-config"
+                ]
+              },
+              "include": [
+                "sac.h",
+                "sacio.h"
+              ]
+            }
+          }
+        ],
+        "version": "103.0"
+      },
+      {
+        "build": null,
+        "name": "sac-static",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libcurl",
+            "libxml2-devel",
+            "xorg-libx11",
+            "xorg-libxpm",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": [
+            "sac"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "lib/libsac.a",
+                  "lib/libsacio.a",
+                  "lib/sacio.a",
+                  "bin/sac-config"
+                ],
+                "not_exists": [
+                  "bin/sac"
+                ]
+              }
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "printf '#include <sacio.h>\\nint main(void) { return 0; }\\n' > link.c",
+              "$CC $(sac-config -c) link.c $(sac-config -l sacio) -o link",
+              "./link"
+            ]
+          }
+        ],
+        "version": "103.0"
+      }
+    ],
+    "package": {
+      "name": "sac",
+      "version": "103.0"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config"
+      ],
+      "host": [
+        "libcurl",
+        "libxml2-devel",
+        "xorg-libx11",
+        "xorg-libxpm",
+        "xorg-xorgproto",
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "f61fbe30d0411fe3033bdb76731062da24940c27920338d0f91a867842b791b8",
+      "url": "https://github.com/EarthScope/sac-community/archive/refs/tags/v103.0.tar.gz"
+    }
+  },
+  "linux_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "libcurl",
+        "libxml2-devel",
+        "xorg-libx11",
+        "xorg-libxpm",
+        "xorg-xorgproto",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "sac"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub"
+      ]
+    }
+  },
+  "meta_yaml": {
+    "about": {
+      "description": "SAC (Seismic Analysis Code) is a general purpose interactive program\ndesigned for the study of sequential signals, especially time series\ndata. It is used in seismology for reading and writing binary seismic\ndata files, for filtering, spectral analysis and deconvolution, and for\ninteractive display of waveforms.\n\nThis is the community maintained continuation of SAC. In addition to the\n`sac` interpreter the package contains the `saclst`, `sacswap`, `sgftops`,\n`bbfswap` and `sgfswap` utilities, the headers, and the auxiliary data\n(colour tables, travel-time tables, macros, ...) in the `aux` and `macros`\ndirectories of the installation prefix. SAC finds that data through the\n`SACAUX` environment variable, which is compiled into the binaries; the\n`bin/sacinit.sh` and `bin/sacinit.csh` scripts set `SACHOME`, `SACAUX` and\n`PATH` for a session.\n\nThe static libraries needed to link programs against SAC are in the\nseparate `sac-static` package.",
+      "dev_url": "https://github.com/EarthScope/sac-community",
+      "doc_url": "https://ds.iris.edu/files/sac-manual/index.html",
+      "home": "https://github.com/EarthScope/sac-community",
+      "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND LGPL-3.0-or-later",
+      "license_family": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND LGPL-3.0-or-later",
+      "license_file": "License",
+      "summary": "Seismic Analysis Code, community edition"
+    },
+    "build": {
+      "number": "0",
+      "script": "build.sh"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "claudiodsf"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "sac",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libcurl",
+            "libxml2-devel",
+            "xorg-libx11",
+            "xorg-libxpm",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "printf 'fg impulse npts 100 delta 0.01\\nw test.sac\\nquit\\n' > commands.m",
+              "sac commands.m",
+              "test \"$(saclst delta npts f test.sac | awk '{$1=$1};1')\" = \"test.sac 0.01 100\""
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "sac",
+                "sacinit.sh",
+                "saclst",
+                "sacswap",
+                "sgftops"
+              ],
+              "files": {
+                "exists": [
+                  "aux/messages",
+                  "macros/init.m",
+                  "lib/README_lib"
+                ],
+                "not_exists": [
+                  "lib/libsac.a",
+                  "lib/libsacio.a",
+                  "lib/sacio.a",
+                  "bin/sac-config"
+                ]
+              },
+              "include": [
+                "sac.h",
+                "sacio.h"
+              ]
+            }
+          }
+        ],
+        "version": "103.0"
+      },
+      {
+        "build": null,
+        "name": "sac-static",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libcurl",
+            "libxml2-devel",
+            "xorg-libx11",
+            "xorg-libxpm",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": [
+            "sac"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "lib/libsac.a",
+                  "lib/libsacio.a",
+                  "lib/sacio.a",
+                  "bin/sac-config"
+                ],
+                "not_exists": [
+                  "bin/sac"
+                ]
+              }
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "printf '#include <sacio.h>\\nint main(void) { return 0; }\\n' > link.c",
+              "$CC $(sac-config -c) link.c $(sac-config -l sacio) -o link",
+              "./link"
+            ]
+          }
+        ],
+        "version": "103.0"
+      },
+      {
+        "build": null,
+        "name": "sac",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libcurl",
+            "libxml2-devel",
+            "xorg-libx11",
+            "xorg-libxpm",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "printf 'fg impulse npts 100 delta 0.01\\nw test.sac\\nquit\\n' > commands.m",
+              "sac commands.m",
+              "test \"$(saclst delta npts f test.sac | awk '{$1=$1};1')\" = \"test.sac 0.01 100\""
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "sac",
+                "sacinit.sh",
+                "saclst",
+                "sacswap",
+                "sgftops"
+              ],
+              "files": {
+                "exists": [
+                  "aux/messages",
+                  "macros/init.m",
+                  "lib/README_lib"
+                ],
+                "not_exists": [
+                  "lib/libsac.a",
+                  "lib/libsacio.a",
+                  "lib/sacio.a",
+                  "bin/sac-config"
+                ]
+              },
+              "include": [
+                "sac.h",
+                "sacio.h"
+              ]
+            }
+          }
+        ],
+        "version": "103.0"
+      },
+      {
+        "build": null,
+        "name": "sac-static",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libcurl",
+            "libxml2-devel",
+            "xorg-libx11",
+            "xorg-libxpm",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": [
+            "sac"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "lib/libsac.a",
+                  "lib/libsacio.a",
+                  "lib/sacio.a",
+                  "bin/sac-config"
+                ],
+                "not_exists": [
+                  "bin/sac"
+                ]
+              }
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "printf '#include <sacio.h>\\nint main(void) { return 0; }\\n' > link.c",
+              "$CC $(sac-config -c) link.c $(sac-config -l sacio) -o link",
+              "./link"
+            ]
+          }
+        ],
+        "version": "103.0"
+      }
+    ],
+    "package": {
+      "name": "sac",
+      "version": "103.0"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config"
+      ],
+      "host": [
+        "libcurl",
+        "libxml2-devel",
+        "xorg-libx11",
+        "xorg-libxpm",
+        "xorg-xorgproto",
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "f61fbe30d0411fe3033bdb76731062da24940c27920338d0f91a867842b791b8",
+      "url": "https://github.com/EarthScope/sac-community/archive/refs/tags/v103.0.tar.gz"
+    }
+  },
+  "name": "sac",
+  "osx_64_meta_yaml": {
+    "about": {
+      "description": "SAC (Seismic Analysis Code) is a general purpose interactive program\ndesigned for the study of sequential signals, especially time series\ndata. It is used in seismology for reading and writing binary seismic\ndata files, for filtering, spectral analysis and deconvolution, and for\ninteractive display of waveforms.\n\nThis is the community maintained continuation of SAC. In addition to the\n`sac` interpreter the package contains the `saclst`, `sacswap`, `sgftops`,\n`bbfswap` and `sgfswap` utilities, the headers, and the auxiliary data\n(colour tables, travel-time tables, macros, ...) in the `aux` and `macros`\ndirectories of the installation prefix. SAC finds that data through the\n`SACAUX` environment variable, which is compiled into the binaries; the\n`bin/sacinit.sh` and `bin/sacinit.csh` scripts set `SACHOME`, `SACAUX` and\n`PATH` for a session.\n\nThe static libraries needed to link programs against SAC are in the\nseparate `sac-static` package.",
+      "dev_url": "https://github.com/EarthScope/sac-community",
+      "doc_url": "https://ds.iris.edu/files/sac-manual/index.html",
+      "home": "https://github.com/EarthScope/sac-community",
+      "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND LGPL-3.0-or-later",
+      "license_family": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND LGPL-3.0-or-later",
+      "license_file": "License",
+      "summary": "Seismic Analysis Code, community edition"
+    },
+    "build": {
+      "number": "0",
+      "script": "build.sh"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "claudiodsf"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "sac",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libcurl",
+            "libxml2-devel",
+            "xorg-libx11",
+            "xorg-libxpm",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "printf 'fg impulse npts 100 delta 0.01\\nw test.sac\\nquit\\n' > commands.m",
+              "sac commands.m",
+              "test \"$(saclst delta npts f test.sac | awk '{$1=$1};1')\" = \"test.sac 0.01 100\""
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "sac",
+                "sacinit.sh",
+                "saclst",
+                "sacswap",
+                "sgftops"
+              ],
+              "files": {
+                "exists": [
+                  "aux/messages",
+                  "macros/init.m",
+                  "lib/README_lib"
+                ],
+                "not_exists": [
+                  "lib/libsac.a",
+                  "lib/libsacio.a",
+                  "lib/sacio.a",
+                  "bin/sac-config"
+                ]
+              },
+              "include": [
+                "sac.h",
+                "sacio.h"
+              ]
+            }
+          }
+        ],
+        "version": "103.0"
+      },
+      {
+        "build": null,
+        "name": "sac-static",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libcurl",
+            "libxml2-devel",
+            "xorg-libx11",
+            "xorg-libxpm",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": [
+            "sac"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "lib/libsac.a",
+                  "lib/libsacio.a",
+                  "lib/sacio.a",
+                  "bin/sac-config"
+                ],
+                "not_exists": [
+                  "bin/sac"
+                ]
+              }
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "printf '#include <sacio.h>\\nint main(void) { return 0; }\\n' > link.c",
+              "$CC $(sac-config -c) link.c $(sac-config -l sacio) -o link",
+              "./link"
+            ]
+          }
+        ],
+        "version": "103.0"
+      }
+    ],
+    "package": {
+      "name": "sac",
+      "version": "103.0"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config"
+      ],
+      "host": [
+        "libcurl",
+        "libxml2-devel",
+        "xorg-libx11",
+        "xorg-libxpm",
+        "xorg-xorgproto",
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "f61fbe30d0411fe3033bdb76731062da24940c27920338d0f91a867842b791b8",
+      "url": "https://github.com/EarthScope/sac-community/archive/refs/tags/v103.0.tar.gz"
+    }
+  },
+  "osx_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "libcurl",
+        "libxml2-devel",
+        "xorg-libx11",
+        "xorg-libxpm",
+        "xorg-xorgproto",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "sac"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub"
+      ]
+    }
+  },
+  "outputs_names": {
+    "__set__": true,
+    "elements": [
+      "sac",
+      "sac-static"
+    ]
+  },
+  "parsing_error": false,
+  "platforms": [
+    "linux_64",
+    "osx_64"
+  ],
+  "pr_info": {
+    "__lazy_json__": "pr_info/sac.json"
+  },
+  "raw_meta_yaml": "context:\n  version: \"103.0\"\n\nrecipe:\n  name: sac\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/EarthScope/sac-community/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: f61fbe30d0411fe3033bdb76731062da24940c27920338d0f91a867842b791b8\n\nbuild:\n  number: 0\n  # Upstream's Visual Studio project (win/) predates the current source layout\n  # and no longer builds, so Windows is not supported yet.\n  skip:\n    - win\n\noutputs:\n  - package:\n      name: sac\n    build:\n      script: build.sh\n      files:\n        include:\n          - \"**\"\n        # The static archives are in the sac-static output (CFEP-18), and\n        # with them sac-config, which only emits linker flags.\n        exclude:\n          - lib/libsac.a\n          - lib/libsacio.a\n          - lib/sacio.a\n          - bin/sac-config\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - make\n        - pkg-config\n      host:\n        - libcurl\n        - libxml2-devel\n        - xorg-libx11\n        - xorg-libxpm\n        - xorg-xorgproto\n        - zlib\n    tests:\n      - script:\n          - printf 'fg impulse npts 100 delta 0.01\\nw test.sac\\nquit\\n' > commands.m\n          - sac commands.m\n          - test \"$(saclst delta npts f test.sac | awk '{$1=$1};1')\" = \"test.sac 0.01 100\"\n      - package_contents:\n          bin:\n            - sac\n            - sacinit.sh\n            - saclst\n            - sacswap\n            - sgftops\n          include:\n            - sac.h\n            - sacio.h\n          files:\n            exists:\n              - aux/messages\n              - macros/init.m\n              - lib/README_lib\n            not_exists:\n              - lib/libsac.a\n              - lib/libsacio.a\n              - lib/sacio.a\n              - bin/sac-config\n\n  - package:\n      name: sac-static\n    build:\n      script: build.sh\n      files:\n        - lib/libsac.a\n        - lib/libsacio.a\n        - lib/sacio.a\n        - bin/sac-config\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - make\n        - pkg-config\n      host:\n        - libcurl\n        - libxml2-devel\n        - xorg-libx11\n        - xorg-libxpm\n        - xorg-xorgproto\n        - zlib\n      run:\n        - ${{ pin_subpackage('sac', exact=True) }}\n      # Static archives need nothing at runtime.\n      ignore_run_exports:\n        from_package:\n          - libcurl\n          - libxml2-devel\n          - xorg-libx11\n          - xorg-libxpm\n          - xorg-xorgproto\n          - zlib\n    tests:\n      - package_contents:\n          files:\n            exists:\n              - lib/libsac.a\n              - lib/libsacio.a\n              - lib/sacio.a\n              - bin/sac-config\n            not_exists:\n              - bin/sac\n      - script:\n          - printf '#include <sacio.h>\\nint main(void) { return 0; }\\n' > link.c\n          - $CC $(sac-config -c) link.c $(sac-config -l sacio) -o link\n          - ./link\n        requirements:\n          build:\n            - ${{ compiler('c') }}\n    about:\n      summary: Static libraries of SAC (Seismic Analysis Code)\n      description: |\n        Static archives of the SAC libraries (`libsac.a`, `libsacio.a` and the\n        `sacio.a` compatibility name), for linking user programs against SAC,\n        e.g. the tools in `utils/` that ship with the `sac` package:\n\n            $(sac-config -c) mytool.c $(sac-config -l sacio) -o mytool\n\n        The headers are in the `sac` package, which this package depends on.\n\nabout:\n  homepage: https://github.com/EarthScope/sac-community\n  summary: Seismic Analysis Code, community edition\n  description: |\n    SAC (Seismic Analysis Code) is a general purpose interactive program\n    designed for the study of sequential signals, especially time series\n    data. It is used in seismology for reading and writing binary seismic\n    data files, for filtering, spectral analysis and deconvolution, and for\n    interactive display of waveforms.\n\n    This is the community maintained continuation of SAC. In addition to the\n    `sac` interpreter the package contains the `saclst`, `sacswap`, `sgftops`,\n    `bbfswap` and `sgfswap` utilities, the headers, and the auxiliary data\n    (colour tables, travel-time tables, macros, ...) in the `aux` and `macros`\n    directories of the installation prefix. SAC finds that data through the\n    `SACAUX` environment variable, which is compiled into the binaries; the\n    `bin/sacinit.sh` and `bin/sacinit.csh` scripts set `SACHOME`, `SACAUX` and\n    `PATH` for a session.\n\n    The static libraries needed to link programs against SAC are in the\n    separate `sac-static` package.\n  license: Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND LGPL-3.0-or-later\n  license_file:\n    - License\n    - evalresp/LICENSE\n    - fern/License\n    - libmseed/LICENSE\n    - linenoise.license\n    - sacio/License\n  repository: https://github.com/EarthScope/sac-community\n  documentation: https://ds.iris.edu/files/sac-manual/index.html\n\nextra:\n  recipe-maintainers:\n    - claudiodsf\n",
+  "req": {
+    "__set__": true,
+    "elements": [
+      "c_compiler_stub",
+      "c_stdlib_stub",
+      "libcurl",
+      "libxml2-devel",
+      "make",
+      "pkg-config",
+      "sac",
+      "xorg-libx11",
+      "xorg-libxpm",
+      "xorg-xorgproto",
+      "zlib"
+    ]
+  },
+  "requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "libcurl",
+        "libxml2-devel",
+        "xorg-libx11",
+        "xorg-libxpm",
+        "xorg-xorgproto",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "sac"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub"
+      ]
+    }
+  },
+  "strong_exports": false,
+  "total_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "libcurl",
+        "libxml2-devel",
+        "xorg-libx11",
+        "xorg-libxpm",
+        "xorg-xorgproto",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "sac"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub"
+      ]
+    }
+  },
+  "url": "https://github.com/EarthScope/sac-community/archive/refs/tags/v103.0.tar.gz",
+  "version": "103.0",
+  "version_pr_info": {
+    "__lazy_json__": "version_pr_info/sac.json"
+  }
+}
