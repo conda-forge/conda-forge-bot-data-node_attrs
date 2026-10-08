@@ -32,8 +32,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "7291e131661e87c5a7993119c33ad2774df86cb1",
-  "feedstock_hash_ts": 1791378643,
+  "feedstock_hash": "7c6ac1c5bb4b30cc21199ca79e6d427f4df569c0",
+  "feedstock_hash_ts": 1791465752,
   "feedstock_name": "cp2k",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -48,7 +48,7 @@
       "summary": "Quantum chemistry and solid state physics software package"
     },
     "build": {
-      "number": "4",
+      "number": "5",
       "script": "build.sh"
     },
     "extra": {
@@ -293,6 +293,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "compiler-options-nul.patch"
+      ],
       "sha256": "f9bd86f580f57a53a0768c0045d1417f9f9a1d66d851ed7f662f496200043373",
       "url": "https://github.com/cp2k/cp2k/releases/download/v2026.2/cp2k-2026.2.tar.bz2"
     }
@@ -379,7 +382,7 @@
       "summary": "Quantum chemistry and solid state physics software package"
     },
     "build": {
-      "number": "4",
+      "number": "5",
       "script": "build.sh"
     },
     "extra": {
@@ -624,6 +627,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "compiler-options-nul.patch"
+      ],
       "sha256": "f9bd86f580f57a53a0768c0045d1417f9f9a1d66d851ed7f662f496200043373",
       "url": "https://github.com/cp2k/cp2k/releases/download/v2026.2/cp2k-2026.2.tar.bz2"
     }
@@ -642,7 +648,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/cp2k.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: cp2k\n  version: \"2026.2\"\n  mpi_prefix: \"mpi_${{ mpi }}\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/${{ name }}/${{ name }}/releases/download/v${{ version }}/${{ name }}-${{ version }}.tar.bz2\n    sha256: f9bd86f580f57a53a0768c0045d1417f9f9a1d66d851ed7f662f496200043373\n\nbuild:\n  number: 4\n  # cp2k.F embeds the build prefix in a Fortran string literal via\n  # compiler_options(). Fortran literals are length-counted rather than\n  # NUL-terminated, so substituting the prefix at install time shifts the\n  # literals packed behind it and corrupts them.\n  prefix_detection:\n    ignore:\n      - bin/cp2k.psmp\n  script: build.sh\n  string: mpi_${{ mpi }}_h${{ hash }}_${{ build_number }}\n  skip:\n    - aarch64\n    - osx\n    - win\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ compiler(\"fortran\") }}\n    - ${{ mpi }}\n    - cmake >=3.27\n    - ninja >=1.13\n    - pkg-config\n  host:\n    - ${{ mpi }}\n    - libboost-python-devel\n    - \"cosma-scalapack >=2.8 *${{ mpi_prefix }}_*\"\n    - \"dbcsr >=2.10 *${{ mpi_prefix }}_*\"\n    - eigen\n    - \"elpa >=2026.02.002 *${{ mpi_prefix }}_*\"\n    - \"fftw * *${{ mpi_prefix }}_*\"\n    - \"hdf5 * *${{ mpi_prefix }}_*\"\n    - libint\n    - libint-fortran-devel\n    - \"libtorch >=2.12 *cpu_generic_*\"\n    - \"libxc >=7.0 *cpu_*\"\n    - \"libxs ==1.0.0\"\n    - \"libxsmm ==2.0.0\"\n    - \"openblas * *openmp_*\"\n    - \"plumed >=2.10 *${{ mpi_prefix }}_*\"\n    - scalapack\n    - \"sirius >=7.11,<7.12 *${{ mpi_prefix }}_*\"\n    - \"spfft >=1.1 ${{ mpi_prefix }}_*\"\n    - \"spla >=1.6 ${{ mpi_prefix }}_*\"\n    - spglib >=2.7\n    # tblite\n    - trexio >=2.5\n    - zlib\n  run:\n    - ${{ mpi }}\n    - \"cosma-scalapack >=2.8 *${{ mpi_prefix }}_*\"\n    - \"dbcsr >=2.10 *${{ mpi_prefix }}_*\"\n    - \"elpa >=2026.02.002 *${{ mpi_prefix }}_*\"\n    - \"fftw >=3.3 *${{ mpi_prefix }}_*\"\n    - \"hdf5 * *${{ mpi_prefix }}_*\"\n    - \"libtorch >=2.12 *cpu_generic_*\"\n    - \"libxs ==1.0.0\"\n    - \"libxsmm ==2.0.0\"\n    - \"openblas * *openmp_*\"\n    - \"plumed >=2.10 *${{ mpi_prefix }}_*\"\n    - \"sirius >=7.11,<7.12 *${{ mpi_prefix }}_*\"\n    - \"spfft >=1.1 ${{ mpi_prefix }}_*\"\n    - \"spla >=1.6 ${{ mpi_prefix }}_*\"\n    - trexio >=2.5\n\ntests:\n  - package_contents:\n      bin:\n        - cp2k.psmp\n        - cp2k.popt\n        - cp2k\n      lib:\n        - libcp2k\n  - script:\n      - cp2k -h -v\n\nabout:\n  homepage: https://www.cp2k.org\n  license: GPL-2.0-only\n  license_family: GPL\n  license_file: LICENSE\n  summary: Quantum chemistry and solid state physics software package\n  description: |\n    CP2K is a quantum chemistry and solid state physics software package\n    that can perform atomistic simulations of solid state, liquid,\n    molecular, periodic, material, crystal, and biological systems.\n  documentation: https://manual.cp2k.org\n  repository: https://github.com/cp2k/cp2k\n\nextra:\n  recipe-maintainers:\n    - jan-janssen\n    - oschuett\n    - mkrack\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: cp2k\n  version: \"2026.2\"\n  mpi_prefix: \"mpi_${{ mpi }}\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/${{ name }}/${{ name }}/releases/download/v${{ version }}/${{ name }}-${{ version }}.tar.bz2\n    sha256: f9bd86f580f57a53a0768c0045d1417f9f9a1d66d851ed7f662f496200043373\n    patches:\n      - compiler-options-nul.patch\n\nbuild:\n  number: 5\n  script: build.sh\n  string: mpi_${{ mpi }}_h${{ hash }}_${{ build_number }}\n  skip:\n    - aarch64\n    - osx\n    - win\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ compiler(\"fortran\") }}\n    - ${{ mpi }}\n    - cmake >=3.27\n    - ninja >=1.13\n    - pkg-config\n  host:\n    - ${{ mpi }}\n    - libboost-python-devel\n    - \"cosma-scalapack >=2.8 *${{ mpi_prefix }}_*\"\n    - \"dbcsr >=2.10 *${{ mpi_prefix }}_*\"\n    - eigen\n    - \"elpa >=2026.02.002 *${{ mpi_prefix }}_*\"\n    - \"fftw * *${{ mpi_prefix }}_*\"\n    - \"hdf5 * *${{ mpi_prefix }}_*\"\n    - libint\n    - libint-fortran-devel\n    - \"libtorch >=2.12 *cpu_generic_*\"\n    - \"libxc >=7.0 *cpu_*\"\n    - \"libxs ==1.0.0\"\n    - \"libxsmm ==2.0.0\"\n    - \"openblas * *openmp_*\"\n    - \"plumed >=2.10 *${{ mpi_prefix }}_*\"\n    - scalapack\n    - \"sirius >=7.11,<7.12 *${{ mpi_prefix }}_*\"\n    - \"spfft >=1.1 ${{ mpi_prefix }}_*\"\n    - \"spla >=1.6 ${{ mpi_prefix }}_*\"\n    - spglib >=2.7\n    # tblite\n    - trexio >=2.5\n    - zlib\n  run:\n    - ${{ mpi }}\n    - \"cosma-scalapack >=2.8 *${{ mpi_prefix }}_*\"\n    - \"dbcsr >=2.10 *${{ mpi_prefix }}_*\"\n    - \"elpa >=2026.02.002 *${{ mpi_prefix }}_*\"\n    - \"fftw >=3.3 *${{ mpi_prefix }}_*\"\n    - \"hdf5 * *${{ mpi_prefix }}_*\"\n    - \"libtorch >=2.12 *cpu_generic_*\"\n    - \"libxs ==1.0.0\"\n    - \"libxsmm ==2.0.0\"\n    - \"openblas * *openmp_*\"\n    - \"plumed >=2.10 *${{ mpi_prefix }}_*\"\n    - \"sirius >=7.11,<7.12 *${{ mpi_prefix }}_*\"\n    - \"spfft >=1.1 ${{ mpi_prefix }}_*\"\n    - \"spla >=1.6 ${{ mpi_prefix }}_*\"\n    - trexio >=2.5\n\ntests:\n  - package_contents:\n      bin:\n        - cp2k.psmp\n        - cp2k.popt\n        - cp2k\n      lib:\n        - libcp2k\n  - script:\n      - cp2k -h -v\n\nabout:\n  homepage: https://www.cp2k.org\n  license: GPL-2.0-only\n  license_family: GPL\n  license_file: LICENSE\n  summary: Quantum chemistry and solid state physics software package\n  description: |\n    CP2K is a quantum chemistry and solid state physics software package\n    that can perform atomistic simulations of solid state, liquid,\n    molecular, periodic, material, crystal, and biological systems.\n  documentation: https://manual.cp2k.org\n  repository: https://github.com/cp2k/cp2k\n\nextra:\n  recipe-maintainers:\n    - jan-janssen\n    - oschuett\n    - mkrack\n",
   "req": {
     "__set__": true,
     "elements": [
