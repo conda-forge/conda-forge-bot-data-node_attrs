@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_is_python_mintruepython3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- true\nis_python_min:\n- true\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n",
+  "ci_support_linux_64_is_python_mintruepython3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- true\nis_python_min:\n- true\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n- - python\n  - is_python_min\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
@@ -14,12 +14,13 @@
       "tooling_branch_name": "main"
     },
     "provider": {
+      "linux_aarch64": "default",
       "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "b7bb9f56d2fae20fb033dc4a83b873d0463e3239",
-  "feedstock_hash_ts": 1791301160,
+  "feedstock_hash": "b5c002389ec4245ca350ea0bbf22de0ba6d45351",
+  "feedstock_hash_ts": 1791475095,
   "feedstock_name": "numba-cfunc-compiler",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -34,7 +35,7 @@
       "summary": "Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
@@ -57,6 +58,7 @@
         "requirements": {
           "build": [
             "c_compiler_stub",
+            "cxx_compiler_stub",
             "c_stdlib_stub"
           ],
           "host": [
@@ -104,6 +106,7 @@
     "requirements": {
       "build": [
         "c_compiler_stub",
+        "cxx_compiler_stub",
         "c_stdlib_stub"
       ],
       "host": [
@@ -130,7 +133,157 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "hatch-cpp",
+        "hatchling",
+        "pip",
+        "python",
+        "python-abi3"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "llvmlite",
+        "numba",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation",
+      "dev_url": "https://github.com/Point72/numba-cfunc-compiler",
+      "doc_url": "https://github.com/Point72/numba-cfunc-compiler/wiki",
+      "home": "https://github.com/Point72/numba-cfunc-compiler",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation"
+    },
+    "build": {
+      "number": "1",
+      "python": {
+        "version_independent": true
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ptomecek",
+        "timkpaine"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "numba-cfunc-compiler",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "hatch-cpp",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "hatchling",
+            "hatch-cpp",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "numba >=0.64",
+            "llvmlite >=0.46"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "numba_cfunc_compiler",
+                "numba_cfunc_compiler.numba_rt"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/numba_cfunc_compiler/numba_rt/_py_nrt_init.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.3.0"
+      }
+    ],
+    "package": {
+      "name": "numba-cfunc-compiler",
+      "version": "0.3.0"
+    },
+    "requirements": {
+      "build": [
+        "python",
+        "cross-python_linux-aarch64",
+        "hatch-cpp",
+        "c_compiler_stub",
+        "cxx_compiler_stub",
         "c_stdlib_stub"
+      ],
+      "host": [
+        "python",
+        "pip",
+        "hatchling",
+        "hatch-cpp",
+        "python-abi3"
+      ],
+      "run": [
+        "python",
+        "numba >=0.64",
+        "llvmlite >=0.46"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "45fe6aff634e361a184e9c919fcc7ab478affb4c18a643e629c2b04b0231d712",
+      "url": "https://pypi.org/packages/source/n/numba-cfunc-compiler/numba_cfunc_compiler-0.3.0.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cross-python_linux-aarch64",
+        "cxx_compiler_stub",
+        "hatch-cpp",
+        "python"
       ]
     },
     "host": {
@@ -171,7 +324,7 @@
       "summary": "Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
@@ -194,6 +347,60 @@
         "requirements": {
           "build": [
             "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "hatchling",
+            "hatch-cpp",
+            "python-abi3"
+          ],
+          "run": [
+            "python",
+            "numba >=0.64",
+            "llvmlite >=0.46"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "numba_cfunc_compiler",
+                "numba_cfunc_compiler.numba_rt"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/numba_cfunc_compiler/numba_rt/_py_nrt_init.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "numba-cfunc-compiler",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "hatch-cpp",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
             "c_stdlib_stub"
           ],
           "host": [
@@ -246,6 +453,7 @@
             "cross-python_osx-64",
             "hatch-cpp",
             "c_compiler_stub",
+            "cxx_compiler_stub",
             "c_stdlib_stub"
           ],
           "host": [
@@ -298,6 +506,7 @@
             "cross-python_osx-arm64",
             "hatch-cpp",
             "c_compiler_stub",
+            "cxx_compiler_stub",
             "c_stdlib_stub"
           ],
           "host": [
@@ -350,6 +559,7 @@
             "cross-python_win-64",
             "hatch-cpp",
             "c_compiler_stub",
+            "cxx_compiler_stub",
             "c_stdlib_stub"
           ],
           "host": [
@@ -397,10 +607,12 @@
     "requirements": {
       "build": [
         "c_compiler_stub",
+        "cxx_compiler_stub",
         "c_stdlib_stub",
         "python",
-        "cross-python_osx-64",
+        "cross-python_linux-aarch64",
         "hatch-cpp",
+        "cross-python_osx-64",
         "cross-python_osx-arm64",
         "cross-python_win-64"
       ],
@@ -436,7 +648,7 @@
       "summary": "Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
@@ -462,6 +674,7 @@
             "cross-python_osx-64",
             "hatch-cpp",
             "c_compiler_stub",
+            "cxx_compiler_stub",
             "c_stdlib_stub"
           ],
           "host": [
@@ -512,6 +725,7 @@
         "cross-python_osx-64",
         "hatch-cpp",
         "c_compiler_stub",
+        "cxx_compiler_stub",
         "c_stdlib_stub"
       ],
       "host": [
@@ -540,6 +754,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cross-python_osx-64",
+        "cxx_compiler_stub",
         "hatch-cpp",
         "python"
       ]
@@ -582,7 +797,7 @@
       "summary": "Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
@@ -608,6 +823,7 @@
             "cross-python_osx-arm64",
             "hatch-cpp",
             "c_compiler_stub",
+            "cxx_compiler_stub",
             "c_stdlib_stub"
           ],
           "host": [
@@ -658,6 +874,7 @@
         "cross-python_osx-arm64",
         "hatch-cpp",
         "c_compiler_stub",
+        "cxx_compiler_stub",
         "c_stdlib_stub"
       ],
       "host": [
@@ -686,6 +903,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cross-python_osx-arm64",
+        "cxx_compiler_stub",
         "hatch-cpp",
         "python"
       ]
@@ -725,6 +943,7 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
     "osx_arm64",
     "win_64"
@@ -732,15 +951,17 @@
   "pr_info": {
     "__lazy_json__": "pr_info/numba-cfunc-compiler.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.3.0\"\n\npackage:\n  name: numba-cfunc-compiler\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/n/numba-cfunc-compiler/numba_cfunc_compiler-${{ version }}.tar.gz\n  sha256: 45fe6aff634e361a184e9c919fcc7ab478affb4c18a643e629c2b04b0231d712\n\nbuild:\n  number: 0\n  python:\n    version_independent: true\n  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  skip: is_abi3 and not is_python_min\n\nrequirements:\n  build:\n    - if: build_platform != host_platform\n      then:\n        - python\n        - cross-python_${{ host_platform }}\n        - hatch-cpp\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n  host:\n    - python\n    - pip\n    - hatchling\n    - hatch-cpp\n    - if: is_abi3\n      then:\n        - python-abi3\n  run:\n    - python\n    - numba >=0.64\n    - llvmlite >=0.46\n\ntests:\n  - python:\n      imports:\n        - numba_cfunc_compiler\n        - numba_cfunc_compiler.numba_rt\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - if: is_abi3\n    then:\n      script:\n        - if: win\n          then: abi3audit %SP_DIR%/numba_cfunc_compiler/numba_rt/_py_nrt_init.pyd -s -v --assume-minimum-abi3 ${{ python_min }}\n          else: abi3audit $SP_DIR/numba_cfunc_compiler/numba_rt/_py_nrt_init.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n      requirements:\n        run:\n          - abi3audit\n\nabout:\n  homepage: https://github.com/Point72/numba-cfunc-compiler\n  summary: 'Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation'\n  description: |\n    Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation\n  license: Apache-2.0\n  license_file: LICENSE\n  documentation: https://github.com/Point72/numba-cfunc-compiler/wiki\n  repository: https://github.com/Point72/numba-cfunc-compiler\n\nextra:\n  recipe-maintainers:\n    - ptomecek\n    - timkpaine\n",
+  "raw_meta_yaml": "context:\n  version: \"0.3.0\"\n\npackage:\n  name: numba-cfunc-compiler\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/n/numba-cfunc-compiler/numba_cfunc_compiler-${{ version }}.tar.gz\n  sha256: 45fe6aff634e361a184e9c919fcc7ab478affb4c18a643e629c2b04b0231d712\n\nbuild:\n  number: 1\n  python:\n    version_independent: true\n  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  skip: is_abi3 and not is_python_min\n\nrequirements:\n  build:\n    - if: build_platform != host_platform\n      then:\n        - python\n        - cross-python_${{ host_platform }}\n        - hatch-cpp\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n  host:\n    - python\n    - pip\n    - hatchling\n    - hatch-cpp\n    - if: is_abi3\n      then:\n        - python-abi3\n  run:\n    - python\n    - numba >=0.64\n    - llvmlite >=0.46\n\ntests:\n  - python:\n      imports:\n        - numba_cfunc_compiler\n        - numba_cfunc_compiler.numba_rt\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - if: is_abi3\n    then:\n      script:\n        - if: win\n          then: abi3audit %SP_DIR%/numba_cfunc_compiler/numba_rt/_py_nrt_init.pyd -s -v --assume-minimum-abi3 ${{ python_min }}\n          else: abi3audit $SP_DIR/numba_cfunc_compiler/numba_rt/_py_nrt_init.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n      requirements:\n        run:\n          - abi3audit\n\nabout:\n  homepage: https://github.com/Point72/numba-cfunc-compiler\n  summary: 'Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation'\n  description: |\n    Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation\n  license: Apache-2.0\n  license_file: LICENSE\n  documentation: https://github.com/Point72/numba-cfunc-compiler/wiki\n  repository: https://github.com/Point72/numba-cfunc-compiler\n\nextra:\n  recipe-maintainers:\n    - ptomecek\n    - timkpaine\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
       "c_stdlib_stub",
+      "cross-python_linux-aarch64",
       "cross-python_osx-64",
       "cross-python_osx-arm64",
       "cross-python_win-64",
+      "cxx_compiler_stub",
       "hatch-cpp",
       "hatchling",
       "llvmlite",
@@ -756,9 +977,11 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python_linux-aarch64",
         "cross-python_osx-64",
         "cross-python_osx-arm64",
         "cross-python_win-64",
+        "cxx_compiler_stub",
         "hatch-cpp",
         "python"
       ]
@@ -769,6 +992,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cross-python",
+        "cxx_compiler_stub",
         "hatch-cpp",
         "hatchling",
         "pip",
@@ -782,6 +1006,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cross-python",
+        "cxx_compiler_stub",
         "llvmlite",
         "numba",
         "python"
@@ -802,9 +1027,11 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python_linux-aarch64",
         "cross-python_osx-64",
         "cross-python_osx-arm64",
         "cross-python_win-64",
+        "cxx_compiler_stub",
         "hatch-cpp",
         "python"
       ]
@@ -852,7 +1079,7 @@
       "summary": "Generic, framework-agnostic infrastructure for compiling Python functions to Numba @cfunc via AST transformation"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
@@ -878,6 +1105,7 @@
             "cross-python_win-64",
             "hatch-cpp",
             "c_compiler_stub",
+            "cxx_compiler_stub",
             "c_stdlib_stub"
           ],
           "host": [
@@ -928,6 +1156,7 @@
         "cross-python_win-64",
         "hatch-cpp",
         "c_compiler_stub",
+        "cxx_compiler_stub",
         "c_stdlib_stub"
       ],
       "host": [
@@ -956,6 +1185,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cross-python_win-64",
+        "cxx_compiler_stub",
         "hatch-cpp",
         "python"
       ]
