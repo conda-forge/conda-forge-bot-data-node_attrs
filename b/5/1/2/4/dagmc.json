@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_dddoubledownhdf51.14.6mpimpichmpi_prefixmpi_mpich.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndd:\n- doubledown\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nhdf5:\n- 1.14.6\nmpi:\n- mpich\nmpi_prefix:\n- mpi_mpich\nmpich:\n- '5'\nopenmpi:\n- '5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - mpi\n  - mpi_prefix\n",
+  "ci_support_linux_64_dddoubledownmpimpich.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndd:\n- doubledown\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ndouble_down:\n- '1.1'\nhdf5:\n- 1.14.6\n- '2'\nmoab:\n- '5.6'\nmpi:\n- mpich\nmpi_prefix:\n- mpi_mpich\nmpich:\n- '5'\nopenmpi:\n- '5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - mpi\n  - mpi_prefix\n",
   "ci_support_migrations": {
     "hdf52": {
       "migration_number": 1,
@@ -29,8 +29,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "e3ee6f74788f55933565825d1bc7efaae4620f1a",
-  "feedstock_hash_ts": 1789523558,
+  "feedstock_hash": "67a9467c95d75f4b8d1e18dd5b624744798473b6",
+  "feedstock_hash_ts": 1791524392,
   "feedstock_name": "dagmc",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -45,15 +45,18 @@
       "summary": "Direct Accelerated Geometry Toolkit"
     },
     "build": {
-      "number": "8",
+      "number": "9",
       "run_exports": {
         "weak": [
+          "dagmc",
           "dagmc * mpi_mpich_*",
           "dagmc * mpi_openmpi_*"
         ]
-      }
+      },
+      "script": "build.sh"
     },
     "extra": {
+      "feedstock-name": "dagmc",
       "recipe-maintainers": [
         "gonuke",
         "pshriwise",
@@ -71,6 +74,7 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -89,6 +93,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -140,7 +145,125 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_mpich_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
+            "moab[build=\"mpi_mpich_notempest_*\"]",
+            "mpich"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * mpi_mpich_*",
+            "moab * mpi_mpich_notempest_*",
+            "zlib",
+            "mpich"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -155,6 +278,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -207,6 +331,116 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"nompi_*\"]",
+            "moab",
+            "moab[build=\"nompi_notempest_*\"]"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * nompi_*",
+            "moab * nompi_notempest_*",
+            "zlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -225,6 +459,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -279,142 +514,7 @@
         "build": {
           "run_exports": {
             "weak": [
-              "dagmc * mpi_mpich_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"mpi_mpich_*\"]",
-            "moab[build=\"mpi_mpich_notempest_*\"]",
-            "mpich"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * mpi_mpich_*",
-            "moab * mpi_mpich_notempest_*",
-            "zlib",
-            "mpich"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": null,
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"nompi_*\"]",
-            "moab[build=\"nompi_notempest_*\"]"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * nompi_*",
-            "moab * nompi_notempest_*",
-            "zlib"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -433,6 +533,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -485,8 +586,47 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -504,6 +644,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -554,7 +695,123 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_mpich_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
+            "moab[build=\"mpi_mpich_notempest_*\"]",
+            "mpich"
+          ],
+          "run": [
+            "hdf5 * mpi_mpich_*",
+            "moab * mpi_mpich_notempest_*",
+            "zlib",
+            "mpich"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -568,6 +825,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -619,6 +877,114 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"nompi_*\"]",
+            "moab",
+            "moab[build=\"nompi_notempest_*\"]"
+          ],
+          "run": [
+            "hdf5 * nompi_*",
+            "moab * nompi_notempest_*",
+            "zlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -636,6 +1002,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -689,138 +1056,7 @@
         "build": {
           "run_exports": {
             "weak": [
-              "dagmc * mpi_mpich_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"mpi_mpich_*\"]",
-            "moab[build=\"mpi_mpich_notempest_*\"]",
-            "mpich"
-          ],
-          "run": [
-            "hdf5 * mpi_mpich_*",
-            "moab * mpi_mpich_notempest_*",
-            "zlib",
-            "mpich"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": null,
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"nompi_*\"]",
-            "moab[build=\"nompi_notempest_*\"]"
-          ],
-          "run": [
-            "hdf5 * nompi_*",
-            "moab * nompi_notempest_*",
-            "zlib"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -838,6 +1074,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -883,6 +1120,44 @@
           },
           {
             "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
           }
         ],
         "version": "3.2.4"
@@ -905,6 +1180,7 @@
         "double-down",
         "hdf5",
         "hdf5[build=\"mpi_mpich_*\"]",
+        "moab",
         "moab[build=\"mpi_mpich_notempest_*\"]",
         "mpich",
         "hdf5[build=\"nompi_*\"]",
@@ -962,6 +1238,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "dagmc",
         "double-down",
         "hdf5",
         "moab",
@@ -987,15 +1264,18 @@
       "summary": "Direct Accelerated Geometry Toolkit"
     },
     "build": {
-      "number": "8",
+      "number": "9",
       "run_exports": {
         "weak": [
+          "dagmc",
           "dagmc * mpi_mpich_*",
           "dagmc * mpi_openmpi_*"
         ]
-      }
+      },
+      "script": "build.sh"
     },
     "extra": {
+      "feedstock-name": "dagmc",
       "recipe-maintainers": [
         "gonuke",
         "pshriwise",
@@ -1013,6 +1293,7 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -1031,6 +1312,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -1082,7 +1364,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -1097,6 +1404,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -1147,8 +1455,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -1167,6 +1495,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -1219,8 +1548,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -1239,6 +1588,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -1290,7 +1640,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -1305,6 +1680,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -1355,8 +1731,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -1375,6 +1771,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -1427,8 +1824,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -1446,6 +1863,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -1496,7 +1914,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -1510,6 +1953,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -1559,8 +2003,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -1578,6 +2042,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -1629,8 +2094,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -1648,6 +2133,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -1698,7 +2184,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -1712,6 +2223,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -1761,8 +2273,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -1780,6 +2312,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -1825,6 +2358,25 @@
           },
           {
             "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
           }
         ],
         "version": "3.2.4"
@@ -1847,6 +2399,7 @@
         "double-down",
         "hdf5",
         "hdf5[build=\"mpi_mpich_*\"]",
+        "moab",
         "moab[build=\"mpi_mpich_notempest_*\"]",
         "mpich",
         "hdf5[build=\"nompi_*\"]",
@@ -1904,6 +2457,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "dagmc",
         "double-down",
         "hdf5",
         "moab",
@@ -1929,15 +2483,18 @@
       "summary": "Direct Accelerated Geometry Toolkit"
     },
     "build": {
-      "number": "8",
+      "number": "9",
       "run_exports": {
         "weak": [
+          "dagmc",
           "dagmc * mpi_mpich_*",
           "dagmc * mpi_openmpi_*"
         ]
-      }
+      },
+      "script": "build.sh"
     },
     "extra": {
+      "feedstock-name": "dagmc",
       "recipe-maintainers": [
         "gonuke",
         "pshriwise",
@@ -1955,6 +2512,7 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -1973,6 +2531,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -2024,7 +2583,125 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_mpich_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
+            "moab[build=\"mpi_mpich_notempest_*\"]",
+            "mpich"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * mpi_mpich_*",
+            "moab * mpi_mpich_notempest_*",
+            "zlib",
+            "mpich"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -2039,6 +2716,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -2091,6 +2769,116 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"nompi_*\"]",
+            "moab",
+            "moab[build=\"nompi_notempest_*\"]"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * nompi_*",
+            "moab * nompi_notempest_*",
+            "zlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -2109,6 +2897,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -2163,142 +2952,7 @@
         "build": {
           "run_exports": {
             "weak": [
-              "dagmc * mpi_mpich_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"mpi_mpich_*\"]",
-            "moab[build=\"mpi_mpich_notempest_*\"]",
-            "mpich"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * mpi_mpich_*",
-            "moab * mpi_mpich_notempest_*",
-            "zlib",
-            "mpich"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": null,
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"nompi_*\"]",
-            "moab[build=\"nompi_notempest_*\"]"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * nompi_*",
-            "moab * nompi_notempest_*",
-            "zlib"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -2317,6 +2971,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -2369,8 +3024,47 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -2388,6 +3082,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -2438,7 +3133,123 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_mpich_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
+            "moab[build=\"mpi_mpich_notempest_*\"]",
+            "mpich"
+          ],
+          "run": [
+            "hdf5 * mpi_mpich_*",
+            "moab * mpi_mpich_notempest_*",
+            "zlib",
+            "mpich"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -2452,6 +3263,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -2503,144 +3315,10 @@
         "build": {
           "run_exports": {
             "weak": [
-              "dagmc * mpi_openmpi_*"
+              "dagmc"
             ]
           }
         },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"mpi_openmpi_*\"]",
-            "moab[build=\"mpi_openmpi_notempest_*\"]",
-            "openmpi"
-          ],
-          "run": [
-            "hdf5 * mpi_openmpi_*",
-            "moab * mpi_openmpi_notempest_*",
-            "zlib",
-            "openmpi"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_mpich_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"mpi_mpich_*\"]",
-            "moab[build=\"mpi_mpich_notempest_*\"]",
-            "mpich"
-          ],
-          "run": [
-            "hdf5 * mpi_mpich_*",
-            "moab * mpi_mpich_notempest_*",
-            "zlib",
-            "mpich"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": null,
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -2654,6 +3332,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -2703,8 +3382,47 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -2722,6 +3440,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -2775,6 +3494,117 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
+              "dagmc * mpi_openmpi_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
+            "moab[build=\"mpi_openmpi_notempest_*\"]",
+            "openmpi"
+          ],
+          "run": [
+            "hdf5 * mpi_openmpi_*",
+            "moab * mpi_openmpi_notempest_*",
+            "zlib",
+            "openmpi"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -2793,6 +3623,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -2844,7 +3675,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -2859,6 +3715,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -2909,8 +3766,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -2929,6 +3806,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -2981,8 +3859,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -3001,6 +3899,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -3052,7 +3951,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -3067,6 +3991,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -3117,8 +4042,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -3137,6 +4082,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -3189,8 +4135,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -3208,6 +4174,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -3258,7 +4225,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -3272,6 +4264,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -3321,8 +4314,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -3340,6 +4353,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -3391,8 +4405,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -3410,6 +4444,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -3460,7 +4495,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -3474,6 +4534,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -3523,8 +4584,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -3542,6 +4623,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -3593,8 +4675,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -3613,6 +4715,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -3664,7 +4767,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -3679,6 +4807,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -3729,8 +4858,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -3749,826 +4898,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
-            "moab[build=\"mpi_openmpi_notempest_*\"]",
-            "openmpi"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * mpi_openmpi_*",
-            "moab * mpi_openmpi_notempest_*",
-            "zlib",
-            "openmpi"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_mpich_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"mpi_mpich_*\"]",
-            "moab[build=\"mpi_mpich_notempest_*\"]",
-            "mpich"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * mpi_mpich_*",
-            "moab * mpi_mpich_notempest_*",
-            "zlib",
-            "mpich"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": null,
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"nompi_*\"]",
-            "moab[build=\"nompi_notempest_*\"]"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * nompi_*",
-            "moab * nompi_notempest_*",
-            "zlib"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_openmpi_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"mpi_openmpi_*\"]",
-            "moab[build=\"mpi_openmpi_notempest_*\"]",
-            "openmpi"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * mpi_openmpi_*",
-            "moab * mpi_openmpi_notempest_*",
-            "zlib",
-            "openmpi"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_mpich_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"mpi_mpich_*\"]",
-            "moab[build=\"mpi_mpich_notempest_*\"]",
-            "mpich"
-          ],
-          "run": [
-            "hdf5 * mpi_mpich_*",
-            "moab * mpi_mpich_notempest_*",
-            "zlib",
-            "mpich"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": null,
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"nompi_*\"]",
-            "moab[build=\"nompi_notempest_*\"]"
-          ],
-          "run": [
-            "hdf5 * nompi_*",
-            "moab * nompi_notempest_*",
-            "zlib"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_openmpi_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"mpi_openmpi_*\"]",
-            "moab[build=\"mpi_openmpi_notempest_*\"]",
-            "openmpi"
-          ],
-          "run": [
-            "hdf5 * mpi_openmpi_*",
-            "moab * mpi_openmpi_notempest_*",
-            "zlib",
-            "openmpi"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_mpich_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"mpi_mpich_*\"]",
-            "moab[build=\"mpi_mpich_notempest_*\"]",
-            "mpich"
-          ],
-          "run": [
-            "hdf5 * mpi_mpich_*",
-            "moab * mpi_mpich_notempest_*",
-            "zlib",
-            "mpich"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": null,
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"nompi_*\"]",
-            "moab[build=\"nompi_notempest_*\"]"
-          ],
-          "run": [
-            "hdf5 * nompi_*",
-            "moab * nompi_notempest_*",
-            "zlib"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_openmpi_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "hdf5",
-            "hdf5[build=\"mpi_openmpi_*\"]",
-            "moab[build=\"mpi_openmpi_notempest_*\"]",
-            "openmpi"
-          ],
-          "run": [
-            "hdf5 * mpi_openmpi_*",
-            "moab * mpi_openmpi_notempest_*",
-            "zlib",
-            "openmpi"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_mpich_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"mpi_mpich_*\"]",
-            "moab[build=\"mpi_mpich_notempest_*\"]",
-            "mpich"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * mpi_mpich_*",
-            "moab * mpi_mpich_notempest_*",
-            "zlib",
-            "mpich"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": null,
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"nompi_*\"]",
-            "moab[build=\"nompi_notempest_*\"]"
-          ],
-          "run": [
-            "double-down",
-            "hdf5 * nompi_*",
-            "moab * nompi_notempest_*",
-            "zlib"
-          ]
-        },
-        "tests": [
-          {
-            "package_contents": {
-              "bin": [
-                "build_obb",
-                "check_watertight",
-                "make_watertight",
-                "overlap_check",
-                "pt_vol_test",
-                "ray_fire_test",
-                "test_geom",
-                "uwuw_preproc"
-              ],
-              "files": [
-                "lib/cmake/dagmc/DAGMCConfig.cmake",
-                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
-                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
-                "lib/cmake/dagmc/DAGMCTargets.cmake"
-              ],
-              "include": [
-                "dagmc/DagMC.hpp",
-                "dagmc/pyne.h",
-                "dagmc/uwuw.hpp"
-              ],
-              "lib": [
-                "dagmc",
-                "dagtally",
-                "makeWatertight",
-                "pyne_dagmc",
-                "uwuw"
-              ]
-            }
-          },
-          {
-            "script": "make_watertight --help"
-          }
-        ],
-        "version": "3.2.4"
-      },
-      {
-        "build": {
-          "run_exports": {
-            "weak": [
-              "dagmc * mpi_openmpi_*"
-            ]
-          }
-        },
-        "name": "dagmc",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "cmake",
-            "make",
-            "python >=3"
-          ],
-          "host": [
-            "eigen-abi-devel 3.*",
-            "double-down",
-            "hdf5",
-            "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -4621,8 +4951,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -4641,6 +4991,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -4692,7 +5043,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -4707,6 +5083,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -4757,8 +5134,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -4777,6 +5174,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -4829,8 +5227,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -4848,6 +5266,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -4898,7 +5317,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -4912,6 +5356,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -4961,8 +5406,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -4980,6 +5445,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -5031,8 +5497,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -5050,6 +5536,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -5100,7 +5587,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -5114,6 +5626,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -5163,8 +5676,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -5182,6 +5715,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -5227,6 +5761,1117 @@
           },
           {
             "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_mpich_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
+            "moab[build=\"mpi_mpich_notempest_*\"]",
+            "mpich"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * mpi_mpich_*",
+            "moab * mpi_mpich_notempest_*",
+            "zlib",
+            "mpich"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"nompi_*\"]",
+            "moab",
+            "moab[build=\"nompi_notempest_*\"]"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * nompi_*",
+            "moab * nompi_notempest_*",
+            "zlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_openmpi_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
+            "moab[build=\"mpi_openmpi_notempest_*\"]",
+            "openmpi"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * mpi_openmpi_*",
+            "moab * mpi_openmpi_notempest_*",
+            "zlib",
+            "openmpi"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_mpich_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
+            "moab[build=\"mpi_mpich_notempest_*\"]",
+            "mpich"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * mpi_mpich_*",
+            "moab * mpi_mpich_notempest_*",
+            "zlib",
+            "mpich"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"nompi_*\"]",
+            "moab",
+            "moab[build=\"nompi_notempest_*\"]"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * nompi_*",
+            "moab * nompi_notempest_*",
+            "zlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_openmpi_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "double-down",
+            "hdf5",
+            "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
+            "moab[build=\"mpi_openmpi_notempest_*\"]",
+            "openmpi"
+          ],
+          "run": [
+            "double-down",
+            "hdf5 * mpi_openmpi_*",
+            "moab * mpi_openmpi_notempest_*",
+            "zlib",
+            "openmpi"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_mpich_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
+            "moab[build=\"mpi_mpich_notempest_*\"]",
+            "mpich"
+          ],
+          "run": [
+            "hdf5 * mpi_mpich_*",
+            "moab * mpi_mpich_notempest_*",
+            "zlib",
+            "mpich"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"nompi_*\"]",
+            "moab",
+            "moab[build=\"nompi_notempest_*\"]"
+          ],
+          "run": [
+            "hdf5 * nompi_*",
+            "moab * nompi_notempest_*",
+            "zlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_openmpi_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
+            "moab[build=\"mpi_openmpi_notempest_*\"]",
+            "openmpi"
+          ],
+          "run": [
+            "hdf5 * mpi_openmpi_*",
+            "moab * mpi_openmpi_notempest_*",
+            "zlib",
+            "openmpi"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_mpich_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
+            "moab[build=\"mpi_mpich_notempest_*\"]",
+            "mpich"
+          ],
+          "run": [
+            "hdf5 * mpi_mpich_*",
+            "moab * mpi_mpich_notempest_*",
+            "zlib",
+            "mpich"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"nompi_*\"]",
+            "moab",
+            "moab[build=\"nompi_notempest_*\"]"
+          ],
+          "run": [
+            "hdf5 * nompi_*",
+            "moab * nompi_notempest_*",
+            "zlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc",
+              "dagmc * mpi_openmpi_*"
+            ]
+          }
+        },
+        "name": "dagmc",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "python >=3"
+          ],
+          "host": [
+            "eigen-abi-devel 3.*",
+            "hdf5",
+            "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
+            "moab[build=\"mpi_openmpi_notempest_*\"]",
+            "openmpi"
+          ],
+          "run": [
+            "hdf5 * mpi_openmpi_*",
+            "moab * mpi_openmpi_notempest_*",
+            "zlib",
+            "openmpi"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "build_obb",
+                "check_watertight",
+                "make_watertight",
+                "overlap_check",
+                "pt_vol_test",
+                "ray_fire_test",
+                "test_geom",
+                "uwuw_preproc"
+              ],
+              "files": [
+                "lib/cmake/dagmc/DAGMCConfig.cmake",
+                "lib/cmake/dagmc/DAGMCConfigVersion.cmake",
+                "lib/cmake/dagmc/DAGMCTargets-release.cmake",
+                "lib/cmake/dagmc/DAGMCTargets.cmake"
+              ],
+              "include": [
+                "dagmc/DagMC.hpp",
+                "dagmc/pyne.h",
+                "dagmc/uwuw.hpp"
+              ],
+              "lib": [
+                "dagmc",
+                "dagtally",
+                "makeWatertight",
+                "pyne_dagmc",
+                "uwuw"
+              ]
+            }
+          },
+          {
+            "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
           }
         ],
         "version": "3.2.4"
@@ -5249,6 +6894,7 @@
         "double-down",
         "hdf5",
         "hdf5[build=\"mpi_mpich_*\"]",
+        "moab",
         "moab[build=\"mpi_mpich_notempest_*\"]",
         "mpich",
         "hdf5[build=\"nompi_*\"]",
@@ -5294,15 +6940,18 @@
       "summary": "Direct Accelerated Geometry Toolkit"
     },
     "build": {
-      "number": "8",
+      "number": "9",
       "run_exports": {
         "weak": [
+          "dagmc",
           "dagmc * mpi_mpich_*",
           "dagmc * mpi_openmpi_*"
         ]
-      }
+      },
+      "script": "build.sh"
     },
     "extra": {
+      "feedstock-name": "dagmc",
       "recipe-maintainers": [
         "gonuke",
         "pshriwise",
@@ -5320,6 +6969,7 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -5338,6 +6988,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -5389,7 +7040,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -5404,6 +7080,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -5454,8 +7131,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -5474,6 +7171,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -5526,8 +7224,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -5546,6 +7264,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -5597,7 +7316,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -5612,6 +7356,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -5662,8 +7407,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -5682,6 +7447,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -5734,8 +7500,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -5753,6 +7539,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -5803,7 +7590,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -5817,6 +7629,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -5866,8 +7679,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -5885,6 +7718,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -5936,8 +7770,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -5955,6 +7809,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -6005,7 +7860,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -6019,6 +7899,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -6068,8 +7949,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -6087,6 +7988,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -6132,6 +8034,25 @@
           },
           {
             "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
           }
         ],
         "version": "3.2.4"
@@ -6154,6 +8075,7 @@
         "double-down",
         "hdf5",
         "hdf5[build=\"mpi_mpich_*\"]",
+        "moab",
         "moab[build=\"mpi_mpich_notempest_*\"]",
         "mpich",
         "hdf5[build=\"nompi_*\"]",
@@ -6211,6 +8133,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "dagmc",
         "double-down",
         "hdf5",
         "moab",
@@ -6236,15 +8159,18 @@
       "summary": "Direct Accelerated Geometry Toolkit"
     },
     "build": {
-      "number": "8",
+      "number": "9",
       "run_exports": {
         "weak": [
+          "dagmc",
           "dagmc * mpi_mpich_*",
           "dagmc * mpi_openmpi_*"
         ]
-      }
+      },
+      "script": "build.sh"
     },
     "extra": {
+      "feedstock-name": "dagmc",
       "recipe-maintainers": [
         "gonuke",
         "pshriwise",
@@ -6262,6 +8188,7 @@
         "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -6280,6 +8207,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -6331,7 +8259,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -6346,6 +8299,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -6396,8 +8350,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -6416,6 +8390,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -6468,8 +8443,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -6488,6 +8483,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -6539,7 +8535,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -6554,6 +8575,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -6604,8 +8626,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -6624,6 +8666,7 @@
             "double-down",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -6676,8 +8719,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -6695,6 +8758,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -6745,7 +8809,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -6759,6 +8848,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -6808,8 +8898,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -6827,6 +8937,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -6878,8 +8989,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_mpich_*"
             ]
           }
@@ -6897,6 +9028,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_mpich_*\"]",
+            "moab",
             "moab[build=\"mpi_mpich_notempest_*\"]",
             "mpich"
           ],
@@ -6947,7 +9079,32 @@
         "version": "3.2.4"
       },
       {
-        "build": null,
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-mpich",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "dagmc"
+            ]
+          }
+        },
         "name": "dagmc",
         "requirements": {
           "build": [
@@ -6961,6 +9118,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"nompi_*\"]",
+            "moab",
             "moab[build=\"nompi_notempest_*\"]"
           ],
           "run": [
@@ -7010,8 +9168,28 @@
       },
       {
         "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-nompi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
           "run_exports": {
             "weak": [
+              "dagmc",
               "dagmc * mpi_openmpi_*"
             ]
           }
@@ -7029,6 +9207,7 @@
             "eigen-abi-devel 3.*",
             "hdf5",
             "hdf5[build=\"mpi_openmpi_*\"]",
+            "moab",
             "moab[build=\"mpi_openmpi_notempest_*\"]",
             "openmpi"
           ],
@@ -7074,6 +9253,25 @@
           },
           {
             "script": "make_watertight --help"
+          }
+        ],
+        "version": "3.2.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "dagmc-openmpi",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "dagmc"
+          ]
+        },
+        "tests": [
+          {
+            "script": "which make_watertight"
           }
         ],
         "version": "3.2.4"
@@ -7096,6 +9294,7 @@
         "double-down",
         "hdf5",
         "hdf5[build=\"mpi_mpich_*\"]",
+        "moab",
         "moab[build=\"mpi_mpich_notempest_*\"]",
         "mpich",
         "hdf5[build=\"nompi_*\"]",
@@ -7153,6 +9352,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "dagmc",
         "double-down",
         "hdf5",
         "moab",
@@ -7169,7 +9369,10 @@
   "outputs_names": {
     "__set__": true,
     "elements": [
-      "dagmc"
+      "dagmc",
+      "dagmc-mpich",
+      "dagmc-nompi",
+      "dagmc-openmpi"
     ]
   },
   "parsing_error": false,
@@ -7182,13 +9385,14 @@
   "pr_info": {
     "__lazy_json__": "pr_info/dagmc.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"3.2.4\"\n  build_number: 8\n\npackage:\n  name: \"dagmc\"\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/svalinn/DAGMC/archive/v${{ version }}.tar.gz\n    sha256: ace39cb6cc05f1de316815512a0afe9f96c771449f8f0b12d65dfed915fb9788\n    patches:\n      # c.f. https://github.com/svalinn/DAGMC/pull/990\n      - cmake-policy-max.patch\n      # amalgamate_pyne.sh runs `git rev-parse HEAD` into an unused variable,\n      # which aborts the script (`set -e`) before remove_unsupported.py runs,\n      # as the source tarball is not a git repository.\n      - amalgamate-pyne-no-git.patch\n      # c.f. https://github.com/svalinn/DAGMC/pull/998\n      - namespace-include-headers.patch\n  # DAGMC vendors PyNE as a git submodule, which the GitHub release tarball\n  # does not include, so add the submodule commit pinned by the DAGMC release\n  # as an additional source.\n  # c.f. https://github.com/svalinn/DAGMC/tree/v3.2.4/src/pyne\n  - url: https://github.com/pyne/pyne/archive/e55e52e24a5394aebec78a15e94842fba86f68c9.tar.gz\n    sha256: 30207b34a555c62bf1d641d69a3ab320d4413097b72c502a4cf3303560df1c7e\n    target_directory: src/pyne/pyne\n\nbuild:\n  # add build string so packages can depend on\n  # mpi or nompi variants explicitly:\n  # `dagmc * mpi_mpich_*` for mpich\n  # `dagmc * mpi_openmpi_*` for openmpi\n  # `dagmc * nompi_*` for no mpi\n\n  # prioritize nompi variant\n  # rattler-build exposes the resolved build.number as `build_number` when\n  # rendering build.string, so only apply the offset here\n  number: ${{ build_number | int + 100 if mpi == \"nompi\" else build_number }}\n  string: ${{ mpi_prefix }}_${{ dd }}_h${{ hash }}_${{ build_number }}\n  variant:\n    # prefer 'nompi' over other variants\n    down_prioritize_variant: ${{ 0 if mpi == \"nompi\" else 1 }}\n  skip:\n    - win\n  prefix_detection:\n    ignore_binary_files: true\n\nrequirements:\n  build:\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - cmake\n    - make\n    # needed by the PyNE amalgamation scripts run from src/pyne/CMakeLists.txt\n    # python has a version bound so conda-smithy does not treat python as a build\n    # matrix variant, which would multiply the CI jobs across python versions\n    - python >=3\n  host:\n    # DAGMC (KDEKernel.hpp) and MOAB (Matrix3.hpp) expose Eigen types in\n    # their public headers, so depend on eigen-abi-devel to get the eigen-abi\n    # ABI marker run export. Constrain to the Eigen v3 API/ABI to match MOAB,\n    # which is built against eigen 3.*.\n    # c.f. https://github.com/conda-forge/eigen-feedstock/blob/main/recipe/README.md\n    - eigen-abi-devel 3.*\n    - if: dd != \"nodoubledown\"\n      then: double-down\n    # matching MOAB HDF5 host requirements to ensure matched pinning of HDF5 versions\n    - hdf5\n    - hdf5 [build=${{ mpi_prefix }}_*]\n    # DAGMC does not need TempestRemap\n    # c.f. https://github.com/conda-forge/dagmc-feedstock/issues/41\n    - moab [build=${{ mpi_prefix }}_notempest_*]\n    - if: mpi != \"nompi\"\n      then: ${{ mpi }}\n  run:\n    - if: dd != \"nodoubledown\"\n      then: double-down\n    - hdf5 * [build=${{ mpi_prefix }}_*]\n    - moab * [build=${{ mpi_prefix }}_notempest_*]\n    - zlib\n    - if: mpi != \"nompi\"\n      then: ${{ mpi }}\n  run_exports:\n    # constrain downstream packages to the same mpi variant\n    - if: mpi != \"nompi\"\n      then: dagmc * ${{ mpi_prefix }}_*\n\ntests:\n  - package_contents:\n      bin:\n        - build_obb\n        - check_watertight\n        - make_watertight\n        - overlap_check\n        - pt_vol_test\n        - ray_fire_test\n        - test_geom\n        - uwuw_preproc\n      include:\n        - dagmc/DagMC.hpp\n        - dagmc/pyne.h\n        - dagmc/uwuw.hpp\n      lib:\n        - dagmc\n        - dagtally\n        - makeWatertight\n        - pyne_dagmc\n        - uwuw\n      files:\n        - lib/cmake/dagmc/DAGMCConfig.cmake\n        - lib/cmake/dagmc/DAGMCConfigVersion.cmake\n        - lib/cmake/dagmc/DAGMCTargets-release.cmake\n        - lib/cmake/dagmc/DAGMCTargets.cmake\n\n  - script:\n      - make_watertight --help\n\nabout:\n  license: BSD-2-Clause\n  license_file: LICENSE.txt\n  summary: Direct Accelerated Geometry Toolkit\n  description: |\n    Direct Accelerated Geometry Monte Carlo (DAGMC) is a software package that\n    allows users to perform Monte Carlo radiation transport directly on CAD\n    models.\n  homepage: https://svalinn.github.io/DAGMC/\n  repository: https://github.com/svalinn/DAGMC\n  documentation: https://svalinn.github.io/DAGMC/\n\nextra:\n  recipe-maintainers:\n    - gonuke\n    - pshriwise\n    - ljacobson64\n    - kkiesling\n    - bam241\n    - ngranda\n    - shimwell\n    - bquan0\n    - matthewfeickert\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"3.2.4\"\n  build_number: 9\n\nrecipe:\n  name: dagmc-suite\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/svalinn/DAGMC/archive/v${{ version }}.tar.gz\n    sha256: ace39cb6cc05f1de316815512a0afe9f96c771449f8f0b12d65dfed915fb9788\n    patches:\n      # c.f. https://github.com/svalinn/DAGMC/pull/990\n      - cmake-policy-max.patch\n      # amalgamate_pyne.sh runs `git rev-parse HEAD` into an unused variable,\n      # which aborts the script (`set -e`) before remove_unsupported.py runs,\n      # as the source tarball is not a git repository.\n      - amalgamate-pyne-no-git.patch\n      # c.f. https://github.com/svalinn/DAGMC/pull/998\n      - namespace-include-headers.patch\n  # DAGMC vendors PyNE as a git submodule, which the GitHub release tarball\n  # does not include, so add the submodule commit pinned by the DAGMC release\n  # as an additional source.\n  # c.f. https://github.com/svalinn/DAGMC/tree/v3.2.4/src/pyne\n  - url: https://github.com/pyne/pyne/archive/e55e52e24a5394aebec78a15e94842fba86f68c9.tar.gz\n    sha256: 30207b34a555c62bf1d641d69a3ab320d4413097b72c502a4cf3303560df1c7e\n    target_directory: src/pyne/pyne\n\nbuild:\n  number: ${{ build_number | int + 100 if mpi == \"nompi\" else build_number }}\n  variant:\n    # prefer 'nompi' over other variants\n    down_prioritize_variant: ${{ 0 if mpi == \"nompi\" else 1 }}\n  skip:\n    - win\n\noutputs:\n  - package:\n      name: dagmc\n    build:\n      # add build string so packages can depend on\n      # mpi or nompi variants explicitly:\n      # `dagmc * mpi_mpich_*` for mpich\n      # `dagmc * mpi_openmpi_*` for openmpi\n      # `dagmc * nompi_*` for no mpi\n      # prioritize nompi variant\n      string: ${{ mpi_prefix }}_${{ dd }}_h${{ hash }}_${{ build_number }}\n      script: build.sh\n      prefix_detection:\n        ignore_binary_files: true\n    requirements:\n      build:\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler(\"cxx\") }}\n        - cmake\n        - make\n        # needed by the PyNE amalgamation scripts run from src/pyne/CMakeLists.txt\n        # python has a version bound so conda-smithy does not treat python as a build\n        # matrix variant, which would multiply the CI jobs across python versions\n        - python >=3\n      host:\n        # DAGMC (KDEKernel.hpp) and MOAB (Matrix3.hpp) expose Eigen types in\n        # their public headers, so depend on eigen-abi-devel to get the eigen-abi\n        # ABI marker run export. Constrain to the Eigen v3 API/ABI to match MOAB,\n        # which is built against eigen 3.*.\n        # c.f. https://github.com/conda-forge/eigen-feedstock/blob/main/recipe/README.md\n        - eigen-abi-devel 3.*\n        - if: dd != \"nodoubledown\"\n          then: double-down\n        # matching MOAB HDF5 host requirements to ensure matched pinning of HDF5 versions\n        - hdf5\n        - hdf5 [build=${{ mpi_prefix }}_*]\n        # DAGMC does not need TempestRemap\n        # c.f. https://github.com/conda-forge/dagmc-feedstock/issues/41\n        - moab\n        - moab [build=${{ mpi_prefix }}_notempest_*]\n        - if: mpi != \"nompi\"\n          then: ${{ mpi }}\n      run:\n        - if: dd != \"nodoubledown\"\n          then: double-down\n        - hdf5 * [build=${{ mpi_prefix }}_*]\n        - moab * [build=${{ mpi_prefix }}_notempest_*]\n        - zlib\n        - if: mpi != \"nompi\"\n          then: ${{ mpi }}\n      run_exports:\n        - ${{ pin_subpackage(\"dagmc\", upper_bound=\"x.x\") }}\n        # constrain downstream packages to the same mpi variant\n        - if: mpi != \"nompi\"\n          then: dagmc * ${{ mpi_prefix }}_*\n\n    tests:\n      - package_contents:\n          bin:\n            - build_obb\n            - check_watertight\n            - make_watertight\n            - overlap_check\n            - pt_vol_test\n            - ray_fire_test\n            - test_geom\n            - uwuw_preproc\n          include:\n            - dagmc/DagMC.hpp\n            - dagmc/pyne.h\n            - dagmc/uwuw.hpp\n          lib:\n            - dagmc\n            - dagtally\n            - makeWatertight\n            - pyne_dagmc\n            - uwuw\n          files:\n            - lib/cmake/dagmc/DAGMCConfig.cmake\n            - lib/cmake/dagmc/DAGMCConfigVersion.cmake\n            - lib/cmake/dagmc/DAGMCTargets-release.cmake\n            - lib/cmake/dagmc/DAGMCTargets.cmake\n\n      - script:\n          - make_watertight --help\n\n  - package:\n      # metapackages named for each MPI variant so users can select one\n      # directly, e.g. `conda install dagmc-mpich`\n      name: dagmc-${{ mpi }}\n    build:\n      noarch: generic\n      # Avoid inheriting build script and do nothing instead\n      script: \"true\"\n      # keep the doubledown variant visible in the build string and carry the\n      # nompi build number bump so this metapackage tracks the dagmc output\n      string: ${{ dd }}_h${{ hash }}_${{ build_number }}\n    requirements:\n      run:\n        # Pin to the exact build variant, which is the mpi variant that built\n        - ${{ pin_subpackage(\"dagmc\", exact=true) }}\n    tests:\n      - script:\n          - which make_watertight\n\nabout:\n  license: BSD-2-Clause\n  license_file: LICENSE.txt\n  summary: Direct Accelerated Geometry Toolkit\n  description: |\n    Direct Accelerated Geometry Monte Carlo (DAGMC) is a software package that\n    allows users to perform Monte Carlo radiation transport directly on CAD\n    models.\n  homepage: https://svalinn.github.io/DAGMC/\n  repository: https://github.com/svalinn/DAGMC\n  documentation: https://svalinn.github.io/DAGMC/\n\nextra:\n  feedstock-name: dagmc\n  recipe-maintainers:\n    - gonuke\n    - pshriwise\n    - ljacobson64\n    - kkiesling\n    - bam241\n    - ngranda\n    - shimwell\n    - bquan0\n    - matthewfeickert\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_stdlib_stub",
       "cmake",
       "cxx_compiler_stub",
+      "dagmc",
       "double-down",
       "eigen-abi-devel",
       "hdf5",
@@ -7229,6 +9433,7 @@
       "elements": [
         "c_stdlib_stub",
         "cxx_compiler_stub",
+        "dagmc",
         "double-down",
         "hdf5",
         "moab",
@@ -7263,6 +9468,7 @@
         "hdf5[build=\"mpi_mpich_*\"]",
         "hdf5[build=\"mpi_openmpi_*\"]",
         "hdf5[build=\"nompi_*\"]",
+        "moab",
         "moab[build=\"mpi_mpich_notempest_*\"]",
         "moab[build=\"mpi_openmpi_notempest_*\"]",
         "moab[build=\"nompi_notempest_*\"]",
@@ -7273,6 +9479,7 @@
     "run": {
       "__set__": true,
       "elements": [
+        "dagmc",
         "double-down",
         "hdf5 * mpi_mpich_*",
         "hdf5 * mpi_openmpi_*",
