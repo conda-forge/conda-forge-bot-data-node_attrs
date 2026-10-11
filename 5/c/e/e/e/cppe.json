@@ -1,18 +1,16 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.10.____cpython.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npybind11_abi:\n- '11'\npython:\n- 3.10.* *_cpython\npython_impl:\n- cpython\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_python3.11.____cpython.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npybind11_abi:\n- '11'\npython:\n- 3.11.* *_cpython\npython_impl:\n- cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - channel_sources\n",
   "ci_support_migrations": {
-    "python314": {
+    "python315": {
       "migration_number": 1,
-      "migrator_ts": 1724712607
+      "migrator_ts": 1755739490
     }
   },
   "conda-forge.yml": {
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "pkg_format": "2"
@@ -24,12 +22,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "b02a2a223926235ce0727e24807b2e8e183584c2",
-  "feedstock_hash_ts": 1776923526,
+  "feedstock_hash": "9a40d3de5fc8fcd35b96340921abdd5fd3728b07",
+  "feedstock_hash_ts": 1791701243,
   "feedstock_name": "cppe",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -46,7 +45,7 @@
     },
     "build": {
       "binary_relocation": true,
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "cppe"
       ]
@@ -165,7 +164,7 @@
     },
     "build": {
       "binary_relocation": true,
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "cppe"
       ]
@@ -283,7 +282,7 @@
     },
     "build": {
       "binary_relocation": true,
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "cppe"
       ]
@@ -401,7 +400,7 @@
     },
     "build": {
       "binary_relocation": true,
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "cppe"
       ]
@@ -485,7 +484,7 @@
     },
     "build": {
       "binary_relocation": true,
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "cppe"
       ]
@@ -604,7 +603,7 @@
     },
     "build": {
       "binary_relocation": true,
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "cppe"
       ]
@@ -727,7 +726,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/cppe.json"
   },
-  "raw_meta_yaml": "{% set name = \"cppe\" %}\n{% set version = \"0.3.4\" %}\n{% set sha256 = \"06c0dfd94c09e651eb09039f20e945ab53cd4586f87b2eeae6523765057431c0\" %}\n{% set build = 1 %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/maxscheurer/cppe/archive/v{{ version }}.tar.gz\n  sha256: {{ sha256 }}\n\nbuild:\n  number: {{ build }}\n  binary_relocation: true\n  run_exports:\n    - {{ pin_subpackage('cppe', max_pin='x.x') }}\n\nrequirements:\n  build:\n    - {{ stdlib(\"c\") }}\n    - python  # [build_platform != target_platform]\n    - cross-python_{{ target_platform }}  # [build_platform != target_platform]\n    - pybind11  # [build_platform != target_platform]\n    - cmake >=3.5\n    - {{ compiler('cxx') }}\n    - ninja\n    - llvm-openmp  # [osx or win]\n    - libgomp      # [linux]\n    - eigen <5\n  host:\n    - pip\n    - pybind11\n    - pybind11-abi\n    - scikit-build-core >=0.8\n    - setuptools_scm\n    - python\n  run:\n    - python\n\ntest:\n  source_files:\n    - tests\n  requires:\n    - pip\n    - m2w64-binutils  # [win]   # provides objdump.exe\n    - pytest\n    - numpy\n    - h5py  # [python_impl != \"pypy\"]\n    - scipy\n    - pandas\n  imports:\n    - cppe\n  commands:\n    # Verify Python extension library\n    - test -f $SP_DIR/cppe/pycppe*.so                                       # [not win]\n    - if not exist %PREFIX%\\\\Lib\\\\site-packages\\\\cppe\\\\pycppe.*.pyd exit 1  # [win]\n    # Inspect linkage\n    - ldd -v $SP_DIR/cppe/pycppe*.so  # [linux64]\n    - otool -L $SP_DIR/cppe/pycppe*.so  # [osx]\n    - objdump.exe -p %SP_DIR%\\\\cppe\\\\pycppe.*.pyd | findstr /i \"dll\"  # [win]\n    - pip check\n    - pytest --capture=no --log-cli-level=INFO tests -m \"not needs_polarizationsolver\"  # [python_impl != \"pypy\"]\n\nabout:\n  home: https://github.com/maxscheurer/cppe\n  dev_url: https://github.com/maxscheurer/cppe\n  doc_url: https://cppe.readthedocs.io\n  doc_source_url: https://github.com/maxscheurer/cppe/blob/master/doc/source/index.rst\n  license: LGPL-3.0-or-later\n  license_file: LICENSE\n  license_url: https://opensource.org/licenses/LGPL-3.0\n  license_family: LGPL\n  summary: \"C++ and Python library for Polarizable Embedding calculations\"\n\nextra:\n  recipe-maintainers:\n    - robertodr\n    - maxscheurer\n",
+  "raw_meta_yaml": "{% set name = \"cppe\" %}\n{% set version = \"0.3.4\" %}\n{% set sha256 = \"06c0dfd94c09e651eb09039f20e945ab53cd4586f87b2eeae6523765057431c0\" %}\n{% set build = 2 %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/maxscheurer/cppe/archive/v{{ version }}.tar.gz\n  sha256: {{ sha256 }}\n\nbuild:\n  number: {{ build }}\n  binary_relocation: true\n  run_exports:\n    - {{ pin_subpackage('cppe', max_pin='x.x') }}\n\nrequirements:\n  build:\n    - {{ stdlib(\"c\") }}\n    - python  # [build_platform != target_platform]\n    - cross-python_{{ target_platform }}  # [build_platform != target_platform]\n    - pybind11  # [build_platform != target_platform]\n    - cmake >=3.5\n    - {{ compiler('cxx') }}\n    - ninja\n    - llvm-openmp  # [osx or win]\n    - libgomp      # [linux]\n    - eigen <5\n  host:\n    - pip\n    - pybind11\n    - pybind11-abi\n    - scikit-build-core >=0.8\n    - setuptools_scm\n    - python\n  run:\n    - python\n\ntest:\n  source_files:\n    - tests\n  requires:\n    - pip\n    - m2w64-binutils  # [win]   # provides objdump.exe\n    - pytest\n    - numpy\n    - h5py  # [python_impl != \"pypy\"]\n    - scipy\n    - pandas\n  imports:\n    - cppe\n  commands:\n    # Verify Python extension library\n    - test -f $SP_DIR/cppe/pycppe*.so                                       # [not win]\n    - if not exist %PREFIX%\\\\Lib\\\\site-packages\\\\cppe\\\\pycppe.*.pyd exit 1  # [win and py<315]\n    - if not exist %PREFIX%\\\\lib\\\\python\\\\site-packages\\\\cppe\\\\pycppe.*.pyd exit 1  # [win and py>=315]\n    # Inspect linkage\n    - ldd -v $SP_DIR/cppe/pycppe*.so  # [linux64]\n    - otool -L $SP_DIR/cppe/pycppe*.so  # [osx]\n    - objdump.exe -p %SP_DIR%\\\\cppe\\\\pycppe.*.pyd | findstr /i \"dll\"  # [win]\n    - pip check\n    - pytest --capture=no --log-cli-level=INFO tests -m \"not needs_polarizationsolver\"  # [python_impl != \"pypy\"]\n\nabout:\n  home: https://github.com/maxscheurer/cppe\n  dev_url: https://github.com/maxscheurer/cppe\n  doc_url: https://cppe.readthedocs.io\n  doc_source_url: https://github.com/maxscheurer/cppe/blob/master/doc/source/index.rst\n  license: LGPL-3.0-or-later\n  license_file: LICENSE\n  license_url: https://opensource.org/licenses/LGPL-3.0\n  license_family: LGPL\n  summary: \"C++ and Python library for Polarizable Embedding calculations\"\n\nextra:\n  recipe-maintainers:\n    - robertodr\n    - maxscheurer\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -860,7 +859,7 @@
     },
     "build": {
       "binary_relocation": true,
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "cppe"
       ]
