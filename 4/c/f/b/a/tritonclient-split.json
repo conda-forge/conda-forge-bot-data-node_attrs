@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.10'\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibabseil:\n- '20260526'\nlibcurl:\n- '8'\nlibgrpc:\n- '1.82'\nlibprotobuf:\n- 7.35.1\npython_min:\n- '3.10'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -17,33 +17,36 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
+    },
+    "provider": {
+      "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "1342b5baea61a7012dddb6d36ad8d964e824c4a6",
-  "feedstock_hash_ts": 1787561718,
+  "feedstock_hash": "408c4ca0374870f29d9030cd332303b67c0a8221",
+  "feedstock_hash_ts": 1791743289,
   "feedstock_name": "tritonclient-split",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
+      "dev_url": "https://github.com/triton-inference-server/client",
       "home": "https://developer.nvidia.com/nvidia-triton-inference-server",
       "license": "BSD-3-Clause",
       "license_family": "BSD-3-Clause",
-      "license_file": "tritonclient-2.71.0.dist-info/LICENSE.txt",
-      "summary": "Python client library and utilities for communicating with Triton Inference Server."
+      "license_file": "client/LICENSE",
+      "summary": "C++ and Python clients for communicating with Triton Inference Server"
     },
     "build": {
       "noarch": "python",
-      "number": "0",
-      "script": {
-        "file": "build_base.sh",
-        "interpreter": "bash"
-      }
+      "number": "1",
+      "script": "build_python.sh"
     },
     "extra": {
+      "feedstock-name": "tritonclient-split",
       "recipe-maintainers": [
         "janjagusch",
         "ivergara",
-        "nick-harmening"
+        "nick-harmening",
+        "timkpaine"
       ]
     },
     "outputs": [
@@ -53,12 +56,24 @@
         },
         "name": "tritonclient",
         "requirements": {
-          "build": [],
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.31.8",
+            "libgrpc 1.82.*",
+            "ninja"
+          ],
           "host": [
             "python 3.10.*",
             "pip",
             "setuptools",
-            "unzip"
+            "wheel",
+            "grpcio-tools 1.82.*",
+            "grpcio 1.82.*",
+            "libgrpc",
+            "libprotobuf",
+            "rapidjson"
           ],
           "run": [
             "python >=3.10",
@@ -86,23 +101,17 @@
       },
       {
         "build": {
-          "noarch": "python"
+          "noarch": "generic"
         },
         "name": "tritonclient-http",
         "requirements": {
           "build": [],
-          "host": [
-            "python 3.10.*",
-            "pip",
-            "setuptools",
-            "unzip",
-            "tritonclient"
-          ],
+          "host": [],
           "run": [
-            "python >=3.10",
             "tritonclient",
             "aiohttp >=3.8.1,<4.0.0",
-            "geventhttpclient >=2.3.3"
+            "geventhttpclient >=2.3.3",
+            "greenlet <3.4.0"
           ]
         },
         "tests": [
@@ -122,24 +131,17 @@
       },
       {
         "build": {
-          "noarch": "python"
+          "noarch": "generic"
         },
         "name": "tritonclient-grpc",
         "requirements": {
           "build": [],
-          "host": [
-            "python 3.10.*",
-            "pip",
-            "setuptools",
-            "unzip",
-            "tritonclient"
-          ],
+          "host": [],
           "run": [
-            "python >=3.10",
             "tritonclient",
-            "grpcio >=1.63.0,<1.68",
+            "grpcio >=1.82",
             "packaging >=14.1",
-            "protobuf >=5.26.1,<6.0dev"
+            "protobuf >=7.35.1,<8.0"
           ]
         },
         "tests": [
@@ -156,6 +158,84 @@
           }
         ],
         "version": "2.71.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libtritonclient"
+            ]
+          }
+        },
+        "name": "libtritonclient",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.31.8",
+            "libgrpc 1.82.*",
+            "ninja"
+          ],
+          "host": [
+            "libabseil",
+            "libcurl",
+            "libgrpc",
+            "libprotobuf",
+            "rapidjson",
+            "zlib"
+          ],
+          "run": [
+            "rapidjson"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/TritonClient/TritonClientConfig.cmake"
+              ],
+              "include": [
+                "common.h",
+                "grpc_client.h",
+                "http_client.h"
+              ],
+              "lib": [
+                "grpcclient",
+                "httpclient"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "cmake",
+                "libabseil",
+                "libcurl",
+                "libgrpc",
+                "libprotobuf",
+                "ninja",
+                "zlib"
+              ]
+            },
+            "script": [
+              "cmake -S test -B test-build -GNinja",
+              "cmake --build test-build",
+              "test-build/tritonclient-test",
+              "test ! -e \"$PREFIX/lib/libgrpcclient_static.a\"",
+              "test ! -e \"$PREFIX/lib/libhttpclient_static.a\""
+            ]
+          }
+        ],
+        "version": "2.71.0"
       }
     ],
     "package": {
@@ -163,11 +243,24 @@
       "version": "2.71.0"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake >=3.31.8",
+        "libgrpc 1.82.*",
+        "ninja"
+      ],
       "host": [
         "python 3.10.*",
         "pip",
         "setuptools",
-        "unzip"
+        "wheel",
+        "grpcio-tools 1.82.*",
+        "grpcio 1.82.*",
+        "libgrpc",
+        "libprotobuf",
+        "rapidjson"
       ],
       "run": [
         "python >=3.10",
@@ -179,23 +272,41 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "64be542d5fe0bec8d9e7e708d8c847c43f13d9bfe1190665a8ed185562011dfc",
-      "url": "https://files.pythonhosted.org/packages/py3/t/tritonclient/tritonclient-2.71.0-py3-none-any.whl"
+      "patches": [
+        "client-cmake.patch",
+        "client-support-conda-grpc.patch"
+      ],
+      "sha256": "c48e31f08959e2c0f264fded27b1395b0ba335939118a747223b1852c8f179ea",
+      "url": "https://github.com/triton-inference-server/client/archive/67fc23833a2d67edd2840db9f828ca6b75a0336c.tar.gz"
     }
   },
   "linux_64_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libgrpc",
+        "ninja"
+      ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "grpcio",
+        "grpcio-tools",
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
         "pip",
         "python",
+        "rapidjson",
         "setuptools",
-        "tritonclient",
-        "unzip"
+        "wheel",
+        "zlib"
       ]
     },
     "run": {
@@ -203,6 +314,7 @@
       "elements": [
         "aiohttp",
         "geventhttpclient",
+        "greenlet",
         "grpcio",
         "ml_dtypes",
         "numpy",
@@ -210,6 +322,7 @@
         "protobuf",
         "python",
         "python-rapidjson",
+        "rapidjson",
         "tritonclient",
         "urllib3"
       ]
@@ -217,31 +330,45 @@
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "ninja",
+        "pip",
+        "zlib"
       ]
     }
   },
   "meta_yaml": {
     "about": {
+      "dev_url": "https://github.com/triton-inference-server/client",
       "home": "https://developer.nvidia.com/nvidia-triton-inference-server",
       "license": "BSD-3-Clause",
       "license_family": "BSD-3-Clause",
-      "license_file": "tritonclient-2.71.0.dist-info/LICENSE.txt",
-      "summary": "Python client library and utilities for communicating with Triton Inference Server."
+      "license_file": "client/LICENSE",
+      "summary": "C++ and Python clients for communicating with Triton Inference Server"
     },
     "build": {
       "noarch": "python",
-      "number": "0",
-      "script": {
-        "file": "build_base.sh",
-        "interpreter": "bash"
-      }
+      "number": "1",
+      "run_exports": {
+        "weak": [
+          "libtritonclient"
+        ]
+      },
+      "script": "build_cpp.sh"
     },
     "extra": {
+      "feedstock-name": "tritonclient-split",
       "recipe-maintainers": [
         "janjagusch",
         "ivergara",
-        "nick-harmening"
+        "nick-harmening",
+        "timkpaine"
       ]
     },
     "outputs": [
@@ -251,12 +378,24 @@
         },
         "name": "tritonclient",
         "requirements": {
-          "build": [],
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.31.8",
+            "libgrpc 1.82.*",
+            "ninja"
+          ],
           "host": [
             "python 3.10.*",
             "pip",
             "setuptools",
-            "unzip"
+            "wheel",
+            "grpcio-tools 1.82.*",
+            "grpcio 1.82.*",
+            "libgrpc",
+            "libprotobuf",
+            "rapidjson"
           ],
           "run": [
             "python >=3.10",
@@ -284,23 +423,17 @@
       },
       {
         "build": {
-          "noarch": "python"
+          "noarch": "generic"
         },
         "name": "tritonclient-http",
         "requirements": {
           "build": [],
-          "host": [
-            "python 3.10.*",
-            "pip",
-            "setuptools",
-            "unzip",
-            "tritonclient"
-          ],
+          "host": [],
           "run": [
-            "python >=3.10",
             "tritonclient",
             "aiohttp >=3.8.1,<4.0.0",
-            "geventhttpclient >=2.3.3"
+            "geventhttpclient >=2.3.3",
+            "greenlet <3.4.0"
           ]
         },
         "tests": [
@@ -320,24 +453,17 @@
       },
       {
         "build": {
-          "noarch": "python"
+          "noarch": "generic"
         },
         "name": "tritonclient-grpc",
         "requirements": {
           "build": [],
-          "host": [
-            "python 3.10.*",
-            "pip",
-            "setuptools",
-            "unzip",
-            "tritonclient"
-          ],
+          "host": [],
           "run": [
-            "python >=3.10",
             "tritonclient",
-            "grpcio >=1.63.0,<1.68",
+            "grpcio >=1.82",
             "packaging >=14.1",
-            "protobuf >=5.26.1,<6.0dev"
+            "protobuf >=7.35.1,<8.0"
           ]
         },
         "tests": [
@@ -354,37 +480,661 @@
           }
         ],
         "version": "2.71.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libtritonclient"
+            ]
+          }
+        },
+        "name": "libtritonclient",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.31.8",
+            "libgrpc 1.82.*",
+            "ninja"
+          ],
+          "host": [
+            "libabseil",
+            "libcurl",
+            "libgrpc",
+            "libprotobuf",
+            "rapidjson",
+            "zlib"
+          ],
+          "run": [
+            "rapidjson"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/TritonClient/TritonClientConfig.cmake"
+              ],
+              "include": [
+                "common.h",
+                "grpc_client.h",
+                "http_client.h"
+              ],
+              "lib": [
+                "grpcclient",
+                "httpclient"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "cmake",
+                "libabseil",
+                "libcurl",
+                "libgrpc",
+                "libprotobuf",
+                "ninja",
+                "zlib"
+              ]
+            },
+            "script": [
+              "cmake -S test -B test-build -GNinja",
+              "cmake --build test-build",
+              "test-build/tritonclient-test",
+              "test ! -e \"$PREFIX/lib/libgrpcclient_static.a\"",
+              "test ! -e \"$PREFIX/lib/libhttpclient_static.a\""
+            ]
+          }
+        ],
+        "version": "2.71.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libtritonclient"
+            ]
+          }
+        },
+        "name": "libtritonclient",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.31.8",
+            "libgrpc 1.82.*",
+            "ninja"
+          ],
+          "host": [
+            "libabseil",
+            "libcurl",
+            "libgrpc",
+            "libprotobuf",
+            "rapidjson",
+            "zlib"
+          ],
+          "run": [
+            "rapidjson"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/TritonClient/TritonClientConfig.cmake"
+              ],
+              "include": [
+                "common.h",
+                "grpc_client.h",
+                "http_client.h"
+              ],
+              "lib": [
+                "grpcclient",
+                "httpclient"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "cmake",
+                "libabseil",
+                "libcurl",
+                "libgrpc",
+                "libprotobuf",
+                "ninja",
+                "zlib"
+              ]
+            },
+            "script": [
+              "cmake -S test -B test-build -GNinja",
+              "cmake --build test-build",
+              "test-build/tritonclient-test",
+              "test ! -e \"$PREFIX/lib/libgrpcclient_static.a\"",
+              "test ! -e \"$PREFIX/lib/libhttpclient_static.a\""
+            ]
+          }
+        ],
+        "version": "2.71.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libtritonclient"
+            ]
+          }
+        },
+        "name": "libtritonclient",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.31.8",
+            "libgrpc 1.82.*",
+            "ninja"
+          ],
+          "host": [
+            "libabseil",
+            "libcurl",
+            "libgrpc",
+            "libprotobuf",
+            "rapidjson",
+            "zlib"
+          ],
+          "run": [
+            "rapidjson"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/TritonClient/TritonClientConfig.cmake"
+              ],
+              "include": [
+                "common.h",
+                "grpc_client.h",
+                "http_client.h"
+              ],
+              "lib": [
+                "grpcclient",
+                "httpclient"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "cmake",
+                "libabseil",
+                "libcurl",
+                "libgrpc",
+                "libprotobuf",
+                "ninja",
+                "zlib"
+              ]
+            },
+            "script": [
+              "cmake -S test -B test-build -GNinja",
+              "cmake --build test-build",
+              "test-build/tritonclient-test",
+              "test ! -e \"$PREFIX/lib/libgrpcclient_static.a\"",
+              "test ! -e \"$PREFIX/lib/libhttpclient_static.a\""
+            ]
+          }
+        ],
+        "version": "2.71.0"
       }
     ],
     "package": {
-      "name": "tritonclient",
+      "name": "libtritonclient",
       "version": "2.71.0"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake >=3.31.8",
+        "libgrpc 1.82.*",
+        "ninja"
+      ],
       "host": [
         "python 3.10.*",
         "pip",
         "setuptools",
-        "unzip"
+        "wheel",
+        "grpcio-tools 1.82.*",
+        "grpcio 1.82.*",
+        "libgrpc",
+        "libprotobuf",
+        "rapidjson",
+        "libabseil",
+        "libcurl",
+        "zlib"
       ],
       "run": [
         "python >=3.10",
         "ml_dtypes <=0.5.4",
         "numpy >=1.19.1",
         "python-rapidjson >=0.9.1",
-        "urllib3 >=2.0.7"
+        "urllib3 >=2.0.7",
+        "rapidjson"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "64be542d5fe0bec8d9e7e708d8c847c43f13d9bfe1190665a8ed185562011dfc",
-      "url": "https://files.pythonhosted.org/packages/py3/t/tritonclient/tritonclient-2.71.0-py3-none-any.whl"
+      "patches": [
+        "client-cmake.patch",
+        "client-support-conda-grpc.patch"
+      ],
+      "sha256": "c48e31f08959e2c0f264fded27b1395b0ba335939118a747223b1852c8f179ea",
+      "url": "https://github.com/triton-inference-server/client/archive/67fc23833a2d67edd2840db9f828ca6b75a0336c.tar.gz"
     }
   },
-  "name": "tritonclient",
+  "name": "libtritonclient",
+  "osx_64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/triton-inference-server/client",
+      "home": "https://developer.nvidia.com/nvidia-triton-inference-server",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "client/LICENSE",
+      "summary": "C++ and Python clients for communicating with Triton Inference Server"
+    },
+    "build": {
+      "number": "1",
+      "run_exports": {
+        "weak": [
+          "libtritonclient"
+        ]
+      },
+      "script": "build_cpp.sh"
+    },
+    "extra": {
+      "feedstock-name": "tritonclient-split",
+      "recipe-maintainers": [
+        "janjagusch",
+        "ivergara",
+        "nick-harmening",
+        "timkpaine"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libtritonclient"
+            ]
+          }
+        },
+        "name": "libtritonclient",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.31.8",
+            "libgrpc 1.82.*",
+            "ninja"
+          ],
+          "host": [
+            "libabseil",
+            "libcurl",
+            "libgrpc",
+            "libprotobuf",
+            "rapidjson",
+            "zlib"
+          ],
+          "run": [
+            "rapidjson"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/TritonClient/TritonClientConfig.cmake"
+              ],
+              "include": [
+                "common.h",
+                "grpc_client.h",
+                "http_client.h"
+              ],
+              "lib": [
+                "grpcclient",
+                "httpclient"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "cmake",
+                "libabseil",
+                "libcurl",
+                "libgrpc",
+                "libprotobuf",
+                "ninja",
+                "zlib"
+              ]
+            },
+            "script": [
+              "cmake -S test -B test-build -GNinja",
+              "cmake --build test-build",
+              "test-build/tritonclient-test",
+              "test ! -e \"$PREFIX/lib/libgrpcclient_static.a\"",
+              "test ! -e \"$PREFIX/lib/libhttpclient_static.a\""
+            ]
+          }
+        ],
+        "version": "2.71.0"
+      }
+    ],
+    "package": {
+      "name": "libtritonclient",
+      "version": "2.71.0"
+    },
+    "requirements": {
+      "build": [
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake >=3.31.8",
+        "libgrpc 1.82.*",
+        "ninja"
+      ],
+      "host": [
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "rapidjson",
+        "zlib"
+      ],
+      "run": [
+        "rapidjson"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "client-cmake.patch",
+        "client-support-conda-grpc.patch"
+      ],
+      "sha256": "c48e31f08959e2c0f264fded27b1395b0ba335939118a747223b1852c8f179ea",
+      "url": "https://github.com/triton-inference-server/client/archive/67fc23833a2d67edd2840db9f828ca6b75a0336c.tar.gz"
+    }
+  },
+  "osx_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libgrpc",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "rapidjson",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "rapidjson"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "ninja",
+        "zlib"
+      ]
+    }
+  },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/triton-inference-server/client",
+      "home": "https://developer.nvidia.com/nvidia-triton-inference-server",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "client/LICENSE",
+      "summary": "C++ and Python clients for communicating with Triton Inference Server"
+    },
+    "build": {
+      "number": "1",
+      "run_exports": {
+        "weak": [
+          "libtritonclient"
+        ]
+      },
+      "script": "build_cpp.sh"
+    },
+    "extra": {
+      "feedstock-name": "tritonclient-split",
+      "recipe-maintainers": [
+        "janjagusch",
+        "ivergara",
+        "nick-harmening",
+        "timkpaine"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libtritonclient"
+            ]
+          }
+        },
+        "name": "libtritonclient",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.31.8",
+            "libgrpc 1.82.*",
+            "ninja"
+          ],
+          "host": [
+            "libabseil",
+            "libcurl",
+            "libgrpc",
+            "libprotobuf",
+            "rapidjson",
+            "zlib"
+          ],
+          "run": [
+            "rapidjson"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/TritonClient/TritonClientConfig.cmake"
+              ],
+              "include": [
+                "common.h",
+                "grpc_client.h",
+                "http_client.h"
+              ],
+              "lib": [
+                "grpcclient",
+                "httpclient"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "cmake",
+                "libabseil",
+                "libcurl",
+                "libgrpc",
+                "libprotobuf",
+                "ninja",
+                "zlib"
+              ]
+            },
+            "script": [
+              "cmake -S test -B test-build -GNinja",
+              "cmake --build test-build",
+              "test-build/tritonclient-test",
+              "test ! -e \"$PREFIX/lib/libgrpcclient_static.a\"",
+              "test ! -e \"$PREFIX/lib/libhttpclient_static.a\""
+            ]
+          }
+        ],
+        "version": "2.71.0"
+      }
+    ],
+    "package": {
+      "name": "libtritonclient",
+      "version": "2.71.0"
+    },
+    "requirements": {
+      "build": [
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake >=3.31.8",
+        "libgrpc 1.82.*",
+        "ninja"
+      ],
+      "host": [
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "rapidjson",
+        "zlib"
+      ],
+      "run": [
+        "rapidjson"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "client-cmake.patch",
+        "client-support-conda-grpc.patch"
+      ],
+      "sha256": "c48e31f08959e2c0f264fded27b1395b0ba335939118a747223b1852c8f179ea",
+      "url": "https://github.com/triton-inference-server/client/archive/67fc23833a2d67edd2840db9f828ca6b75a0336c.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libgrpc",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "rapidjson",
+        "zlib"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "rapidjson"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "ninja",
+        "zlib"
+      ]
+    }
+  },
   "outputs_names": {
     "__set__": true,
     "elements": [
+      "libtritonclient",
       "tritonclient",
       "tritonclient-grpc",
       "tritonclient-http"
@@ -392,51 +1142,87 @@
   },
   "parsing_error": false,
   "platforms": [
-    "linux_64"
+    "linux_64",
+    "osx_64",
+    "osx_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/tritonclient-split.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: tritonclient\n  version: \"2.71.0\"\n\nrecipe:\n  name: ${{ name|lower }}-split\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/py3/t/tritonclient/tritonclient-${{ version }}-py3-none-any.whl\n  sha256: 64be542d5fe0bec8d9e7e708d8c847c43f13d9bfe1190665a8ed185562011dfc\n\nbuild:\n  number: 0\n  noarch: python\n\noutputs:\n  - package:\n      name: ${{ name }}\n    build:\n      noarch: python\n      script:\n        file: build_base.sh\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools\n        - unzip\n      run:\n        - python >=${{ python_min }}\n        - ml_dtypes <=0.5.4\n        - numpy >=1.19.1\n        - python-rapidjson >=0.9.1\n        - urllib3 >=2.0.7\n    tests:\n      - python:\n          imports:\n            - tritonclient\n            - tritonclient.utils\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n  - package:\n      name: ${{ name }}-http\n    build:\n      noarch: python\n      script:\n        - unzip tritonclient-*.whl\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools\n        - unzip\n        - ${{ pin_subpackage('tritonclient', exact=True) }}\n      run:\n        - python >=${{ python_min }}\n        - ${{ pin_subpackage('tritonclient', exact=True) }}\n        - aiohttp >=3.8.1,<4.0.0\n        - geventhttpclient >=2.3.3\n    tests:\n      - python:\n          imports:\n            - tritonclient.http\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n  - package:\n      name: ${{ name }}-grpc\n    build:\n      noarch: python\n      script:\n        - unzip tritonclient-*.whl\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools\n        - unzip\n        - ${{ pin_subpackage('tritonclient', exact=True) }}\n      run:\n        - python >=${{ python_min }}\n        - ${{ pin_subpackage('tritonclient', exact=True) }}\n        - grpcio >=1.63.0,<1.68\n        - packaging >=14.1\n        - protobuf >=5.26.1,<6.0dev\n    tests:\n      - python:\n          imports:\n            - tritonclient.grpc\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n\nabout:\n  license: BSD-3-Clause\n  license_file: tritonclient-${{ version }}.dist-info/LICENSE.txt\n  summary: Python client library and utilities for communicating with Triton Inference Server.\n  homepage: https://developer.nvidia.com/nvidia-triton-inference-server\n\nextra:\n  recipe-maintainers:\n    - janjagusch\n    - ivergara\n    - nick-harmening\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: tritonclient\n  version: \"2.71.0\"\n  client_rev: 67fc23833a2d67edd2840db9f828ca6b75a0336c\n  common_rev: ecb874c3126f9f07810f4900d4e7b088fee5eb8c\n\nrecipe:\n  name: ${{ name|lower }}-split\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/triton-inference-server/client/archive/${{ client_rev }}.tar.gz\n    sha256: c48e31f08959e2c0f264fded27b1395b0ba335939118a747223b1852c8f179ea\n    target_directory: client\n    patches:\n      # Fix shared-library linkage and CMake exports; make static archive installation optional.\n      - client-cmake.patch\n      # Allow the conda-forge gRPC/protobuf runtimes used to regenerate Python stubs.\n      - client-support-conda-grpc.patch\n  - url: https://github.com/triton-inference-server/common/archive/${{ common_rev }}.tar.gz\n    sha256: 81e5f9aef14cc70b9c0570e2a465c69d2fdac55ee9c8bc8f729879244cb7a26e\n    target_directory: common\n    patches:\n      # Control common-library installation/tests and locate the native gRPC code generator.\n      - common-cmake.patch\n\nbuild:\n  number: 1\n  skip:\n    - win\n\noutputs:\n  - package:\n      name: ${{ name }}\n    build:\n      # CMake's protobuf object files are build-only; the installed wheel is pure Python.\n      noarch: python\n      skip:\n        - not linux\n      script: build_python.sh\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake >=3.31.8\n        # Keep native code-generation tools on the same release line as host libgrpc.\n        - libgrpc ${{ libgrpc }}.*\n        - ninja\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools\n        - wheel\n        - grpcio-tools ${{ libgrpc }}.*\n        - grpcio ${{ libgrpc }}.*\n        - libgrpc\n        - libprotobuf\n        - rapidjson\n      run:\n        - python >=${{ python_min }}\n        - ml_dtypes <=0.5.4\n        - numpy >=1.19.1\n        - python-rapidjson >=0.9.1\n        - urllib3 >=2.0.7\n      run_constraints:\n        # grpcio-tools requires matching grpcio; generated stubs enforce this full version.\n        - ${{ pin_compatible('grpcio', lower_bound='x.x.x', upper_bound=None) }}\n    tests:\n      - python:\n          imports:\n            - tritonclient\n            - tritonclient.utils\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n\n  - package:\n      name: ${{ name }}-http\n    build:\n      noarch: generic\n      skip:\n        - not linux\n    requirements:\n      run:\n        - ${{ pin_subpackage('tritonclient', exact=True) }}\n        - aiohttp >=3.8.1,<4.0.0\n        - geventhttpclient >=2.3.3\n        - greenlet <3.4.0\n    tests:\n      - python:\n          imports:\n            - tritonclient.http\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n\n  - package:\n      name: ${{ name }}-grpc\n    build:\n      noarch: generic\n      skip:\n        - not linux\n    requirements:\n      run:\n        - ${{ pin_subpackage('tritonclient', exact=True) }}\n        # tritonclient constrains this further to the generator's resolved patch version.\n        - grpcio >=${{ libgrpc }}\n        - packaging >=14.1\n        - protobuf >=${{ libprotobuf }},<8.0\n    tests:\n      - python:\n          imports:\n            - tritonclient.grpc\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n\n  - package:\n      name: libtritonclient\n    build:\n      skip:\n        - win\n      script: build_cpp.sh\n    requirements:\n      build:\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake >=3.31.8\n        # grpc_cpp_plugin runs on the build platform and must match host libgrpc.\n        - libgrpc ${{ libgrpc }}.*\n        - ninja\n      host:\n        - libabseil\n        - libcurl\n        - libgrpc\n        - libprotobuf\n        - rapidjson\n        - zlib\n      run:\n        # The installed json_utils.h exposes RapidJSON types to downstream consumers.\n        - rapidjson\n      run_exports:\n        - ${{ pin_subpackage('libtritonclient', upper_bound='x.x') }}\n    tests:\n      - package_contents:\n          include:\n            - common.h\n            - grpc_client.h\n            - http_client.h\n          lib:\n            - grpcclient\n            - httpclient\n          files:\n            - lib/cmake/TritonClient/TritonClientConfig.cmake\n      - script:\n          - cmake -S test -B test-build -GNinja\n          - cmake --build test-build\n          - test-build/tritonclient-test\n          - test ! -e \"$PREFIX/lib/libgrpcclient_static.a\"\n          - test ! -e \"$PREFIX/lib/libhttpclient_static.a\"\n        files:\n          recipe:\n            - test/\n        requirements:\n          build:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n          run:\n            - cmake\n            - libabseil\n            - libcurl\n            - libgrpc\n            - libprotobuf\n            - ninja\n            - zlib\n\nabout:\n  license: BSD-3-Clause\n  license_file:\n    - client/LICENSE\n    - common/LICENSE\n  summary: C++ and Python clients for communicating with Triton Inference Server\n  homepage: https://developer.nvidia.com/nvidia-triton-inference-server\n  repository: https://github.com/triton-inference-server/client\n\nextra:\n  feedstock-name: tritonclient-split\n  recipe-maintainers:\n    - janjagusch\n    - ivergara\n    - nick-harmening\n    - timkpaine\n",
   "req": {
     "__set__": true,
     "elements": [
       "aiohttp",
+      "c_compiler_stub",
+      "c_stdlib_stub",
+      "cmake",
+      "cxx_compiler_stub",
       "geventhttpclient",
+      "greenlet",
       "grpcio",
+      "grpcio-tools",
+      "libabseil",
+      "libcurl",
+      "libgrpc",
+      "libprotobuf",
       "ml_dtypes",
+      "ninja",
       "numpy",
       "packaging",
       "pip",
       "protobuf",
       "python",
       "python-rapidjson",
+      "rapidjson",
       "setuptools",
       "tritonclient",
-      "unzip",
-      "urllib3"
+      "urllib3",
+      "wheel",
+      "zlib"
     ]
   },
   "requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libgrpc",
+        "ninja"
+      ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "grpcio",
+        "grpcio-tools",
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
         "pip",
         "python",
+        "rapidjson",
         "setuptools",
-        "tritonclient",
-        "unzip"
+        "wheel",
+        "zlib"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "aiohttp",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
         "geventhttpclient",
+        "greenlet",
         "grpcio",
         "ml_dtypes",
         "numpy",
@@ -444,6 +1230,7 @@
         "protobuf",
         "python",
         "python-rapidjson",
+        "rapidjson",
         "tritonclient",
         "urllib3"
       ]
@@ -451,7 +1238,16 @@
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "ninja",
+        "pip",
+        "zlib"
       ]
     }
   },
@@ -459,16 +1255,30 @@
   "total_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake >=3.31.8",
+        "cxx_compiler_stub",
+        "libgrpc 1.82.*",
+        "ninja"
+      ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "grpcio 1.82.*",
+        "grpcio-tools 1.82.*",
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
         "pip",
         "python 3.10.*",
+        "rapidjson",
         "setuptools",
-        "tritonclient",
-        "unzip"
+        "wheel",
+        "zlib"
       ]
     },
     "run": {
@@ -476,13 +1286,15 @@
       "elements": [
         "aiohttp >=3.8.1,<4.0.0",
         "geventhttpclient >=2.3.3",
-        "grpcio >=1.63.0,<1.68",
+        "greenlet <3.4.0",
+        "grpcio >=1.82",
         "ml_dtypes <=0.5.4",
         "numpy >=1.19.1",
         "packaging >=14.1",
-        "protobuf >=5.26.1,<6.0dev",
+        "protobuf >=7.35.1,<8.0",
         "python >=3.10",
         "python-rapidjson >=0.9.1",
+        "rapidjson",
         "tritonclient",
         "urllib3 >=2.0.7"
       ]
@@ -490,11 +1302,20 @@
     "test": {
       "__set__": true,
       "elements": [
-        "pip"
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "libabseil",
+        "libcurl",
+        "libgrpc",
+        "libprotobuf",
+        "ninja",
+        "pip",
+        "zlib"
       ]
     }
   },
-  "url": "https://files.pythonhosted.org/packages/py3/t/tritonclient/tritonclient-2.71.0-py3-none-any.whl",
+  "url": "https://github.com/triton-inference-server/client/archive/67fc23833a2d67edd2840db9f828ca6b75a0336c.tar.gz",
   "version": "2.71.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/tritonclient-split.json"
