@@ -4,6 +4,10 @@
   "ci_support_linux_64_.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\nxerces_c:\n- '3.3'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "build_platform": {
+      "linux_aarch64": "linux_64",
+      "osx_arm64": "osx_64"
+    },
     "conda_build": {
       "error_overlinking": true
     },
@@ -12,10 +16,11 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
-    }
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "1087b7e8e93cdd460350eb0d9479b9d1366aa13f",
-  "feedstock_hash_ts": 1791749674,
+  "feedstock_hash": "01ea1a7b41bfe6c337e1e8056c9e4baa2cf2c831",
+  "feedstock_hash_ts": 1791757035,
   "feedstock_name": "libe57format",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -29,7 +34,7 @@
       "summary": "Library for reading and writing E57 point-cloud files"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libe57format"
@@ -105,6 +110,7 @@
             "script": [
               "cmake -G Ninja -S test -B build ${CMAKE_ARGS}",
               "cmake --build build",
+              "if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi",
               "./build/e57-test"
             ]
           }
@@ -167,6 +173,155 @@
       ]
     }
   },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/asmaloney/libE57Format",
+      "doc_url": "https://asmaloney.github.io/libE57Format-docs/",
+      "home": "https://github.com/asmaloney/libE57Format",
+      "license": "BSL-1.0",
+      "license_family": "BSL-1.0",
+      "license_file": "LICENSE.md",
+      "summary": "Library for reading and writing E57 point-cloud files"
+    },
+    "build": {
+      "number": "1",
+      "run_exports": {
+        "weak": [
+          "libe57format"
+        ]
+      },
+      "script": [
+        "cmake -G Ninja -S . -B build ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=\"${PREFIX}\" -DCMAKE_BUILD_TYPE=Release -DE57_BUILD_SHARED=ON -DE57_BUILD_TEST=ON -DE57_USE_EXTERNAL_GTEST=ON -DE57_USE_EXTERNAL_CRCPP=ON -DE57_RELEASE_LTO=OFF",
+        "cmake --build build",
+        "cmake --install build"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "swahtz"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libe57format"
+            ]
+          }
+        },
+        "name": "libe57format",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "xerces-c",
+            "libcrcpp",
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/E57Format/e57format-config.cmake"
+              ],
+              "include": [
+                "E57Format/E57Format.h",
+                "E57Format/E57SimpleReader.h",
+                "E57Format/E57SimpleWriter.h"
+              ],
+              "lib": [
+                "E57Format"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/CMakeLists.txt",
+                "test/test.cpp"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -G Ninja -S test -B build ${CMAKE_ARGS}",
+              "cmake --build build",
+              "if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi",
+              "./build/e57-test"
+            ]
+          }
+        ],
+        "version": "3.4.1"
+      }
+    ],
+    "package": {
+      "name": "libe57format",
+      "version": "3.4.1"
+    },
+    "requirements": {
+      "build": [
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "ninja"
+      ],
+      "host": [
+        "xerces-c",
+        "libcrcpp",
+        "gtest"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "28a523c87fc03f6eb146cec5c10f1e4727e21d0958f969c2cf03119c2bed9b69",
+      "url": "https://github.com/asmaloney/libE57Format/archive/refs/tags/v3.4.1.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "gtest",
+        "libcrcpp",
+        "xerces-c"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    }
+  },
   "meta_yaml": {
     "about": {
       "dev_url": "https://github.com/asmaloney/libE57Format",
@@ -178,7 +333,7 @@
       "summary": "Library for reading and writing E57 point-cloud files"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libe57format"
@@ -256,6 +411,7 @@
             "script": [
               "cmake -G Ninja -S test -B build ${CMAKE_ARGS}",
               "cmake --build build",
+              "if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi",
               "./build/e57-test"
             ]
           }
@@ -319,6 +475,135 @@
             "script": [
               "cmake -G Ninja -S test -B build ${CMAKE_ARGS}",
               "cmake --build build",
+              "if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi",
+              "./build/e57-test"
+            ]
+          }
+        ],
+        "version": "3.4.1"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libe57format"
+            ]
+          }
+        },
+        "name": "libe57format",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "xerces-c",
+            "libcrcpp",
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/E57Format/e57format-config.cmake"
+              ],
+              "include": [
+                "E57Format/E57Format.h",
+                "E57Format/E57SimpleReader.h",
+                "E57Format/E57SimpleWriter.h"
+              ],
+              "lib": [
+                "E57Format"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/CMakeLists.txt",
+                "test/test.cpp"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -G Ninja -S test -B build ${CMAKE_ARGS}",
+              "cmake --build build",
+              "if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi",
+              "./build/e57-test"
+            ]
+          }
+        ],
+        "version": "3.4.1"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libe57format"
+            ]
+          }
+        },
+        "name": "libe57format",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "xerces-c",
+            "libcrcpp",
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/E57Format/e57format-config.cmake"
+              ],
+              "include": [
+                "E57Format/E57Format.h",
+                "E57Format/E57SimpleReader.h",
+                "E57Format/E57SimpleWriter.h"
+              ],
+              "lib": [
+                "E57Format"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/CMakeLists.txt",
+                "test/test.cpp"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -G Ninja -S test -B build ${CMAKE_ARGS}",
+              "cmake --build build",
+              "if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi",
               "./build/e57-test"
             ]
           }
@@ -424,7 +709,7 @@
       "summary": "Library for reading and writing E57 point-cloud files"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libe57format"
@@ -499,6 +784,7 @@
             "script": [
               "cmake -G Ninja -S test -B build ${CMAKE_ARGS}",
               "cmake --build build",
+              "if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi",
               "./build/e57-test"
             ]
           }
@@ -561,6 +847,155 @@
       ]
     }
   },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/asmaloney/libE57Format",
+      "doc_url": "https://asmaloney.github.io/libE57Format-docs/",
+      "home": "https://github.com/asmaloney/libE57Format",
+      "license": "BSL-1.0",
+      "license_family": "BSL-1.0",
+      "license_file": "LICENSE.md",
+      "summary": "Library for reading and writing E57 point-cloud files"
+    },
+    "build": {
+      "number": "1",
+      "run_exports": {
+        "weak": [
+          "libe57format"
+        ]
+      },
+      "script": [
+        "cmake -G Ninja -S . -B build ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=\"${PREFIX}\" -DCMAKE_BUILD_TYPE=Release -DE57_BUILD_SHARED=ON -DE57_BUILD_TEST=ON -DE57_USE_EXTERNAL_GTEST=ON -DE57_USE_EXTERNAL_CRCPP=ON -DE57_RELEASE_LTO=OFF",
+        "cmake --build build",
+        "cmake --install build"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "swahtz"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libe57format"
+            ]
+          }
+        },
+        "name": "libe57format",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "xerces-c",
+            "libcrcpp",
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/cmake/E57Format/e57format-config.cmake"
+              ],
+              "include": [
+                "E57Format/E57Format.h",
+                "E57Format/E57SimpleReader.h",
+                "E57Format/E57SimpleWriter.h"
+              ],
+              "lib": [
+                "E57Format"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/CMakeLists.txt",
+                "test/test.cpp"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -G Ninja -S test -B build ${CMAKE_ARGS}",
+              "cmake --build build",
+              "if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi",
+              "./build/e57-test"
+            ]
+          }
+        ],
+        "version": "3.4.1"
+      }
+    ],
+    "package": {
+      "name": "libe57format",
+      "version": "3.4.1"
+    },
+    "requirements": {
+      "build": [
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "ninja"
+      ],
+      "host": [
+        "xerces-c",
+        "libcrcpp",
+        "gtest"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "28a523c87fc03f6eb146cec5c10f1e4727e21d0958f969c2cf03119c2bed9b69",
+      "url": "https://github.com/asmaloney/libE57Format/archive/refs/tags/v3.4.1.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "gtest",
+        "libcrcpp",
+        "xerces-c"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    }
+  },
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -570,13 +1005,15 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
+    "osx_arm64",
     "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/libe57format.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: libe57format\n  version: 3.4.1\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/asmaloney/libE57Format/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 28a523c87fc03f6eb146cec5c10f1e4727e21d0958f969c2cf03119c2bed9b69\n\nbuild:\n  number: 0\n  script:\n    - if: unix\n      then:\n        - cmake -G Ninja -S . -B build ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=\"${PREFIX}\" -DCMAKE_BUILD_TYPE=Release -DE57_BUILD_SHARED=ON -DE57_BUILD_TEST=ON -DE57_USE_EXTERNAL_GTEST=ON -DE57_USE_EXTERNAL_CRCPP=ON -DE57_RELEASE_LTO=OFF\n        - cmake --build build\n        - if: build_platform == target_platform\n          then: ./build/testE57\n        - cmake --install build\n    - if: win\n      then:\n        - cmake -G Ninja -S . -B build %CMAKE_ARGS% -DCMAKE_INSTALL_PREFIX=\"%LIBRARY_PREFIX%\" -DCMAKE_BUILD_TYPE=Release -DE57_BUILD_SHARED=ON -DE57_BUILD_TEST=ON -DE57_USE_EXTERNAL_GTEST=ON -DE57_USE_EXTERNAL_CRCPP=ON -DE57_RELEASE_LTO=OFF\n        - cmake --build build\n        - build\\testE57.exe\n        - cmake --install build\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - ninja\n  host:\n    - xerces-c\n    - libcrcpp\n    - gtest\n  run_exports:\n    - ${{ pin_subpackage('libe57format', upper_bound='x') }}\n  ignore_run_exports:\n    from_package:\n      - gtest\n\ntests:\n  - package_contents:\n      lib:\n        - E57Format\n      include:\n        - E57Format/E57Format.h\n        - E57Format/E57SimpleReader.h\n        - E57Format/E57SimpleWriter.h\n      files:\n        exists:\n          - ${{ \"Library/\" if win }}lib/cmake/E57Format/e57format-config.cmake\n  - script:\n      - if: unix\n        then:\n          - cmake -G Ninja -S test -B build ${CMAKE_ARGS}\n          - cmake --build build\n          - ./build/e57-test\n      - if: win\n        then:\n          - cmake -G Ninja -S test -B build %CMAKE_ARGS%\n          - cmake --build build\n          - build\\e57-test.exe\n    files:\n      recipe:\n        - test/CMakeLists.txt\n        - test/test.cpp\n    requirements:\n      build:\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n\nabout:\n  homepage: https://github.com/asmaloney/libE57Format\n  repository: https://github.com/asmaloney/libE57Format\n  documentation: https://asmaloney.github.io/libE57Format-docs/\n  summary: Library for reading and writing E57 point-cloud files\n  license: BSL-1.0\n  license_file: LICENSE.md\n\nextra:\n  recipe-maintainers:\n    - swahtz\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: libe57format\n  version: 3.4.1\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/asmaloney/libE57Format/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 28a523c87fc03f6eb146cec5c10f1e4727e21d0958f969c2cf03119c2bed9b69\n\nbuild:\n  number: 1\n  script:\n    - if: unix\n      then:\n        - cmake -G Ninja -S . -B build ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=\"${PREFIX}\" -DCMAKE_BUILD_TYPE=Release -DE57_BUILD_SHARED=ON -DE57_BUILD_TEST=ON -DE57_USE_EXTERNAL_GTEST=ON -DE57_USE_EXTERNAL_CRCPP=ON -DE57_RELEASE_LTO=OFF\n        - cmake --build build\n        - if: build_platform == target_platform\n          then: ./build/testE57\n        - cmake --install build\n    - if: win\n      then:\n        - cmake -G Ninja -S . -B build %CMAKE_ARGS% -DCMAKE_INSTALL_PREFIX=\"%LIBRARY_PREFIX%\" -DCMAKE_BUILD_TYPE=Release -DE57_BUILD_SHARED=ON -DE57_BUILD_TEST=ON -DE57_USE_EXTERNAL_GTEST=ON -DE57_USE_EXTERNAL_CRCPP=ON -DE57_RELEASE_LTO=OFF\n        - cmake --build build\n        - build\\testE57.exe\n        - cmake --install build\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - ninja\n  host:\n    - xerces-c\n    - libcrcpp\n    - gtest\n  run_exports:\n    - ${{ pin_subpackage('libe57format', upper_bound='x') }}\n  ignore_run_exports:\n    from_package:\n      - gtest\n\ntests:\n  - package_contents:\n      lib:\n        - E57Format\n      include:\n        - E57Format/E57Format.h\n        - E57Format/E57SimpleReader.h\n        - E57Format/E57SimpleWriter.h\n      files:\n        exists:\n          - ${{ \"Library/\" if win }}lib/cmake/E57Format/e57format-config.cmake\n  - script:\n      - if: unix\n        then:\n          - cmake -G Ninja -S test -B build ${CMAKE_ARGS}\n          - cmake --build build\n          # Under qemu emulation, point the loader lookup at the target sysroot\n          - if [[ \"${build_platform}\" != \"${target_platform}\" && -z \"${QEMU_LD_PREFIX:-}\" ]]; then export QEMU_LD_PREFIX=\"$(dirname \"$(dirname \"$(command -v \"${CXX}\")\")\")/${CONDA_TOOLCHAIN_HOST}/sysroot\"; fi\n          - ./build/e57-test\n      - if: win\n        then:\n          - cmake -G Ninja -S test -B build %CMAKE_ARGS%\n          - cmake --build build\n          - build\\e57-test.exe\n    files:\n      recipe:\n        - test/CMakeLists.txt\n        - test/test.cpp\n    requirements:\n      build:\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n\nabout:\n  homepage: https://github.com/asmaloney/libE57Format\n  repository: https://github.com/asmaloney/libE57Format\n  documentation: https://asmaloney.github.io/libE57Format-docs/\n  summary: Library for reading and writing E57 point-cloud files\n  license: BSL-1.0\n  license_file: LICENSE.md\n\nextra:\n  recipe-maintainers:\n    - swahtz\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -675,7 +1112,7 @@
       "summary": "Library for reading and writing E57 point-cloud files"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libe57format"
