@@ -1,163 +1,183 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\ncgo_compiler:\n- go-cgo\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\ncgo_compiler:\n- go-cgo\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
       "automerge": true
     },
-    "build_platform": {
-      "osx_arm64": "osx_64"
-    },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default",
-      "win": "azure"
+      "osx_arm64": "default",
+      "win": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "32c33758f101926d71b30ec7f469ef713d5e2e61",
-  "feedstock_hash_ts": 1776814051,
+  "feedstock_hash": "c767701cf7b829cd57d61c2e213f886868bf700f",
+  "feedstock_hash_ts": 1791841291,
   "feedstock_name": "kubernetes",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/kubernetes/kubernetes",
-      "doc_url": "https://docs.kubernetes.io",
-      "home": "https://www.kubernetes.io",
+      "doc_url": "https://docs.kubernetes.io/",
+      "home": "https://www.kubernetes.io/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
-      "summary": "Production-Grade Container Orchestration"
+      "summary": "Kubernetes client binaries"
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "script": "client/build.sh"
     },
     "extra": {
       "recipe-maintainers": [
         "mxr-conda",
         "sodre",
-        "dhirschfeld"
+        "dhirschfeld",
+        "janjagusch"
       ]
     },
     "outputs": [
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes client binaries"
-        },
+        "build": null,
         "name": "kubernetes-client",
         "requirements": {
           "build": [
             "c_stdlib_stub",
-            "cgo_compiler_stub",
-            "c_compiler_stub",
-            "bash >=4.2",
-            "make",
-            "rsync",
-            "jq"
-          ]
-        },
-        "script": "client/build.sh",
-        "test": {
-          "script": "client/test.sh"
-        }
-      },
-      {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes node binaries"
-        },
-        "build": {
-          "binary_relocation": false
-        },
-        "name": "kubernetes-node",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cgo_compiler_stub",
-            "c_compiler_stub",
-            "bash >=4.2",
-            "make",
-            "rsync",
-            "jq"
-          ]
-        },
-        "script": "node/build.sh",
-        "test": {
-          "script": "node/test.sh"
-        }
-      },
-      {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes server binaries"
-        },
-        "build": null,
-        "name": "kubernetes-server",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cgo_compiler_stub",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
           ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "kubectl --help"
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes-node",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "kubeadm --help",
+              "kubelet --help",
+              "kube-proxy --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes-server",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
           "run": [
             "kubernetes-node"
           ]
         },
-        "script": "server/build.sh",
-        "test": {
-          "script": "server/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help",
+              "test -x \"${PREFIX}/bin/mounter\""
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "kubernetes-client",
+            "kubernetes-node",
+            "kubernetes-server"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "kubectl",
+              "kubelet --help",
+              "kube-proxy --help",
+              "kubeadm --help",
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
       }
     ],
     "package": {
-      "name": "kubernetes",
-      "version": "1.34.3"
+      "name": "kubernetes-client",
+      "version": "1.36.0"
     },
     "requirements": {
-      "run": [
-        "kubernetes-client",
-        "kubernetes-node",
-        "kubernetes-server"
+      "build": [
+        "c_stdlib_stub",
+        "cgo_compiler_stub >=1.26",
+        "c_compiler_stub",
+        "bash >=4.2",
+        "make",
+        "rsync",
+        "jq"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "0001-unset-conda-go-compiler.diff"
-        ],
-        "sha256": "d95f59700bf9d059b261ee2e0a34187301c734d596307e8dfe66c4c68c1a565d",
-        "url": "https://github.com/kubernetes/kubernetes/archive/v1.34.3.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "kubectl",
-        "kubelet --help",
-        "kube-proxy --help",
-        "kubeadm --help",
-        "kube-apiserver --help",
-        "kube-controller-manager --help",
-        "kube-scheduler --help"
-      ]
+    "schema_version": 1,
+    "source": {
+      "sha256": "b98652d8ebf5d60d0715cd952e5d489aa10e14ad75d7b6e2425b8de8c65aa4c5",
+      "url": "https://github.com/kubernetes/kubernetes/archive/v1.36.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -190,415 +210,762 @@
       "elements": []
     }
   },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/kubernetes/kubernetes",
+      "doc_url": "https://docs.kubernetes.io/",
+      "home": "https://www.kubernetes.io/",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "Kubernetes client binaries"
+    },
+    "build": {
+      "number": "0",
+      "script": "client/build.sh"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "mxr-conda",
+        "sodre",
+        "dhirschfeld",
+        "janjagusch"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "kubernetes-client",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "kubectl --help"
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes-node",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "kubeadm --help",
+              "kubelet --help",
+              "kube-proxy --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes-server",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
+          "run": [
+            "kubernetes-node"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help",
+              "test -x \"${PREFIX}/bin/mounter\""
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "kubernetes-client",
+            "kubernetes-node",
+            "kubernetes-server"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "kubectl",
+              "kubelet --help",
+              "kube-proxy --help",
+              "kubeadm --help",
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      }
+    ],
+    "package": {
+      "name": "kubernetes-client",
+      "version": "1.36.0"
+    },
+    "requirements": {
+      "build": [
+        "c_stdlib_stub",
+        "cgo_compiler_stub >=1.26",
+        "c_compiler_stub",
+        "bash >=4.2",
+        "make",
+        "rsync",
+        "jq"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "b98652d8ebf5d60d0715cd952e5d489aa10e14ad75d7b6e2425b8de8c65aa4c5",
+      "url": "https://github.com/kubernetes/kubernetes/archive/v1.36.0.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "bash",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cgo_compiler_stub",
+        "jq",
+        "make",
+        "rsync"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "kubernetes-client",
+        "kubernetes-node",
+        "kubernetes-server"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
   "meta_yaml": {
     "about": {
       "dev_url": "https://github.com/kubernetes/kubernetes",
-      "doc_url": "https://docs.kubernetes.io",
-      "home": "https://www.kubernetes.io",
+      "doc_url": "https://docs.kubernetes.io/",
+      "home": "https://www.kubernetes.io/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSES/",
-      "summary": "Production-Grade Container Orchestration"
+      "summary": "Kubernetes client binaries"
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "script": "client/bld.bat"
     },
     "extra": {
       "recipe-maintainers": [
         "mxr-conda",
         "sodre",
-        "dhirschfeld"
+        "dhirschfeld",
+        "janjagusch"
       ]
     },
     "outputs": [
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes client binaries"
-        },
+        "build": null,
         "name": "kubernetes-client",
         "requirements": {
           "build": [
             "c_stdlib_stub",
-            "cgo_compiler_stub",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "client/build.sh",
-        "test": {
-          "script": "client/test.sh"
-        }
+        "tests": [
+          {
+            "script": "kubectl --help"
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes node binaries"
-        },
-        "build": {
-          "binary_relocation": false
-        },
+        "build": null,
         "name": "kubernetes-node",
         "requirements": {
           "build": [
             "c_stdlib_stub",
-            "cgo_compiler_stub",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "node/build.sh",
-        "test": {
-          "script": "node/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kubeadm --help",
+              "kubelet --help",
+              "kube-proxy --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes server binaries"
-        },
         "build": null,
         "name": "kubernetes-server",
         "requirements": {
           "build": [
             "c_stdlib_stub",
-            "cgo_compiler_stub",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
           ],
+          "host": [],
           "run": [
             "kubernetes-node"
           ]
         },
-        "script": "server/build.sh",
-        "test": {
-          "script": "server/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help",
+              "test -x \"${PREFIX}/bin/mounter\""
+            ]
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes client binaries"
+        "build": null,
+        "name": "kubernetes",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "kubernetes-client",
+            "kubernetes-node",
+            "kubernetes-server"
+          ]
         },
+        "tests": [
+          {
+            "script": [
+              "kubectl",
+              "kubelet --help",
+              "kube-proxy --help",
+              "kubeadm --help",
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
         "name": "kubernetes-client",
         "requirements": {
           "build": [
             "c_stdlib_stub",
-            "cgo_compiler_stub <1.25",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "client/build.sh",
-        "test": {
-          "script": "client/test.sh"
-        }
+        "tests": [
+          {
+            "script": "kubectl --help"
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes node binaries"
-        },
-        "build": {
-          "binary_relocation": false
-        },
+        "build": null,
         "name": "kubernetes-node",
         "requirements": {
           "build": [
             "c_stdlib_stub",
-            "cgo_compiler_stub <1.25",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "node/build.sh",
-        "test": {
-          "script": "node/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kubeadm --help",
+              "kubelet --help",
+              "kube-proxy --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes server binaries"
-        },
         "build": null,
         "name": "kubernetes-server",
         "requirements": {
           "build": [
             "c_stdlib_stub",
-            "cgo_compiler_stub <1.25",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
           ],
+          "host": [],
           "run": [
             "kubernetes-node"
           ]
         },
-        "script": "server/build.sh",
-        "test": {
-          "script": "server/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help",
+              "test -x \"${PREFIX}/bin/mounter\""
+            ]
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSES/",
-          "summary": "Kubernetes client binaries"
+        "build": null,
+        "name": "kubernetes",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "kubernetes-client",
+            "kubernetes-node",
+            "kubernetes-server"
+          ]
         },
+        "tests": [
+          {
+            "script": [
+              "kubectl",
+              "kubelet --help",
+              "kube-proxy --help",
+              "kubeadm --help",
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
         "name": "kubernetes-client",
         "requirements": {
-          "build": []
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "client/bld.bat",
-        "test": {
-          "script": "client/test.sh"
-        }
+        "tests": [
+          {
+            "script": "kubectl --help"
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSES/",
-          "summary": "Kubernetes node binaries"
-        },
-        "build": {
-          "binary_relocation": false
-        },
+        "build": null,
         "name": "kubernetes-node",
         "requirements": {
-          "build": []
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "node/bld.bat",
-        "test": {
-          "script": "node/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kubeadm --help",
+              "kubelet --help",
+              "kube-proxy --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes server binaries"
-        },
-        "build": {
-          "skip": true
-        },
+        "build": null,
         "name": "kubernetes-server",
         "requirements": {
           "build": [
             "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
           ],
+          "host": [],
           "run": [
             "kubernetes-node"
           ]
         },
-        "script": "server/build.sh",
-        "test": {
-          "script": "server/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help",
+              "test -x \"${PREFIX}/bin/mounter\""
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "kubernetes-client",
+            "kubernetes-node",
+            "kubernetes-server"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "kubectl",
+              "kubelet --help",
+              "kube-proxy --help",
+              "kubeadm --help",
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes-client",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "kubectl --help"
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes-node",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "kubeadm --help",
+              "kubelet --help",
+              "kube-proxy --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "kubernetes-client",
+            "kubernetes-node"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "kubectl",
+              "kubelet --help",
+              "kube-proxy --help",
+              "kubeadm --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
       }
     ],
     "package": {
-      "name": "kubernetes",
-      "version": "1.34.3"
+      "name": "kubernetes-client",
+      "version": "1.36.0"
     },
     "requirements": {
-      "run": [
-        "kubernetes-client",
-        "kubernetes-node",
-        "kubernetes-server"
+      "build": [
+        "c_stdlib_stub",
+        "cgo_compiler_stub >=1.26",
+        "c_compiler_stub",
+        "bash >=4.2",
+        "make",
+        "rsync",
+        "jq"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "0001-unset-conda-go-compiler.diff"
-        ],
-        "sha256": "d95f59700bf9d059b261ee2e0a34187301c734d596307e8dfe66c4c68c1a565d",
-        "url": "https://github.com/kubernetes/kubernetes/archive/v1.34.3.tar.gz"
-      },
-      {
-        "patches": [
-          "0001-unset-conda-go-compiler.diff"
-        ],
-        "sha256": "d95f59700bf9d059b261ee2e0a34187301c734d596307e8dfe66c4c68c1a565d",
-        "url": "https://github.com/kubernetes/kubernetes/archive/v1.34.3.tar.gz"
-      },
-      {
-        "sha256": "3a3448afd66754e95e4adfb71b75cae0608cfdbdb3e60bbdd0b01d85459d4362",
-        "url": "https://dl.k8s.io/v1.34.3/kubernetes-node-windows-amd64.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "kubectl",
-        "kubelet --help",
-        "kube-proxy --help",
-        "kubeadm --help",
-        "kube-apiserver --help",
-        "kube-controller-manager --help",
-        "kube-scheduler --help"
-      ]
+    "schema_version": 1,
+    "source": {
+      "sha256": "6f58371d4664af48a4c73083b5864fb377f2148efd705ab5613e16af5d29eba8",
+      "url": "https://dl.k8s.io/v1.36.0/kubernetes-node-windows-amd64.tar.gz"
     }
   },
-  "name": "kubernetes",
+  "name": "kubernetes-client",
   "osx_arm64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/kubernetes/kubernetes",
-      "doc_url": "https://docs.kubernetes.io",
-      "home": "https://www.kubernetes.io",
+      "doc_url": "https://docs.kubernetes.io/",
+      "home": "https://www.kubernetes.io/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
-      "summary": "Production-Grade Container Orchestration"
+      "summary": "Kubernetes client binaries"
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "script": "client/build.sh"
     },
     "extra": {
       "recipe-maintainers": [
         "mxr-conda",
         "sodre",
-        "dhirschfeld"
+        "dhirschfeld",
+        "janjagusch"
       ]
     },
     "outputs": [
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes client binaries"
-        },
+        "build": null,
         "name": "kubernetes-client",
         "requirements": {
           "build": [
             "c_stdlib_stub",
-            "cgo_compiler_stub <1.25",
-            "c_compiler_stub",
-            "bash >=4.2",
-            "make",
-            "rsync",
-            "jq"
-          ]
-        },
-        "script": "client/build.sh",
-        "test": {
-          "script": "client/test.sh"
-        }
-      },
-      {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes node binaries"
-        },
-        "build": {
-          "binary_relocation": false
-        },
-        "name": "kubernetes-node",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cgo_compiler_stub <1.25",
-            "c_compiler_stub",
-            "bash >=4.2",
-            "make",
-            "rsync",
-            "jq"
-          ]
-        },
-        "script": "node/build.sh",
-        "test": {
-          "script": "node/test.sh"
-        }
-      },
-      {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes server binaries"
-        },
-        "build": null,
-        "name": "kubernetes-server",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "cgo_compiler_stub <1.25",
+            "cgo_compiler_stub >=1.26",
             "c_compiler_stub",
             "bash >=4.2",
             "make",
             "rsync",
             "jq"
           ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "kubectl --help"
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes-node",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "kubeadm --help",
+              "kubelet --help",
+              "kube-proxy --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes-server",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cgo_compiler_stub >=1.26",
+            "c_compiler_stub",
+            "bash >=4.2",
+            "make",
+            "rsync",
+            "jq"
+          ],
+          "host": [],
           "run": [
             "kubernetes-node"
           ]
         },
-        "script": "server/build.sh",
-        "test": {
-          "script": "server/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help",
+              "test -x \"${PREFIX}/bin/mounter\""
+            ]
+          }
+        ],
+        "version": "1.36.0"
+      },
+      {
+        "build": null,
+        "name": "kubernetes",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "kubernetes-client",
+            "kubernetes-node",
+            "kubernetes-server"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "kubectl",
+              "kubelet --help",
+              "kube-proxy --help",
+              "kubeadm --help",
+              "kube-apiserver --help",
+              "kube-controller-manager --help",
+              "kube-scheduler --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
       }
     ],
     "package": {
-      "name": "kubernetes",
-      "version": "1.34.3"
+      "name": "kubernetes-client",
+      "version": "1.36.0"
     },
     "requirements": {
-      "run": [
-        "kubernetes-client",
-        "kubernetes-node",
-        "kubernetes-server"
+      "build": [
+        "c_stdlib_stub",
+        "cgo_compiler_stub >=1.26",
+        "c_compiler_stub",
+        "bash >=4.2",
+        "make",
+        "rsync",
+        "jq"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "0001-unset-conda-go-compiler.diff"
-        ],
-        "sha256": "d95f59700bf9d059b261ee2e0a34187301c734d596307e8dfe66c4c68c1a565d",
-        "url": "https://github.com/kubernetes/kubernetes/archive/v1.34.3.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "kubectl",
-        "kubelet --help",
-        "kube-proxy --help",
-        "kubeadm --help",
-        "kube-apiserver --help",
-        "kube-controller-manager --help",
-        "kube-scheduler --help"
-      ]
+    "schema_version": 1,
+    "source": {
+      "sha256": "b98652d8ebf5d60d0715cd952e5d489aa10e14ad75d7b6e2425b8de8c65aa4c5",
+      "url": "https://github.com/kubernetes/kubernetes/archive/v1.36.0.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -643,13 +1010,14 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_arm64",
     "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/kubernetes.json"
   },
-  "raw_meta_yaml": "{% set name = \"kubernetes\" %}\n{% set version = \"1.34.3\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  - url: https://github.com/kubernetes/kubernetes/archive/v{{ version }}.tar.gz  # [not win]\n    sha256: d95f59700bf9d059b261ee2e0a34187301c734d596307e8dfe66c4c68c1a565d  # [not win]\n    patches:   # [not win]\n      - 0001-unset-conda-go-compiler.diff  # [not win]\n\n  - url: https://dl.k8s.io/v{{ version }}/kubernetes-node-windows-amd64.tar.gz  # [win]\n    sha256: 3a3448afd66754e95e4adfb71b75cae0608cfdbdb3e60bbdd0b01d85459d4362  # [win]\n\nbuild:\n  skip: true  # [(osx and not arm64) or ppc64le or aarch64]\n  number: 0\n\nrequirements:\n  run:\n    - {{ pin_subpackage('kubernetes-client', exact=True) }}\n    - {{ pin_subpackage('kubernetes-node', exact=True) }}\n    - {{ pin_subpackage('kubernetes-server', exact=True) }}  # [unix]\n\n\ntest:\n  commands:\n    - kubectl\n\n    - kubelet --help\n    - kube-proxy --help\n    - kubeadm --help\n\n    - kube-apiserver --help  # [unix]\n    - kube-controller-manager --help  # [unix]\n    - kube-scheduler --help  # [unix]\n\noutputs:\n  - name: {{ name }}-client\n    script: client/build.sh  # [unix]\n    script: client/bld.bat  # [win]\n    test:\n      script: client/test.sh\n    requirements:\n      build:\n        - {{ stdlib(\"c\") }}  # [unix]\n        - {{ compiler('cgo') }}  # [unix and not osx]\n        - {{ compiler('cgo') }} <1.25  # [osx]\n        - {{ compiler('c') }}  # [unix]\n        - bash >=4.2  # [unix]\n        - make  # [unix]\n        - rsync  # [unix]\n        - jq  # [unix]\n    about:\n      license: Apache-2.0\n      license_file: LICENSE\n      license_file: LICENSES/  # [win]\n      summary: Kubernetes client binaries\n\n  - name: {{ name }}-node\n    script: node/build.sh  # [unix]\n    script: node/bld.bat  # [win]\n    build:\n      binary_relocation: false\n    test:\n      script: node/test.sh\n    requirements:\n      build:\n        - {{ stdlib(\"c\") }}  # [unix]\n        - {{ compiler('cgo') }}  # [unix and not osx]\n        - {{ compiler('cgo') }} <1.25  # [osx]\n        - {{ compiler('c') }}  # [unix]\n        - bash >=4.2  # [unix]\n        - make  # [unix]\n        - rsync  # [unix]\n        - jq  # [unix]\n    about:\n      license: Apache-2.0\n      license_file: LICENSE\n      license_file: LICENSES/  # [win]\n      summary: Kubernetes node binaries\n\n  - name: {{ name }}-server\n    build:\n      skip: true  # [not unix]\n    script: server/build.sh\n    test:\n      script: server/test.sh\n    requirements:\n      build:\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cgo') }}  # [unix and not osx]\n        - {{ compiler('cgo') }} <1.25  # [osx]\n        - {{ compiler('c') }}\n        - bash >=4.2\n        - make\n        - rsync\n        - jq\n      run:\n        - {{ pin_subpackage('kubernetes-node', exact=True) }}\n    about:\n      license: Apache-2.0\n      license_file: LICENSE\n      summary: Kubernetes server binaries\n\nabout:\n  home: https://www.kubernetes.io\n  license: Apache-2.0\n  license_family: Apache\n  license_file: LICENSE  # [not win]\n  license_file: LICENSES/  # [win]\n  summary: Production-Grade Container Orchestration\n  doc_url: https://docs.kubernetes.io\n  dev_url: https://github.com/kubernetes/kubernetes\n\nextra:\n  recipe-maintainers:\n    - mxr-conda\n    - sodre\n    - dhirschfeld\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\n\nschema_version: 1\n\ncontext:\n  version: \"1.36.0\"\n\nrecipe:\n  name: kubernetes\n  version: ${{ version }}\n\nsource:\n  - if: not win\n    then:\n      url: https://github.com/kubernetes/kubernetes/archive/v${{ version }}.tar.gz\n      sha256: b98652d8ebf5d60d0715cd952e5d489aa10e14ad75d7b6e2425b8de8c65aa4c5\n    else:\n      url: https://dl.k8s.io/v${{ version }}/kubernetes-node-windows-amd64.tar.gz\n      sha256: 6f58371d4664af48a4c73083b5864fb377f2148efd705ab5613e16af5d29eba8\n\nbuild:\n  number: 0\n  skip:\n    - osx and not arm64\n    - ppc64le\n\noutputs:\n  - package:\n      name: kubernetes-client\n    build:\n      dynamic_linking:\n        binary_relocation: false\n      script:\n        - if: win\n          then: client/bld.bat\n          else: client/build.sh\n    requirements:\n      build:\n        - if: unix\n          then:\n            - ${{ stdlib(\"c\") }}\n            - ${{ compiler('cgo') }} >=1.26\n            - ${{ compiler('c') }}\n            - bash >=4.2\n            - make\n            - rsync\n            - jq\n    tests:\n      - script:\n          - kubectl --help\n    about:\n      license: Apache-2.0\n      license_file:\n        - if: win\n          then: LICENSES/\n          else: LICENSE\n      summary: Kubernetes client binaries\n\n  - package:\n      name: kubernetes-node\n    build:\n      dynamic_linking:\n        binary_relocation: false\n      script:\n        - if: win\n          then: node/bld.bat\n          else: node/build.sh\n    requirements:\n      build:\n        - if: unix\n          then:\n            - ${{ stdlib(\"c\") }}\n            - ${{ compiler('cgo') }} >=1.26\n            - ${{ compiler('c') }}\n            - bash >=4.2\n            - make\n            - rsync\n            - jq\n    tests:\n      - script:\n          - kubeadm --help\n          - kubelet --help\n          - kube-proxy --help\n    about:\n      license: Apache-2.0\n      license_file:\n        - if: win\n          then: LICENSES/\n          else: LICENSE\n      summary: Kubernetes node binaries\n\n  - package:\n      name: kubernetes-server\n    build:\n      skip: not unix\n      dynamic_linking:\n        binary_relocation: false\n      script: server/build.sh\n    requirements:\n      build:\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('cgo') }} >=1.26\n        - ${{ compiler('c') }}\n        - bash >=4.2\n        - make\n        - rsync\n        - jq\n      run:\n        - ${{ pin_subpackage('kubernetes-node', exact=true) }}\n    tests:\n      - script:\n          - kube-apiserver --help\n          - kube-controller-manager --help\n          - kube-scheduler --help\n          - test -x \"${PREFIX}/bin/mounter\"\n    about:\n      license: Apache-2.0\n      license_file: LICENSE\n      summary: Kubernetes server binaries\n\n  - package:\n      name: kubernetes\n    requirements:\n      run:\n        - ${{ pin_subpackage('kubernetes-client', exact=true) }}\n        - ${{ pin_subpackage('kubernetes-node', exact=true) }}\n        - if: unix\n          then: ${{ pin_subpackage('kubernetes-server', exact=true) }}\n    tests:\n      - script:\n          - kubectl\n          - kubelet --help\n          - kube-proxy --help\n          - kubeadm --help\n          - if: unix\n            then: kube-apiserver --help\n          - if: unix\n            then: kube-controller-manager --help\n          - if: unix\n            then: kube-scheduler --help\n\nabout:\n  homepage: https://www.kubernetes.io\n  license: Apache-2.0\n  license_file:\n    - if: win\n      then: LICENSES/\n      else: LICENSE\n  summary: Production-Grade Container Orchestration\n  documentation: https://docs.kubernetes.io\n  repository: https://github.com/kubernetes/kubernetes\n\nextra:\n  recipe-maintainers:\n    - mxr-conda\n    - sodre\n    - dhirschfeld\n    - janjagusch\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -708,8 +1076,7 @@
         "bash >=4.2",
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cgo_compiler_stub",
-        "cgo_compiler_stub <1.25",
+        "cgo_compiler_stub >=1.26",
         "jq",
         "make",
         "rsync"
@@ -732,131 +1099,107 @@
       "elements": []
     }
   },
-  "url": "https://github.com/kubernetes/kubernetes/archive/v1.34.3.tar.gz",
-  "version": "1.34.3",
+  "url": "https://dl.k8s.io/v1.36.0/kubernetes-node-windows-amd64.tar.gz",
+  "version": "1.36.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/kubernetes.json"
   },
   "win_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/kubernetes/kubernetes",
-      "doc_url": "https://docs.kubernetes.io",
-      "home": "https://www.kubernetes.io",
+      "doc_url": "https://docs.kubernetes.io/",
+      "home": "https://www.kubernetes.io/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSES/",
-      "summary": "Production-Grade Container Orchestration"
+      "summary": "Kubernetes client binaries"
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "script": "client/bld.bat"
     },
     "extra": {
       "recipe-maintainers": [
         "mxr-conda",
         "sodre",
-        "dhirschfeld"
+        "dhirschfeld",
+        "janjagusch"
       ]
     },
     "outputs": [
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSES/",
-          "summary": "Kubernetes client binaries"
-        },
+        "build": null,
         "name": "kubernetes-client",
         "requirements": {
-          "build": []
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "script": "client/bld.bat",
-        "test": {
-          "script": "client/test.sh"
-        }
+        "tests": [
+          {
+            "script": "kubectl --help"
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSES/",
-          "summary": "Kubernetes node binaries"
-        },
-        "build": {
-          "binary_relocation": false
-        },
+        "build": null,
         "name": "kubernetes-node",
         "requirements": {
-          "build": []
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "script": "node/bld.bat",
-        "test": {
-          "script": "node/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kubeadm --help",
+              "kubelet --help",
+              "kube-proxy --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
       },
       {
-        "about": {
-          "license": "Apache-2.0",
-          "license_file": "LICENSE",
-          "summary": "Kubernetes server binaries"
-        },
-        "build": {
-          "skip": true
-        },
-        "name": "kubernetes-server",
+        "build": null,
+        "name": "kubernetes",
         "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "bash >=4.2",
-            "make",
-            "rsync",
-            "jq"
-          ],
+          "build": [],
+          "host": [],
           "run": [
+            "kubernetes-client",
             "kubernetes-node"
           ]
         },
-        "script": "server/build.sh",
-        "test": {
-          "script": "server/test.sh"
-        }
+        "tests": [
+          {
+            "script": [
+              "kubectl",
+              "kubelet --help",
+              "kube-proxy --help",
+              "kubeadm --help"
+            ]
+          }
+        ],
+        "version": "1.36.0"
       }
     ],
     "package": {
-      "name": "kubernetes",
-      "version": "1.34.3"
+      "name": "kubernetes-client",
+      "version": "1.36.0"
     },
-    "requirements": {
-      "run": [
-        "kubernetes-client",
-        "kubernetes-node"
-      ]
-    },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "3a3448afd66754e95e4adfb71b75cae0608cfdbdb3e60bbdd0b01d85459d4362",
-        "url": "https://dl.k8s.io/v1.34.3/kubernetes-node-windows-amd64.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "kubectl",
-        "kubelet --help",
-        "kube-proxy --help",
-        "kubeadm --help"
-      ]
+    "requirements": {},
+    "schema_version": 1,
+    "source": {
+      "sha256": "6f58371d4664af48a4c73083b5864fb377f2148efd705ab5613e16af5d29eba8",
+      "url": "https://dl.k8s.io/v1.36.0/kubernetes-node-windows-amd64.tar.gz"
     }
   },
   "win_64_requirements": {
     "build": {
       "__set__": true,
-      "elements": [
-        "bash",
-        "c_compiler_stub",
-        "c_stdlib_stub",
-        "jq",
-        "make",
-        "rsync"
-      ]
+      "elements": []
     },
     "host": {
       "__set__": true,
