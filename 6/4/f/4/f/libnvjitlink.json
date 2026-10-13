@@ -23,8 +23,8 @@
       "win_arm64": "github_actions"
     }
   },
-  "feedstock_hash": "7f4d775336a177d359749f06d3bf83c28a5a4966",
-  "feedstock_hash_ts": 1789606847,
+  "feedstock_hash": "3d8b56da9fd83f79545cb8b9e2bd693ca0c3849d",
+  "feedstock_hash_ts": 1791919030,
   "feedstock_name": "libnvjitlink",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -39,7 +39,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -181,7 +181,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -234,7 +234,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -384,7 +384,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -438,7 +438,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -947,7 +947,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -976,7 +976,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/libnvjitlink.json"
   },
-  "raw_meta_yaml": "{% set name = \"libnvjitlink\" %}\n{% set version = \"13.4.92\" %}\n{% set cuda_version = \"13.4\" %}\n{% set platform = \"placeholder\" %}  # [osx]\n{% set platform = \"linux-x86_64\" %}  # [linux64]\n{% set platform = \"linux-ppc64le\" %}  # [ppc64le]\n{% set platform = \"linux-sbsa\" %}  # [aarch64]\n{% set platform = \"windows-x86_64\" %}  # [win64]\n{% set platform = \"windows-arm64\" %}  # [win and arm64]\n{% set target_name = \"x86_64-linux\" %}  # [linux64]\n{% set target_name = \"ppc64le-linux\" %}  # [ppc64le]\n{% set target_name = \"sbsa-linux\" %}  # [aarch64]\n{% set target_name = \"x64\" %}  # [win64]\n{% set target_name = \"arm64\" %}  # [win and arm64]\n{% set extension = \"tar.xz\" %}  # [not win]\n{% set extension = \"zip\" %}  # [win]\n{% set sha256 = \"e24557473e5e2e1dc591209558523deaca48b32123fe2b822f994b8e691c8ae3\" %}  # [linux64]\n{% set sha256 = \"e253a1f1a1582e2221737391cccf272bf722e44b05be1ed58ebfaefe6dd79315\" %}  # [aarch64]\n{% set sha256 = \"7cef0ee32d2221d07b122ba32e38898a9ecbdb256524f2c1f7b5c61a7f32b6ce\" %}  # [win64]\n{% set sha256 = \"73451f44a7afb46cfbdc8d2ef8b6b1d321ad03cdf38242d7099f53c488c3ec24\" %}  # [win and arm64]\n\npackage:\n  name: {{ name|lower }}-split\n  version: {{ version }}\n\nsource:\n  url: https://developer.download.nvidia.com/compute/cuda/redist/{{ name }}/{{ platform }}/{{ name }}-{{ platform }}-{{ version }}-archive.{{ extension }}\n  sha256: {{ sha256 }}\n\nbuild:\n  number: 0\n  binary_relocation: false\n  skip: true  # [osx or ppc64le]\n\nrequirements:\n  build:\n    - cf-nvidia-tools 1.*  # [linux] \n    - patchelf <0.18.0     # [linux]\n\noutputs:\n  - name: libnvjitlink\n    files:\n      - lib/libnvJitLink.so.*                            # [linux]\n      - targets/{{ target_name }}/lib/libnvJitLink.so.*  # [linux]\n      - Library\\bin\\nvJitLink*.dll     # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        # xref: conda-forge/libnvjitlink-feedstock#15\n        # we want to allow ex: libnvjitlink=12.6 installed in a cuda-version=12.3 environment,\n        # both within the same CUDA major.\n        - {{ pin_compatible(\"cuda-version\", min_pin=\"x\", max_pin=\"x.x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      requires:\n        - patchelf  # [linux]\n      files:\n        - test-rpath.sh\n      commands:\n        - test -L $PREFIX/lib/libnvJitLink.so.{{ version.split(\".\")[0] }}                            # [linux]\n        - test -L $PREFIX/lib/libnvJitLink.so.{{ version }}                                          # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libnvJitLink.so.{{ version.split(\".\")[0] }}  # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libnvJitLink.so.{{ version }}                # [linux]\n        - bash test-rpath.sh                                                                         # [linux]\n        - if not exist %LIBRARY_BIN%\\nvJitLink*.dll exit 1                         # [win]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA nvJitLink library\n      description: |\n        nvJitLink - Just-in-Time Link Time Optimization (JIT LTO)\n      doc_url: https://docs.nvidia.com/cuda/nvjitlink/\n\n  - name: libnvjitlink-dev\n    build:\n      run_exports:\n        - {{ pin_subpackage(\"libnvjitlink\", max_pin=\"x\") }}\n    files:\n      - lib/libnvJitLink*.so                            # [linux]\n      - lib/pkgconfig                                   # [linux]\n      - targets/{{ target_name }}/include/nvJitLink.h   # [linux]\n      - targets/{{ target_name }}/lib/libnvJitLink*.so  # [linux]\n      #- targets/{{ target_name }}/lib/stubs             # [linux]  # bug: currently missing\n      - Library\\include                                 # [win]\n      - Library\\lib\\{{ target_name }}\\nvJitLink.lib     # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        # xref: conda-forge/libnvjitlink-feedstock#15\n        # we want to allow ex: libnvjitlink=12.6 installed in a cuda-version=12.3 environment,\n        # both within the same CUDA major.\n        - {{ pin_compatible(\"cuda-version\", min_pin=\"x\", max_pin=\"x.x\") }}\n        - {{ pin_subpackage(\"libnvjitlink\", exact=True) }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - libnvjitlink-static >={{ version }}\n    test:\n      commands:\n        - test -L $PREFIX/lib/libnvJitLink.so                            # [linux]\n        - test -f $PREFIX/lib/pkgconfig/nvjitlink*.pc                    # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/include/nvJitLink.h  # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libnvJitLink.so  # [linux]\n        - if not exist %LIBRARY_INC%\\nvJitLink.h exit 1                  # [win]\n        - if not exist %LIBRARY_LIB%\\{{ target_name }}\\nvJitLink.lib exit 1            # [win]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA nvJitLink library\n      description: |\n        nvJitLink - Just-in-Time Link Time Optimization (JIT LTO)\n      doc_url: https://docs.nvidia.com/cuda/nvjitlink/index.html\n\n  - name: libnvjitlink-static\n    files:\n      - targets/{{ target_name }}/lib/libnvJitLink*_static.a  # [linux]\n      - Library\\lib\\{{ target_name }}\\nvJitLink_static.lib    # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        # xref: conda-forge/libnvjitlink-feedstock#15\n        # we want to allow ex: libnvjitlink=12.6 installed in a cuda-version=12.3 environment,\n        # both within the same CUDA major.\n        - {{ pin_compatible(\"cuda-version\", min_pin=\"x\", max_pin=\"x.x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      commands:\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libnvJitLink_static.a  # [linux]\n        - if not exist %LIBRARY_LIB%\\{{ target_name }}\\nvJitLink_static.lib exit 1           # [win]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA nvJitLink library\n      description: |\n        nvJitLink - Just-in-Time Link Time Optimization (JIT LTO)\n      doc_url: https://docs.nvidia.com/cuda/nvjitlink/index.html\n\nabout:\n  home: https://developer.nvidia.com/cuda-toolkit\n  license_file: LICENSE\n  license: LicenseRef-NVIDIA-End-User-License-Agreement\n  license_url: https://docs.nvidia.com/cuda/eula/index.html\n  summary: CUDA nvJitLink library\n  description: |\n    nvJitLink - Just-in-Time Link Time Optimization (JIT LTO)\n  doc_url: https://docs.nvidia.com/cuda/nvjitlink/index.html\n\nextra:\n  recipe-maintainers:\n    - conda-forge/cuda\n",
+  "raw_meta_yaml": "{% set name = \"libnvjitlink\" %}\n{% set version = \"13.4.92\" %}\n{% set cuda_version = \"13.4\" %}\n{% set platform = \"placeholder\" %}  # [osx]\n{% set platform = \"linux-x86_64\" %}  # [linux64]\n{% set platform = \"linux-ppc64le\" %}  # [ppc64le]\n{% set platform = \"linux-sbsa\" %}  # [aarch64]\n{% set platform = \"windows-x86_64\" %}  # [win64]\n{% set platform = \"windows-arm64\" %}  # [win and arm64]\n{% set target_name = \"x86_64-linux\" %}  # [linux64]\n{% set target_name = \"ppc64le-linux\" %}  # [ppc64le]\n{% set target_name = \"sbsa-linux\" %}  # [aarch64]\n{% set target_name = \"x64\" %}  # [win64]\n{% set target_name = \"arm64\" %}  # [win and arm64]\n{% set extension = \"tar.xz\" %}  # [not win]\n{% set extension = \"zip\" %}  # [win]\n{% set sha256 = \"e24557473e5e2e1dc591209558523deaca48b32123fe2b822f994b8e691c8ae3\" %}  # [linux64]\n{% set sha256 = \"e253a1f1a1582e2221737391cccf272bf722e44b05be1ed58ebfaefe6dd79315\" %}  # [aarch64]\n{% set sha256 = \"7cef0ee32d2221d07b122ba32e38898a9ecbdb256524f2c1f7b5c61a7f32b6ce\" %}  # [win64]\n{% set sha256 = \"73451f44a7afb46cfbdc8d2ef8b6b1d321ad03cdf38242d7099f53c488c3ec24\" %}  # [win and arm64]\n\npackage:\n  name: {{ name|lower }}-split\n  version: {{ version }}\n\nsource:\n  url: https://developer.download.nvidia.com/compute/cuda/redist/{{ name }}/{{ platform }}/{{ name }}-{{ platform }}-{{ version }}-archive.{{ extension }}\n  sha256: {{ sha256 }}\n\nbuild:\n  number: 1\n  binary_relocation: false\n  skip: true  # [osx or ppc64le]\n\nrequirements:\n  build:\n    - cf-nvidia-tools 1  # [linux]\n    - patchelf <0.18.0     # [linux]\n\noutputs:\n  - name: libnvjitlink\n    files:\n      - lib/libnvJitLink.so.*                            # [linux]\n      - targets/{{ target_name }}/lib/libnvJitLink.so.*  # [linux]\n      - Library\\bin\\nvJitLink*.dll     # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        # xref: conda-forge/libnvjitlink-feedstock#15\n        # we want to allow ex: libnvjitlink=12.6 installed in a cuda-version=12.3 environment,\n        # both within the same CUDA major.\n        - {{ pin_compatible(\"cuda-version\", min_pin=\"x\", max_pin=\"x.x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      requires:\n        - patchelf  # [linux]\n      files:\n        - test-rpath.sh\n      commands:\n        - test -L $PREFIX/lib/libnvJitLink.so.{{ version.split(\".\")[0] }}                            # [linux]\n        - test -L $PREFIX/lib/libnvJitLink.so.{{ version }}                                          # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libnvJitLink.so.{{ version.split(\".\")[0] }}  # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libnvJitLink.so.{{ version }}                # [linux]\n        - bash test-rpath.sh                                                                         # [linux]\n        - if not exist %LIBRARY_BIN%\\nvJitLink*.dll exit 1                         # [win]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA nvJitLink library\n      description: |\n        nvJitLink - Just-in-Time Link Time Optimization (JIT LTO)\n      doc_url: https://docs.nvidia.com/cuda/nvjitlink/\n\n  - name: libnvjitlink-dev\n    build:\n      run_exports:\n        - {{ pin_subpackage(\"libnvjitlink\", max_pin=\"x\") }}\n    files:\n      - lib/libnvJitLink*.so                            # [linux]\n      - lib/pkgconfig                                   # [linux]\n      - targets/{{ target_name }}/include/nvJitLink.h   # [linux]\n      - targets/{{ target_name }}/lib/libnvJitLink*.so  # [linux]\n      #- targets/{{ target_name }}/lib/stubs             # [linux]  # bug: currently missing\n      - Library\\include                                 # [win]\n      - Library\\lib\\{{ target_name }}\\nvJitLink.lib     # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        # xref: conda-forge/libnvjitlink-feedstock#15\n        # we want to allow ex: libnvjitlink=12.6 installed in a cuda-version=12.3 environment,\n        # both within the same CUDA major.\n        - {{ pin_compatible(\"cuda-version\", min_pin=\"x\", max_pin=\"x.x\") }}\n        - {{ pin_subpackage(\"libnvjitlink\", exact=True) }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - libnvjitlink-static >={{ version }}\n    test:\n      commands:\n        - test -L $PREFIX/lib/libnvJitLink.so                            # [linux]\n        - test -f $PREFIX/lib/pkgconfig/nvjitlink*.pc                    # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/include/nvJitLink.h  # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libnvJitLink.so  # [linux]\n        - if not exist %LIBRARY_INC%\\nvJitLink.h exit 1                  # [win]\n        - if not exist %LIBRARY_LIB%\\{{ target_name }}\\nvJitLink.lib exit 1            # [win]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA nvJitLink library\n      description: |\n        nvJitLink - Just-in-Time Link Time Optimization (JIT LTO)\n      doc_url: https://docs.nvidia.com/cuda/nvjitlink/index.html\n\n  - name: libnvjitlink-static\n    files:\n      - targets/{{ target_name }}/lib/libnvJitLink*_static.a  # [linux]\n      - Library\\lib\\{{ target_name }}\\nvJitLink_static.lib    # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        # xref: conda-forge/libnvjitlink-feedstock#15\n        # we want to allow ex: libnvjitlink=12.6 installed in a cuda-version=12.3 environment,\n        # both within the same CUDA major.\n        - {{ pin_compatible(\"cuda-version\", min_pin=\"x\", max_pin=\"x.x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      commands:\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libnvJitLink_static.a  # [linux]\n        - if not exist %LIBRARY_LIB%\\{{ target_name }}\\nvJitLink_static.lib exit 1           # [win]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA nvJitLink library\n      description: |\n        nvJitLink - Just-in-Time Link Time Optimization (JIT LTO)\n      doc_url: https://docs.nvidia.com/cuda/nvjitlink/index.html\n\nabout:\n  home: https://developer.nvidia.com/cuda-toolkit\n  license_file: LICENSE\n  license: LicenseRef-NVIDIA-End-User-License-Agreement\n  license_url: https://docs.nvidia.com/cuda/eula/index.html\n  summary: CUDA nvJitLink library\n  description: |\n    nvJitLink - Just-in-Time Link Time Optimization (JIT LTO)\n  doc_url: https://docs.nvidia.com/cuda/nvjitlink/index.html\n\nextra:\n  recipe-maintainers:\n    - conda-forge/cuda\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1038,7 +1038,7 @@
         "arm-variant * sbsa",
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "cxx_compiler_stub",
         "patchelf <0.18.0"
       ]
@@ -1080,7 +1080,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1257,7 +1257,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
