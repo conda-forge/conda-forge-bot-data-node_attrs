@@ -23,8 +23,8 @@
       "win_arm64": "github_actions"
     }
   },
-  "feedstock_hash": "3a243835808f8adaa499a9b59237743378382cc2",
-  "feedstock_hash_ts": 1789613684,
+  "feedstock_hash": "9f62ce3e32098d7b2eb4ce02e8ec251099e8235c",
+  "feedstock_hash_ts": 1791924036,
   "feedstock_name": "libcusparse",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -39,7 +39,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libcusparse",
@@ -195,7 +195,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -252,7 +252,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libcusparse",
@@ -413,7 +413,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -471,7 +471,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libcusparse",
@@ -1018,7 +1018,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -1047,7 +1047,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/libcusparse.json"
   },
-  "raw_meta_yaml": "{% set name = \"libcusparse\" %}\n{% set version = \"12.8.6.72\" %}\n{% set cuda_version = \"13.4\" %}\n{% set platform = \"linux-x86_64\" %}  # [linux64]\n{% set platform = \"linux-ppc64le\" %}  # [ppc64le]\n{% set platform = \"linux-sbsa\" %}  # [aarch64]\n{% set platform = \"windows-x86_64\" %}  # [win64]\n{% set platform = \"windows-arm64\" %}  # [win and arm64]\n{% set target_name = \"x86_64-linux\" %}  # [linux64]\n{% set target_name = \"ppc64le-linux\" %}  # [ppc64le]\n{% set target_name = \"sbsa-linux\" %}  # [aarch64]\n{% set target_name = \"x64\" %}  # [win64]\n{% set target_name = \"arm64\" %}  # [win and arm64]\n{% set extension = \"tar.xz\" %}  # [not win]\n{% set extension = \"zip\" %}  # [win]\n{% set sha256 = \"1c1fe7f04d74878e1cabc6d0161882caac766c2872e469743a1993366572640b\" %}  # [linux64]\n{% set sha256 = \"dfc3c94bfd0f6b81503d860bd2299cf0a17e0e9819f376c88994f5e2393db074\" %}  # [aarch64]\n{% set sha256 = \"31e2c317de8f92d602f690bad8d1d91957c941a05b44720fc9a3c4bea03b6406\" %}  # [win64]\n{% set sha256 = \"7cff1683e8d633d833e3d1364e86de254f72e89996c28563205418b99991d1ee\" %}  # [win and arm64]\n\npackage:\n  name: {{ name|lower }}-split\n  version: {{ version }}\n\nsource:\n  url: https://developer.download.nvidia.com/compute/cuda/redist/{{ name }}/{{ platform }}/{{ name }}-{{ platform }}-{{ version }}-archive.{{ extension }}\n  sha256: {{ sha256 }}\n\nbuild:\n  number: 0\n  binary_relocation: false\n  skip: true  # [osx or ppc64le]\n\nrequirements:\n  build:\n    - cf-nvidia-tools 1.*  # [linux]\n    - patchelf <0.18.0     # [linux]\n\noutputs:\n  - name: libcusparse\n    files:\n      - lib/libcusparse.so.*                             # [linux]\n      - targets/{{ target_name }}/lib/libcusparse*.so.*  # [linux]\n      - Library\\bin\\cusparse*.dll      # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n        - libnvjitlink =={{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n        - {{ pin_compatible(\"libnvjitlink\", max_pin=\"x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      requires:\n        - patchelf  # [linux]\n      files:\n        - test-rpath.sh\n      commands:\n        - test -L $PREFIX/lib/libcusparse.so.{{ version }}                                  # [linux]\n        - test -L $PREFIX/lib/libcusparse.so.{{ version.split(\".\")[0] }}                    # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libcusparse.so.{{ version.split(\".\")[0] }}  # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libcusparse.so.{{ version }}                # [linux]\n        - bash test-rpath.sh                                                                        # [linux]\n        - if not exist %LIBRARY_BIN%\\cusparse*.dll exit 1                         # [win]\n    about:\n      home: https://developer.nvidia.com/cusparse\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA Sparse Matrix Library\n      description: |\n        cuSPARSE - Basic Linear Algebra for Sparse Matrices on NVIDIA GPUs\n      doc_url: https://docs.nvidia.com/cuda/cusparse/index.html\n\n  - name: libcusparse-dev\n    build:\n      run_exports:\n        - {{ pin_subpackage(\"libcusparse\", max_pin=\"x\") }}\n    files:\n      - lib/libcusparse.so         # [linux]\n      - lib/pkgconfig                                 # [linux]\n      - targets/{{ target_name }}/include             # [linux]\n      - targets/{{ target_name }}/lib/libcusparse.so  # [linux]\n      - targets/{{ target_name }}/lib/stubs           # [linux]\n      # Not shipping Fortran bindings (in src) on Windows for now\n      - targets/{{ target_name }}/libcusparse/src     # [linux]\n      - Library\\include                             # [win]\n      - Library\\lib\\{{ target_name }}                 # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n        - libnvjitlink =={{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n        - {{ pin_compatible(\"libnvjitlink\", max_pin=\"x\") }}\n        - {{ pin_subpackage(\"libcusparse\", exact=True) }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - libcusparse-static >={{ version }}  # [linux]\n    test:\n      commands:\n        - test -L $PREFIX/lib/libcusparse.so                                                   # [linux]\n        - test -f $PREFIX/lib/pkgconfig/cusparse*.pc                                           # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/include/cusparse.h                         # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libcusparse.so                         # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/stubs/libcusparse.so                   # [linux]\n        # These `src` files are only available on Linux x86_64 (not aarch64 or ppc64le)\n        - test -f $PREFIX/targets/{{ target_name }}/libcusparse/src/cusparse_fortran.c         # [linux64]\n        - test -f $PREFIX/targets/{{ target_name }}/libcusparse/src/cusparse_fortran.h         # [linux64]\n        - test -f $PREFIX/targets/{{ target_name }}/libcusparse/src/cusparse_fortran_common.h  # [linux64]\n        - if not exist %LIBRARY_INC%\\cusparse.h exit 1                                         # [win]\n        - if not exist %LIBRARY_LIB%\\{{ target_name }}\\cusparse.lib exit 1                     # [win]\n    about:\n      home: https://developer.nvidia.com/cusparse\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA Sparse Matrix Library\n      description: |\n        cuSPARSE - Basic Linear Algebra for Sparse Matrices on NVIDIA GPUs\n      doc_url: https://docs.nvidia.com/cuda/cusparse/index.html\n\n  - name: libcusparse-static\n    build:\n      skip: true  # [win]\n    files:\n      - targets/{{ target_name }}/lib/libcusparse_static.a\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n        - libnvjitlink-static =={{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n        - {{ pin_compatible(\"libnvjitlink-static\", max_pin=\"x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      commands:\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libcusparse_static.a\n    about:\n      home: https://developer.nvidia.com/cusparse\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA Sparse Matrix Library\n      description: |\n        cuSPARSE - Basic Linear Algebra for Sparse Matrices on NVIDIA GPUs\n      doc_url: https://docs.nvidia.com/cuda/cusparse/index.html\n\nabout:\n  home: https://developer.nvidia.com/cusparse\n  license_file: LICENSE\n  license: LicenseRef-NVIDIA-End-User-License-Agreement\n  license_url: https://docs.nvidia.com/cuda/eula/index.html\n  summary: CUDA Sparse Matrix Library\n  description: |\n    cuSPARSE - Basic Linear Algebra for Sparse Matrices on NVIDIA GPUs\n  doc_url: https://docs.nvidia.com/cuda/cusparse/index.html\n\nextra:\n  feedstock-name: libcusparse\n  recipe-maintainers:\n    - conda-forge/cuda\n",
+  "raw_meta_yaml": "{% set name = \"libcusparse\" %}\n{% set version = \"12.8.6.72\" %}\n{% set cuda_version = \"13.4\" %}\n{% set platform = \"linux-x86_64\" %}  # [linux64]\n{% set platform = \"linux-ppc64le\" %}  # [ppc64le]\n{% set platform = \"linux-sbsa\" %}  # [aarch64]\n{% set platform = \"windows-x86_64\" %}  # [win64]\n{% set platform = \"windows-arm64\" %}  # [win and arm64]\n{% set target_name = \"x86_64-linux\" %}  # [linux64]\n{% set target_name = \"ppc64le-linux\" %}  # [ppc64le]\n{% set target_name = \"sbsa-linux\" %}  # [aarch64]\n{% set target_name = \"x64\" %}  # [win64]\n{% set target_name = \"arm64\" %}  # [win and arm64]\n{% set extension = \"tar.xz\" %}  # [not win]\n{% set extension = \"zip\" %}  # [win]\n{% set sha256 = \"1c1fe7f04d74878e1cabc6d0161882caac766c2872e469743a1993366572640b\" %}  # [linux64]\n{% set sha256 = \"dfc3c94bfd0f6b81503d860bd2299cf0a17e0e9819f376c88994f5e2393db074\" %}  # [aarch64]\n{% set sha256 = \"31e2c317de8f92d602f690bad8d1d91957c941a05b44720fc9a3c4bea03b6406\" %}  # [win64]\n{% set sha256 = \"7cff1683e8d633d833e3d1364e86de254f72e89996c28563205418b99991d1ee\" %}  # [win and arm64]\n\npackage:\n  name: {{ name|lower }}-split\n  version: {{ version }}\n\nsource:\n  url: https://developer.download.nvidia.com/compute/cuda/redist/{{ name }}/{{ platform }}/{{ name }}-{{ platform }}-{{ version }}-archive.{{ extension }}\n  sha256: {{ sha256 }}\n\nbuild:\n  number: 1\n  binary_relocation: false\n  skip: true  # [osx or ppc64le]\n\nrequirements:\n  build:\n    - cf-nvidia-tools 1  # [linux]\n    - patchelf <0.18.0     # [linux]\n\noutputs:\n  - name: libcusparse\n    files:\n      - lib/libcusparse.so.*                             # [linux]\n      - targets/{{ target_name }}/lib/libcusparse*.so.*  # [linux]\n      - Library\\bin\\cusparse*.dll      # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n        - libnvjitlink =={{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n        - {{ pin_compatible(\"libnvjitlink\", max_pin=\"x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      requires:\n        - patchelf  # [linux]\n      files:\n        - test-rpath.sh\n      commands:\n        - test -L $PREFIX/lib/libcusparse.so.{{ version }}                                  # [linux]\n        - test -L $PREFIX/lib/libcusparse.so.{{ version.split(\".\")[0] }}                    # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libcusparse.so.{{ version.split(\".\")[0] }}  # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libcusparse.so.{{ version }}                # [linux]\n        - bash test-rpath.sh                                                                        # [linux]\n        - if not exist %LIBRARY_BIN%\\cusparse*.dll exit 1                         # [win]\n    about:\n      home: https://developer.nvidia.com/cusparse\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA Sparse Matrix Library\n      description: |\n        cuSPARSE - Basic Linear Algebra for Sparse Matrices on NVIDIA GPUs\n      doc_url: https://docs.nvidia.com/cuda/cusparse/index.html\n\n  - name: libcusparse-dev\n    build:\n      run_exports:\n        - {{ pin_subpackage(\"libcusparse\", max_pin=\"x\") }}\n    files:\n      - lib/libcusparse.so         # [linux]\n      - lib/pkgconfig                                 # [linux]\n      - targets/{{ target_name }}/include             # [linux]\n      - targets/{{ target_name }}/lib/libcusparse.so  # [linux]\n      - targets/{{ target_name }}/lib/stubs           # [linux]\n      # Not shipping Fortran bindings (in src) on Windows for now\n      - targets/{{ target_name }}/libcusparse/src     # [linux]\n      - Library\\include                             # [win]\n      - Library\\lib\\{{ target_name }}                 # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n        - libnvjitlink =={{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n        - {{ pin_compatible(\"libnvjitlink\", max_pin=\"x\") }}\n        - {{ pin_subpackage(\"libcusparse\", exact=True) }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - libcusparse-static >={{ version }}  # [linux]\n    test:\n      commands:\n        - test -L $PREFIX/lib/libcusparse.so                                                   # [linux]\n        - test -f $PREFIX/lib/pkgconfig/cusparse*.pc                                           # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/include/cusparse.h                         # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libcusparse.so                         # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/stubs/libcusparse.so                   # [linux]\n        # These `src` files are only available on Linux x86_64 (not aarch64 or ppc64le)\n        - test -f $PREFIX/targets/{{ target_name }}/libcusparse/src/cusparse_fortran.c         # [linux64]\n        - test -f $PREFIX/targets/{{ target_name }}/libcusparse/src/cusparse_fortran.h         # [linux64]\n        - test -f $PREFIX/targets/{{ target_name }}/libcusparse/src/cusparse_fortran_common.h  # [linux64]\n        - if not exist %LIBRARY_INC%\\cusparse.h exit 1                                         # [win]\n        - if not exist %LIBRARY_LIB%\\{{ target_name }}\\cusparse.lib exit 1                     # [win]\n    about:\n      home: https://developer.nvidia.com/cusparse\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA Sparse Matrix Library\n      description: |\n        cuSPARSE - Basic Linear Algebra for Sparse Matrices on NVIDIA GPUs\n      doc_url: https://docs.nvidia.com/cuda/cusparse/index.html\n\n  - name: libcusparse-static\n    build:\n      skip: true  # [win]\n    files:\n      - targets/{{ target_name }}/lib/libcusparse_static.a\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - {{ stdlib(\"c\") }}\n      host:\n        - cuda-version {{ cuda_version }}\n        - libnvjitlink-static =={{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n        - {{ pin_compatible(\"libnvjitlink-static\", max_pin=\"x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      commands:\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libcusparse_static.a\n    about:\n      home: https://developer.nvidia.com/cusparse\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: CUDA Sparse Matrix Library\n      description: |\n        cuSPARSE - Basic Linear Algebra for Sparse Matrices on NVIDIA GPUs\n      doc_url: https://docs.nvidia.com/cuda/cusparse/index.html\n\nabout:\n  home: https://developer.nvidia.com/cusparse\n  license_file: LICENSE\n  license: LicenseRef-NVIDIA-End-User-License-Agreement\n  license_url: https://docs.nvidia.com/cuda/eula/index.html\n  summary: CUDA Sparse Matrix Library\n  description: |\n    cuSPARSE - Basic Linear Algebra for Sparse Matrices on NVIDIA GPUs\n  doc_url: https://docs.nvidia.com/cuda/cusparse/index.html\n\nextra:\n  feedstock-name: libcusparse\n  recipe-maintainers:\n    - conda-forge/cuda\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1115,7 +1115,7 @@
         "arm-variant * sbsa",
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "cxx_compiler_stub",
         "patchelf <0.18.0"
       ]
@@ -1161,7 +1161,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libcusparse",
@@ -1350,7 +1350,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libcusparse",
