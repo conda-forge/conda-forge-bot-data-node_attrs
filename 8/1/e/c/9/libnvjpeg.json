@@ -23,8 +23,8 @@
       "win_arm64": "github_actions"
     }
   },
-  "feedstock_hash": "ff3d70fa5d78b68808d902fb0fd407a4447adf93",
-  "feedstock_hash_ts": 1789618019,
+  "feedstock_hash": "6cac2e0b4adc5404dfde9f61ab391e6bed7c33b3",
+  "feedstock_hash_ts": 1791924036,
   "feedstock_name": "libnvjpeg",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -39,7 +39,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libnvjpeg",
@@ -178,7 +178,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -232,7 +232,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libnvjpeg",
@@ -381,7 +381,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -436,7 +436,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libnvjpeg",
@@ -920,7 +920,7 @@
     },
     "requirements": {
       "build": [
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "patchelf <0.18.0"
       ]
     },
@@ -949,7 +949,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/libnvjpeg.json"
   },
-  "raw_meta_yaml": "{% set name = \"libnvjpeg\" %}\n{% set version = \"13.2.3.58\" %}\n{% set cuda_version = \"13.4\" %}\n{% set platform = \"linux-x86_64\" %}  # [linux64]\n{% set platform = \"linux-ppc64le\" %}  # [ppc64le]\n{% set platform = \"linux-sbsa\" %}  # [aarch64]\n{% set platform = \"windows-x86_64\" %}  # [win64]\n{% set platform = \"windows-arm64\" %}  # [win and arm64]\n{% set target_name = \"x86_64-linux\" %}  # [linux64]\n{% set target_name = \"ppc64le-linux\" %}  # [ppc64le]\n{% set target_name = \"sbsa-linux\" %}  # [aarch64]\n{% set target_name = \"x64\" %}  # [win64]\n{% set target_name = \"arm64\" %}  # [win and arm64]\n{% set extension = \"tar.xz\" %}  # [not win]\n{% set extension = \"zip\" %}  # [win]\n{% set sha256 = \"ea46688875d58579f1bac24fa3b2525413843cb7d2e031dffb3d8f89fafd8e5b\" %}  # [linux64]\n{% set sha256 = \"077518f58ff9d619b8ac679448d74bdf7be9e3619f9f688c9c6060ed8bc6c13e\" %}  # [aarch64]\n{% set sha256 = \"97f408e982fc71f704085e29fd3fb9daf9ec8a35c05e72d698ab2ca15f97f80e\" %}  # [win64]\n{% set sha256 = \"5eed7829aa9f88c48c27627345391bef2dd5bc9706c643f977046aeddd384c76\" %}  # [win and arm64]\n\npackage:\n  name: {{ name|lower }}-split\n  version: {{ version }}\n\nsource:\n  url: https://developer.download.nvidia.com/compute/cuda/redist/{{ name }}/{{ platform }}/{{ name }}-{{ platform }}-{{ version }}-archive.{{ extension }}\n  sha256: {{ sha256 }}\n\nbuild:\n  number: 0\n  binary_relocation: false\n  skip: true  # [osx or ppc64le]\n\nrequirements:\n  build:\n    - cf-nvidia-tools 1.*  # [linux]\n    - patchelf <0.18.0                      # [linux]\n\noutputs:\n  - name: libnvjpeg\n    files:\n      - lib/libnvjpeg.so.*            # [linux]\n      - targets/{{ target_name }}/lib/libnvjpeg.so.*  # [linux]\n      - Library\\bin\\nvjpeg*.dll       # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - {{ stdlib(\"c\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      requires:\n        - patchelf  # [linux]\n      files:\n        - test-rpath.sh\n      commands:\n        - test -L $PREFIX/lib/libnvjpeg.so.{{ version.split(\".\")[0] }}                            # [linux]\n        - test -L $PREFIX/lib/libnvjpeg.so.{{ version }}                                          # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libnvjpeg.so.{{ version.split(\".\")[0] }}  # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libnvjpeg.so.{{ version }}                # [linux]\n        - bash test-rpath.sh                                                                      # [linux]\n        - if not exist %LIBRARY_BIN%\\nvjpeg64_{{ version.split(\".\")[0] }}.dll exit 1              # [win]\n    about:\n      home: https://developer.nvidia.com/nvjpeg\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: nvJPEG native runtime libraries\n      description: |\n        nvJPEG native runtime libraries\n      doc_url: https://docs.nvidia.com/cuda/nvjpeg/index.html\n\n  - name: libnvjpeg-dev\n    build:\n      run_exports:\n        - {{ pin_subpackage(\"libnvjpeg\", max_pin=\"x\") }}\n    files:\n      - lib/libnvjpeg.so                                  # [linux]\n      - lib/pkgconfig/nvjpeg*.pc                          # [linux]\n      - targets/{{ target_name }}/lib/libnvjpeg.so        # [linux]\n      - targets/{{ target_name }}/lib/stubs/libnvjpeg.so  # [linux]\n      - targets/{{ target_name }}/include/nvjpeg*         # [linux]\n      - Library\\include                                   # [win]\n      - Library\\lib\\{{ target_name }}\\nvjpeg.lib          # [win]\n    requirements:\n      build:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n        - {{ pin_subpackage(\"libnvjpeg\", exact=True) }}\n        - cuda-cudart-dev\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - libnvjpeg-static >={{ version }}      # [linux]\n    test:\n      commands:\n        - test -L $PREFIX/lib/libnvjpeg.so                                    # [linux]\n        - test -f $PREFIX/lib/pkgconfig/nvjpeg*.pc                            # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/include/nvjpeg.h          # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libnvjpeg.so          # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/stubs/libnvjpeg.so    # [linux]\n        - if not exist %LIBRARY_INC%\\nvjpeg.h exit 1                          # [win]\n        - if not exist %LIBRARY_LIB%\\{{ target_name }}\\nvjpeg.lib exit 1      # [win]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: nvJPEG native runtime libraries\n      description: |\n        nvJPEG native runtime libraries\n      doc_url: https://docs.nvidia.com/cuda/nvjpeg/index.html\n\n  - name: libnvjpeg-static\n    build:\n      skip: true  # [not linux]\n    files:\n      - targets/{{ target_name }}/lib/libnvjpeg_static.a  # [linux]\n    requirements:\n      build:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      commands:\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libnvjpeg_static.a  # [linux]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: nvJPEG native runtime libraries\n      description: |\n        nvJPEG native runtime libraries\n      doc_url: https://docs.nvidia.com/cuda/nvjpeg/index.html\n\nabout:\n  home: https://developer.nvidia.com/nvjpeg\n  license_file: LICENSE\n  license: LicenseRef-NVIDIA-End-User-License-Agreement\n  license_url: https://docs.nvidia.com/cuda/eula/index.html\n  summary: nvJPEG native runtime libraries\n  description: |\n    nvJPEG native runtime libraries\n  doc_url: https://docs.nvidia.com/cuda/nvjpeg/index.html\n\nextra:\n  recipe-maintainers:\n    - conda-forge/cuda\n  feedstock-name: libnvjpeg\n",
+  "raw_meta_yaml": "{% set name = \"libnvjpeg\" %}\n{% set version = \"13.2.3.58\" %}\n{% set cuda_version = \"13.4\" %}\n{% set platform = \"linux-x86_64\" %}  # [linux64]\n{% set platform = \"linux-ppc64le\" %}  # [ppc64le]\n{% set platform = \"linux-sbsa\" %}  # [aarch64]\n{% set platform = \"windows-x86_64\" %}  # [win64]\n{% set platform = \"windows-arm64\" %}  # [win and arm64]\n{% set target_name = \"x86_64-linux\" %}  # [linux64]\n{% set target_name = \"ppc64le-linux\" %}  # [ppc64le]\n{% set target_name = \"sbsa-linux\" %}  # [aarch64]\n{% set target_name = \"x64\" %}  # [win64]\n{% set target_name = \"arm64\" %}  # [win and arm64]\n{% set extension = \"tar.xz\" %}  # [not win]\n{% set extension = \"zip\" %}  # [win]\n{% set sha256 = \"ea46688875d58579f1bac24fa3b2525413843cb7d2e031dffb3d8f89fafd8e5b\" %}  # [linux64]\n{% set sha256 = \"077518f58ff9d619b8ac679448d74bdf7be9e3619f9f688c9c6060ed8bc6c13e\" %}  # [aarch64]\n{% set sha256 = \"97f408e982fc71f704085e29fd3fb9daf9ec8a35c05e72d698ab2ca15f97f80e\" %}  # [win64]\n{% set sha256 = \"5eed7829aa9f88c48c27627345391bef2dd5bc9706c643f977046aeddd384c76\" %}  # [win and arm64]\n\npackage:\n  name: {{ name|lower }}-split\n  version: {{ version }}\n\nsource:\n  url: https://developer.download.nvidia.com/compute/cuda/redist/{{ name }}/{{ platform }}/{{ name }}-{{ platform }}-{{ version }}-archive.{{ extension }}\n  sha256: {{ sha256 }}\n\nbuild:\n  number: 1\n  binary_relocation: false\n  skip: true  # [osx or ppc64le]\n\nrequirements:\n  build:\n    - cf-nvidia-tools 1  # [linux]\n    - patchelf <0.18.0                      # [linux]\n\noutputs:\n  - name: libnvjpeg\n    files:\n      - lib/libnvjpeg.so.*            # [linux]\n      - targets/{{ target_name }}/lib/libnvjpeg.so.*  # [linux]\n      - Library\\bin\\nvjpeg*.dll       # [win]\n    requirements:\n      build:\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - {{ stdlib(\"c\") }}\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      requires:\n        - patchelf  # [linux]\n      files:\n        - test-rpath.sh\n      commands:\n        - test -L $PREFIX/lib/libnvjpeg.so.{{ version.split(\".\")[0] }}                            # [linux]\n        - test -L $PREFIX/lib/libnvjpeg.so.{{ version }}                                          # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libnvjpeg.so.{{ version.split(\".\")[0] }}  # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libnvjpeg.so.{{ version }}                # [linux]\n        - bash test-rpath.sh                                                                      # [linux]\n        - if not exist %LIBRARY_BIN%\\nvjpeg64_{{ version.split(\".\")[0] }}.dll exit 1              # [win]\n    about:\n      home: https://developer.nvidia.com/nvjpeg\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: nvJPEG native runtime libraries\n      description: |\n        nvJPEG native runtime libraries\n      doc_url: https://docs.nvidia.com/cuda/nvjpeg/index.html\n\n  - name: libnvjpeg-dev\n    build:\n      run_exports:\n        - {{ pin_subpackage(\"libnvjpeg\", max_pin=\"x\") }}\n    files:\n      - lib/libnvjpeg.so                                  # [linux]\n      - lib/pkgconfig/nvjpeg*.pc                          # [linux]\n      - targets/{{ target_name }}/lib/libnvjpeg.so        # [linux]\n      - targets/{{ target_name }}/lib/stubs/libnvjpeg.so  # [linux]\n      - targets/{{ target_name }}/include/nvjpeg*         # [linux]\n      - Library\\include                                   # [win]\n      - Library\\lib\\{{ target_name }}\\nvjpeg.lib          # [win]\n    requirements:\n      build:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n        - {{ pin_subpackage(\"libnvjpeg\", exact=True) }}\n        - cuda-cudart-dev\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n        - libnvjpeg-static >={{ version }}      # [linux]\n    test:\n      commands:\n        - test -L $PREFIX/lib/libnvjpeg.so                                    # [linux]\n        - test -f $PREFIX/lib/pkgconfig/nvjpeg*.pc                            # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/include/nvjpeg.h          # [linux]\n        - test -L $PREFIX/targets/{{ target_name }}/lib/libnvjpeg.so          # [linux]\n        - test -f $PREFIX/targets/{{ target_name }}/lib/stubs/libnvjpeg.so    # [linux]\n        - if not exist %LIBRARY_INC%\\nvjpeg.h exit 1                          # [win]\n        - if not exist %LIBRARY_LIB%\\{{ target_name }}\\nvjpeg.lib exit 1      # [win]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: nvJPEG native runtime libraries\n      description: |\n        nvJPEG native runtime libraries\n      doc_url: https://docs.nvidia.com/cuda/nvjpeg/index.html\n\n  - name: libnvjpeg-static\n    build:\n      skip: true  # [not linux]\n    files:\n      - targets/{{ target_name }}/lib/libnvjpeg_static.a  # [linux]\n    requirements:\n      build:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n      host:\n        - cuda-version {{ cuda_version }}\n      run:\n        - {{ pin_compatible(\"cuda-version\", max_pin=\"x.x\") }}\n      run_constrained:\n        - arm-variant * {{ arm_variant_type }}  # [aarch64]\n    test:\n      commands:\n        - test -f $PREFIX/targets/{{ target_name }}/lib/libnvjpeg_static.a  # [linux]\n    about:\n      home: https://developer.nvidia.com/cuda-toolkit\n      license_file: LICENSE\n      license: LicenseRef-NVIDIA-End-User-License-Agreement\n      license_url: https://docs.nvidia.com/cuda/eula/index.html\n      summary: nvJPEG native runtime libraries\n      description: |\n        nvJPEG native runtime libraries\n      doc_url: https://docs.nvidia.com/cuda/nvjpeg/index.html\n\nabout:\n  home: https://developer.nvidia.com/nvjpeg\n  license_file: LICENSE\n  license: LicenseRef-NVIDIA-End-User-License-Agreement\n  license_url: https://docs.nvidia.com/cuda/eula/index.html\n  summary: nvJPEG native runtime libraries\n  description: |\n    nvJPEG native runtime libraries\n  doc_url: https://docs.nvidia.com/cuda/nvjpeg/index.html\n\nextra:\n  recipe-maintainers:\n    - conda-forge/cuda\n  feedstock-name: libnvjpeg\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1013,7 +1013,7 @@
         "arm-variant * sbsa",
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cf-nvidia-tools 1.*",
+        "cf-nvidia-tools 1",
         "cxx_compiler_stub",
         "patchelf <0.18.0"
       ]
@@ -1056,7 +1056,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libnvjpeg",
@@ -1225,7 +1225,7 @@
     },
     "build": {
       "binary_relocation": false,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "feedstock-name": "libnvjpeg",
