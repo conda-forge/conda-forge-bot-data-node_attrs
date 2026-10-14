@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
+  "ci_support_linux_64_python3.12.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.12.* *_cpython\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -19,14 +19,6 @@
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
-    "noarch_platforms": [
-      "linux_64",
-      "linux_aarch64",
-      "linux_ppc64le",
-      "osx_64",
-      "osx_arm64",
-      "win_64"
-    ],
     "provider": {
       "linux_aarch64": "default",
       "linux_ppc64le": "default",
@@ -34,8 +26,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "f2f3e84168b45b2a1ff219f139a70f4760560745",
-  "feedstock_hash_ts": 1790797703,
+  "feedstock_hash": "d82b082dc1839045cec49c3c56e1f24e3a067406",
+  "feedstock_hash_ts": 1791989936,
   "feedstock_name": "pulp",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -48,7 +40,6 @@
       "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "noarch": "python",
       "number": "0",
       "python": {
         "entry_points": [
@@ -56,8 +47,9 @@
         ]
       },
       "script": [
+        "mv pulp/rust rust",
         "${{ PYTHON }} -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
+        "cd rust && cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
       ]
     },
     "extra": {
@@ -70,7 +62,6 @@
     "outputs": [
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -79,84 +70,188 @@
         },
         "name": "pulp",
         "requirements": {
-          "build": [],
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
       }
     ],
     "package": {
       "name": "pulp",
-      "version": "3.3.2"
+      "version": "4.0.1"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
+      ],
       "host": [
-        "pip",
-        "python 3.11.*",
-        "setuptools >=77"
+        "python",
+        "maturin >=1.4,<2.0",
+        "pip"
       ],
       "run": [
-        "amply >=0.1.2",
+        "python",
+        "orloge >=1.0.0",
         "coin-or-cbc",
-        "python >=3.11"
+        "numpy"
       ]
     },
     "schema_version": 1,
     "source": {
       "patches": [
-        "patches/system-cbc.patch"
+        "patches/rust-build.patch"
       ],
-      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
-      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
+      "sha256": "976f1184a69ab2aceb12e7c14e375775f184bddb8e66ee611ebaccbcad537f8c",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-4.0.1.tar.gz"
     }
   },
   "linux_64_requirements": {
     "build": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
+        "rust_compiler_stub"
+      ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "amply",
         "coin-or-cbc",
+        "numpy",
+        "orloge",
         "python"
       ]
     },
@@ -177,7 +272,6 @@
       "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "noarch": "python",
       "number": "0",
       "python": {
         "entry_points": [
@@ -185,8 +279,9 @@
         ]
       },
       "script": [
+        "mv pulp/rust rust",
         "${{ PYTHON }} -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
+        "cd rust && cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
       ]
     },
     "extra": {
@@ -199,7 +294,6 @@
     "outputs": [
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -210,92 +304,196 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_linux-aarch64"
+            "cross-python_linux-aarch64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
       }
     ],
     "package": {
       "name": "pulp",
-      "version": "3.3.2"
+      "version": "4.0.1"
     },
     "requirements": {
       "build": [
         "python",
-        "cross-python_linux-aarch64"
+        "cross-python_linux-aarch64",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "pip",
-        "python 3.11.*",
-        "setuptools >=77"
+        "python",
+        "maturin >=1.4,<2.0",
+        "pip"
       ],
       "run": [
-        "amply >=0.1.2",
+        "python",
+        "orloge >=1.0.0",
         "coin-or-cbc",
-        "python >=3.11"
+        "numpy"
       ]
     },
     "schema_version": 1,
     "source": {
       "patches": [
-        "patches/system-cbc.patch"
+        "patches/rust-build.patch"
       ],
-      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
-      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
+      "sha256": "976f1184a69ab2aceb12e7c14e375775f184bddb8e66ee611ebaccbcad537f8c",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-4.0.1.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
         "cross-python_linux-aarch64",
-        "python"
+        "python",
+        "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "amply",
         "coin-or-cbc",
+        "numpy",
+        "orloge",
         "python"
       ]
     },
@@ -316,7 +514,6 @@
       "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "noarch": "python",
       "number": "0",
       "python": {
         "entry_points": [
@@ -324,8 +521,9 @@
         ]
       },
       "script": [
+        "mv pulp/rust rust",
         "${{ PYTHON }} -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
+        "cd rust && cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
       ]
     },
     "extra": {
@@ -338,7 +536,6 @@
     "outputs": [
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -349,92 +546,196 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_linux-ppc64le"
+            "cross-python_linux-ppc64le",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
       }
     ],
     "package": {
       "name": "pulp",
-      "version": "3.3.2"
+      "version": "4.0.1"
     },
     "requirements": {
       "build": [
         "python",
-        "cross-python_linux-ppc64le"
+        "cross-python_linux-ppc64le",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "pip",
-        "python 3.11.*",
-        "setuptools >=77"
+        "python",
+        "maturin >=1.4,<2.0",
+        "pip"
       ],
       "run": [
-        "amply >=0.1.2",
+        "python",
+        "orloge >=1.0.0",
         "coin-or-cbc",
-        "python >=3.11"
+        "numpy"
       ]
     },
     "schema_version": 1,
     "source": {
       "patches": [
-        "patches/system-cbc.patch"
+        "patches/rust-build.patch"
       ],
-      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
-      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
+      "sha256": "976f1184a69ab2aceb12e7c14e375775f184bddb8e66ee611ebaccbcad537f8c",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-4.0.1.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
         "cross-python_linux-ppc64le",
-        "python"
+        "python",
+        "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "amply",
         "coin-or-cbc",
+        "numpy",
+        "orloge",
         "python"
       ]
     },
@@ -455,7 +756,6 @@
       "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "noarch": "python",
       "number": "0",
       "python": {
         "entry_points": [
@@ -463,9 +763,10 @@
         ]
       },
       "script": [
+        "mv pulp/rust rust",
         "${{ PYTHON }} -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"",
-        "rd /s /q %SP_DIR%/pulp/solverdir/cbc"
+        "cd rust && cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
+        "move pulp/rust rust"
       ]
     },
     "extra": {
@@ -478,7 +779,6 @@
     "outputs": [
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -487,43 +787,133 @@
         },
         "name": "pulp",
         "requirements": {
-          "build": [],
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
       },
       {
         "build": {
-          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -534,44 +924,43 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_linux-aarch64"
+            "cross-python_linux-aarch64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
       },
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -582,44 +971,43 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_linux-ppc64le"
+            "cross-python_linux-aarch64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
       },
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -630,44 +1018,43 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_osx-64"
+            "cross-python_linux-aarch64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
       },
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -678,44 +1065,43 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_osx-arm64"
+            "cross-python_linux-ppc64le",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
       },
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -726,69 +1112,548 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_win-64"
+            "cross-python_linux-ppc64le",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd %SP_DIR% && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd %SP_DIR% && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd %SP_DIR% && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
       }
     ],
     "package": {
       "name": "pulp",
-      "version": "3.3.2"
+      "version": "4.0.1"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses",
         "python",
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
         "cross-python_win-64"
       ],
       "host": [
-        "pip",
-        "python 3.11.*",
-        "setuptools >=77"
+        "python",
+        "maturin >=1.4,<2.0",
+        "pip"
       ],
       "run": [
-        "amply >=0.1.2",
+        "python",
+        "orloge >=1.0.0",
         "coin-or-cbc",
-        "python >=3.11"
+        "numpy"
       ]
     },
     "schema_version": 1,
     "source": {
       "patches": [
-        "patches/system-cbc.patch"
+        "patches/rust-build.patch"
       ],
-      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
-      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
+      "sha256": "976f1184a69ab2aceb12e7c14e375775f184bddb8e66ee611ebaccbcad537f8c",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-4.0.1.tar.gz"
     }
   },
   "name": "pulp",
@@ -802,7 +1667,6 @@
       "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "noarch": "python",
       "number": "0",
       "python": {
         "entry_points": [
@@ -810,8 +1674,9 @@
         ]
       },
       "script": [
+        "mv pulp/rust rust",
         "${{ PYTHON }} -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
+        "cd rust && cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
       ]
     },
     "extra": {
@@ -824,7 +1689,6 @@
     "outputs": [
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -835,92 +1699,196 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_osx-64"
+            "cross-python_osx-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
       }
     ],
     "package": {
       "name": "pulp",
-      "version": "3.3.2"
+      "version": "4.0.1"
     },
     "requirements": {
       "build": [
         "python",
-        "cross-python_osx-64"
+        "cross-python_osx-64",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "pip",
-        "python 3.11.*",
-        "setuptools >=77"
+        "python",
+        "maturin >=1.4,<2.0",
+        "pip"
       ],
       "run": [
-        "amply >=0.1.2",
+        "python",
+        "orloge >=1.0.0",
         "coin-or-cbc",
-        "python >=3.11"
+        "numpy"
       ]
     },
     "schema_version": 1,
     "source": {
       "patches": [
-        "patches/system-cbc.patch"
+        "patches/rust-build.patch"
       ],
-      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
-      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
+      "sha256": "976f1184a69ab2aceb12e7c14e375775f184bddb8e66ee611ebaccbcad537f8c",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-4.0.1.tar.gz"
     }
   },
   "osx_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
         "cross-python_osx-64",
-        "python"
+        "python",
+        "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "amply",
         "coin-or-cbc",
+        "numpy",
+        "orloge",
         "python"
       ]
     },
@@ -941,7 +1909,6 @@
       "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "noarch": "python",
       "number": "0",
       "python": {
         "entry_points": [
@@ -949,8 +1916,9 @@
         ]
       },
       "script": [
+        "mv pulp/rust rust",
         "${{ PYTHON }} -m pip install . -vv",
-        "rm -rf \"${SP_DIR}/pulp/solverdir/cbc\""
+        "cd rust && cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
       ]
     },
     "extra": {
@@ -963,7 +1931,6 @@
     "outputs": [
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -974,92 +1941,196 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_osx-arm64"
+            "cross-python_osx-arm64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd ${SP_DIR} && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd ${SP_DIR} && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
       }
     ],
     "package": {
       "name": "pulp",
-      "version": "3.3.2"
+      "version": "4.0.1"
     },
     "requirements": {
       "build": [
         "python",
-        "cross-python_osx-arm64"
+        "cross-python_osx-arm64",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "pip",
-        "python 3.11.*",
-        "setuptools >=77"
+        "python",
+        "maturin >=1.4,<2.0",
+        "pip"
       ],
       "run": [
-        "amply >=0.1.2",
+        "python",
+        "orloge >=1.0.0",
         "coin-or-cbc",
-        "python >=3.11"
+        "numpy"
       ]
     },
     "schema_version": 1,
     "source": {
       "patches": [
-        "patches/system-cbc.patch"
+        "patches/rust-build.patch"
       ],
-      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
-      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
+      "sha256": "976f1184a69ab2aceb12e7c14e375775f184bddb8e66ee611ebaccbcad537f8c",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-4.0.1.tar.gz"
     }
   },
   "osx_arm64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
         "cross-python_osx-arm64",
-        "python"
+        "python",
+        "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "amply",
         "coin-or-cbc",
+        "numpy",
+        "orloge",
         "python"
       ]
     },
@@ -1088,49 +2159,63 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pulp.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"3.3.2\"\n\npackage:\n  name: pulp\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/p/pulp/pulp-${{ version }}.tar.gz\n  sha256: d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0\n  patches:\n    - patches/system-cbc.patch\n\nbuild:\n  number: 0\n  noarch: python\n  script:\n    - ${{ PYTHON }} -m pip install . -vv\n    # Remove bundled cbc binaries, using coin-or-cbc provided cbc instead:\n    - if: not win\n      then: rm -rf \"${SP_DIR}/pulp/solverdir/cbc\"\n      else: rd /s /q %SP_DIR%/pulp/solverdir/cbc\n  python:\n    entry_points:\n      - pulptest = pulp.tests.run_tests:pulpTestAll\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n  host:\n    - pip\n    - python ${{ python_min }}.*\n    - setuptools >=77\n  run:\n    - amply >=0.1.2\n    - coin-or-cbc\n    - python >=${{ python_min }}\n\ntests:\n  - python:\n      imports:\n        - pulp\n        - pulp.solverdir\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - script:\n      - python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"\n      - pulptest\n\nabout:\n  summary: |\n    PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\n    and call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n  license: MIT\n  license_file: LICENSE\n  homepage: https://github.com/coin-or/pulp\n  repository: https://github.com/coin-or/pulp\n\nextra:\n  recipe-maintainers:\n    - johanneskoester\n    - christopher-schroeder\n    - mgorny\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"4.0.1\"\n\npackage:\n  name: pulp\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/p/pulp/pulp-${{ version }}.tar.gz\n  sha256: 976f1184a69ab2aceb12e7c14e375775f184bddb8e66ee611ebaccbcad537f8c\n  patches:\n    # https://github.com/coin-or/pulp/pull/950\n    - patches/rust-build.patch\n\nbuild:\n  number: 0\n  skip: match(python, \"<3.12\")\n  script:\n    # part of https://github.com/coin-or/pulp/pull/950\n    - if: unix\n      then: mv pulp/rust rust\n      else: move pulp/rust rust\n    - ${{ PYTHON }} -m pip install . -vv\n    - cd rust && cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n  python:\n    entry_points:\n      - pulptest = pulp.tests.run_tests:pulpTestAll\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n    - ${{ compiler(\"c\") }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - cargo-bundle-licenses\n  host:\n    - python\n    - maturin >=1.4,<2.0\n    - pip\n  run:\n    - python\n    - orloge >=1.0.0\n    - coin-or-cbc\n    - numpy\n\ntests:\n  - python:\n      imports:\n        - pulp\n      pip_check: true\n  - script:\n      - python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"\n      - if: unix\n        then: cd ${SP_DIR} && pulptest\n        else: cd %SP_DIR% && pulptest\n\nabout:\n  summary: |\n    PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\n    and call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems.\n  license: MIT\n  license_file:\n    - LICENSE\n    - rust/THIRDPARTY.yml\n  homepage: https://github.com/coin-or/pulp\n  repository: https://github.com/coin-or/pulp\n\nextra:\n  recipe-maintainers:\n    - johanneskoester\n    - christopher-schroeder\n    - mgorny\n",
   "req": {
     "__set__": true,
     "elements": [
-      "amply",
+      "c_compiler_stub",
+      "c_stdlib_stub",
+      "cargo-bundle-licenses",
       "coin-or-cbc",
       "cross-python_linux-aarch64",
       "cross-python_linux-ppc64le",
       "cross-python_osx-64",
       "cross-python_osx-arm64",
       "cross-python_win-64",
+      "maturin",
+      "numpy",
+      "orloge",
       "pip",
       "python",
-      "setuptools"
+      "rust_compiler_stub"
     ]
   },
   "requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
         "cross-python_linux-aarch64",
         "cross-python_linux-ppc64le",
         "cross-python_osx-64",
         "cross-python_osx-arm64",
         "cross-python_win-64",
-        "python"
+        "python",
+        "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "cross-python",
+        "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "amply",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "coin-or-cbc",
         "cross-python",
+        "numpy",
+        "orloge",
         "python"
       ]
     },
@@ -1147,28 +2232,33 @@
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
         "cross-python_linux-aarch64",
         "cross-python_linux-ppc64le",
         "cross-python_osx-64",
         "cross-python_osx-arm64",
         "cross-python_win-64",
-        "python"
+        "python",
+        "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "maturin >=1.4,<2.0",
         "pip",
-        "python 3.11.*",
-        "setuptools >=77"
+        "python"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "amply >=0.1.2",
         "coin-or-cbc",
-        "python >=3.11"
+        "numpy",
+        "orloge >=1.0.0",
+        "python"
       ]
     },
     "test": {
@@ -1178,8 +2268,8 @@
       ]
     }
   },
-  "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz",
-  "version": "3.3.2",
+  "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-4.0.1.tar.gz",
+  "version": "4.0.1",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/pulp.json"
   },
@@ -1193,7 +2283,6 @@
       "summary": "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files\nand call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
     },
     "build": {
-      "noarch": "python",
       "number": "0",
       "python": {
         "entry_points": [
@@ -1201,8 +2290,9 @@
         ]
       },
       "script": [
+        "move pulp/rust rust",
         "${{ PYTHON }} -m pip install . -vv",
-        "rd /s /q %SP_DIR%/pulp/solverdir/cbc"
+        "cd rust && cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
       ]
     },
     "extra": {
@@ -1215,7 +2305,6 @@
     "outputs": [
       {
         "build": {
-          "noarch": "python",
           "python": {
             "entry_points": [
               "pulptest = pulp.tests.run_tests:pulpTestAll"
@@ -1226,92 +2315,196 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_win-64"
+            "cross-python_win-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
-            "python 3.11.*",
-            "setuptools >=77"
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
           ],
           "run": [
-            "amply >=0.1.2",
+            "python",
+            "orloge >=1.0.0",
             "coin-or-cbc",
-            "python >=3.11"
+            "numpy"
           ]
         },
         "tests": [
           {
             "python": {
               "imports": [
-                "pulp",
-                "pulp.solverdir"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
+                "pulp"
               ]
             }
           },
           {
             "script": [
               "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
-              "pulptest"
+              "cd %SP_DIR% && pulptest"
             ]
           }
         ],
-        "version": "3.3.2"
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd %SP_DIR% && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "pulptest = pulp.tests.run_tests:pulpTestAll"
+            ]
+          }
+        },
+        "name": "pulp",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "maturin >=1.4,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "orloge >=1.0.0",
+            "coin-or-cbc",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pulp"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"import pulp; assert pulp.LpSolverDefault, 'default solver not available'\"",
+              "cd %SP_DIR% && pulptest"
+            ]
+          }
+        ],
+        "version": "4.0.1"
       }
     ],
     "package": {
       "name": "pulp",
-      "version": "3.3.2"
+      "version": "4.0.1"
     },
     "requirements": {
       "build": [
         "python",
-        "cross-python_win-64"
+        "cross-python_win-64",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
       ],
       "host": [
-        "pip",
-        "python 3.11.*",
-        "setuptools >=77"
+        "python",
+        "maturin >=1.4,<2.0",
+        "pip"
       ],
       "run": [
-        "amply >=0.1.2",
+        "python",
+        "orloge >=1.0.0",
         "coin-or-cbc",
-        "python >=3.11"
+        "numpy"
       ]
     },
     "schema_version": 1,
     "source": {
       "patches": [
-        "patches/system-cbc.patch"
+        "patches/rust-build.patch"
       ],
-      "sha256": "d0904700c207ac11e25e3b1213b70eae1d6fb25faa719d75f3f15054901258c0",
-      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-3.3.2.tar.gz"
+      "sha256": "976f1184a69ab2aceb12e7c14e375775f184bddb8e66ee611ebaccbcad537f8c",
+      "url": "https://files.pythonhosted.org/packages/source/p/pulp/pulp-4.0.1.tar.gz"
     }
   },
   "win_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
         "cross-python_win-64",
-        "python"
+        "python",
+        "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
+        "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "amply",
         "coin-or-cbc",
+        "numpy",
+        "orloge",
         "python"
       ]
     },
