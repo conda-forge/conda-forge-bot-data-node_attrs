@@ -30,13 +30,13 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "f95033b7552ea77047c35606c7f40a3b09421635",
-  "feedstock_hash_ts": 1791923696,
+  "feedstock_hash": "4b098a196afda2c4eff7fc7042bde10b5df26288",
+  "feedstock_hash_ts": 1792081477,
   "feedstock_name": "filament",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
+      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nThe optional filament-gltfio output adds the shared glTF loader\n(libgltfio_core, ubershader materials only) and the default ubershader\narchive as a data-only static library. It is not built for Windows yet.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
       "dev_url": "https://github.com/google/filament",
       "home": "https://github.com/google/filament",
       "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib",
@@ -45,7 +45,7 @@
       "summary": "Real-time physically based rendering engine"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "filament"
@@ -223,6 +223,74 @@
         "build": {
           "run_exports": {
             "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libpng",
+            "meshoptimizer",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
+            ]
+          }
+        ],
+        "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
               "filament"
             ]
           }
@@ -385,6 +453,80 @@
               "cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON -DFILAMENT_TEST_WINDOW_SYSTEM=x11",
               "cmake --build test-cmake-docking-build --verbose",
               "VK_DRIVER_FILES=\"$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json\" xvfb-run -a -s \"-screen 0 640x480x24 -ac -extension GLX +extension RANDR\" ./test-cmake-docking-build/hello_world"
+            ]
+          }
+        ],
+        "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libegl-devel",
+            "libgl-devel",
+            "libgles-devel",
+            "libxcb",
+            "libpng",
+            "meshoptimizer",
+            "xorg-libx11",
+            "xorg-xorgproto",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
             ]
           }
         ],
@@ -431,7 +573,8 @@
         "patches/0004-build-selected-shared-libraries.patch",
         "patches/0005-fix-windows-shared-library-boundaries.patch",
         "patches/0006-use-selected-imgui-source.patch",
-        "patches/0007-use-current-imgui-command-list-api.patch"
+        "patches/0007-use-current-imgui-command-list-api.patch",
+        "patches/0008-build-shared-gltfio-core.patch"
       ],
       "sha256": "9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95",
       "url": "https://github.com/google/filament/archive/refs/tags/v1.78.0.tar.gz"
@@ -453,6 +596,7 @@
       "__set__": true,
       "elements": [
         "assimp",
+        "filament",
         "libegl-devel",
         "libgl-devel",
         "libgles-devel",
@@ -496,7 +640,7 @@
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
+      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nThe optional filament-gltfio output adds the shared glTF loader\n(libgltfio_core, ubershader materials only) and the default ubershader\narchive as a data-only static library. It is not built for Windows yet.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
       "dev_url": "https://github.com/google/filament",
       "home": "https://github.com/google/filament",
       "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib",
@@ -505,7 +649,7 @@
       "summary": "Real-time physically based rendering engine"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "filament"
@@ -679,6 +823,79 @@
           }
         ],
         "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libegl-devel",
+            "libgl-devel",
+            "libgles-devel",
+            "libxcb",
+            "libpng",
+            "xorg-libx11",
+            "xorg-xorgproto",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
+            ]
+          }
+        ],
+        "version": "1.78.0"
       }
     ],
     "package": {
@@ -719,7 +936,8 @@
         "patches/0004-build-selected-shared-libraries.patch",
         "patches/0005-fix-windows-shared-library-boundaries.patch",
         "patches/0006-use-selected-imgui-source.patch",
-        "patches/0007-use-current-imgui-command-list-api.patch"
+        "patches/0007-use-current-imgui-command-list-api.patch",
+        "patches/0008-build-shared-gltfio-core.patch"
       ],
       "sha256": "9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95",
       "url": "https://github.com/google/filament/archive/refs/tags/v1.78.0.tar.gz"
@@ -741,6 +959,7 @@
       "__set__": true,
       "elements": [
         "assimp",
+        "filament",
         "libegl-devel",
         "libgl-devel",
         "libgles-devel",
@@ -775,7 +994,7 @@
   },
   "linux_ppc64le_meta_yaml": {
     "about": {
-      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
+      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nThe optional filament-gltfio output adds the shared glTF loader\n(libgltfio_core, ubershader materials only) and the default ubershader\narchive as a data-only static library. It is not built for Windows yet.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
       "dev_url": "https://github.com/google/filament",
       "home": "https://github.com/google/filament",
       "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib",
@@ -784,7 +1003,7 @@
       "summary": "Real-time physically based rendering engine"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "filament"
@@ -946,6 +1165,73 @@
           }
         ],
         "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libpng",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
+            ]
+          }
+        ],
+        "version": "1.78.0"
       }
     ],
     "package": {
@@ -980,7 +1266,8 @@
         "patches/0004-build-selected-shared-libraries.patch",
         "patches/0005-fix-windows-shared-library-boundaries.patch",
         "patches/0006-use-selected-imgui-source.patch",
-        "patches/0007-use-current-imgui-command-list-api.patch"
+        "patches/0007-use-current-imgui-command-list-api.patch",
+        "patches/0008-build-shared-gltfio-core.patch"
       ],
       "sha256": "9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95",
       "url": "https://github.com/google/filament/archive/refs/tags/v1.78.0.tar.gz"
@@ -1002,6 +1289,7 @@
       "__set__": true,
       "elements": [
         "assimp",
+        "filament",
         "libpng",
         "zlib",
         "zstd"
@@ -1030,7 +1318,7 @@
   },
   "meta_yaml": {
     "about": {
-      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
+      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nThe optional filament-gltfio output adds the shared glTF loader\n(libgltfio_core, ubershader materials only) and the default ubershader\narchive as a data-only static library. It is not built for Windows yet.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
       "dev_url": "https://github.com/google/filament",
       "home": "https://github.com/google/filament",
       "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib",
@@ -1039,7 +1327,7 @@
       "summary": "Real-time physically based rendering engine"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "filament"
@@ -1208,6 +1496,74 @@
               "cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON -DFILAMENT_TEST_WINDOW_SYSTEM=wayland",
               "cmake --build test-cmake-docking-build --verbose",
               "bash run_wayland_test.sh ./test-cmake-docking-build/hello_world"
+            ]
+          }
+        ],
+        "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libpng",
+            "meshoptimizer",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
             ]
           }
         ],
@@ -1388,6 +1744,80 @@
         "build": {
           "run_exports": {
             "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libegl-devel",
+            "libgl-devel",
+            "libgles-devel",
+            "libxcb",
+            "libpng",
+            "meshoptimizer",
+            "xorg-libx11",
+            "xorg-xorgproto",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
+            ]
+          }
+        ],
+        "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
               "filament"
             ]
           }
@@ -1539,6 +1969,79 @@
               "cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON",
               "cmake --build test-cmake-docking-build --verbose",
               "./test-cmake-docking-build/hello_world"
+            ]
+          }
+        ],
+        "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libegl-devel",
+            "libgl-devel",
+            "libgles-devel",
+            "libxcb",
+            "libpng",
+            "xorg-libx11",
+            "xorg-xorgproto",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
             ]
           }
         ],
@@ -1696,6 +2199,73 @@
         "build": {
           "run_exports": {
             "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libpng",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
+            ]
+          }
+        ],
+        "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
               "filament"
             ]
           }
@@ -1847,6 +2417,74 @@
         "build": {
           "run_exports": {
             "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libpng",
+            "meshoptimizer",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
+            ]
+          }
+        ],
+        "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
               "filament"
             ]
           }
@@ -1986,6 +2624,73 @@
               "cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON",
               "cmake --build test-cmake-docking-build --verbose",
               "./test-cmake-docking-build/hello_world"
+            ]
+          }
+        ],
+        "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libpng",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
             ]
           }
         ],
@@ -2213,7 +2918,8 @@
         "patches/0004-build-selected-shared-libraries.patch",
         "patches/0005-fix-windows-shared-library-boundaries.patch",
         "patches/0006-use-selected-imgui-source.patch",
-        "patches/0007-use-current-imgui-command-list-api.patch"
+        "patches/0007-use-current-imgui-command-list-api.patch",
+        "patches/0008-build-shared-gltfio-core.patch"
       ],
       "sha256": "9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95",
       "url": "https://github.com/google/filament/archive/refs/tags/v1.78.0.tar.gz"
@@ -2222,7 +2928,7 @@
   "name": "filament",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
+      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nThe optional filament-gltfio output adds the shared glTF loader\n(libgltfio_core, ubershader materials only) and the default ubershader\narchive as a data-only static library. It is not built for Windows yet.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
       "dev_url": "https://github.com/google/filament",
       "home": "https://github.com/google/filament",
       "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib",
@@ -2231,7 +2937,7 @@
       "summary": "Real-time physically based rendering engine"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "filament"
@@ -2396,6 +3102,74 @@
           }
         ],
         "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libpng",
+            "meshoptimizer",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
+            ]
+          }
+        ],
+        "version": "1.78.0"
       }
     ],
     "package": {
@@ -2432,7 +3206,8 @@
         "patches/0004-build-selected-shared-libraries.patch",
         "patches/0005-fix-windows-shared-library-boundaries.patch",
         "patches/0006-use-selected-imgui-source.patch",
-        "patches/0007-use-current-imgui-command-list-api.patch"
+        "patches/0007-use-current-imgui-command-list-api.patch",
+        "patches/0008-build-shared-gltfio-core.patch"
       ],
       "sha256": "9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95",
       "url": "https://github.com/google/filament/archive/refs/tags/v1.78.0.tar.gz"
@@ -2454,6 +3229,7 @@
       "__set__": true,
       "elements": [
         "assimp",
+        "filament",
         "libpng",
         "meshoptimizer",
         "zlib",
@@ -2484,7 +3260,7 @@
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
+      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nThe optional filament-gltfio output adds the shared glTF loader\n(libgltfio_core, ubershader materials only) and the default ubershader\narchive as a data-only static library. It is not built for Windows yet.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
       "dev_url": "https://github.com/google/filament",
       "home": "https://github.com/google/filament",
       "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib",
@@ -2493,7 +3269,7 @@
       "summary": "Real-time physically based rendering engine"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "filament"
@@ -2655,6 +3431,73 @@
           }
         ],
         "version": "1.78.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "filament-gltfio"
+            ]
+          }
+        },
+        "name": "filament-gltfio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja",
+            "python 3.12.*"
+          ],
+          "host": [
+            "assimp",
+            "libpng",
+            "zlib",
+            "zstd",
+            "filament"
+          ],
+          "run": [
+            "filament"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libuberarchive.a"
+              ],
+              "include": [
+                "gltfio/AssetLoader.h",
+                "gltfio/materials/uberarchive.h"
+              ],
+              "lib": [
+                "gltfio_core"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test-cmake-gltfio"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "c_stdlib_stub",
+                "cmake",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build test-cmake-gltfio-build --verbose",
+              "ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error"
+            ]
+          }
+        ],
+        "version": "1.78.0"
       }
     ],
     "package": {
@@ -2689,7 +3532,8 @@
         "patches/0004-build-selected-shared-libraries.patch",
         "patches/0005-fix-windows-shared-library-boundaries.patch",
         "patches/0006-use-selected-imgui-source.patch",
-        "patches/0007-use-current-imgui-command-list-api.patch"
+        "patches/0007-use-current-imgui-command-list-api.patch",
+        "patches/0008-build-shared-gltfio-core.patch"
       ],
       "sha256": "9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95",
       "url": "https://github.com/google/filament/archive/refs/tags/v1.78.0.tar.gz"
@@ -2711,6 +3555,7 @@
       "__set__": true,
       "elements": [
         "assimp",
+        "filament",
         "libpng",
         "zlib",
         "zstd"
@@ -2742,7 +3587,8 @@
     "elements": [
       "filament",
       "filament-bluegl-static",
-      "filament-filagui-static"
+      "filament-filagui-static",
+      "filament-gltfio"
     ]
   },
   "parsing_error": false,
@@ -2757,7 +3603,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/filament.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: filament\n  version: \"1.78.0\"\n  build_number: 0\n  imgui_version: \"1.92.9\"\n  python: \"3.12\"\n\nrecipe:\n  name: ${{ name|lower }}-split\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/google/filament/archive/refs/tags/v${{ version }}.tar.gz\n    sha256: 9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95\n    patches:\n      # Remove when upstream guards the macOS 12-only enum values, or when the\n      # conda-forge build moves to a macOS 12+ SDK.\n      - patches/0001-guard-newer-metal-command-buffer-errors.patch\n      # Remove when upstream supports selecting these system dependencies.\n      - patches/0003-use-system-libpng-zlib.patch\n      # Remove when upstream supports shared-library builds (google/filament#1075).\n      - patches/0004-build-selected-shared-libraries.patch\n      # Remove with the shared-library patch, or when upstream supports Windows DLLs.\n      - patches/0005-fix-windows-shared-library-boundaries.patch\n      # Build Filagui against the selected consumer-compatible ImGui sources.\n      - patches/0006-use-selected-imgui-source.patch\n      # Use the current ImDrawData API required by Dear ImGui 1.92.9 docking.\n      - patches/0007-use-current-imgui-command-list-api.patch\n  # Build Filagui and test its consumer-supplied ImGui contract against docking.\n  - url: https://github.com/ocornut/imgui/archive/refs/tags/v${{ imgui_version }}-docking.tar.gz\n    sha256: 61f2ec7ef19702e47689b77cc602e3aeeda423941bfbc5d8ecb6a02d05a9dd73\n    target_directory: imgui-docking\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ filament_window_system }}_h${{ hash }}_${{ build_number }}\n  variant:\n    use_keys:\n      - filament_window_system\n    # Preserve X11 as the default while making native Wayland opt-in.\n    down_prioritize_variant: ${{ 1 if filament_window_system == \"wayland\" else 0 }}\n\noutputs:\n  - staging:\n      name: filament-build\n    build:\n      script:\n        - if: unix\n          then: build.sh\n          else: build.bat\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n        - python ${{ python }}.*\n      host:\n        - assimp\n        - if: filament_window_system == \"x11\"\n          then:\n            - libegl-devel\n            - libgl-devel\n            - libgles-devel\n            - libxcb\n        - libpng\n        # Use Filament's bundled copy until conda-forge publishes meshoptimizer\n        # for Windows, Apple Silicon, and Linux Arm/PPC.\n        - if: target_platform in (\"linux-64\", \"osx-64\")\n          then: meshoptimizer\n        - if: filament_window_system == \"x11\"\n          then:\n            - xorg-libx11\n            - xorg-xorgproto\n        - zlib\n        - zstd\n      ignore_run_exports:\n        from_package:\n          - if: filament_window_system == \"x11\"\n            then: libgles-devel\n\n  - package:\n      name: filament\n    inherit: filament-build\n    build:\n      files:\n        - LICENSE\n        - README.md\n        - bin/*\n        - docs/*\n        - include/backend\n        - include/bluevk\n        - include/filaflat\n        - include/filament\n        - include/filameshio\n        - include/geometry\n        - include/image\n        - include/ktxreader\n        - include/math\n        - include/utils\n        - lib/cmake/Filament\n        - lib/lib*.dylib\n        - lib/lib*.so*\n        - Library/bin/*\n        - Library/include/backend\n        - Library/include/bluevk\n        - Library/include/filaflat\n        - Library/include/filament\n        - Library/include/filameshio\n        - Library/include/geometry\n        - Library/include/image\n        - Library/include/ktxreader\n        - Library/include/math\n        - Library/include/utils\n        - Library/lib/backend.lib\n        - Library/lib/bluevk.lib\n        - Library/lib/cmake/Filament\n        - Library/lib/filabridge.lib\n        - Library/lib/filaflat.lib\n        - Library/lib/filament.lib\n        - Library/lib/filameshio.lib\n        - Library/lib/geometry.lib\n        - Library/lib/image.lib\n        - Library/lib/ktxreader.lib\n        - Library/lib/utils.lib\n    requirements:\n      # Staging requirements are not inherited once an output adds requirements.\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n        - python ${{ python }}.*\n      host:\n        - assimp\n        - if: filament_window_system == \"x11\"\n          then:\n            - libegl-devel\n            - libgl-devel\n            - libgles-devel\n            - libxcb\n        - libpng\n        - if: target_platform in (\"linux-64\", \"osx-64\")\n          then: meshoptimizer\n        - if: filament_window_system == \"x11\"\n          then:\n            - xorg-libx11\n            - xorg-xorgproto\n        - zlib\n        - zstd\n      run:\n        - if: target_platform in (\"linux-64\", \"osx-64\")\n          then: meshoptimizer\n        - tsl_robin_map\n        - zstd\n      run_exports:\n        - ${{ pin_subpackage('filament', upper_bound='x.x', build=filament_window_system ~ '_*') }}\n      ignore_run_exports:\n        from_package:\n          - if: filament_window_system == \"x11\"\n            then: libgles-devel\n    tests:\n      - files:\n          recipe:\n            - bakedColor.mat\n            - check_package_payload.py\n            - test-cmake-core\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n            - cmake\n            - libvulkan-headers\n            - ninja\n            - python ${{ python }}.*\n        script:\n          - python check_package_payload.py\n          - cmake -S test-cmake-core -B test-cmake-core-build -G Ninja -DCMAKE_BUILD_TYPE=Release\n          - cmake --build test-cmake-core-build --verbose\n          - ctest --test-dir test-cmake-core-build --output-on-failure --no-tests=error\n          - matc --help\n          - matinfo --help\n          - cmgen --help\n          - filamesh --help\n          - if: target_platform != \"linux-ppc64le\"\n            then: matc -a opengl -p desktop -o bakedColor.filamat bakedColor.mat\n            else: matc -a vulkan -p desktop -o bakedColor.filamat bakedColor.mat\n  - package:\n      name: filament-bluegl-static\n    build:\n      # BlueGL is a shared library on every other platform and is already in\n      # the main package. Windows keeps it static (see patch 0005), so there\n      # it has to be shipped separately for consumers that call into it.\n      skip: not win\n      files:\n        - Library/lib/bluegl.lib\n    inherit:\n      from: filament-build\n      run_exports: false\n    requirements:\n      run:\n        - ${{ pin_subpackage('filament', exact=True) }}\n    tests:\n      - package_contents:\n          files:\n            - Library/lib/bluegl.lib\n  - package:\n      name: filament-filagui-static\n    inherit:\n      from: filament-build\n      run_exports: false\n    build:\n      files:\n        - include/filagui\n        - lib/libfilagui.a\n        - Library/include/filagui\n        - Library/lib/filagui.lib\n    requirements:\n      run:\n        - ${{ pin_subpackage('filament', exact=True) }}\n      # Do not install ImGui: applications may link either mainline or docking.\n      # If conda-forge's mainline package is present, keep its ABI version aligned.\n      run_constraints:\n        - imgui ==${{ imgui_version }}\n    tests:\n      - package_contents:\n          include:\n            - filagui/ImGuiHelper.h\n          files:\n            - if: win\n              then: Library/lib/filagui.lib\n            - if: unix\n              then: lib/libfilagui.a\n      - files:\n          recipe:\n            - bakedColor.mat\n            - test-cmake\n            - run_wayland_test.sh\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n            - cmake\n            - imgui ==${{ imgui_version }}\n            - libvulkan-headers\n            - if: target_platform == \"linux-64\"\n              then:\n                - libvulkan-loader\n                - if: filament_window_system == \"x11\"\n                  then:\n                    - mesa-lavapipe\n            - ninja\n            - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n              then:\n                - xorg-libx11\n                - xorg-xorgproto\n            - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n              then:\n                - glfw >=3.4\n                - wayland\n                - weston\n        script:\n          - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n            then: cmake -S test-cmake -B test-cmake-mainline-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAMENT_TEST_WINDOW_SYSTEM=x11\n          - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n            then: cmake -S test-cmake -B test-cmake-mainline-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAMENT_TEST_WINDOW_SYSTEM=wayland\n          - if: target_platform != \"linux-64\"\n            then: cmake -S test-cmake -B test-cmake-mainline-build -G Ninja -DCMAKE_BUILD_TYPE=Release\n          - cmake --build test-cmake-mainline-build --verbose\n          - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n            then: VK_DRIVER_FILES=\"$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json\" xvfb-run -a -s \"-screen 0 640x480x24 -ac -extension GLX +extension RANDR\" ./test-cmake-mainline-build/hello_world\n          - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n            then: bash run_wayland_test.sh ./test-cmake-mainline-build/hello_world\n          - if: unix and target_platform != \"linux-64\"\n            then: ./test-cmake-mainline-build/hello_world\n          - if: win\n            then: .\\test-cmake-mainline-build\\hello_world.exe\n      - files:\n          recipe:\n            - bakedColor.mat\n            - test-cmake\n            - run_wayland_test.sh\n          source:\n            - imgui-docking\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n            - cmake\n            - if: target_platform == \"linux-64\"\n              then:\n                - libvulkan-loader\n                - if: filament_window_system == \"x11\"\n                  then:\n                    - mesa-lavapipe\n            - ninja\n            - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n              then:\n                - glfw >=3.4\n                - wayland\n                - weston\n            - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n              then:\n                - xorg-libx11\n                - xorg-xorgproto\n        script:\n          - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n            then: cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON -DFILAMENT_TEST_WINDOW_SYSTEM=x11\n          - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n            then: cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON -DFILAMENT_TEST_WINDOW_SYSTEM=wayland\n          - if: target_platform != \"linux-64\"\n            then: cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON\n          - cmake --build test-cmake-docking-build --verbose\n          - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n            then: VK_DRIVER_FILES=\"$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json\" xvfb-run -a -s \"-screen 0 640x480x24 -ac -extension GLX +extension RANDR\" ./test-cmake-docking-build/hello_world\n          - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n            then: bash run_wayland_test.sh ./test-cmake-docking-build/hello_world\n          - if: unix and target_platform != \"linux-64\"\n            then: ./test-cmake-docking-build/hello_world\n          - if: win\n            then: .\\test-cmake-docking-build\\hello_world.exe\n\nabout:\n  summary: Real-time physically based rendering engine\n  description: |\n    Filament is a real-time physically based rendering engine for Android,\n    iOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\n    command line tools and a constrained shared C++ development surface for\n    downstream consumers.\n    The image and ktxreader libraries are built shared, so Filament's vendored\n    Basis Universal transcoder is linked into libktxreader rather than shipped\n    as a static archive.\n    The optional filament-bluegl-static output carries the static BlueGL\n    loader on Windows, where it is not part of the shared library surface.\n    It ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\n    would collide with other OpenGL header packages.\n    The optional filament-filagui-static output is built against Dear ImGui\n    ${{ imgui_version }} docking headers but does not package or link an ImGui\n    implementation. Consumers must link exactly one matching implementation:\n    conda-forge's mainline imgui package or their own docking build.\n    Linux x86-64 packages provide mutually exclusive x11 and wayland build\n    variants. X11 remains the default; request filament=*=wayland_* for native\n    Wayland support, which uses Filament's Vulkan backend.\n  license: Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib\n  license_file:\n    - LICENSE\n    - third_party/basisu/LICENSE\n    - third_party/benchmark/LICENSE\n    - third_party/cgltf/LICENSE\n    - third_party/civetweb/LICENSE.md\n    - third_party/clang/LICENSE.TXT\n    - third_party/dawn/LICENSE\n    - third_party/getopt/LICENSE\n    - third_party/gl-matrix/LICENSE.md\n    - third_party/glslang/LICENSE\n    - third_party/glslang/LICENSE.txt\n    - third_party/gltumble/LICENSE\n    - imgui-docking/LICENSE.txt\n    - third_party/jsmn/LICENSE\n    - third_party/libgtest/LICENSE\n    - third_party/markdeep/LICENSE\n    - third_party/robin-map/LICENSE\n    - third_party/smol-v/LICENSE\n    - third_party/spirv-cross/LICENSE\n    - third_party/spirv-cross/LICENSES/LicenseRef-KhronosFreeUse.txt\n    - third_party/spirv-headers/LICENSE\n    - third_party/spirv-tools/LICENSE\n    - third_party/stb/LICENSE\n    - third_party/tinyexr/LICENSE\n    - third_party/vkmemalloc/LICENSE.txt\n  homepage: https://github.com/google/filament\n  repository: https://github.com/google/filament\n\nextra:\n  feedstock-name: filament\n  recipe-maintainers:\n    - jeongseok-meta\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: filament\n  version: \"1.78.0\"\n  build_number: 1\n  imgui_version: \"1.92.9\"\n  python: \"3.12\"\n\nrecipe:\n  name: ${{ name|lower }}-split\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/google/filament/archive/refs/tags/v${{ version }}.tar.gz\n    sha256: 9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95\n    patches:\n      # Remove when upstream guards the macOS 12-only enum values, or when the\n      # conda-forge build moves to a macOS 12+ SDK.\n      - patches/0001-guard-newer-metal-command-buffer-errors.patch\n      # Remove when upstream supports selecting these system dependencies.\n      - patches/0003-use-system-libpng-zlib.patch\n      # Remove when upstream supports shared-library builds (google/filament#1075).\n      - patches/0004-build-selected-shared-libraries.patch\n      # Remove with the shared-library patch, or when upstream supports Windows DLLs.\n      - patches/0005-fix-windows-shared-library-boundaries.patch\n      # Build Filagui against the selected consumer-compatible ImGui sources.\n      - patches/0006-use-selected-imgui-source.patch\n      # Use the current ImDrawData API required by Dear ImGui 1.92.9 docking.\n      - patches/0007-use-current-imgui-command-list-api.patch\n      # Remove with the shared-library patch, or when upstream supports\n      # building gltfio shared (google/filament#1075).\n      - patches/0008-build-shared-gltfio-core.patch\n  # Build Filagui and test its consumer-supplied ImGui contract against docking.\n  - url: https://github.com/ocornut/imgui/archive/refs/tags/v${{ imgui_version }}-docking.tar.gz\n    sha256: 61f2ec7ef19702e47689b77cc602e3aeeda423941bfbc5d8ecb6a02d05a9dd73\n    target_directory: imgui-docking\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ filament_window_system }}_h${{ hash }}_${{ build_number }}\n  variant:\n    use_keys:\n      - filament_window_system\n    # Preserve X11 as the default while making native Wayland opt-in.\n    down_prioritize_variant: ${{ 1 if filament_window_system == \"wayland\" else 0 }}\n\noutputs:\n  - staging:\n      name: filament-build\n    build:\n      script:\n        - if: unix\n          then: build.sh\n          else: build.bat\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n        - python ${{ python }}.*\n      host:\n        - assimp\n        - if: filament_window_system == \"x11\"\n          then:\n            - libegl-devel\n            - libgl-devel\n            - libgles-devel\n            - libxcb\n        - libpng\n        # Use Filament's bundled copy until conda-forge publishes meshoptimizer\n        # for Windows, Apple Silicon, and Linux Arm/PPC.\n        - if: target_platform in (\"linux-64\", \"osx-64\")\n          then: meshoptimizer\n        - if: filament_window_system == \"x11\"\n          then:\n            - xorg-libx11\n            - xorg-xorgproto\n        - zlib\n        - zstd\n      ignore_run_exports:\n        from_package:\n          - if: filament_window_system == \"x11\"\n            then: libgles-devel\n\n  - package:\n      name: filament\n    inherit: filament-build\n    build:\n      files:\n        include:\n          - LICENSE\n          - README.md\n          - bin/*\n          - docs/*\n          - include/backend\n          - include/bluevk\n          - include/filaflat\n          - include/filament\n          - include/filameshio\n          - include/geometry\n          - include/image\n          - include/ktxreader\n          - include/math\n          - include/utils\n          - lib/cmake/Filament\n          - lib/lib*.dylib\n          - lib/lib*.so*\n          - Library/bin/*\n          - Library/include/backend\n          - Library/include/bluevk\n          - Library/include/filaflat\n          - Library/include/filament\n          - Library/include/filameshio\n          - Library/include/geometry\n          - Library/include/image\n          - Library/include/ktxreader\n          - Library/include/math\n          - Library/include/utils\n          - Library/lib/backend.lib\n          - Library/lib/bluevk.lib\n          - Library/lib/cmake/Filament\n          - Library/lib/filabridge.lib\n          - Library/lib/filaflat.lib\n          - Library/lib/filament.lib\n          - Library/lib/filameshio.lib\n          - Library/lib/geometry.lib\n          - Library/lib/image.lib\n          - Library/lib/ktxreader.lib\n          - Library/lib/utils.lib\n        exclude:\n          # Shipped by filament-gltfio.\n          - lib/libgltfio_core.*\n    requirements:\n      # Staging requirements are not inherited once an output adds requirements.\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake\n        - ninja\n        - python ${{ python }}.*\n      host:\n        - assimp\n        - if: filament_window_system == \"x11\"\n          then:\n            - libegl-devel\n            - libgl-devel\n            - libgles-devel\n            - libxcb\n        - libpng\n        - if: target_platform in (\"linux-64\", \"osx-64\")\n          then: meshoptimizer\n        - if: filament_window_system == \"x11\"\n          then:\n            - xorg-libx11\n            - xorg-xorgproto\n        - zlib\n        - zstd\n      run:\n        - if: target_platform in (\"linux-64\", \"osx-64\")\n          then: meshoptimizer\n        - tsl_robin_map\n        - zstd\n      run_exports:\n        - ${{ pin_subpackage('filament', upper_bound='x.x', build=filament_window_system ~ '_*') }}\n      ignore_run_exports:\n        from_package:\n          - if: filament_window_system == \"x11\"\n            then: libgles-devel\n    tests:\n      - files:\n          recipe:\n            - bakedColor.mat\n            - check_package_payload.py\n            - test-cmake-core\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n            - cmake\n            - libvulkan-headers\n            - ninja\n            - python ${{ python }}.*\n        script:\n          - python check_package_payload.py\n          - cmake -S test-cmake-core -B test-cmake-core-build -G Ninja -DCMAKE_BUILD_TYPE=Release\n          - cmake --build test-cmake-core-build --verbose\n          - ctest --test-dir test-cmake-core-build --output-on-failure --no-tests=error\n          - matc --help\n          - matinfo --help\n          - cmgen --help\n          - filamesh --help\n          - if: target_platform != \"linux-ppc64le\"\n            then: matc -a opengl -p desktop -o bakedColor.filamat bakedColor.mat\n            else: matc -a vulkan -p desktop -o bakedColor.filamat bakedColor.mat\n  - package:\n      name: filament-bluegl-static\n    build:\n      # BlueGL is a shared library on every other platform and is already in\n      # the main package. Windows keeps it static (see patch 0005), so there\n      # it has to be shipped separately for consumers that call into it.\n      skip: not win\n      files:\n        - Library/lib/bluegl.lib\n    inherit:\n      from: filament-build\n      run_exports: false\n    requirements:\n      run:\n        - ${{ pin_subpackage('filament', exact=True) }}\n    tests:\n      - package_contents:\n          files:\n            - Library/lib/bluegl.lib\n  - package:\n      name: filament-filagui-static\n    inherit:\n      from: filament-build\n      run_exports: false\n    build:\n      files:\n        - include/filagui\n        - lib/libfilagui.a\n        - Library/include/filagui\n        - Library/lib/filagui.lib\n    requirements:\n      run:\n        - ${{ pin_subpackage('filament', exact=True) }}\n      # Do not install ImGui: applications may link either mainline or docking.\n      # If conda-forge's mainline package is present, keep its ABI version aligned.\n      run_constraints:\n        - imgui ==${{ imgui_version }}\n    tests:\n      - package_contents:\n          include:\n            - filagui/ImGuiHelper.h\n          files:\n            - if: win\n              then: Library/lib/filagui.lib\n            - if: unix\n              then: lib/libfilagui.a\n      - files:\n          recipe:\n            - bakedColor.mat\n            - test-cmake\n            - run_wayland_test.sh\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n            - cmake\n            - imgui ==${{ imgui_version }}\n            - libvulkan-headers\n            - if: target_platform == \"linux-64\"\n              then:\n                - libvulkan-loader\n                - if: filament_window_system == \"x11\"\n                  then:\n                    - mesa-lavapipe\n            - ninja\n            - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n              then:\n                - xorg-libx11\n                - xorg-xorgproto\n            - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n              then:\n                - glfw >=3.4\n                - wayland\n                - weston\n        script:\n          - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n            then: cmake -S test-cmake -B test-cmake-mainline-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAMENT_TEST_WINDOW_SYSTEM=x11\n          - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n            then: cmake -S test-cmake -B test-cmake-mainline-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAMENT_TEST_WINDOW_SYSTEM=wayland\n          - if: target_platform != \"linux-64\"\n            then: cmake -S test-cmake -B test-cmake-mainline-build -G Ninja -DCMAKE_BUILD_TYPE=Release\n          - cmake --build test-cmake-mainline-build --verbose\n          - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n            then: VK_DRIVER_FILES=\"$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json\" xvfb-run -a -s \"-screen 0 640x480x24 -ac -extension GLX +extension RANDR\" ./test-cmake-mainline-build/hello_world\n          - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n            then: bash run_wayland_test.sh ./test-cmake-mainline-build/hello_world\n          - if: unix and target_platform != \"linux-64\"\n            then: ./test-cmake-mainline-build/hello_world\n          - if: win\n            then: .\\test-cmake-mainline-build\\hello_world.exe\n      - files:\n          recipe:\n            - bakedColor.mat\n            - test-cmake\n            - run_wayland_test.sh\n          source:\n            - imgui-docking\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n            - cmake\n            - if: target_platform == \"linux-64\"\n              then:\n                - libvulkan-loader\n                - if: filament_window_system == \"x11\"\n                  then:\n                    - mesa-lavapipe\n            - ninja\n            - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n              then:\n                - glfw >=3.4\n                - wayland\n                - weston\n            - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n              then:\n                - xorg-libx11\n                - xorg-xorgproto\n        script:\n          - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n            then: cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON -DFILAMENT_TEST_WINDOW_SYSTEM=x11\n          - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n            then: cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON -DFILAMENT_TEST_WINDOW_SYSTEM=wayland\n          - if: target_platform != \"linux-64\"\n            then: cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON\n          - cmake --build test-cmake-docking-build --verbose\n          - if: target_platform == \"linux-64\" and filament_window_system == \"x11\"\n            then: VK_DRIVER_FILES=\"$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json\" xvfb-run -a -s \"-screen 0 640x480x24 -ac -extension GLX +extension RANDR\" ./test-cmake-docking-build/hello_world\n          - if: target_platform == \"linux-64\" and filament_window_system == \"wayland\"\n            then: bash run_wayland_test.sh ./test-cmake-docking-build/hello_world\n          - if: unix and target_platform != \"linux-64\"\n            then: ./test-cmake-docking-build/hello_world\n          - if: win\n            then: .\\test-cmake-docking-build\\hello_world.exe\n  - package:\n      name: filament-gltfio\n    inherit:\n      from: filament-build\n      run_exports: false\n    build:\n      # Not built on Windows yet: the DLL would need the export work that\n      # patch 0005 does for the core libraries, and the uberarchive data\n      # symbol cannot be imported from a DLL without dllimport.\n      skip: win\n      files:\n        - include/gltfio\n        - lib/libgltfio_core.dylib\n        - lib/libgltfio_core.so\n        # Data-only archive holding the default ubershader materials. A shared\n        # library would hand consumers its data through copy relocations.\n        - lib/libuberarchive.a\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n      host:\n        - ${{ pin_subpackage('filament', exact=True) }}\n        - if: target_platform in (\"linux-64\", \"osx-64\")\n          then: meshoptimizer\n        - zstd\n      run:\n        - ${{ pin_subpackage('filament', exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage('filament-gltfio', upper_bound='x.x', build=filament_window_system ~ '_*') }}\n    tests:\n      - package_contents:\n          include:\n            - gltfio/AssetLoader.h\n            - gltfio/materials/uberarchive.h\n          lib:\n            - gltfio_core\n          files:\n            - lib/libuberarchive.a\n      - files:\n          recipe:\n            - test-cmake-gltfio\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n            - cmake\n            - ninja\n        script:\n          - cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release\n          - cmake --build test-cmake-gltfio-build --verbose\n          - ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error\n\nabout:\n  summary: Real-time physically based rendering engine\n  description: |\n    Filament is a real-time physically based rendering engine for Android,\n    iOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\n    command line tools and a constrained shared C++ development surface for\n    downstream consumers.\n    The image and ktxreader libraries are built shared, so Filament's vendored\n    Basis Universal transcoder is linked into libktxreader rather than shipped\n    as a static archive.\n    The optional filament-bluegl-static output carries the static BlueGL\n    loader on Windows, where it is not part of the shared library surface.\n    It ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\n    would collide with other OpenGL header packages.\n    The optional filament-filagui-static output is built against Dear ImGui\n    ${{ imgui_version }} docking headers but does not package or link an ImGui\n    implementation. Consumers must link exactly one matching implementation:\n    conda-forge's mainline imgui package or their own docking build.\n    The optional filament-gltfio output adds the shared glTF loader\n    (libgltfio_core, ubershader materials only) and the default ubershader\n    archive as a data-only static library. It is not built for Windows yet.\n    Linux x86-64 packages provide mutually exclusive x11 and wayland build\n    variants. X11 remains the default; request filament=*=wayland_* for native\n    Wayland support, which uses Filament's Vulkan backend.\n  license: Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib\n  license_file:\n    - LICENSE\n    - third_party/basisu/LICENSE\n    - third_party/benchmark/LICENSE\n    - third_party/cgltf/LICENSE\n    - third_party/civetweb/LICENSE.md\n    - third_party/clang/LICENSE.TXT\n    - third_party/dawn/LICENSE\n    - third_party/draco/LICENSE\n    - third_party/getopt/LICENSE\n    - third_party/gl-matrix/LICENSE.md\n    - third_party/glslang/LICENSE\n    - third_party/glslang/LICENSE.txt\n    - third_party/gltumble/LICENSE\n    - imgui-docking/LICENSE.txt\n    - third_party/jsmn/LICENSE\n    - third_party/libgtest/LICENSE\n    - third_party/markdeep/LICENSE\n    - third_party/meshoptimizer/LICENSE\n    - third_party/robin-map/LICENSE\n    - third_party/smol-v/LICENSE\n    - third_party/spirv-cross/LICENSE\n    - third_party/spirv-cross/LICENSES/LicenseRef-KhronosFreeUse.txt\n    - third_party/spirv-headers/LICENSE\n    - third_party/spirv-tools/LICENSE\n    - third_party/stb/LICENSE\n    - third_party/tinyexr/LICENSE\n    - third_party/vkmemalloc/LICENSE.txt\n  homepage: https://github.com/google/filament\n  repository: https://github.com/google/filament\n\nextra:\n  feedstock-name: filament\n  recipe-maintainers:\n    - jeongseok-meta\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2801,6 +3647,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
+        "filament",
         "libegl-devel",
         "libgl-devel",
         "libgles-devel",
@@ -2862,6 +3709,7 @@
       "__set__": true,
       "elements": [
         "assimp",
+        "filament",
         "libegl-devel",
         "libgl-devel",
         "libgles-devel",
@@ -2910,7 +3758,7 @@
   },
   "win_64_meta_yaml": {
     "about": {
-      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
+      "description": "Filament is a real-time physically based rendering engine for Android,\niOS, Windows, Linux, macOS, and WebGL2. This package provides host-side\ncommand line tools and a constrained shared C++ development surface for\ndownstream consumers.\nThe image and ktxreader libraries are built shared, so Filament's vendored\nBasis Universal transcoder is linked into libktxreader rather than shipped\nas a static archive.\nThe optional filament-bluegl-static output carries the static BlueGL\nloader on Windows, where it is not part of the shared library surface.\nIt ships no headers: BlueGL's own headers bundle GL/glcorearb.h, which\nwould collide with other OpenGL header packages.\nThe optional filament-filagui-static output is built against Dear ImGui\n1.92.9 docking headers but does not package or link an ImGui\nimplementation. Consumers must link exactly one matching implementation:\nconda-forge's mainline imgui package or their own docking build.\nThe optional filament-gltfio output adds the shared glTF loader\n(libgltfio_core, ubershader materials only) and the default ubershader\narchive as a data-only static library. It is not built for Windows yet.\nLinux x86-64 packages provide mutually exclusive x11 and wayland build\nvariants. X11 remains the default; request filament=*=wayland_* for native\nWayland support, which uses Filament's Vulkan backend.",
       "dev_url": "https://github.com/google/filament",
       "home": "https://github.com/google/filament",
       "license": "Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib",
@@ -2919,7 +3767,7 @@
       "summary": "Real-time physically based rendering engine"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "filament"
@@ -3148,7 +3996,8 @@
         "patches/0004-build-selected-shared-libraries.patch",
         "patches/0005-fix-windows-shared-library-boundaries.patch",
         "patches/0006-use-selected-imgui-source.patch",
-        "patches/0007-use-current-imgui-command-list-api.patch"
+        "patches/0007-use-current-imgui-command-list-api.patch",
+        "patches/0008-build-shared-gltfio-core.patch"
       ],
       "sha256": "9f4a24c123d8db83ea93bfee501cba70c240b342a0cbab12db3256fdd8f44a95",
       "url": "https://github.com/google/filament/archive/refs/tags/v1.78.0.tar.gz"
