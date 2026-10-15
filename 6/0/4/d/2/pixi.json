@@ -25,8 +25,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "30acb187d1512632f731aba5e2ae26fef5eb1c6b",
-  "feedstock_hash_ts": 1790940577,
+  "feedstock_hash": "5f246fe93312045a6946faa674e06c567efa9364",
+  "feedstock_hash_ts": 1792067305,
   "feedstock_name": "pixi",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -42,9 +42,8 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
+        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n  # aws-lc-sys's default cc builder hands the win-aarch64 `.S` assembly\n  # to cl.exe, which ignores it, so linking fails on missing objects.\n  $env.AWS_LC_SYS_CMAKE_BUILDER = \"1\"\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\n\n# `zstd` is a build dependency of `uv-python`, so cargo compiles the\n# `zstd-sys` C sources for the build platform too. cc-rs accumulates\n# the flags of `CFLAGS` into both compiles, which makes the build platform\n# compiler choke on the target's `-march=core2` / `-mabi=lp64d`. Pass them\n# via `TARGET_CFLAGS` instead, which cc-rs only applies to the target compile.\nif ${{ \"true\" if unix and build_platform != target_platform else \"false\" }} {\n  $env.TARGET_CFLAGS = $env.CFLAGS\n  hide-env CFLAGS\n}\n\n# On win-arm64, `CC=cl.exe` resolves to the ARM64-targeting cl.exe, so the\n# build platform `zstd-sys` objects come out ARM64 and the x64 build script\n# fails to link. cc-rs ignores `CC_FOR_BUILD`, so forward it explicitly.\nif ${{ \"true\" if win and build_platform != target_platform else \"false\" }} {\n  $env.CC_x86_64_pc_windows_msvc = $env.CC_FOR_BUILD\n  $env.CXX_x86_64_pc_windows_msvc = $env.CXX_FOR_BUILD\n}\n\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
         "env": {
-          "AWS_LC_SYS_CMAKE_BUILDER": "1",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         },
         "interpreter": "nu"
@@ -100,7 +99,7 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       },
       {
         "build": null,
@@ -141,12 +140,12 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       }
     ],
     "package": {
       "name": "pixi",
-      "version": "0.81.0"
+      "version": "0.82.0"
     },
     "requirements": {
       "build": [
@@ -167,8 +166,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6de3f263642615b772400140562ca0a79db2ef489df2efd2499611225481ac24",
-      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.81.0.tar.gz"
+      "sha256": "efbd86f9983490d5636035d9b26994ad3df0d71617e6046eb8e9d5c9742e4166",
+      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.82.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -215,9 +214,8 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
+        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n  # aws-lc-sys's default cc builder hands the win-aarch64 `.S` assembly\n  # to cl.exe, which ignores it, so linking fails on missing objects.\n  $env.AWS_LC_SYS_CMAKE_BUILDER = \"1\"\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\n\n# `zstd` is a build dependency of `uv-python`, so cargo compiles the\n# `zstd-sys` C sources for the build platform too. cc-rs accumulates\n# the flags of `CFLAGS` into both compiles, which makes the build platform\n# compiler choke on the target's `-march=core2` / `-mabi=lp64d`. Pass them\n# via `TARGET_CFLAGS` instead, which cc-rs only applies to the target compile.\nif ${{ \"true\" if unix and build_platform != target_platform else \"false\" }} {\n  $env.TARGET_CFLAGS = $env.CFLAGS\n  hide-env CFLAGS\n}\n\n# On win-arm64, `CC=cl.exe` resolves to the ARM64-targeting cl.exe, so the\n# build platform `zstd-sys` objects come out ARM64 and the x64 build script\n# fails to link. cc-rs ignores `CC_FOR_BUILD`, so forward it explicitly.\nif ${{ \"true\" if win and build_platform != target_platform else \"false\" }} {\n  $env.CC_x86_64_pc_windows_msvc = $env.CC_FOR_BUILD\n  $env.CXX_x86_64_pc_windows_msvc = $env.CXX_FOR_BUILD\n}\n\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
         "env": {
-          "AWS_LC_SYS_CMAKE_BUILDER": "1",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
           "JEMALLOC_SYS_WITH_LG_PAGE": "16"
         },
@@ -274,12 +272,12 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       }
     ],
     "package": {
       "name": "pixi",
-      "version": "0.81.0"
+      "version": "0.82.0"
     },
     "requirements": {
       "build": [
@@ -300,8 +298,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6de3f263642615b772400140562ca0a79db2ef489df2efd2499611225481ac24",
-      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.81.0.tar.gz"
+      "sha256": "efbd86f9983490d5636035d9b26994ad3df0d71617e6046eb8e9d5c9742e4166",
+      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.82.0.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -348,9 +346,8 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
+        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n  # aws-lc-sys's default cc builder hands the win-aarch64 `.S` assembly\n  # to cl.exe, which ignores it, so linking fails on missing objects.\n  $env.AWS_LC_SYS_CMAKE_BUILDER = \"1\"\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\n\n# `zstd` is a build dependency of `uv-python`, so cargo compiles the\n# `zstd-sys` C sources for the build platform too. cc-rs accumulates\n# the flags of `CFLAGS` into both compiles, which makes the build platform\n# compiler choke on the target's `-march=core2` / `-mabi=lp64d`. Pass them\n# via `TARGET_CFLAGS` instead, which cc-rs only applies to the target compile.\nif ${{ \"true\" if unix and build_platform != target_platform else \"false\" }} {\n  $env.TARGET_CFLAGS = $env.CFLAGS\n  hide-env CFLAGS\n}\n\n# On win-arm64, `CC=cl.exe` resolves to the ARM64-targeting cl.exe, so the\n# build platform `zstd-sys` objects come out ARM64 and the x64 build script\n# fails to link. cc-rs ignores `CC_FOR_BUILD`, so forward it explicitly.\nif ${{ \"true\" if win and build_platform != target_platform else \"false\" }} {\n  $env.CC_x86_64_pc_windows_msvc = $env.CC_FOR_BUILD\n  $env.CXX_x86_64_pc_windows_msvc = $env.CXX_FOR_BUILD\n}\n\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
         "env": {
-          "AWS_LC_SYS_CMAKE_BUILDER": "1",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
           "JEMALLOC_SYS_WITH_LG_PAGE": "16"
         },
@@ -407,7 +404,7 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       },
       {
         "build": null,
@@ -448,7 +445,7 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       },
       {
         "build": null,
@@ -489,7 +486,7 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       },
       {
         "build": null,
@@ -529,7 +526,7 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       },
       {
         "build": null,
@@ -569,7 +566,7 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       },
       {
         "build": null,
@@ -602,7 +599,7 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       },
       {
         "build": null,
@@ -635,12 +632,12 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       }
     ],
     "package": {
       "name": "pixi",
-      "version": "0.81.0"
+      "version": "0.82.0"
     },
     "requirements": {
       "build": [
@@ -662,8 +659,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6de3f263642615b772400140562ca0a79db2ef489df2efd2499611225481ac24",
-      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.81.0.tar.gz"
+      "sha256": "efbd86f9983490d5636035d9b26994ad3df0d71617e6046eb8e9d5c9742e4166",
+      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.82.0.tar.gz"
     }
   },
   "name": "pixi",
@@ -680,9 +677,8 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
+        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n  # aws-lc-sys's default cc builder hands the win-aarch64 `.S` assembly\n  # to cl.exe, which ignores it, so linking fails on missing objects.\n  $env.AWS_LC_SYS_CMAKE_BUILDER = \"1\"\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\n\n# `zstd` is a build dependency of `uv-python`, so cargo compiles the\n# `zstd-sys` C sources for the build platform too. cc-rs accumulates\n# the flags of `CFLAGS` into both compiles, which makes the build platform\n# compiler choke on the target's `-march=core2` / `-mabi=lp64d`. Pass them\n# via `TARGET_CFLAGS` instead, which cc-rs only applies to the target compile.\nif ${{ \"true\" if unix and build_platform != target_platform else \"false\" }} {\n  $env.TARGET_CFLAGS = $env.CFLAGS\n  hide-env CFLAGS\n}\n\n# On win-arm64, `CC=cl.exe` resolves to the ARM64-targeting cl.exe, so the\n# build platform `zstd-sys` objects come out ARM64 and the x64 build script\n# fails to link. cc-rs ignores `CC_FOR_BUILD`, so forward it explicitly.\nif ${{ \"true\" if win and build_platform != target_platform else \"false\" }} {\n  $env.CC_x86_64_pc_windows_msvc = $env.CC_FOR_BUILD\n  $env.CXX_x86_64_pc_windows_msvc = $env.CXX_FOR_BUILD\n}\n\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
         "env": {
-          "AWS_LC_SYS_CMAKE_BUILDER": "1",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         },
         "interpreter": "nu"
@@ -737,12 +733,12 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       }
     ],
     "package": {
       "name": "pixi",
-      "version": "0.81.0"
+      "version": "0.82.0"
     },
     "requirements": {
       "build": [
@@ -761,8 +757,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6de3f263642615b772400140562ca0a79db2ef489df2efd2499611225481ac24",
-      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.81.0.tar.gz"
+      "sha256": "efbd86f9983490d5636035d9b26994ad3df0d71617e6046eb8e9d5c9742e4166",
+      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.82.0.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -808,9 +804,8 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
+        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n  # aws-lc-sys's default cc builder hands the win-aarch64 `.S` assembly\n  # to cl.exe, which ignores it, so linking fails on missing objects.\n  $env.AWS_LC_SYS_CMAKE_BUILDER = \"1\"\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\n\n# `zstd` is a build dependency of `uv-python`, so cargo compiles the\n# `zstd-sys` C sources for the build platform too. cc-rs accumulates\n# the flags of `CFLAGS` into both compiles, which makes the build platform\n# compiler choke on the target's `-march=core2` / `-mabi=lp64d`. Pass them\n# via `TARGET_CFLAGS` instead, which cc-rs only applies to the target compile.\nif ${{ \"true\" if unix and build_platform != target_platform else \"false\" }} {\n  $env.TARGET_CFLAGS = $env.CFLAGS\n  hide-env CFLAGS\n}\n\n# On win-arm64, `CC=cl.exe` resolves to the ARM64-targeting cl.exe, so the\n# build platform `zstd-sys` objects come out ARM64 and the x64 build script\n# fails to link. cc-rs ignores `CC_FOR_BUILD`, so forward it explicitly.\nif ${{ \"true\" if win and build_platform != target_platform else \"false\" }} {\n  $env.CC_x86_64_pc_windows_msvc = $env.CC_FOR_BUILD\n  $env.CXX_x86_64_pc_windows_msvc = $env.CXX_FOR_BUILD\n}\n\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
         "env": {
-          "AWS_LC_SYS_CMAKE_BUILDER": "1",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         },
         "interpreter": "nu"
@@ -865,12 +860,12 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       }
     ],
     "package": {
       "name": "pixi",
-      "version": "0.81.0"
+      "version": "0.82.0"
     },
     "requirements": {
       "build": [
@@ -889,8 +884,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6de3f263642615b772400140562ca0a79db2ef489df2efd2499611225481ac24",
-      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.81.0.tar.gz"
+      "sha256": "efbd86f9983490d5636035d9b26994ad3df0d71617e6046eb8e9d5c9742e4166",
+      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.82.0.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -941,7 +936,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pixi.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.81.0\"\n\npackage:\n  name: pixi\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/prefix-dev/pixi/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 6de3f263642615b772400140562ca0a79db2ef489df2efd2499611225481ac24\n\nbuild:\n  number: 0\n  script:\n    env:\n      # This env var  specifies the base 2 log of the allocator page size\n      JEMALLOC_SYS_WITH_LG_PAGE: ${{ \"16\" if target_platform == \"linux-aarch64\" }} # or target_platform == \"linux-ppc64le\" }}\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      # Use cmake to build aws-lc-sys, because conda's CFLAGS inject -O2 which\n      # overrides the -O0 required by jitterentropy-base.c, causing a build failure.\n      AWS_LC_SYS_CMAKE_BUILDER: \"1\"\n    interpreter: nu\n    content: |\n      $env.OPENSSL_DIR = $env.PREFIX\n\n      if $nu.os-info.name == \"windows\" {\n        # Avoid long path issues\n        let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n        $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n        $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n      }\n\n      if $nu.os-info.name == \"linux\" {\n        # This flag is needed for tree-sitter on linux\n        $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n      }\n      cargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\n      cargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\n      if $nu.os-info.name != \"windows\" {\n        # Generate shell completions for unix shells\n        let pixi = $\"($env.PREFIX)/bin/pixi\"\n        mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n        mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n        mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n        ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n        ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n        ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n      }\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - cmake\n    - nushell\n    - pkg-config\n    - if: unix\n      then: make\n    - if: osx\n      then: ld64\n  host:\n    # native-tls links openssl on linux (macOS uses Security.framework,\n    # Windows uses schannel, neither needs a host dependency)\n    - if: linux\n      then: openssl\n\ntests:\n  - script:\n      - pixi --help\n  - package_contents:\n      strict: true\n      bin:\n        - pixi\n      files:\n        - if: unix\n          then:\n            - share/bash-completion/completions/pixi\n            - share/zsh/site-functions/_pixi\n            - share/fish/vendor_completions.d/pixi.fish\n\nabout:\n  summary: pixi is a cross-platform, multi-language package manager and workflow tool build on the shoulders of the conda ecosystem.\n  description: |\n    pixi is a cross-platform, multi-language package manager and workflow tool build on the shoulders of the conda ecosystem.\n\n    pixi provides all developers the exceptional experience that is usually found with package managers like cargo or yarn but for any language.\n\n    # Highlights\n\n    - Support for multiple languages like Python, C++ and R using Conda packages\n    - All OS's: Linux, Windows, macOS (including Apple Silicon)\n    - A lockfile is always included and always up-to-date.\n    - A clean and simple Cargo-like command-line interface.\n    - Install tools per-project or system-wide.\n    - Completely written in Rust and build on top of the rattler library.\n\n  license: BSD-3-Clause\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://pixi.prefix.dev\n  repository: https://github.com/prefix-dev/pixi\n\nextra:\n  recipe-maintainers:\n    - lucascolley\n    - wolfv\n    - baszalmstra\n    - tdejager\n    - ruben-arts\n    - Hofer-Julian\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.82.0\"\n\npackage:\n  name: pixi\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/prefix-dev/pixi/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: efbd86f9983490d5636035d9b26994ad3df0d71617e6046eb8e9d5c9742e4166\n\nbuild:\n  number: 0\n  script:\n    env:\n      # This env var  specifies the base 2 log of the allocator page size\n      JEMALLOC_SYS_WITH_LG_PAGE: ${{ \"16\" if target_platform == \"linux-aarch64\" }} # or target_platform == \"linux-ppc64le\" }}\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    interpreter: nu\n    content: |\n      $env.OPENSSL_DIR = $env.PREFIX\n\n      if $nu.os-info.name == \"windows\" {\n        # Avoid long path issues\n        let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n        $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n        $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n        # aws-lc-sys's default cc builder hands the win-aarch64 `.S` assembly\n        # to cl.exe, which ignores it, so linking fails on missing objects.\n        $env.AWS_LC_SYS_CMAKE_BUILDER = \"1\"\n      }\n\n      if $nu.os-info.name == \"linux\" {\n        # This flag is needed for tree-sitter on linux\n        $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n      }\n\n      # `zstd` is a build dependency of `uv-python`, so cargo compiles the\n      # `zstd-sys` C sources for the build platform too. cc-rs accumulates\n      # the flags of `CFLAGS` into both compiles, which makes the build platform\n      # compiler choke on the target's `-march=core2` / `-mabi=lp64d`. Pass them\n      # via `TARGET_CFLAGS` instead, which cc-rs only applies to the target compile.\n      if ${{ \"true\" if unix and build_platform != target_platform else \"false\" }} {\n        $env.TARGET_CFLAGS = $env.CFLAGS\n        hide-env CFLAGS\n      }\n\n      # On win-arm64, `CC=cl.exe` resolves to the ARM64-targeting cl.exe, so the\n      # build platform `zstd-sys` objects come out ARM64 and the x64 build script\n      # fails to link. cc-rs ignores `CC_FOR_BUILD`, so forward it explicitly.\n      if ${{ \"true\" if win and build_platform != target_platform else \"false\" }} {\n        $env.CC_x86_64_pc_windows_msvc = $env.CC_FOR_BUILD\n        $env.CXX_x86_64_pc_windows_msvc = $env.CXX_FOR_BUILD\n      }\n\n      cargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\n      cargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\n      if $nu.os-info.name != \"windows\" {\n        # Generate shell completions for unix shells\n        let pixi = $\"($env.PREFIX)/bin/pixi\"\n        mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n        mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n        mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n        ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n        ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n        ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n      }\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - cmake\n    - nushell\n    - pkg-config\n    - if: unix\n      then: make\n    - if: osx\n      then: ld64\n  host:\n    # native-tls links openssl on linux (macOS uses Security.framework,\n    # Windows uses schannel, neither needs a host dependency)\n    - if: linux\n      then: openssl\n\ntests:\n  - script:\n      - pixi --help\n  - package_contents:\n      strict: true\n      bin:\n        - pixi\n      files:\n        - if: unix\n          then:\n            - share/bash-completion/completions/pixi\n            - share/zsh/site-functions/_pixi\n            - share/fish/vendor_completions.d/pixi.fish\n\nabout:\n  summary: pixi is a cross-platform, multi-language package manager and workflow tool build on the shoulders of the conda ecosystem.\n  description: |\n    pixi is a cross-platform, multi-language package manager and workflow tool build on the shoulders of the conda ecosystem.\n\n    pixi provides all developers the exceptional experience that is usually found with package managers like cargo or yarn but for any language.\n\n    # Highlights\n\n    - Support for multiple languages like Python, C++ and R using Conda packages\n    - All OS's: Linux, Windows, macOS (including Apple Silicon)\n    - A lockfile is always included and always up-to-date.\n    - A clean and simple Cargo-like command-line interface.\n    - Install tools per-project or system-wide.\n    - Completely written in Rust and build on top of the rattler library.\n\n  license: BSD-3-Clause\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://pixi.prefix.dev\n  repository: https://github.com/prefix-dev/pixi\n\nextra:\n  recipe-maintainers:\n    - lucascolley\n    - wolfv\n    - baszalmstra\n    - tdejager\n    - ruben-arts\n    - Hofer-Julian\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1031,8 +1026,8 @@
       "elements": []
     }
   },
-  "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.81.0.tar.gz",
-  "version": "0.81.0",
+  "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.82.0.tar.gz",
+  "version": "0.82.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/pixi.json"
   },
@@ -1049,9 +1044,8 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
+        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n  # aws-lc-sys's default cc builder hands the win-aarch64 `.S` assembly\n  # to cl.exe, which ignores it, so linking fails on missing objects.\n  $env.AWS_LC_SYS_CMAKE_BUILDER = \"1\"\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\n\n# `zstd` is a build dependency of `uv-python`, so cargo compiles the\n# `zstd-sys` C sources for the build platform too. cc-rs accumulates\n# the flags of `CFLAGS` into both compiles, which makes the build platform\n# compiler choke on the target's `-march=core2` / `-mabi=lp64d`. Pass them\n# via `TARGET_CFLAGS` instead, which cc-rs only applies to the target compile.\nif ${{ \"true\" if unix and build_platform != target_platform else \"false\" }} {\n  $env.TARGET_CFLAGS = $env.CFLAGS\n  hide-env CFLAGS\n}\n\n# On win-arm64, `CC=cl.exe` resolves to the ARM64-targeting cl.exe, so the\n# build platform `zstd-sys` objects come out ARM64 and the x64 build script\n# fails to link. cc-rs ignores `CC_FOR_BUILD`, so forward it explicitly.\nif ${{ \"true\" if win and build_platform != target_platform else \"false\" }} {\n  $env.CC_x86_64_pc_windows_msvc = $env.CC_FOR_BUILD\n  $env.CXX_x86_64_pc_windows_msvc = $env.CXX_FOR_BUILD\n}\n\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
         "env": {
-          "AWS_LC_SYS_CMAKE_BUILDER": "1",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         },
         "interpreter": "nu"
@@ -1099,12 +1093,12 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       }
     ],
     "package": {
       "name": "pixi",
-      "version": "0.81.0"
+      "version": "0.82.0"
     },
     "requirements": {
       "build": [
@@ -1121,8 +1115,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6de3f263642615b772400140562ca0a79db2ef489df2efd2499611225481ac24",
-      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.81.0.tar.gz"
+      "sha256": "efbd86f9983490d5636035d9b26994ad3df0d71617e6046eb8e9d5c9742e4166",
+      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.82.0.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -1166,9 +1160,8 @@
     "build": {
       "number": "0",
       "script": {
-        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
+        "content": "$env.OPENSSL_DIR = $env.PREFIX\n\nif $nu.os-info.name == \"windows\" {\n  # Avoid long path issues\n  let drive = ($env.SRC_DIR | path split | first)  # e.g. \"D:\"\n  $env.CARGO_TARGET_DIR = $\"($drive)\\\\cb\"  # D:\\cb\n  $env.CARGO_HOME = $\"($drive)\\\\ch\"        # D:\\ch\n  # aws-lc-sys's default cc builder hands the win-aarch64 `.S` assembly\n  # to cl.exe, which ignores it, so linking fails on missing objects.\n  $env.AWS_LC_SYS_CMAKE_BUILDER = \"1\"\n}\n\nif $nu.os-info.name == \"linux\" {\n  # This flag is needed for tree-sitter on linux\n  $env.CFLAGS = $\"($env.CFLAGS) -D_BSD_SOURCE\"\n}\n\n# `zstd` is a build dependency of `uv-python`, so cargo compiles the\n# `zstd-sys` C sources for the build platform too. cc-rs accumulates\n# the flags of `CFLAGS` into both compiles, which makes the build platform\n# compiler choke on the target's `-march=core2` / `-mabi=lp64d`. Pass them\n# via `TARGET_CFLAGS` instead, which cc-rs only applies to the target compile.\nif ${{ \"true\" if unix and build_platform != target_platform else \"false\" }} {\n  $env.TARGET_CFLAGS = $env.CFLAGS\n  hide-env CFLAGS\n}\n\n# On win-arm64, `CC=cl.exe` resolves to the ARM64-targeting cl.exe, so the\n# build platform `zstd-sys` objects come out ARM64 and the x64 build script\n# fails to link. cc-rs ignores `CC_FOR_BUILD`, so forward it explicitly.\nif ${{ \"true\" if win and build_platform != target_platform else \"false\" }} {\n  $env.CC_x86_64_pc_windows_msvc = $env.CC_FOR_BUILD\n  $env.CXX_x86_64_pc_windows_msvc = $env.CXX_FOR_BUILD\n}\n\ncargo auditable install --locked --no-default-features --features native-tls --root $env.PREFIX --no-track --path crates/pixi --bin pixi\ncargo-bundle-licenses --format yaml --output $\"($env.SRC_DIR)/THIRDPARTY.yml\"\n\nif $nu.os-info.name != \"windows\" {\n  # Generate shell completions for unix shells\n  let pixi = $\"($env.PREFIX)/bin/pixi\"\n  mkdir $\"($env.PREFIX)/share/bash-completion/completions\"\n  mkdir $\"($env.PREFIX)/share/zsh/site-functions\"\n  mkdir $\"($env.PREFIX)/share/fish/vendor_completions.d\"\n  ^$pixi completion --shell bash | save --force $\"($env.PREFIX)/share/bash-completion/completions/pixi\"\n  ^$pixi completion --shell zsh | save --force $\"($env.PREFIX)/share/zsh/site-functions/_pixi\"\n  ^$pixi completion --shell fish | save --force $\"($env.PREFIX)/share/fish/vendor_completions.d/pixi.fish\"\n}\n",
         "env": {
-          "AWS_LC_SYS_CMAKE_BUILDER": "1",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         },
         "interpreter": "nu"
@@ -1216,12 +1209,12 @@
             }
           }
         ],
-        "version": "0.81.0"
+        "version": "0.82.0"
       }
     ],
     "package": {
       "name": "pixi",
-      "version": "0.81.0"
+      "version": "0.82.0"
     },
     "requirements": {
       "build": [
@@ -1238,8 +1231,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6de3f263642615b772400140562ca0a79db2ef489df2efd2499611225481ac24",
-      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.81.0.tar.gz"
+      "sha256": "efbd86f9983490d5636035d9b26994ad3df0d71617e6046eb8e9d5c9742e4166",
+      "url": "https://github.com/prefix-dev/pixi/archive/refs/tags/v0.82.0.tar.gz"
     }
   },
   "win_arm64_requirements": {
