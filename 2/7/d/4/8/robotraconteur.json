@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndbus:\n- '1'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibboost_devel:\n- '1.90'\nnumpy:\n- '2'\nopenssl:\n- '3.5'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndbus:\n- '1'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibboost_devel:\n- '1.90'\nnumpy:\n- '2'\nopenssl:\n- '3.5'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\n- 3.12.* *_cpython\n- 3.13.* *_cp313\n- 3.14.* *_cp314\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {
     "libboost190": {
       "migration_number": 1,
@@ -13,9 +13,7 @@
       "linux_aarch64": "linux_64",
       "osx_arm64": "osx_64"
     },
-    "conda_build": {
-      "error_overlinking": true
-    },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
@@ -23,20 +21,29 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "6c43d28d2f77492f1d159f7b7d4c1ef8b434803d",
-  "feedstock_hash_ts": 1792014035,
+  "feedstock_hash": "a6944cf7548af6c90edcfc589beb5be14bfcb3ae",
+  "feedstock_hash_ts": 1792023544,
   "feedstock_name": "robotraconteur",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/robotraconteur/robotraconteur",
-      "home": "http://robotraconteur.com",
+      "home": "http://robotraconteur.com/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE.txt",
       "summary": "Communication framework for robotics and automation"
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "run_exports": {
+        "weak": [
+          "librobotraconteur"
+        ]
+      },
+      "script": {
+        "file": "build_cpp"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -47,9 +54,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -66,27 +75,32 @@
             "libboost-devel",
             "dbus",
             "zlib",
-            "openssl",
-            "libusb"
-          ]
+            "libusb",
+            "openssl"
+          ],
+          "run": []
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -113,57 +127,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -190,57 +176,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -267,57 +225,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -344,77 +274,53 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       }
     ],
     "package": {
-      "name": "robotraconteur-suite",
+      "name": "librobotraconteur",
       "version": "1.2.8"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "make",
+        "git",
+        "cmake",
+        "swig"
+      ],
       "host": [
-        "python",
-        "numpy"
+        "libboost-devel",
+        "dbus",
+        "zlib",
+        "libusb",
+        "openssl"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      }
-    ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "470.patch"
+      ],
+      "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
+      "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
+    }
   },
   "linux_64_requirements": {
     "build": {
@@ -454,19 +360,30 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "linux_aarch64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/robotraconteur/robotraconteur",
-      "home": "http://robotraconteur.com",
+      "home": "http://robotraconteur.com/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE.txt",
       "summary": "Communication framework for robotics and automation"
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "run_exports": {
+        "weak": [
+          "librobotraconteur"
+        ]
+      },
+      "script": {
+        "file": "build_cpp"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -477,9 +394,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -496,27 +415,32 @@
             "libboost-devel",
             "dbus",
             "zlib",
-            "openssl",
-            "libusb"
-          ]
+            "libusb",
+            "openssl"
+          ],
+          "run": []
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -527,7 +451,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_linux-aarch64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -543,57 +471,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -604,7 +504,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_linux-aarch64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -620,57 +524,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -681,7 +557,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_linux-aarch64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -697,57 +577,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -758,7 +610,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_linux-aarch64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -774,77 +630,53 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       }
     ],
     "package": {
-      "name": "robotraconteur-suite",
+      "name": "librobotraconteur",
       "version": "1.2.8"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "make",
+        "git",
+        "cmake",
+        "swig"
+      ],
       "host": [
-        "python",
-        "numpy"
+        "libboost-devel",
+        "dbus",
+        "zlib",
+        "libusb",
+        "openssl"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      }
-    ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "470.patch"
+      ],
+      "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
+      "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
+    }
   },
   "linux_aarch64_requirements": {
     "build": {
@@ -853,9 +685,13 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-aarch64",
         "cxx_compiler_stub",
         "git",
         "make",
+        "numpy",
+        "pip",
+        "python",
         "swig"
       ]
     },
@@ -884,19 +720,30 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "meta_yaml": {
     "about": {
       "dev_url": "https://github.com/robotraconteur/robotraconteur",
-      "home": "http://robotraconteur.com",
+      "home": "http://robotraconteur.com/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE.txt",
       "summary": "Communication framework for robotics and automation"
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "run_exports": {
+        "weak": [
+          "librobotraconteur"
+        ]
+      },
+      "script": {
+        "file": "build_cpp"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -907,9 +754,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -926,27 +775,32 @@
             "libboost-devel",
             "dbus",
             "zlib",
-            "openssl",
-            "libusb"
-          ]
+            "libusb",
+            "openssl"
+          ],
+          "run": []
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -973,20 +827,176 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
+        },
+        "name": "robotraconteur",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "make",
+            "git",
+            "cmake",
+            "swig"
+          ],
+          "host": [
+            "librobotraconteur",
+            "python",
+            "numpy",
+            "setuptools",
+            "libboost-devel",
+            "pip"
+          ],
+          "run": [
+            "librobotraconteur",
+            "python",
+            "numpy"
           ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
+        },
+        "name": "robotraconteur",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "make",
+            "git",
+            "cmake",
+            "swig"
+          ],
+          "host": [
+            "librobotraconteur",
+            "python",
+            "numpy",
+            "setuptools",
+            "libboost-devel",
+            "pip"
+          ],
+          "run": [
+            "librobotraconteur",
+            "python",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
+        },
+        "name": "robotraconteur",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "make",
+            "git",
+            "cmake",
+            "swig"
+          ],
+          "host": [
+            "librobotraconteur",
+            "python",
+            "numpy",
+            "setuptools",
+            "libboost-devel",
+            "pip"
+          ],
+          "run": [
+            "librobotraconteur",
+            "python",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -1003,27 +1013,32 @@
             "libboost-devel",
             "dbus",
             "zlib",
-            "openssl",
-            "libusb"
-          ]
+            "libusb",
+            "openssl"
+          ],
+          "run": []
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1034,7 +1049,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_linux-aarch64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1050,57 +1069,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1111,7 +1102,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_linux-aarch64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1127,57 +1122,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1188,7 +1155,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_linux-aarch64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1204,57 +1175,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1265,7 +1208,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_linux-aarch64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1281,251 +1228,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
-        },
-        "name": "robotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "librobotraconteur",
-            "python",
-            "numpy",
-            "setuptools",
-            "libboost-devel",
-            "pip"
-          ],
-          "run": [
-            "librobotraconteur",
-            "python",
-            "numpy"
-          ]
-        },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
-        },
-        "name": "robotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "librobotraconteur",
-            "python",
-            "numpy",
-            "setuptools",
-            "libboost-devel",
-            "pip"
-          ],
-          "run": [
-            "librobotraconteur",
-            "python",
-            "numpy"
-          ]
-        },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "dbus",
-            "zlib",
-            "openssl",
-            "libusb"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
-        },
-        "name": "robotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "librobotraconteur",
-            "python",
-            "numpy",
-            "setuptools",
-            "libboost-devel",
-            "pip"
-          ],
-          "run": [
-            "librobotraconteur",
-            "python",
-            "numpy"
-          ]
-        },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -1541,25 +1266,30 @@
           "host": [
             "libboost-devel",
             "openssl"
-          ]
+          ],
+          "run": []
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1570,7 +1300,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1586,20 +1320,188 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
+        },
+        "name": "robotraconteur",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "make",
+            "git",
+            "cmake",
+            "swig",
+            "python",
+            "cross-python_osx-64",
+            "pip",
+            "numpy"
+          ],
+          "host": [
+            "librobotraconteur",
+            "python",
+            "numpy",
+            "setuptools",
+            "libboost-devel",
+            "pip"
+          ],
+          "run": [
+            "librobotraconteur",
+            "python",
+            "numpy"
           ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
+        },
+        "name": "robotraconteur",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "make",
+            "git",
+            "cmake",
+            "swig",
+            "python",
+            "cross-python_osx-64",
+            "pip",
+            "numpy"
+          ],
+          "host": [
+            "librobotraconteur",
+            "python",
+            "numpy",
+            "setuptools",
+            "libboost-devel",
+            "pip"
+          ],
+          "run": [
+            "librobotraconteur",
+            "python",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
+        },
+        "name": "robotraconteur",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "make",
+            "git",
+            "cmake",
+            "swig",
+            "python",
+            "cross-python_osx-64",
+            "pip",
+            "numpy"
+          ],
+          "host": [
+            "librobotraconteur",
+            "python",
+            "numpy",
+            "setuptools",
+            "libboost-devel",
+            "pip"
+          ],
+          "run": [
+            "librobotraconteur",
+            "python",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -1615,25 +1517,30 @@
           "host": [
             "libboost-devel",
             "openssl"
-          ]
+          ],
+          "run": []
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1644,7 +1551,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-arm64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1660,54 +1571,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1718,7 +1604,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-arm64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1734,54 +1624,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1792,7 +1657,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-arm64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1808,54 +1677,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -1866,7 +1710,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-arm64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -1882,242 +1730,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
-        },
-        "name": "robotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "librobotraconteur",
-            "python",
-            "numpy",
-            "setuptools",
-            "libboost-devel",
-            "pip"
-          ],
-          "run": [
-            "librobotraconteur",
-            "python",
-            "numpy"
-          ]
-        },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
-        },
-        "name": "robotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "librobotraconteur",
-            "python",
-            "numpy",
-            "setuptools",
-            "libboost-devel",
-            "pip"
-          ],
-          "run": [
-            "librobotraconteur",
-            "python",
-            "numpy"
-          ]
-        },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
-        },
-        "name": "robotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "librobotraconteur",
-            "python",
-            "numpy",
-            "setuptools",
-            "libboost-devel",
-            "pip"
-          ],
-          "run": [
-            "librobotraconteur",
-            "python",
-            "numpy"
-          ]
-        },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -2132,26 +1767,30 @@
           ],
           "host": [
             "libboost-devel"
-          ]
+          ],
+          "run": []
         },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -2162,7 +1801,11 @@
             "ninja",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_win-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -2178,55 +1821,29 @@
             "numpy"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "ninja",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel"
-          ]
-        },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -2237,7 +1854,11 @@
             "ninja",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_win-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -2253,55 +1874,29 @@
             "numpy"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "ninja",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel"
-          ]
-        },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -2312,7 +1907,11 @@
             "ninja",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_win-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -2328,55 +1927,29 @@
             "numpy"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "ninja",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel"
-          ]
-        },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -2387,7 +1960,11 @@
             "ninja",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_win-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -2403,222 +1980,75 @@
             "numpy"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       }
     ],
     "package": {
-      "name": "robotraconteur-suite",
+      "name": "librobotraconteur",
       "version": "1.2.8"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "make",
+        "git",
+        "cmake",
+        "swig",
+        "ninja"
+      ],
       "host": [
-        "python",
-        "numpy"
+        "libboost-devel",
+        "dbus",
+        "zlib",
+        "libusb",
+        "openssl"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "folder": "bluez-src",
-        "sha256": "59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d",
-        "url": "http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      }
-    ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "470.patch"
+      ],
+      "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
+      "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
+    }
   },
-  "name": "robotraconteur-suite",
+  "name": "librobotraconteur",
   "osx_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/robotraconteur/robotraconteur",
-      "home": "http://robotraconteur.com",
+      "home": "http://robotraconteur.com/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE.txt",
       "summary": "Communication framework for robotics and automation"
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "run_exports": {
+        "weak": [
+          "librobotraconteur"
+        ]
+      },
+      "script": {
+        "file": "build_cpp"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -2629,9 +2059,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -2647,25 +2079,30 @@
           "host": [
             "libboost-devel",
             "openssl"
-          ]
+          ],
+          "run": []
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -2676,7 +2113,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -2692,54 +2133,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -2750,7 +2166,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -2766,54 +2186,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -2824,7 +2219,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -2840,54 +2239,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -2898,7 +2272,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -2914,57 +2292,50 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       }
     ],
     "package": {
-      "name": "robotraconteur-suite",
+      "name": "librobotraconteur",
       "version": "1.2.8"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "make",
+        "git",
+        "cmake",
+        "swig"
+      ],
       "host": [
-        "python",
-        "numpy"
+        "libboost-devel",
+        "openssl"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      }
-    ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "470.patch"
+      ],
+      "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
+      "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
+    }
   },
   "osx_64_requirements": {
     "build": {
@@ -2973,9 +2344,13 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_osx-64",
         "cxx_compiler_stub",
         "git",
         "make",
+        "numpy",
+        "pip",
+        "python",
         "swig"
       ]
     },
@@ -3001,19 +2376,30 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "osx_arm64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/robotraconteur/robotraconteur",
-      "home": "http://robotraconteur.com",
+      "home": "http://robotraconteur.com/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE.txt",
       "summary": "Communication framework for robotics and automation"
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "run_exports": {
+        "weak": [
+          "librobotraconteur"
+        ]
+      },
+      "script": {
+        "file": "build_cpp"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -3024,9 +2410,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -3042,25 +2430,30 @@
           "host": [
             "libboost-devel",
             "openssl"
-          ]
+          ],
+          "run": []
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -3071,7 +2464,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-arm64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -3087,54 +2484,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -3145,7 +2517,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-arm64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -3161,54 +2537,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -3219,7 +2570,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-arm64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -3235,54 +2590,29 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "make",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel",
-            "openssl"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -3293,7 +2623,11 @@
             "make",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_osx-arm64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -3309,57 +2643,50 @@
             "numpy"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/RobotRaconteur.h",
-            "test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       }
     ],
     "package": {
-      "name": "robotraconteur-suite",
+      "name": "librobotraconteur",
       "version": "1.2.8"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "make",
+        "git",
+        "cmake",
+        "swig"
+      ],
       "host": [
-        "python",
-        "numpy"
+        "libboost-devel",
+        "openssl"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      }
-    ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "470.patch"
+      ],
+      "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
+      "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
+    }
   },
   "osx_arm64_requirements": {
     "build": {
@@ -3368,9 +2695,13 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_osx-arm64",
         "cxx_compiler_stub",
         "git",
         "make",
+        "numpy",
+        "pip",
+        "python",
         "swig"
       ]
     },
@@ -3396,7 +2727,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "outputs_names": {
@@ -3417,13 +2750,17 @@
   "pr_info": {
     "__lazy_json__": "pr_info/robotraconteur.json"
   },
-  "raw_meta_yaml": "{% set version = \"1.2.8\" %}\n\npackage:\n  name: robotraconteur-suite\n  version: {{ version }}\n\nsource:\n  - url: https://github.com/robotraconteur/robotraconteur/archive/v{{ version }}.tar.gz\n    sha256: c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b\n    patches:\n      - 470.patch\n  - url: http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz  # [linux]\n    sha256: 59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d  # [linux]\n    folder: bluez-src  # [linux]\n\nbuild:\n  number: 1\n\nrequirements:\n  host:\n    - python\n    - numpy\n\noutputs:\n  - name: librobotraconteur\n    script: build_cpp.sh  # [unix]\n    script: bld_cpp.bat  # [win]\n    build:\n      run_exports:\n        - {{ pin_subpackage(\"librobotraconteur\", min_pin='x.x.x') }}\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cxx') }}\n        - ninja  # [win]    \n        - make  # [unix]\n        - git\n        - cmake\n        - swig\n      host:\n        - libboost-devel\n        - dbus  # [linux]\n        - zlib  # [linux]\n        - openssl  # [unix]\n        - libusb  # [linux]\n\n    test:\n      commands:\n        - test -f ${PREFIX}/include/RobotRaconteur.h  # [not win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)  # [win]\n        - test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}  # [not win]\n        - if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)  # [win]\n        - if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)  # [win]\n\n  - name: robotraconteur\n    script: build_py.sh  # [unix]\n    script: bld_py.bat  # [win]\n\n    build:\n      run_exports:\n        - {{ pin_subpackage(\"robotraconteur\", min_pin='x.x') }}\n      force_use_keys:\n        - python\n        - numpy\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler('cxx') }}\n        - ninja  # [win]    \n        - make  # [unix]\n        - git\n        - cmake\n        - swig\n        - python                                 # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n        - pip                                    # [build_platform != target_platform]\n        - numpy                                  # [build_platform != target_platform]\n      host:\n        - {{ pin_subpackage(\"librobotraconteur\", exact=True) }}\n        - python\n        - numpy\n        - setuptools\n        - libboost-devel\n        - pip\n\n      run:\n        - {{ pin_subpackage(\"librobotraconteur\", min_pin='x.x.x') }}\n        - python\n        - numpy\n\n    test:\n      commands:\n        - test -f ${PREFIX}/include/RobotRaconteur.h  # [not win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)  # [win]\n        - test -f ${PREFIX}/lib/libRobotRaconteurCore${SHLIB_EXT}  # [not win]\n        - if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)  # [win]\n        - if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)  # [win]\n        - python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\"\n\nabout:\n  home: http://robotraconteur.com\n  dev_url: https://github.com/robotraconteur/robotraconteur\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  summary: 'Communication framework for robotics and automation'\n\nextra:\n  recipe-maintainers:\n    - traversaro\n    - johnwason\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"1.2.8\"\n\nrecipe:\n  name: robotraconteur-suite\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/robotraconteur/robotraconteur/archive/v${{ version }}.tar.gz\n    sha256: c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b\n    patches:\n      - 470.patch\n  - if: linux\n    then:\n      url: http://www.kernel.org/pub/linux/bluetooth/bluez-5.56.tar.xz\n      sha256: 59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d\n      target_directory: bluez-src\n\nbuild:\n  number: 2\n\noutputs:\n  - package:\n      name: librobotraconteur\n    build:\n      script:\n        file: build_cpp\n      dynamic_linking:\n        overlinking_behavior: error\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('cxx') }}\n        - if: win\n          then: ninja\n        - if: unix\n          then: make\n        - git\n        - cmake\n        - swig\n      host:\n        - libboost-devel\n        - if: linux\n          then:\n            - dbus\n            - zlib\n            - libusb\n        - if: unix\n          then: openssl\n      run_exports:\n        - ${{ pin_subpackage('librobotraconteur', lower_bound='x.x.x') }}\n    tests:\n      - package_contents:\n          include:\n            - RobotRaconteur.h\n          lib:\n            - RobotRaconteurCore\n\n  - package:\n      name: robotraconteur\n    build:\n      script:\n        file: build_py\n      dynamic_linking:\n        overlinking_behavior: error\n      variant:\n        use_keys:\n          - python\n          - numpy\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('cxx') }}\n        - if: win\n          then: ninja\n        - if: unix\n          then: make\n        - git\n        - cmake\n        - swig\n        - if: build_platform != target_platform\n          then:\n            - python\n            - cross-python_${{ target_platform }}\n            - pip\n            - numpy\n      host:\n        - ${{ pin_subpackage('librobotraconteur', exact=True) }}\n        - python\n        - numpy\n        - setuptools\n        - libboost-devel\n        - pip\n      run:\n        - ${{ pin_subpackage('librobotraconteur', lower_bound='x.x.x') }}\n        - python\n        - numpy\n      run_exports:\n        - ${{ pin_subpackage('robotraconteur', lower_bound='x.x') }}\n    tests:\n      - python:\n          imports:\n            - RobotRaconteur\n            - RobotRaconteur.Client\n          pip_check: false\n      - script:\n          - python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\"\n\nabout:\n  homepage: http://robotraconteur.com\n  repository: https://github.com/robotraconteur/robotraconteur\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  summary: Communication framework for robotics and automation\n\nextra:\n  recipe-maintainers:\n    - traversaro\n    - johnwason\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
       "c_stdlib_stub",
       "cmake",
+      "cross-python_linux-aarch64",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
+      "cross-python_win-64",
       "cxx_compiler_stub",
       "dbus",
       "git",
@@ -3448,10 +2785,17 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-aarch64",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
         "cxx_compiler_stub",
         "git",
         "make",
         "ninja",
+        "numpy",
+        "pip",
+        "python",
         "swig"
       ]
     },
@@ -3460,6 +2804,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "cxx_compiler_stub",
         "dbus",
         "libboost-devel",
@@ -3478,6 +2823,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "cxx_compiler_stub",
         "librobotraconteur",
         "numpy",
@@ -3486,7 +2832,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "strong_exports": false,
@@ -3497,10 +2845,17 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-aarch64",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
         "cxx_compiler_stub",
         "git",
         "make",
         "ninja",
+        "numpy",
+        "pip",
+        "python",
         "swig"
       ]
     },
@@ -3529,7 +2884,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz",
@@ -3540,13 +2897,22 @@
   "win_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/robotraconteur/robotraconteur",
-      "home": "http://robotraconteur.com",
+      "home": "http://robotraconteur.com/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE.txt",
       "summary": "Communication framework for robotics and automation"
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "run_exports": {
+        "weak": [
+          "librobotraconteur"
+        ]
+      },
+      "script": {
+        "file": "build_cpp"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -3557,9 +2923,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "librobotraconteur"
+            ]
+          }
         },
         "name": "librobotraconteur",
         "requirements": {
@@ -3574,26 +2942,30 @@
           ],
           "host": [
             "libboost-devel"
-          ]
+          ],
+          "run": []
         },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "RobotRaconteur.h"
+              ],
+              "lib": [
+                "RobotRaconteurCore"
+              ]
+            }
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -3604,7 +2976,11 @@
             "ninja",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_win-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -3620,55 +2996,29 @@
             "numpy"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "ninja",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel"
-          ]
-        },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -3679,7 +3029,11 @@
             "ninja",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_win-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -3695,55 +3049,29 @@
             "numpy"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "ninja",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel"
-          ]
-        },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -3754,7 +3082,11 @@
             "ninja",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_win-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -3770,55 +3102,29 @@
             "numpy"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       },
       {
         "build": {
-          "run_exports": [
-            "librobotraconteur"
-          ]
-        },
-        "name": "librobotraconteur",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub",
-            "ninja",
-            "git",
-            "cmake",
-            "swig"
-          ],
-          "host": [
-            "libboost-devel"
-          ]
-        },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)"
-          ]
-        }
-      },
-      {
-        "build": {
-          "force_use_keys": [
-            "python",
-            "numpy"
-          ],
-          "run_exports": [
-            "robotraconteur"
-          ]
+          "run_exports": {
+            "weak": [
+              "robotraconteur"
+            ]
+          }
         },
         "name": "robotraconteur",
         "requirements": {
@@ -3829,7 +3135,11 @@
             "ninja",
             "git",
             "cmake",
-            "swig"
+            "swig",
+            "python",
+            "cross-python_win-64",
+            "pip",
+            "numpy"
           ],
           "host": [
             "librobotraconteur",
@@ -3845,58 +3155,49 @@
             "numpy"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "commands": [
-            "if exist %PREFIX%\\\\Library\\\\include\\\\RobotRaconteur.h (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\lib\\\\RobotRaconteurCore.lib (exit 0) else (exit 1)",
-            "if exist %PREFIX%\\\\Library\\\\bin\\\\RobotRaconteurCore.dll (exit 0) else (exit 1)",
-            "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "RobotRaconteur",
+                "RobotRaconteur.Client"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "python -c \"from RobotRaconteur.Client import RRN; print(RRN.RobotRaconteurVersion)\""
+          }
+        ],
+        "version": "1.2.8"
       }
     ],
     "package": {
-      "name": "robotraconteur-suite",
+      "name": "librobotraconteur",
       "version": "1.2.8"
     },
     "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "ninja",
+        "git",
+        "cmake",
+        "swig"
+      ],
       "host": [
-        "python",
-        "numpy"
+        "libboost-devel"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      },
-      {
-        "patches": [
-          "470.patch"
-        ],
-        "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
-        "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
-      }
-    ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "470.patch"
+      ],
+      "sha256": "c7bb5c31518b9aaa38ff6f2ff899fda541d8650555976a85e582b06695ad403b",
+      "url": "https://github.com/robotraconteur/robotraconteur/archive/v1.2.8.tar.gz"
+    }
   },
   "win_64_requirements": {
     "build": {
@@ -3905,9 +3206,13 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_win-64",
         "cxx_compiler_stub",
         "git",
         "ninja",
+        "numpy",
+        "pip",
+        "python",
         "swig"
       ]
     },
@@ -3932,7 +3237,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   }
 }
