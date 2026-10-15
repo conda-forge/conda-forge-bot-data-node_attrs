@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\ncairo:\n- '1'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nexpat:\n- '2'\nfontconfig:\n- '2'\nfreetype:\n- '2'\nglib:\n- '2'\nlibpng:\n- '1.6'\npango:\n- '1'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\ncairo:\n- '1'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nexpat:\n- '2'\nfontconfig:\n- '2'\nfreetype:\n- '2'\nglib:\n- '2'\nlibpng:\n- '1.6'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -10,48 +10,45 @@
       }
     },
     "build_platform": {
+      "linux_aarch64": "linux_aarch64",
       "linux_riscv64": "linux_64",
-      "osx_arm64": "osx_64"
+      "osx_arm64": "osx_arm64"
     },
-    "conda_build": {
-      "pkg_format": "2"
-    },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
-      "linux_aarch64": "azure",
-      "linux_ppc64le": "azure"
+      "linux_aarch64": "default",
+      "linux_ppc64le": "azure",
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "294f43efffddc34c2c25749fd7197d69e0b1d32a",
-  "feedstock_hash_ts": 1792002690,
+  "feedstock_hash": "a44a7ad3c99350e12d2c20c5953e21a137d89094",
+  "feedstock_hash_ts": 1792050593,
   "feedstock_name": "pango",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK+ widget toolkit. Pango forms the core of text and font\nhandling for GTK+-2.x.\n",
+      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK widget toolkit. Pango forms the core of text and font\nhandling for GTK.",
       "dev_url": "https://gitlab.gnome.org/GNOME/pango",
-      "doc_url": "http://www.pango.org/",
-      "home": "http://www.pango.org/",
+      "doc_url": "https://docs.gtk.org/Pango/",
+      "home": "https://gitlab.gnome.org/GNOME/pango",
       "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "Text layout and rendering engine."
     },
     "build": {
-      "detect_binary_files_with_prefix": true,
-      "ignore_run_exports_from": [
-        "cxx_compiler_stub"
-      ],
-      "number": "2",
-      "run_exports": [
-        "pango"
-      ]
+      "number": "3",
+      "script": []
     },
     "extra": {
+      "feedstock-name": "pango",
       "recipe-maintainers": [
         "ocefpaf",
         "ccordoba12",
@@ -59,67 +56,341 @@
         "pkgw"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.so*",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.so*",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      }
+    ],
     "package": {
-      "name": "pango",
+      "name": "libpango",
       "version": "1.58.2"
     },
     "requirements": {
       "build": [
-        "meson",
-        "ninja",
-        "pkg-config",
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "gobject-introspection",
-        "cairo",
-        "expat",
-        "fribidi",
-        "glib",
-        "harfbuzz",
-        "fontconfig",
-        "freetype",
-        "libpng",
-        "xorg-xorgproto",
-        "zlib"
+        "meson",
+        "ninja",
+        "pkg-config",
+        "gobject-introspection"
       ],
       "host": [
         "cairo",
-        "expat",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "fontconfig",
         "freetype",
+        "expat",
         "libpng",
         "xorg-xorgproto",
         "zlib"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a",
       "url": "https://download.gnome.org/sources/pango/1.58/pango-1.58.2.tar.xz"
-    },
-    "test": {
-      "commands": [
-        "pango-view --help",
-        "test -f $PREFIX/lib/libpango-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pango`/libpango-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/Pango-1.0.typelib",
-        "test -f $PREFIX/lib/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangocairo`/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoCairo-1.0.typelib",
-        "test -f $PREFIX/lib/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangoft2`/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoFT2-1.0.typelib"
-      ],
-      "requires": [
-        "expat",
-        "harfbuzz",
-        "pkg-config",
-        "pygobject"
-      ]
     }
   },
   "linux_64_requirements": {
@@ -128,21 +399,11 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cairo",
         "cxx_compiler_stub",
-        "expat",
-        "fontconfig",
-        "freetype",
-        "fribidi",
-        "glib",
         "gobject-introspection",
-        "harfbuzz",
-        "libpng",
         "meson",
         "ninja",
-        "pkg-config",
-        "xorg-xorgproto",
-        "zlib"
+        "pkg-config"
       ]
     },
     "host": {
@@ -154,7 +415,8 @@
         "freetype",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
+        "libpango",
         "libpng",
         "xorg-xorgproto",
         "zlib"
@@ -162,39 +424,41 @@
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "freetype",
+        "libharfbuzz-devel",
+        "libpango",
+        "libpango-devel"
+      ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "expat",
-        "harfbuzz",
         "pkg-config",
-        "pygobject"
+        "pygobject",
+        "xorg-xorgproto",
+        "zlib"
       ]
     }
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK+ widget toolkit. Pango forms the core of text and font\nhandling for GTK+-2.x.\n",
+      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK widget toolkit. Pango forms the core of text and font\nhandling for GTK.",
       "dev_url": "https://gitlab.gnome.org/GNOME/pango",
-      "doc_url": "http://www.pango.org/",
-      "home": "http://www.pango.org/",
+      "doc_url": "https://docs.gtk.org/Pango/",
+      "home": "https://gitlab.gnome.org/GNOME/pango",
       "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "Text layout and rendering engine."
     },
     "build": {
-      "detect_binary_files_with_prefix": true,
-      "ignore_run_exports_from": [
-        "cxx_compiler_stub"
-      ],
-      "number": "2",
-      "run_exports": [
-        "pango"
-      ]
+      "number": "3",
+      "script": []
     },
     "extra": {
+      "feedstock-name": "pango",
       "recipe-maintainers": [
         "ocefpaf",
         "ccordoba12",
@@ -202,57 +466,220 @@
         "pkgw"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.so*",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      }
+    ],
     "package": {
-      "name": "pango",
+      "name": "libpango",
       "version": "1.58.2"
     },
     "requirements": {
       "build": [
-        "meson",
-        "ninja",
-        "pkg-config",
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "gobject-introspection"
-      ],
-      "host": [
+        "meson",
+        "ninja",
+        "pkg-config",
+        "gobject-introspection",
         "cairo",
         "expat",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "fontconfig",
         "freetype",
         "libpng",
         "xorg-xorgproto",
         "zlib"
+      ],
+      "host": [
+        "cairo",
+        "fribidi",
+        "glib",
+        "libharfbuzz-devel",
+        "fontconfig",
+        "freetype",
+        "expat",
+        "libpng",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a",
       "url": "https://download.gnome.org/sources/pango/1.58/pango-1.58.2.tar.xz"
-    },
-    "test": {
-      "commands": [
-        "pango-view --help",
-        "test -f $PREFIX/lib/libpango-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pango`/libpango-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/Pango-1.0.typelib",
-        "test -f $PREFIX/lib/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangocairo`/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoCairo-1.0.typelib",
-        "test -f $PREFIX/lib/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangoft2`/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoFT2-1.0.typelib"
-      ],
-      "requires": [
-        "expat",
-        "harfbuzz",
-        "pkg-config",
-        "pygobject"
-      ]
     }
   },
   "linux_aarch64_requirements": {
@@ -261,11 +688,21 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cairo",
         "cxx_compiler_stub",
+        "expat",
+        "fontconfig",
+        "freetype",
+        "fribidi",
+        "glib",
         "gobject-introspection",
+        "libharfbuzz-devel",
+        "libpng",
         "meson",
         "ninja",
-        "pkg-config"
+        "pkg-config",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
     "host": {
@@ -277,7 +714,8 @@
         "freetype",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
+        "libpango",
         "libpng",
         "xorg-xorgproto",
         "zlib"
@@ -285,39 +723,41 @@
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "freetype",
+        "libharfbuzz-devel",
+        "libpango",
+        "libpango-devel"
+      ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "expat",
-        "harfbuzz",
         "pkg-config",
-        "pygobject"
+        "pygobject",
+        "xorg-xorgproto",
+        "zlib"
       ]
     }
   },
   "linux_ppc64le_meta_yaml": {
     "about": {
-      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK+ widget toolkit. Pango forms the core of text and font\nhandling for GTK+-2.x.\n",
+      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK widget toolkit. Pango forms the core of text and font\nhandling for GTK.",
       "dev_url": "https://gitlab.gnome.org/GNOME/pango",
-      "doc_url": "http://www.pango.org/",
-      "home": "http://www.pango.org/",
+      "doc_url": "https://docs.gtk.org/Pango/",
+      "home": "https://gitlab.gnome.org/GNOME/pango",
       "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "Text layout and rendering engine."
     },
     "build": {
-      "detect_binary_files_with_prefix": true,
-      "ignore_run_exports_from": [
-        "cxx_compiler_stub"
-      ],
-      "number": "2",
-      "run_exports": [
-        "pango"
-      ]
+      "number": "3",
+      "script": []
     },
     "extra": {
+      "feedstock-name": "pango",
       "recipe-maintainers": [
         "ocefpaf",
         "ccordoba12",
@@ -325,57 +765,220 @@
         "pkgw"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.so*",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      }
+    ],
     "package": {
-      "name": "pango",
+      "name": "libpango",
       "version": "1.58.2"
     },
     "requirements": {
       "build": [
-        "meson",
-        "ninja",
-        "pkg-config",
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "gobject-introspection"
-      ],
-      "host": [
+        "meson",
+        "ninja",
+        "pkg-config",
+        "gobject-introspection",
         "cairo",
         "expat",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "fontconfig",
         "freetype",
         "libpng",
         "xorg-xorgproto",
         "zlib"
+      ],
+      "host": [
+        "cairo",
+        "fribidi",
+        "glib",
+        "libharfbuzz-devel",
+        "fontconfig",
+        "freetype",
+        "expat",
+        "libpng",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a",
       "url": "https://download.gnome.org/sources/pango/1.58/pango-1.58.2.tar.xz"
-    },
-    "test": {
-      "commands": [
-        "pango-view --help",
-        "test -f $PREFIX/lib/libpango-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pango`/libpango-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/Pango-1.0.typelib",
-        "test -f $PREFIX/lib/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangocairo`/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoCairo-1.0.typelib",
-        "test -f $PREFIX/lib/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangoft2`/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoFT2-1.0.typelib"
-      ],
-      "requires": [
-        "expat",
-        "harfbuzz",
-        "pkg-config",
-        "pygobject"
-      ]
     }
   },
   "linux_ppc64le_requirements": {
@@ -384,11 +987,21 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cairo",
         "cxx_compiler_stub",
+        "expat",
+        "fontconfig",
+        "freetype",
+        "fribidi",
+        "glib",
         "gobject-introspection",
+        "libharfbuzz-devel",
+        "libpng",
         "meson",
         "ninja",
-        "pkg-config"
+        "pkg-config",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
     "host": {
@@ -400,7 +1013,8 @@
         "freetype",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
+        "libpango",
         "libpng",
         "xorg-xorgproto",
         "zlib"
@@ -408,39 +1022,41 @@
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "freetype",
+        "libharfbuzz-devel",
+        "libpango",
+        "libpango-devel"
+      ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "expat",
-        "harfbuzz",
         "pkg-config",
-        "pygobject"
+        "pygobject",
+        "xorg-xorgproto",
+        "zlib"
       ]
     }
   },
   "meta_yaml": {
     "about": {
-      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK+ widget toolkit. Pango forms the core of text and font\nhandling for GTK+-2.x.\n",
+      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK widget toolkit. Pango forms the core of text and font\nhandling for GTK.",
       "dev_url": "https://gitlab.gnome.org/GNOME/pango",
-      "doc_url": "http://www.pango.org/",
-      "home": "http://www.pango.org/",
+      "doc_url": "https://docs.gtk.org/Pango/",
+      "home": "https://gitlab.gnome.org/GNOME/pango",
       "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "Text layout and rendering engine."
     },
     "build": {
-      "detect_binary_files_with_prefix": true,
-      "ignore_run_exports_from": [
-        "cxx_compiler_stub"
-      ],
-      "number": "2",
-      "run_exports": [
-        "pango"
-      ]
+      "number": "3",
+      "script": []
     },
     "extra": {
+      "feedstock-name": "pango",
       "recipe-maintainers": [
         "ocefpaf",
         "ccordoba12",
@@ -448,24 +1064,1187 @@
         "pkgw"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.so*",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.so*",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.so*",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.so*",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.*dylib",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.*dylib",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "Library/bin/pango-1.0-0.dll",
+                "Library/bin/pangocairo-1.0-0.dll",
+                "Library/bin/pangoft2-1.0-0.dll",
+                "Library/bin/pangowin32-1.0-0.dll",
+                "Library/lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "if not exist hello.png exit 1",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "Library/include/pango-1.0/pango/*.h",
+                "Library/lib/pango*-1.0.lib",
+                "Library/lib/pkgconfig/pango*.pc",
+                "Library/share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      }
+    ],
     "package": {
-      "name": "pango",
+      "name": "libpango",
       "version": "1.58.2"
     },
     "requirements": {
       "build": [
-        "meson",
-        "ninja",
-        "pkg-config",
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
+        "meson",
+        "ninja",
+        "pkg-config",
         "gobject-introspection",
         "cairo",
         "expat",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "fontconfig",
         "freetype",
         "libpng",
@@ -474,80 +2253,41 @@
       ],
       "host": [
         "cairo",
-        "expat",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "fontconfig",
         "freetype",
+        "expat",
         "libpng",
         "xorg-xorgproto",
         "zlib"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a",
       "url": "https://download.gnome.org/sources/pango/1.58/pango-1.58.2.tar.xz"
-    },
-    "test": {
-      "commands": [
-        "pango-view --help",
-        "test -f $PREFIX/lib/libpango-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pango`/libpango-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/Pango-1.0.typelib",
-        "test -f $PREFIX/lib/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangocairo`/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoCairo-1.0.typelib",
-        "test -f $PREFIX/lib/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangoft2`/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoFT2-1.0.typelib",
-        "if not exist %PREFIX%\\\\Library\\\\bin\\\\pango-1.0-0.dll exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=exec_prefix --dont-define-prefix pango`) do if not exist \"%%a/bin/pango-1.0-0.dll\" exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\lib\\\\pango-1.0.lib exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=libdir --dont-define-prefix pango`) do if not exist \"%%a/pango-1.0.lib\" exit 1",
-        "if not exist %PREFIX%\\Library\\lib\\girepository-1.0\\Pango-1.0.typelib exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\bin\\\\pangocairo-1.0-0.dll exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=exec_prefix --dont-define-prefix pangocairo`) do if not exist \"%%a/bin/pangocairo-1.0-0.dll\" exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\lib\\\\pangocairo-1.0.lib exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=libdir --dont-define-prefix pangocairo`) do if not exist \"%%a/pangocairo-1.0.lib\" exit 1",
-        "if not exist %PREFIX%\\Library\\lib\\girepository-1.0\\PangoCairo-1.0.typelib exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\bin\\\\pangoft2-1.0-0.dll exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=exec_prefix --dont-define-prefix pangoft2`) do if not exist \"%%a/bin/pangoft2-1.0-0.dll\" exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\lib\\\\pangoft2-1.0.lib exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=libdir --dont-define-prefix pangoft2`) do if not exist \"%%a/pangoft2-1.0.lib\" exit 1",
-        "if not exist %PREFIX%\\Library\\lib\\girepository-1.0\\PangoFT2-1.0.typelib exit 1"
-      ],
-      "requires": [
-        "expat",
-        "harfbuzz",
-        "pkg-config",
-        "pygobject"
-      ]
     }
   },
-  "name": "pango",
+  "name": "libpango",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK+ widget toolkit. Pango forms the core of text and font\nhandling for GTK+-2.x.\n",
+      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK widget toolkit. Pango forms the core of text and font\nhandling for GTK.",
       "dev_url": "https://gitlab.gnome.org/GNOME/pango",
-      "doc_url": "http://www.pango.org/",
-      "home": "http://www.pango.org/",
+      "doc_url": "https://docs.gtk.org/Pango/",
+      "home": "https://gitlab.gnome.org/GNOME/pango",
       "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "Text layout and rendering engine."
     },
     "build": {
-      "detect_binary_files_with_prefix": true,
-      "ignore_run_exports_from": [
-        "cxx_compiler_stub"
-      ],
-      "number": "2",
-      "run_exports": [
-        "pango"
-      ]
+      "number": "3",
+      "script": []
     },
     "extra": {
+      "feedstock-name": "pango",
       "recipe-maintainers": [
         "ocefpaf",
         "ccordoba12",
@@ -555,57 +2295,220 @@
         "pkgw"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.*dylib",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      }
+    ],
     "package": {
-      "name": "pango",
+      "name": "libpango",
       "version": "1.58.2"
     },
     "requirements": {
       "build": [
-        "meson",
-        "ninja",
-        "pkg-config",
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "gobject-introspection"
-      ],
-      "host": [
+        "meson",
+        "ninja",
+        "pkg-config",
+        "gobject-introspection",
         "cairo",
         "expat",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "fontconfig",
         "freetype",
         "libpng",
         "xorg-xorgproto",
         "zlib"
+      ],
+      "host": [
+        "cairo",
+        "fribidi",
+        "glib",
+        "libharfbuzz-devel",
+        "fontconfig",
+        "freetype",
+        "expat",
+        "libpng",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a",
       "url": "https://download.gnome.org/sources/pango/1.58/pango-1.58.2.tar.xz"
-    },
-    "test": {
-      "commands": [
-        "pango-view --help",
-        "test -f $PREFIX/lib/libpango-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pango`/libpango-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/Pango-1.0.typelib",
-        "test -f $PREFIX/lib/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangocairo`/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoCairo-1.0.typelib",
-        "test -f $PREFIX/lib/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangoft2`/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoFT2-1.0.typelib"
-      ],
-      "requires": [
-        "expat",
-        "harfbuzz",
-        "pkg-config",
-        "pygobject"
-      ]
     }
   },
   "osx_64_requirements": {
@@ -614,11 +2517,21 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cairo",
         "cxx_compiler_stub",
+        "expat",
+        "fontconfig",
+        "freetype",
+        "fribidi",
+        "glib",
         "gobject-introspection",
+        "libharfbuzz-devel",
+        "libpng",
         "meson",
         "ninja",
-        "pkg-config"
+        "pkg-config",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
     "host": {
@@ -630,7 +2543,8 @@
         "freetype",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
+        "libpango",
         "libpng",
         "xorg-xorgproto",
         "zlib"
@@ -638,39 +2552,41 @@
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "freetype",
+        "libharfbuzz-devel",
+        "libpango",
+        "libpango-devel"
+      ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "expat",
-        "harfbuzz",
         "pkg-config",
-        "pygobject"
+        "pygobject",
+        "xorg-xorgproto",
+        "zlib"
       ]
     }
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK+ widget toolkit. Pango forms the core of text and font\nhandling for GTK+-2.x.\n",
+      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK widget toolkit. Pango forms the core of text and font\nhandling for GTK.",
       "dev_url": "https://gitlab.gnome.org/GNOME/pango",
-      "doc_url": "http://www.pango.org/",
-      "home": "http://www.pango.org/",
+      "doc_url": "https://docs.gtk.org/Pango/",
+      "home": "https://gitlab.gnome.org/GNOME/pango",
       "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "Text layout and rendering engine."
     },
     "build": {
-      "detect_binary_files_with_prefix": true,
-      "ignore_run_exports_from": [
-        "cxx_compiler_stub"
-      ],
-      "number": "2",
-      "run_exports": [
-        "pango"
-      ]
+      "number": "3",
+      "script": []
     },
     "extra": {
+      "feedstock-name": "pango",
       "recipe-maintainers": [
         "ocefpaf",
         "ccordoba12",
@@ -678,57 +2594,220 @@
         "pkgw"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "lib/libpango*-1.0.*dylib",
+                "lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "test -s hello.png",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "include/pango-1.0/pango/*.h",
+                "lib/pkgconfig/pango*.pc",
+                "share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      }
+    ],
     "package": {
-      "name": "pango",
+      "name": "libpango",
       "version": "1.58.2"
     },
     "requirements": {
       "build": [
-        "meson",
-        "ninja",
-        "pkg-config",
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "gobject-introspection"
-      ],
-      "host": [
+        "meson",
+        "ninja",
+        "pkg-config",
+        "gobject-introspection",
         "cairo",
         "expat",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "fontconfig",
         "freetype",
         "libpng",
         "xorg-xorgproto",
         "zlib"
+      ],
+      "host": [
+        "cairo",
+        "fribidi",
+        "glib",
+        "libharfbuzz-devel",
+        "fontconfig",
+        "freetype",
+        "expat",
+        "libpng",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a",
       "url": "https://download.gnome.org/sources/pango/1.58/pango-1.58.2.tar.xz"
-    },
-    "test": {
-      "commands": [
-        "pango-view --help",
-        "test -f $PREFIX/lib/libpango-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pango`/libpango-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/Pango-1.0.typelib",
-        "test -f $PREFIX/lib/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangocairo`/libpangocairo-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoCairo-1.0.typelib",
-        "test -f $PREFIX/lib/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f `pkg-config --variable=libdir --dont-define-prefix pangoft2`/libpangoft2-1.0${SHLIB_EXT}",
-        "test -f $PREFIX/lib/girepository-1.0/PangoFT2-1.0.typelib"
-      ],
-      "requires": [
-        "expat",
-        "harfbuzz",
-        "pkg-config",
-        "pygobject"
-      ]
     }
   },
   "osx_arm64_requirements": {
@@ -737,11 +2816,21 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cairo",
         "cxx_compiler_stub",
+        "expat",
+        "fontconfig",
+        "freetype",
+        "fribidi",
+        "glib",
         "gobject-introspection",
+        "libharfbuzz-devel",
+        "libpng",
         "meson",
         "ninja",
-        "pkg-config"
+        "pkg-config",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
     "host": {
@@ -753,7 +2842,8 @@
         "freetype",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
+        "libpango",
         "libpng",
         "xorg-xorgproto",
         "zlib"
@@ -761,21 +2851,29 @@
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "freetype",
+        "libharfbuzz-devel",
+        "libpango",
+        "libpango-devel"
+      ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "expat",
-        "harfbuzz",
         "pkg-config",
-        "pygobject"
+        "pygobject",
+        "xorg-xorgproto",
+        "zlib"
       ]
     }
   },
   "outputs_names": {
     "__set__": true,
     "elements": [
+      "libpango",
+      "libpango-devel",
       "pango"
     ]
   },
@@ -791,7 +2889,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pango.json"
   },
-  "raw_meta_yaml": "{% set version = \"1.58.2\" %}\n{% set version_majmin = \".\".join(version.split(\".\", 2)[:2]) %}\n\npackage:\n  name: pango\n  version: {{ version }}\n\nsource:\n  url: https://download.gnome.org/sources/pango/{{ version_majmin }}/pango-{{ version }}.tar.xz\n  sha256: 342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a\n\nbuild:\n  number: 2\n  detect_binary_files_with_prefix: true\n  ignore_run_exports_from:\n    - {{ compiler('cxx') }}\n  run_exports:\n    - {{ pin_subpackage('pango', max_pin='x') }}\n\nrequirements:\n  build:\n    - meson\n    - ninja\n    - pkg-config\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n    - gobject-introspection\n    - cairo           # [build_platform != target_platform]\n    - expat           # [build_platform != target_platform]\n    - fribidi         # [build_platform != target_platform]\n    - glib            # [build_platform != target_platform]\n    - harfbuzz        # [build_platform != target_platform]\n    - fontconfig      # [build_platform != target_platform]\n    - freetype        # [build_platform != target_platform]\n    - libpng          # [build_platform != target_platform]\n    # needed for pkg-config/development files:\n    - harfbuzz        # [build_platform != target_platform]\n    - xorg-xorgproto  # [build_platform != target_platform]\n    - zlib            # [build_platform != target_platform]\n  host:\n    - cairo\n    - expat  # need to name this explicitly to get the development files\n    - fribidi\n    - glib\n    - harfbuzz\n    - fontconfig\n    - freetype\n    - harfbuzz\n    - libpng\n    - xorg-xorgproto\n    - zlib\n\ntest:\n  requires:\n    - expat  # needed for the pkg-config test\n    - harfbuzz  # needed for gobject-introspection loading\n    - pkg-config\n    - pygobject\n  commands:\n    - pango-view --help\n\n    # check that libraries are installed and can be found through pkg-config\n    # (used by downstream builds)\n    {% set libs = [\"Pango\", \"PangoCairo\", \"PangoFT2\"] %}\n    {% for lib in libs %}\n    - test -f $PREFIX/lib/lib{{ lib | lower }}-1.0${SHLIB_EXT}  # [unix]\n    - test -f `pkg-config --variable=libdir --dont-define-prefix {{ lib | lower }}`/lib{{ lib | lower }}-1.0${SHLIB_EXT}  # [unix]\n    - if not exist %PREFIX%\\\\Library\\\\bin\\\\{{ lib | lower }}-1.0-0.dll exit 1  # [win]\n    - for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=exec_prefix --dont-define-prefix {{ lib | lower }}`) do if not exist \"%%a/bin/{{ lib | lower }}-1.0-0.dll\" exit 1  # [win]\n    - if not exist %PREFIX%\\\\Library\\\\lib\\\\{{ lib | lower }}-1.0.lib exit 1  # [win]\n    - for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=libdir --dont-define-prefix {{ lib | lower }}`) do if not exist \"%%a/{{ lib | lower }}-1.0.lib\" exit 1  # [win]\n    - test -f $PREFIX/lib/girepository-1.0/{{ lib }}-1.0.typelib    # [unix]\n    - if not exist %PREFIX%\\Library\\lib\\girepository-1.0\\{{ lib }}-1.0.typelib exit 1         # [win]\n    {% endfor %}\n\nabout:\n  home: http://www.pango.org/\n  license: LGPL-2.1-or-later\n  license_file: COPYING\n  summary: Text layout and rendering engine.\n  description: |\n    Pango is a library for laying out and rendering of text, with an emphasis\n    on internationalization. Pango can be used anywhere that text layout is\n    needed, though most of the work on Pango so far has been done in the\n    context of the GTK+ widget toolkit. Pango forms the core of text and font\n    handling for GTK+-2.x.\n  doc_url: http://www.pango.org/\n  dev_url: https://gitlab.gnome.org/GNOME/pango\n\nextra:\n  recipe-maintainers:\n    - ocefpaf\n    - ccordoba12\n    - jakirkham\n    - pkgw\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"1.58.2\"\n  version_majmin: ${{ (version | split(\".\"))[:2] | join(\".\") }}\n\nrecipe:\n  name: pango-split\n  version: ${{ version }}\n\nsource:\n  url: https://download.gnome.org/sources/pango/${{ version_majmin }}/pango-${{ version }}.tar.xz\n  sha256: 342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a\n\nbuild:\n  number: 3\n\noutputs:\n  - staging:\n      name: pango-build\n    build:\n      script:\n        file: ${{ \"build.sh\" if unix else \"build.bat\" }}\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('cxx') }}\n        - meson\n        - ninja\n        - pkg-config\n        - gobject-introspection\n        # build.sh does a native build to generate the introspection data\n        - if: build_platform != target_platform\n          then:\n            - cairo\n            - expat\n            - fribidi\n            - glib\n            - libharfbuzz-devel\n            - fontconfig\n            - freetype\n            - libpng\n            - xorg-xorgproto\n            - zlib\n      host:\n        - cairo\n        - fribidi\n        - glib\n        - libharfbuzz-devel\n        - fontconfig\n        - freetype\n        # Not linked; only here because the .pc files of the libraries above\n        # require them (fontconfig.pc, cairo.pc, gio-2.0.pc, libpng16.pc, x11.pc)\n        - expat\n        - libpng\n        - xorg-xorgproto\n        - zlib\n\n  - package:\n      name: libpango\n    inherit: pango-build\n    build:\n      files:\n        - if: unix\n          then:\n            - lib/libpango*.so*\n            - lib/libpango*.dylib\n            - lib/girepository-1.0/Pango*.typelib\n        - if: win\n          then:\n            - Library/bin/pango*.dll\n            - Library/lib/girepository-1.0/Pango*.typelib\n      dynamic_linking:\n        overlinking_behavior: error\n        overdepending_behavior: error\n    requirements:\n      # the sysroot has to be in this output's build env for the linking check\n      build:\n        - ${{ stdlib(\"c\") }}\n      ignore_run_exports:\n        from_package:\n          - ${{ compiler('cxx') }}\n          - expat\n          - libpng\n          - zlib\n    tests:\n      - script:\n          interpreter: python\n          content: |\n            import gi\n            gi.require_version(\"PangoCairo\", \"1.0\")\n            from gi.repository import PangoCairo\n\n            families = PangoCairo.FontMap.get_default().list_families()\n            assert families, \"no font families found\"\n        requirements:\n          run:\n            - pygobject\n      - package_contents:\n          strict: true\n          files:\n            - if: linux\n              then: lib/libpango*-1.0.so*\n            - if: osx\n              then: lib/libpango*-1.0.*dylib\n            - if: unix\n              then: lib/girepository-1.0/Pango*-1.0.typelib\n            - if: win\n              then:\n                - Library/bin/pango-1.0-0.dll\n                - Library/bin/pangocairo-1.0-0.dll\n                - Library/bin/pangoft2-1.0-0.dll\n                - Library/bin/pangowin32-1.0-0.dll\n                - Library/lib/girepository-1.0/Pango*-1.0.typelib\n\n  - package:\n      name: libpango-devel\n    inherit: pango-build\n    build:\n      files:\n        - if: unix\n          then:\n            - bin/pango-*\n            - include/pango-1.0/\n            - lib/pkgconfig/pango*.pc\n            - share/gir-1.0/Pango*.gir\n        - if: win\n          then:\n            - Library/bin/pango-*.exe\n            - Library/include/pango-1.0/\n            - Library/lib/pango*-1.0.lib\n            - Library/lib/pkgconfig/pango*.pc\n            - Library/share/gir-1.0/Pango*.gir\n      dynamic_linking:\n        overlinking_behavior: error\n    requirements:\n      build:\n        - ${{ stdlib(\"c\") }}\n      host:\n        - ${{ pin_subpackage('libpango', exact=True) }}\n      run:\n        - ${{ pin_subpackage('libpango', exact=True) }}\n        # pango's public headers and .pc files reach these, but the runtime\n        # packages libpango pulls in (libharfbuzz, libfreetype) lack them\n        - freetype\n        - libharfbuzz-devel\n      run_exports:\n        - ${{ pin_subpackage('libpango', upper_bound='x') }}\n      ignore_run_exports:\n        from_package:\n          - ${{ compiler('cxx') }}\n          - expat\n          - libpng\n          - zlib\n    tests:\n      - script:\n          # renders through cairo, fontconfig, freetype and harfbuzz\n          - pango-view --no-display --text \"Hello, World\" --output hello.png\n          - if: unix\n            then: test -s hello.png\n            else: if not exist hello.png exit 1\n          - pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot\n        requirements:\n          run:\n            - pkg-config\n            # .pc files that pango's dependencies require but do not provide\n            - expat           # fontconfig.pc\n            - xorg-xorgproto  # x11.pc and the other xorg .pc files cairo.pc pulls in\n            - zlib            # gio-2.0.pc, cairo.pc, libpng16.pc\n      - package_contents:\n          strict: true\n          include:\n            - pango-1.0/pango/pango.h\n          bin:\n            - pango-list\n            - pango-segmentation\n            - pango-view\n          files:\n            - if: unix\n              then:\n                - include/pango-1.0/pango/*.h\n                - lib/pkgconfig/pango*.pc\n                - share/gir-1.0/Pango*-1.0.gir\n            - if: win\n              then:\n                - Library/include/pango-1.0/pango/*.h\n                - Library/lib/pango*-1.0.lib\n                - Library/lib/pkgconfig/pango*.pc\n                - Library/share/gir-1.0/Pango*-1.0.gir\n\n  # compatibility wrapper, so existing `pango` host deps keep getting the\n  # development files\n  - package:\n      name: pango\n    requirements:\n      run:\n        - ${{ pin_subpackage('libpango-devel', exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage('libpango', upper_bound='x') }}\n    tests:\n      - package_contents:\n          strict: true\n\nabout:\n  license: LGPL-2.1-or-later\n  license_file: COPYING\n  summary: Text layout and rendering engine.\n  description: |\n    Pango is a library for laying out and rendering of text, with an emphasis\n    on internationalization. Pango can be used anywhere that text layout is\n    needed, though most of the work on Pango so far has been done in the\n    context of the GTK widget toolkit. Pango forms the core of text and font\n    handling for GTK.\n  homepage: https://gitlab.gnome.org/GNOME/pango\n  repository: https://gitlab.gnome.org/GNOME/pango\n  documentation: https://docs.gtk.org/Pango/\n\nextra:\n  feedstock-name: pango\n  recipe-maintainers:\n    - ocefpaf\n    - ccordoba12\n    - jakirkham\n    - pkgw\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -805,7 +2903,9 @@
       "fribidi",
       "glib",
       "gobject-introspection",
-      "harfbuzz",
+      "libharfbuzz-devel",
+      "libpango",
+      "libpango-devel",
       "libpng",
       "meson",
       "ninja",
@@ -828,7 +2928,7 @@
         "fribidi",
         "glib",
         "gobject-introspection",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "libpng",
         "meson",
         "ninja",
@@ -849,7 +2949,8 @@
         "freetype",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
+        "libpango",
         "libpng",
         "xorg-xorgproto",
         "zlib"
@@ -860,16 +2961,21 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "freetype",
+        "libharfbuzz-devel",
+        "libpango",
+        "libpango-devel"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "expat",
-        "harfbuzz",
         "pkg-config",
-        "pygobject"
+        "pygobject",
+        "xorg-xorgproto",
+        "zlib"
       ]
     }
   },
@@ -888,7 +2994,7 @@
         "fribidi",
         "glib",
         "gobject-introspection",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "libpng",
         "meson",
         "ninja",
@@ -906,7 +3012,8 @@
         "freetype",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
+        "libpango",
         "libpng",
         "xorg-xorgproto",
         "zlib"
@@ -914,15 +3021,21 @@
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "freetype",
+        "libharfbuzz-devel",
+        "libpango",
+        "libpango-devel"
+      ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "expat",
-        "harfbuzz",
         "pkg-config",
-        "pygobject"
+        "pygobject",
+        "xorg-xorgproto",
+        "zlib"
       ]
     }
   },
@@ -933,25 +3046,21 @@
   },
   "win_64_meta_yaml": {
     "about": {
-      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK+ widget toolkit. Pango forms the core of text and font\nhandling for GTK+-2.x.\n",
+      "description": "Pango is a library for laying out and rendering of text, with an emphasis\non internationalization. Pango can be used anywhere that text layout is\nneeded, though most of the work on Pango so far has been done in the\ncontext of the GTK widget toolkit. Pango forms the core of text and font\nhandling for GTK.",
       "dev_url": "https://gitlab.gnome.org/GNOME/pango",
-      "doc_url": "http://www.pango.org/",
-      "home": "http://www.pango.org/",
+      "doc_url": "https://docs.gtk.org/Pango/",
+      "home": "https://gitlab.gnome.org/GNOME/pango",
       "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "Text layout and rendering engine."
     },
     "build": {
-      "detect_binary_files_with_prefix": true,
-      "ignore_run_exports_from": [
-        "cxx_compiler_stub"
-      ],
-      "number": "2",
-      "run_exports": [
-        "pango"
-      ]
+      "number": "3",
+      "script": []
     },
     "extra": {
+      "feedstock-name": "pango",
       "recipe-maintainers": [
         "ocefpaf",
         "ccordoba12",
@@ -959,63 +3068,224 @@
         "pkgw"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "libpango",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pygobject"
+              ]
+            },
+            "script": {
+              "content": "import gi\ngi.require_version(\"PangoCairo\", \"1.0\")\nfrom gi.repository import PangoCairo\n\nfamilies = PangoCairo.FontMap.get_default().list_families()\nassert families, \"no font families found\"\n",
+              "interpreter": "python"
+            }
+          },
+          {
+            "package_contents": {
+              "files": [
+                "Library/bin/pango-1.0-0.dll",
+                "Library/bin/pangocairo-1.0-0.dll",
+                "Library/bin/pangoft2-1.0-0.dll",
+                "Library/bin/pangowin32-1.0-0.dll",
+                "Library/lib/girepository-1.0/Pango*-1.0.typelib"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "libpango-devel",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "meson",
+            "ninja",
+            "pkg-config",
+            "gobject-introspection",
+            "cairo",
+            "expat",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib"
+          ],
+          "host": [
+            "cairo",
+            "fribidi",
+            "glib",
+            "libharfbuzz-devel",
+            "fontconfig",
+            "freetype",
+            "expat",
+            "libpng",
+            "xorg-xorgproto",
+            "zlib",
+            "libpango"
+          ],
+          "run": [
+            "libpango",
+            "freetype",
+            "libharfbuzz-devel"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "pkg-config",
+                "expat",
+                "xorg-xorgproto",
+                "zlib"
+              ]
+            },
+            "script": [
+              "pango-view --no-display --text \"Hello, World\" --output hello.png",
+              "if not exist hello.png exit 1",
+              "pkg-config --print-errors --exact-version \"${{ version }}\" pango pangocairo pangoft2 pangofc pangoot"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "pango-list",
+                "pango-segmentation",
+                "pango-view"
+              ],
+              "files": [
+                "Library/include/pango-1.0/pango/*.h",
+                "Library/lib/pango*-1.0.lib",
+                "Library/lib/pkgconfig/pango*.pc",
+                "Library/share/gir-1.0/Pango*-1.0.gir"
+              ],
+              "include": [
+                "pango-1.0/pango/pango.h"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libpango"
+            ]
+          }
+        },
+        "name": "pango",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libpango-devel"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.58.2"
+      }
+    ],
     "package": {
-      "name": "pango",
+      "name": "libpango",
       "version": "1.58.2"
     },
     "requirements": {
       "build": [
-        "meson",
-        "ninja",
-        "pkg-config",
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "gobject-introspection"
-      ],
-      "host": [
+        "meson",
+        "ninja",
+        "pkg-config",
+        "gobject-introspection",
         "cairo",
         "expat",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
         "fontconfig",
         "freetype",
         "libpng",
         "xorg-xorgproto",
         "zlib"
+      ],
+      "host": [
+        "cairo",
+        "fribidi",
+        "glib",
+        "libharfbuzz-devel",
+        "fontconfig",
+        "freetype",
+        "expat",
+        "libpng",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a",
       "url": "https://download.gnome.org/sources/pango/1.58/pango-1.58.2.tar.xz"
-    },
-    "test": {
-      "commands": [
-        "pango-view --help",
-        "if not exist %PREFIX%\\\\Library\\\\bin\\\\pango-1.0-0.dll exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=exec_prefix --dont-define-prefix pango`) do if not exist \"%%a/bin/pango-1.0-0.dll\" exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\lib\\\\pango-1.0.lib exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=libdir --dont-define-prefix pango`) do if not exist \"%%a/pango-1.0.lib\" exit 1",
-        "if not exist %PREFIX%\\Library\\lib\\girepository-1.0\\Pango-1.0.typelib exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\bin\\\\pangocairo-1.0-0.dll exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=exec_prefix --dont-define-prefix pangocairo`) do if not exist \"%%a/bin/pangocairo-1.0-0.dll\" exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\lib\\\\pangocairo-1.0.lib exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=libdir --dont-define-prefix pangocairo`) do if not exist \"%%a/pangocairo-1.0.lib\" exit 1",
-        "if not exist %PREFIX%\\Library\\lib\\girepository-1.0\\PangoCairo-1.0.typelib exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\bin\\\\pangoft2-1.0-0.dll exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=exec_prefix --dont-define-prefix pangoft2`) do if not exist \"%%a/bin/pangoft2-1.0-0.dll\" exit 1",
-        "if not exist %PREFIX%\\\\Library\\\\lib\\\\pangoft2-1.0.lib exit 1",
-        "for /f \"usebackq tokens=*\" %%a in (`pkg-config --variable=libdir --dont-define-prefix pangoft2`) do if not exist \"%%a/pangoft2-1.0.lib\" exit 1",
-        "if not exist %PREFIX%\\Library\\lib\\girepository-1.0\\PangoFT2-1.0.typelib exit 1"
-      ],
-      "requires": [
-        "expat",
-        "harfbuzz",
-        "pkg-config",
-        "pygobject"
-      ]
     }
   },
   "win_64_requirements": {
@@ -1024,11 +3294,21 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cairo",
         "cxx_compiler_stub",
+        "expat",
+        "fontconfig",
+        "freetype",
+        "fribidi",
+        "glib",
         "gobject-introspection",
+        "libharfbuzz-devel",
+        "libpng",
         "meson",
         "ninja",
-        "pkg-config"
+        "pkg-config",
+        "xorg-xorgproto",
+        "zlib"
       ]
     },
     "host": {
@@ -1040,7 +3320,8 @@
         "freetype",
         "fribidi",
         "glib",
-        "harfbuzz",
+        "libharfbuzz-devel",
+        "libpango",
         "libpng",
         "xorg-xorgproto",
         "zlib"
@@ -1048,15 +3329,21 @@
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "freetype",
+        "libharfbuzz-devel",
+        "libpango",
+        "libpango-devel"
+      ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "expat",
-        "harfbuzz",
         "pkg-config",
-        "pygobject"
+        "pygobject",
+        "xorg-xorgproto",
+        "zlib"
       ]
     }
   }
