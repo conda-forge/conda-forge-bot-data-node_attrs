@@ -5,7 +5,9 @@
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
-      "linux_ppc64le": "linux_64"
+      "linux_ppc64le": "linux_64",
+      "linux_riscv64": "linux_64",
+      "linux_s390x": "linux_64"
     },
     "conda_build": {
       "error_overlinking": true
@@ -19,12 +21,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "osx_arm64": "default"
+      "osx_arm64": "default",
+      "win_arm64": "default"
     },
     "test": "all"
   },
-  "feedstock_hash": "c5eb21fb23c53d32889e1b678634f72120a4e944",
-  "feedstock_hash_ts": 1791831664,
+  "feedstock_hash": "d187a6a1995d7a7c09f86f3ecb218aaa6dca7e8d",
+  "feedstock_hash_ts": 1792167467,
   "feedstock_name": "ocamlbuild",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -39,7 +42,7 @@
       "summary": "OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs."
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": "build.sh"
     },
     "extra": {
@@ -57,8 +60,145 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_linux-64 5.4.0.* c_compiler_stub"
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "ocamlbuild",
+                "ocamlbuild.native"
+              ],
+              "files": [
+                "lib/ocaml/ocamlbuild/META",
+                "lib/ocaml/ocamlbuild/ocamlbuild.cmo",
+                "lib/ocaml/ocamlbuild/ocamlbuild.cmx",
+                "lib/ocaml/ocamlbuild/ocamlbuild.o*",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.cmi",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.cmx",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.o*",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib*",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib.cma",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib.cmxa",
+                "lib/ocaml/ocamlbuild/signatures.cmi",
+                "lib/ocaml/ocamlbuild/signatures.cmti",
+                "lib/ocaml/ocamlbuild/signatures.mli",
+                "share/man/man1/ocamlbuild.1"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "grep"
+              ]
+            },
+            "script": [
+              "ocamlbuild -version | grep ${{ version }}",
+              "ocamlbuild.native -version | grep ${{ version }}"
+            ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "ocaml-compiler"
+              ]
+            },
+            "script": [
+              "echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml",
+              "ocamlbuild hello.native && ${{ dot }}hello.native",
+              "ocamlbuild -clean",
+              "ocamlbuild hello.byte && ${{ dot }}hello.byte",
+              "mkdir -p plugin_test && cd plugin_test",
+              "echo 'open Ocamlbuild_plugin let () = dispatch (fun _ -> ())' > myocamlbuild.ml",
+              "ocamlbuild hello.native && ./hello.native"
+            ]
+          }
+        ],
+        "version": "0.16.1"
+      },
+      {
+        "build": null,
+        "name": "ocamlbuild",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "ocamlbuild",
+                "ocamlbuild.native"
+              ],
+              "files": [
+                "lib/ocaml/ocamlbuild/META",
+                "lib/ocaml/ocamlbuild/ocamlbuild.cmo",
+                "lib/ocaml/ocamlbuild/ocamlbuild.cmx",
+                "lib/ocaml/ocamlbuild/ocamlbuild.o*",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.cmi",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.cmx",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.o*",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib*",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib.cma",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib.cmxa",
+                "lib/ocaml/ocamlbuild/signatures.cmi",
+                "lib/ocaml/ocamlbuild/signatures.cmti",
+                "lib/ocaml/ocamlbuild/signatures.mli",
+                "share/man/man1/ocamlbuild.1"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "grep"
+              ]
+            },
+            "script": [
+              "ocamlbuild -version | grep ${{ version }}",
+              "ocamlbuild.native -version | grep ${{ version }}"
+            ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "ocaml-compiler"
+              ]
+            },
+            "script": [
+              "echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml",
+              "ocamlbuild hello.native && ${{ dot }}hello.native",
+              "ocamlbuild -clean",
+              "ocamlbuild hello.byte && ${{ dot }}hello.byte",
+              "mkdir -p plugin_test && cd plugin_test",
+              "echo 'open Ocamlbuild_plugin let () = dispatch (fun _ -> ())' > myocamlbuild.ml",
+              "ocamlbuild hello.native && ./hello.native"
+            ]
+          }
+        ],
+        "version": "0.16.1"
+      },
+      {
+        "build": null,
+        "name": "ocamlbuild",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "make"
           ],
           "host": [],
           "run": []
@@ -129,8 +269,7 @@
       "build": [
         "ocaml_compiler_stub",
         "c_stdlib_stub",
-        "make",
-        "ocaml_linux-64 5.4.0.* c_compiler_stub"
+        "make"
       ]
     },
     "schema_version": 1,
@@ -145,8 +284,7 @@
       "elements": [
         "c_stdlib_stub",
         "make",
-        "ocaml_compiler_stub",
-        "ocaml_linux-64"
+        "ocaml_compiler_stub"
       ]
     },
     "host": {
@@ -178,7 +316,7 @@
       "summary": "OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs."
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": "build.sh"
     },
     "extra": {
@@ -196,8 +334,7 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_linux-aarch64 5.4.0.* c_compiler_stub"
+            "make"
           ],
           "host": [],
           "run": []
@@ -236,8 +373,10 @@
           },
           {
             "requirements": {
+              "build": [
+                "file"
+              ],
               "run": [
-                "file",
                 "ocaml-compiler"
               ]
             },
@@ -263,8 +402,7 @@
       "build": [
         "ocaml_compiler_stub",
         "c_stdlib_stub",
-        "make",
-        "ocaml_linux-aarch64 5.4.0.* c_compiler_stub"
+        "make"
       ]
     },
     "schema_version": 1,
@@ -279,8 +417,7 @@
       "elements": [
         "c_stdlib_stub",
         "make",
-        "ocaml_compiler_stub",
-        "ocaml_linux-aarch64"
+        "ocaml_compiler_stub"
       ]
     },
     "host": {
@@ -311,7 +448,7 @@
       "summary": "OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs."
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": "build.sh"
     },
     "extra": {
@@ -329,8 +466,7 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_linux-ppc64le 5.4.0.* c_compiler_stub"
+            "make"
           ],
           "host": [],
           "run": []
@@ -370,8 +506,10 @@
           },
           {
             "requirements": {
+              "build": [
+                "file"
+              ],
               "run": [
-                "file",
                 "ocaml-compiler"
               ]
             },
@@ -397,8 +535,7 @@
       "build": [
         "ocaml_compiler_stub",
         "c_stdlib_stub",
-        "make",
-        "ocaml_linux-ppc64le 5.4.0.* c_compiler_stub"
+        "make"
       ]
     },
     "schema_version": 1,
@@ -413,8 +550,7 @@
       "elements": [
         "c_stdlib_stub",
         "make",
-        "ocaml_compiler_stub",
-        "ocaml_linux-ppc64le"
+        "ocaml_compiler_stub"
       ]
     },
     "host": {
@@ -445,7 +581,7 @@
       "summary": "OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs."
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": "build.sh"
     },
     "extra": {
@@ -463,8 +599,7 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_linux-64 5.4.0.* c_compiler_stub"
+            "make"
           ],
           "host": [],
           "run": []
@@ -533,8 +668,145 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_linux-aarch64 5.4.0.* c_compiler_stub"
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "ocamlbuild",
+                "ocamlbuild.native"
+              ],
+              "files": [
+                "lib/ocaml/ocamlbuild/META",
+                "lib/ocaml/ocamlbuild/ocamlbuild.cmo",
+                "lib/ocaml/ocamlbuild/ocamlbuild.cmx",
+                "lib/ocaml/ocamlbuild/ocamlbuild.o*",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.cmi",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.cmx",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.o*",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib*",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib.cma",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib.cmxa",
+                "lib/ocaml/ocamlbuild/signatures.cmi",
+                "lib/ocaml/ocamlbuild/signatures.cmti",
+                "lib/ocaml/ocamlbuild/signatures.mli",
+                "share/man/man1/ocamlbuild.1"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "grep"
+              ]
+            },
+            "script": [
+              "ocamlbuild -version | grep ${{ version }}",
+              "ocamlbuild.native -version | grep ${{ version }}"
+            ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "ocaml-compiler"
+              ]
+            },
+            "script": [
+              "echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml",
+              "ocamlbuild hello.native && ${{ dot }}hello.native",
+              "ocamlbuild -clean",
+              "ocamlbuild hello.byte && ${{ dot }}hello.byte",
+              "mkdir -p plugin_test && cd plugin_test",
+              "echo 'open Ocamlbuild_plugin let () = dispatch (fun _ -> ())' > myocamlbuild.ml",
+              "ocamlbuild hello.native && ./hello.native"
+            ]
+          }
+        ],
+        "version": "0.16.1"
+      },
+      {
+        "build": null,
+        "name": "ocamlbuild",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "ocamlbuild",
+                "ocamlbuild.native"
+              ],
+              "files": [
+                "lib/ocaml/ocamlbuild/META",
+                "lib/ocaml/ocamlbuild/ocamlbuild.cmo",
+                "lib/ocaml/ocamlbuild/ocamlbuild.cmx",
+                "lib/ocaml/ocamlbuild/ocamlbuild.o*",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.cmi",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.cmx",
+                "lib/ocaml/ocamlbuild/ocamlbuild_*.o*",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib*",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib.cma",
+                "lib/ocaml/ocamlbuild/ocamlbuildlib.cmxa",
+                "lib/ocaml/ocamlbuild/signatures.cmi",
+                "lib/ocaml/ocamlbuild/signatures.cmti",
+                "lib/ocaml/ocamlbuild/signatures.mli",
+                "share/man/man1/ocamlbuild.1"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "grep"
+              ]
+            },
+            "script": [
+              "ocamlbuild -version | grep ${{ version }}",
+              "ocamlbuild.native -version | grep ${{ version }}"
+            ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "ocaml-compiler"
+              ]
+            },
+            "script": [
+              "echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml",
+              "ocamlbuild hello.native && ${{ dot }}hello.native",
+              "ocamlbuild -clean",
+              "ocamlbuild hello.byte && ${{ dot }}hello.byte",
+              "mkdir -p plugin_test && cd plugin_test",
+              "echo 'open Ocamlbuild_plugin let () = dispatch (fun _ -> ())' > myocamlbuild.ml",
+              "ocamlbuild hello.native && ./hello.native"
+            ]
+          }
+        ],
+        "version": "0.16.1"
+      },
+      {
+        "build": null,
+        "name": "ocamlbuild",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "make"
           ],
           "host": [],
           "run": []
@@ -573,8 +845,10 @@
           },
           {
             "requirements": {
+              "build": [
+                "file"
+              ],
               "run": [
-                "file",
                 "ocaml-compiler"
               ]
             },
@@ -598,8 +872,7 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_linux-ppc64le 5.4.0.* c_compiler_stub"
+            "make"
           ],
           "host": [],
           "run": []
@@ -639,8 +912,10 @@
           },
           {
             "requirements": {
+              "build": [
+                "file"
+              ],
               "run": [
-                "file",
                 "ocaml-compiler"
               ]
             },
@@ -664,8 +939,7 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_osx-64 5.4.0.* c_compiler_stub"
+            "make"
           ],
           "host": [],
           "run": []
@@ -712,8 +986,7 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_osx-arm64 5.4.0.* c_compiler_stub"
+            "make"
           ],
           "host": [],
           "run": []
@@ -846,6 +1119,69 @@
           }
         ],
         "version": "0.16.1"
+      },
+      {
+        "build": null,
+        "name": "ocamlbuild",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "m2-make",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "m2-coreutils",
+            "m2-sed"
+          ],
+          "host": [],
+          "run": [
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "ocamlbuild",
+                "ocamlbuild.byte"
+              ],
+              "files": [
+                "Library/lib/ocaml/ocamlbuild/META",
+                "Library/lib/ocaml/ocamlbuild/ocamlbuild.cmo",
+                "Library/lib/ocaml/ocamlbuild/ocamlbuild_*.cmi",
+                "Library/lib/ocaml/ocamlbuild/ocamlbuildlib*",
+                "Library/lib/ocaml/ocamlbuild/ocamlbuildlib.cma",
+                "Library/lib/ocaml/ocamlbuild/signatures.cmi",
+                "Library/lib/ocaml/ocamlbuild/signatures.cmti",
+                "Library/lib/ocaml/ocamlbuild/signatures.mli",
+                "Library/share/man/man1/ocamlbuild.1",
+                "etc/conda/test-files/ocamlbuild/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "script": []
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-arch.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+                "python >=3.9"
+              ]
+            },
+            "script": [
+              "echo let () = print_endline \"Hello from ocamlbuild\" > hello.ml",
+              "ocamlbuild hello.byte && hello.byte",
+              "python testing/test-arch.py \"%PREFIX%\\Library\\bin\\ocamlbuild.exe\""
+            ]
+          }
+        ],
+        "version": "0.16.1"
       }
     ],
     "package": {
@@ -857,16 +1193,15 @@
         "ocaml_compiler_stub",
         "c_stdlib_stub",
         "make",
-        "ocaml_linux-64 5.4.0.* c_compiler_stub",
-        "ocaml_linux-aarch64 5.4.0.* c_compiler_stub",
-        "ocaml_linux-ppc64le 5.4.0.* c_compiler_stub",
-        "ocaml_osx-64 5.4.0.* c_compiler_stub",
-        "ocaml_osx-arm64 5.4.0.* c_compiler_stub",
         "m2w64_c_stdlib_stub",
         "m2-make",
         "ocaml_win-64 5.4.0.* c_compiler_stub",
         "m2-coreutils",
-        "m2-sed"
+        "m2-sed",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+      ],
+      "run": [
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "schema_version": 1,
@@ -888,7 +1223,7 @@
       "summary": "OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs."
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": "build.sh"
     },
     "extra": {
@@ -906,8 +1241,7 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_osx-64 5.4.0.* c_compiler_stub"
+            "make"
           ],
           "host": [],
           "run": []
@@ -956,8 +1290,7 @@
       "build": [
         "ocaml_compiler_stub",
         "c_stdlib_stub",
-        "make",
-        "ocaml_osx-64 5.4.0.* c_compiler_stub"
+        "make"
       ]
     },
     "schema_version": 1,
@@ -972,8 +1305,7 @@
       "elements": [
         "c_stdlib_stub",
         "make",
-        "ocaml_compiler_stub",
-        "ocaml_osx-64"
+        "ocaml_compiler_stub"
       ]
     },
     "host": {
@@ -1001,7 +1333,7 @@
       "summary": "OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs."
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": "build.sh"
     },
     "extra": {
@@ -1019,8 +1351,7 @@
           "build": [
             "ocaml_compiler_stub",
             "c_stdlib_stub",
-            "make",
-            "ocaml_osx-arm64 5.4.0.* c_compiler_stub"
+            "make"
           ],
           "host": [],
           "run": []
@@ -1069,8 +1400,7 @@
       "build": [
         "ocaml_compiler_stub",
         "c_stdlib_stub",
-        "make",
-        "ocaml_osx-arm64 5.4.0.* c_compiler_stub"
+        "make"
       ]
     },
     "schema_version": 1,
@@ -1085,8 +1415,7 @@
       "elements": [
         "c_stdlib_stub",
         "make",
-        "ocaml_compiler_stub",
-        "ocaml_osx-arm64"
+        "ocaml_compiler_stub"
       ]
     },
     "host": {
@@ -1115,12 +1444,13 @@
     "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/ocamlbuild.json"
   },
-  "raw_meta_yaml": "context:\n  build_number: 3\n  name: ocamlbuild\n  version: 0.16.1\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  dot: ${{ \"./\" if unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n\npackage:\n  name: ocamlbuild\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml/ocamlbuild/archive/${{ version }}.tar.gz\n  sha256: 2ba6857f2991b7f69368e8db818b163d31cf5a367f15f5953bf8f01a77b3d4fc\n\nbuild:\n  number: ${{ build_number }}\n  prefix_detection:\n    ignore:\n      # Relocation NUL-pads paths inside marshalled bytecode and corrupts it.\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cma\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmo\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmi\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmx\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmxa\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmt\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmti\n  script: build.sh\n\nrequirements:\n  build:\n    - ${{ compiler('ocaml') }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    - ${{ m2 }}make\n    - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # Every sed/cp/tr/mv call site in build.sh is windows-only.\n    - if: not unix\n      then:\n        - ${{ m2 }}coreutils\n        - ${{ m2 }}sed\n  run_constraints:\n    - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\ntests:\n  - package_contents:\n      strict: true\n      bin:\n        - ocamlbuild\n        - ocamlbuild.native\n      files:\n        - ${{ library }}lib/ocaml/ocamlbuild/META\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild.cmo\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild.cmx\n        # Object and library extensions follow the windows toolchain: the gcc lane\n        # emits .o and .a, the vs2022 lane .obj and .lib, with identical basenames.\n        # Glob over the extension rather than branching the block per lane.\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild.o*\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild_*.cmi\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild_*.cmx\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild_*.o*\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuildlib*\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuildlib.cma\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuildlib.cmxa\n        - ${{ library }}lib/ocaml/ocamlbuild/signatures.cmi\n        - ${{ library }}lib/ocaml/ocamlbuild/signatures.cmti\n        - ${{ library }}lib/ocaml/ocamlbuild/signatures.mli\n        - ${{ library }}share/man/man1/ocamlbuild.1\n\n  # Cross-compiled platforms: verify binary architecture\n  - if: build_platform != target_platform\n    then:\n      script:\n        - if: osx\n          then:\n            - otool -hv ${CONDA_PREFIX}/bin/ocamlbuild\n            - otool -hv ${CONDA_PREFIX}/bin/ocamlbuild.native\n        - if: linux\n          then:\n            - readelf -h ${CONDA_PREFIX}/bin/ocamlbuild\n            - readelf -h ${CONDA_PREFIX}/bin/ocamlbuild.native\n        # readelf only prints the header; fail if the binary is not for the target.\n        - if: target_platform == \"linux-s390x\"\n          then: readelf -h ${CONDA_PREFIX}/bin/ocamlbuild.native | grep -q \"IBM S/390\"\n        - if: target_platform == \"linux-ppc64le\"\n          then: readelf -h ${CONDA_PREFIX}/bin/ocamlbuild.native | grep -q \"PowerPC64\"\n        - if: target_platform == \"linux-riscv64\"\n          then: readelf -h ${CONDA_PREFIX}/bin/ocamlbuild.native | grep -q \"RISC-V\"\n\n  # Native platforms: version check\n  - if: build_platform == target_platform\n    then:\n      script:\n        - ocamlbuild -version | grep ${{ version }}\n        - ocamlbuild.native -version | grep ${{ version }}\n      requirements:\n        run:\n          - ${{ m2 }}grep\n\n  # Native platforms: full functional test\n  - if: build_platform == target_platform\n    then:\n      script:\n        - if: unix\n          then:\n            - echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml\n          else:\n            - echo let () = print_endline \"Hello from ocamlbuild\" > hello.ml\n        - ocamlbuild hello.native && ${{ dot }}hello.native\n        - ocamlbuild -clean\n        - ocamlbuild hello.byte && ${{ dot }}hello.byte\n        # A plugin build reads ocamlbuild.cmo from -where, which binary prefix\n        # relocation can corrupt.\n        - if: unix\n          then:\n            - mkdir -p plugin_test && cd plugin_test\n            - echo 'open Ocamlbuild_plugin let () = dispatch (fun _ -> ())' > myocamlbuild.ml\n            - echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml\n            - ocamlbuild hello.native && ./hello.native\n      requirements:\n        run:\n          # MSVC ships no _impl_ package; vs2022_win-64 is the activation package.\n          - if: not unix and c_compiler == \"vs2022\"\n            then: vs2022_${{ target_platform }}\n            else: ${{ c_compiler }}_impl_${{ target_platform }}\n          - ocaml-compiler\n\n  # Cross-compiled platforms: limited tests (QEMU constraints)\n  - if: linux and (build_platform != target_platform)\n    then:\n      script:\n        - ocamlbuild -documentation\n        - echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml\n        - ocamlbuild hello.cmo\n        - ocamlbuild -where\n        # A plugin forces the target compiler to check ocamlbuild's .cmi against its stdlib.\n        - mkdir -p plugin_test && cd plugin_test\n        - echo 'open Ocamlbuild_plugin let () = dispatch (fun _ -> ())' > myocamlbuild.ml\n        - echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml\n        - ocamlbuild -byte-plugin hello.cmo\n      requirements:\n        run:\n          - file\n          - ocaml-compiler\n\nabout:\n  homepage: https://ocaml.org/\n  license: LGPL-2.0-only\n  license_family: LGPL\n  license_file: LICENSE\n  summary: OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs.\n\n  # The remaining entries in this section are optional, but recommended\n  description: |\n    OCaml is an implementation of the ML language, based on the Caml Light\n    dialect extended with a complete class-based object system and a powerful\n    module system in the style of Standard ML.\n\n    OCamlbuild was distributed as part of the OCaml distribution for OCaml\n    versions between 3.10.0 and 4.02.3. Starting from OCaml 4.03, it is now\n    released separately (with its own version numbering).\n\n    You should refer to the OCambuild manual for more informations on how to\n    use ocamlbuild.\n  documentation: https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc\n  repository: https://github.com/ocaml/ocamlbuild\n\nextra:\n  recipe-maintainers:\n    - dslarm\n    - peterjc\n    - MementoRC\n",
+  "raw_meta_yaml": "context:\n  build_number: 4\n  name: ocamlbuild\n  version: 0.16.1\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  dot: ${{ \"./\" if unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n\npackage:\n  name: ocamlbuild\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml/ocamlbuild/archive/${{ version }}.tar.gz\n  sha256: 2ba6857f2991b7f69368e8db818b163d31cf5a367f15f5953bf8f01a77b3d4fc\n\nbuild:\n  number: ${{ build_number }}\n  prefix_detection:\n    ignore:\n      # Relocation NUL-pads paths inside marshalled bytecode and corrupts it.\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cma\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmo\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmi\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmx\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmxa\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmt\n      - ${{ library }}lib/ocaml/ocamlbuild/*.cmti\n  script: build.sh\n\nrequirements:\n  build:\n    - ${{ compiler('ocaml') }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    - ${{ m2 }}make\n    # compiler('ocaml') carries no build string; pin the windows toolchain track.\n    - if: not unix\n      then: ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # Every sed/cp/tr/mv call site in build.sh is windows-only.\n    - if: not unix\n      then:\n        - ${{ m2 }}coreutils\n        - ${{ m2 }}sed\n  run:\n    # win-arm64 ocamlbuild is bytecode; it needs ocamlrun at runtime.\n    - if: win and arm64\n      then: ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n  run_constraints:\n    - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\ntests:\n  - package_contents:\n      strict: true\n      bin:\n        - ocamlbuild\n        # win-arm64 OCaml is bytecode-only: no native artefacts\n        - if: not (win and arm64)\n          then: ocamlbuild.native\n        - if: win and arm64\n          then: ocamlbuild.byte\n      files:\n        - ${{ library }}lib/ocaml/ocamlbuild/META\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild.cmo\n        - if: not (win and arm64)\n          then: ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild.cmx\n        # Object and library extensions follow the windows toolchain: the gcc lane\n        # emits .o and .a, the vs2022 lane .obj and .lib, with identical basenames.\n        # Glob over the extension rather than branching the block per lane.\n        - if: not (win and arm64)\n          then: ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild.o*\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild_*.cmi\n        - if: not (win and arm64)\n          then: ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild_*.cmx\n        - if: not (win and arm64)\n          then: ${{ library }}lib/ocaml/ocamlbuild/ocamlbuild_*.o*\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuildlib*\n        - ${{ library }}lib/ocaml/ocamlbuild/ocamlbuildlib.cma\n        - if: not (win and arm64)\n          then: ${{ library }}lib/ocaml/ocamlbuild/ocamlbuildlib.cmxa\n        - ${{ library }}lib/ocaml/ocamlbuild/signatures.cmi\n        - ${{ library }}lib/ocaml/ocamlbuild/signatures.cmti\n        - ${{ library }}lib/ocaml/ocamlbuild/signatures.mli\n        - ${{ library }}share/man/man1/ocamlbuild.1\n        # rattler-build packages the win-arm64 test's `files:` here.\n        - if: win and arm64\n          then: etc/conda/test-files/ocamlbuild/**\n\n  # Cross-compiled platforms: verify binary architecture\n  - if: build_platform != target_platform\n    then:\n      script:\n        - if: osx\n          then:\n            - otool -hv ${CONDA_PREFIX}/bin/ocamlbuild\n            - otool -hv ${CONDA_PREFIX}/bin/ocamlbuild.native\n        - if: linux\n          then:\n            - readelf -h ${CONDA_PREFIX}/bin/ocamlbuild\n            - readelf -h ${CONDA_PREFIX}/bin/ocamlbuild.native\n        # readelf only prints the header; fail if the binary is not for the target.\n        - if: target_platform == \"linux-s390x\"\n          then: readelf -h ${CONDA_PREFIX}/bin/ocamlbuild.native | grep -q \"IBM S/390\"\n        - if: target_platform == \"linux-ppc64le\"\n          then: readelf -h ${CONDA_PREFIX}/bin/ocamlbuild.native | grep -q \"PowerPC64\"\n        - if: target_platform == \"linux-riscv64\"\n          then: readelf -h ${CONDA_PREFIX}/bin/ocamlbuild.native | grep -q \"RISC-V\"\n\n  # Native platforms: version check\n  - if: build_platform == target_platform\n    then:\n      script:\n        - ocamlbuild -version | grep ${{ version }}\n        - if: not (win and arm64)\n          then: ocamlbuild.native -version | grep ${{ version }}\n      requirements:\n        run:\n          - ${{ m2 }}grep\n\n  # Native platforms: full functional test\n  - if: build_platform == target_platform and not (win and arm64)\n    then:\n      script:\n        - if: unix\n          then:\n            - echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml\n          else:\n            - echo let () = print_endline \"Hello from ocamlbuild\" > hello.ml\n        - ocamlbuild hello.native && ${{ dot }}hello.native\n        - ocamlbuild -clean\n        - ocamlbuild hello.byte && ${{ dot }}hello.byte\n        # A plugin build reads ocamlbuild.cmo from -where, which binary prefix\n        # relocation can corrupt.\n        - if: unix\n          then:\n            - mkdir -p plugin_test && cd plugin_test\n            - echo 'open Ocamlbuild_plugin let () = dispatch (fun _ -> ())' > myocamlbuild.ml\n            - echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml\n            - ocamlbuild hello.native && ./hello.native\n      requirements:\n        run:\n          # MSVC ships no _impl_ package; vs2022_win-64 is the activation package.\n          - if: not unix and c_compiler == \"vs2022\"\n            then: vs2022_${{ target_platform }}\n            else: ${{ c_compiler }}_impl_${{ target_platform }}\n          - ocaml-compiler\n\n  # win-arm64 OCaml is bytecode-only (no ocamlopt)\n  - if: win and arm64\n    then:\n      script:\n        - echo let () = print_endline \"Hello from ocamlbuild\" > hello.ml\n        - ocamlbuild hello.byte && hello.byte\n        - python testing/test-arch.py \"%PREFIX%\\Library\\bin\\ocamlbuild.exe\"\n      files:\n        recipe:\n          - testing/test-arch.py\n      requirements:\n        run:\n          - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n          - python >=3.9\n\n  # Cross-compiled platforms: limited tests (QEMU constraints)\n  - if: linux and (build_platform != target_platform)\n    then:\n      script:\n        - ocamlbuild -documentation\n        - echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml\n        - ocamlbuild hello.cmo\n        - ocamlbuild -where\n        # A plugin forces the target compiler to check ocamlbuild's .cmi against its stdlib.\n        - mkdir -p plugin_test && cd plugin_test\n        - echo 'open Ocamlbuild_plugin let () = dispatch (fun _ -> ())' > myocamlbuild.ml\n        - echo 'let () = print_endline \"Hello from ocamlbuild\"' > hello.ml\n        - ocamlbuild -byte-plugin hello.cmo\n      requirements:\n        # file has no riscv64/s390x build; take it from the build platform.\n        build:\n          - file\n        run:\n          - ocaml-compiler\n\nabout:\n  homepage: https://ocaml.org/\n  license: LGPL-2.0-only\n  license_family: LGPL\n  license_file: LICENSE\n  summary: OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs.\n\n  # The remaining entries in this section are optional, but recommended\n  description: |\n    OCaml is an implementation of the ML language, based on the Caml Light\n    dialect extended with a complete class-based object system and a powerful\n    module system in the style of Standard ML.\n\n    OCamlbuild was distributed as part of the OCaml distribution for OCaml\n    versions between 3.10.0 and 4.02.3. Starting from OCaml 4.03, it is now\n    released separately (with its own version numbering).\n\n    You should refer to the OCambuild manual for more informations on how to\n    use ocamlbuild.\n  documentation: https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc\n  repository: https://github.com/ocaml/ocamlbuild\n\nextra:\n  recipe-maintainers:\n    - dslarm\n    - peterjc\n    - MementoRC\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1131,12 +1461,8 @@
       "m2w64_c_stdlib_stub",
       "make",
       "ocaml_compiler_stub",
-      "ocaml_linux-64",
-      "ocaml_linux-aarch64",
-      "ocaml_linux-ppc64le",
-      "ocaml_osx-64",
-      "ocaml_osx-arm64",
-      "ocaml_win-64"
+      "ocaml_win-64",
+      "ocaml_win-arm64"
     ]
   },
   "requirements": {
@@ -1150,26 +1476,25 @@
         "m2w64_c_stdlib_stub",
         "make",
         "ocaml_compiler_stub",
-        "ocaml_linux-64",
-        "ocaml_linux-aarch64",
-        "ocaml_linux-ppc64le",
-        "ocaml_osx-64",
-        "ocaml_osx-arm64",
-        "ocaml_win-64"
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "c_stdlib_stub"
+        "c_stdlib_stub",
+        "ocaml"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "c_stdlib_stub"
+        "c_stdlib_stub",
+        "ocaml",
+        "ocaml_win-arm64"
       ]
     },
     "test": {
@@ -1178,7 +1503,9 @@
         "c_compiler_stub",
         "file",
         "grep",
-        "ocaml-compiler"
+        "ocaml-compiler",
+        "ocaml_win-arm64",
+        "python"
       ]
     }
   },
@@ -1194,12 +1521,8 @@
         "m2w64_c_stdlib_stub",
         "make",
         "ocaml_compiler_stub",
-        "ocaml_linux-64 5.4.0.* c_compiler_stub",
-        "ocaml_linux-aarch64 5.4.0.* c_compiler_stub",
-        "ocaml_linux-ppc64le 5.4.0.* c_compiler_stub",
-        "ocaml_osx-64 5.4.0.* c_compiler_stub",
-        "ocaml_osx-arm64 5.4.0.* c_compiler_stub",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "host": {
@@ -1208,7 +1531,9 @@
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+      ]
     },
     "test": {
       "__set__": true,
@@ -1216,7 +1541,9 @@
         "c_compiler_stub",
         "file",
         "grep",
-        "ocaml-compiler"
+        "ocaml-compiler",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+        "python >=3.9"
       ]
     }
   },
@@ -1237,7 +1564,7 @@
       "summary": "OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs."
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": "build.sh"
     },
     "extra": {
@@ -1388,6 +1715,146 @@
     "test": {
       "__set__": true,
       "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "description": "OCaml is an implementation of the ML language, based on the Caml Light\ndialect extended with a complete class-based object system and a powerful\nmodule system in the style of Standard ML.\n\nOCamlbuild was distributed as part of the OCaml distribution for OCaml\nversions between 3.10.0 and 4.02.3. Starting from OCaml 4.03, it is now\nreleased separately (with its own version numbering).\n\nYou should refer to the OCambuild manual for more informations on how to\nuse ocamlbuild.",
+      "dev_url": "https://github.com/ocaml/ocamlbuild",
+      "doc_url": "https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc",
+      "home": "https://ocaml.org/",
+      "license": "LGPL-2.0-only",
+      "license_family": "LGPL-2.0-only",
+      "license_file": "LICENSE",
+      "summary": "OCamlbuild is a generic build tool, that has built-in rules for building OCaml library and programs."
+    },
+    "build": {
+      "number": "4",
+      "script": "build.sh"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "dslarm",
+        "peterjc",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocamlbuild",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "m2-make",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "m2-coreutils",
+            "m2-sed"
+          ],
+          "host": [],
+          "run": [
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "ocamlbuild",
+                "ocamlbuild.byte"
+              ],
+              "files": [
+                "Library/lib/ocaml/ocamlbuild/META",
+                "Library/lib/ocaml/ocamlbuild/ocamlbuild.cmo",
+                "Library/lib/ocaml/ocamlbuild/ocamlbuild_*.cmi",
+                "Library/lib/ocaml/ocamlbuild/ocamlbuildlib*",
+                "Library/lib/ocaml/ocamlbuild/ocamlbuildlib.cma",
+                "Library/lib/ocaml/ocamlbuild/signatures.cmi",
+                "Library/lib/ocaml/ocamlbuild/signatures.cmti",
+                "Library/lib/ocaml/ocamlbuild/signatures.mli",
+                "Library/share/man/man1/ocamlbuild.1",
+                "etc/conda/test-files/ocamlbuild/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "script": []
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-arch.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+                "python >=3.9"
+              ]
+            },
+            "script": [
+              "echo let () = print_endline \"Hello from ocamlbuild\" > hello.ml",
+              "ocamlbuild hello.byte && hello.byte",
+              "python testing/test-arch.py \"%PREFIX%\\Library\\bin\\ocamlbuild.exe\""
+            ]
+          }
+        ],
+        "version": "0.16.1"
+      }
+    ],
+    "package": {
+      "name": "ocamlbuild",
+      "version": "0.16.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "m2-make",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+        "m2-coreutils",
+        "m2-sed"
+      ],
+      "run": [
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "2ba6857f2991b7f69368e8db818b163d31cf5a367f15f5953bf8f01a77b3d4fc",
+      "url": "https://github.com/ocaml/ocamlbuild/archive/0.16.1.tar.gz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "m2-coreutils",
+        "m2-make",
+        "m2-sed",
+        "ocaml_compiler_stub",
+        "ocaml_win-arm64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "ocaml_win-arm64"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "ocaml_win-arm64",
+        "python"
+      ]
     }
   }
 }
