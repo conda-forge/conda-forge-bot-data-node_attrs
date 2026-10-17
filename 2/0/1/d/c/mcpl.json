@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.10'\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -10,9 +10,7 @@
     "build_platform": {
       "osx_arm64": "osx_64"
     },
-    "conda_build": {
-      "pkg_format": "2"
-    },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
@@ -23,32 +21,34 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "451b3e41be382fb95119c3f79b98e647958d220b",
-  "feedstock_hash_ts": 1776834436,
+  "feedstock_hash": "86b177d76251eb9fe3b3a9801aad3280eade2fe5",
+  "feedstock_hash_ts": 1792239540,
   "feedstock_name": "mcpl",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.\n",
+      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.",
       "dev_url": "https://github.com/mctools/mcpl",
       "doc_url": "https://mctools.github.io/mcpl",
       "home": "https://github.com/mctools/mcpl",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "src/LICENSE",
       "summary": "MCPL - Monte Carlo Particle Lists"
     },
     "build": {
-      "noarch": "python",
-      "number": "0"
+      "number": "1",
+      "script": "build_core"
     },
     "extra": {
+      "feedstock-name": "mcpl",
       "recipe-maintainers": [
         "tkittel"
       ]
     },
     "outputs": [
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -65,127 +65,161 @@
             "zlib"
           ]
         },
-        "script": "build_core.sh",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ],
-          "script": "test_core.sh",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
           "build": [],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
           "build": [],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
           "build": [],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -195,30 +229,46 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.sh",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       }
     ],
     "package": {
-      "name": "mcpl",
+      "name": "mcpl-lib",
       "version": "2.2.8"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake >=3.25",
+        "make",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "zlib"
+      ],
+      "host": [
+        "zlib"
+      ],
+      "run": [
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "folder": "src",
       "sha256": "6f139822cde2fd7d14b6732c25e312bde77627aeb8ef3b03960acea85935d03b",
       "url": "https://github.com/mctools/mcpl/archive/v2.2.8.tar.gz"
     }
@@ -258,7 +308,8 @@
     "test": {
       "__set__": true,
       "elements": [
-        "c-compiler",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "make",
         "pip",
@@ -268,26 +319,28 @@
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.\n",
+      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.",
       "dev_url": "https://github.com/mctools/mcpl",
       "doc_url": "https://mctools.github.io/mcpl",
       "home": "https://github.com/mctools/mcpl",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "src/LICENSE",
       "summary": "MCPL - Monte Carlo Particle Lists"
     },
     "build": {
-      "noarch": "python",
-      "number": "0"
+      "number": "1",
+      "script": "build_core"
     },
     "extra": {
+      "feedstock-name": "mcpl",
       "recipe-maintainers": [
         "tkittel"
       ]
     },
     "outputs": [
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -304,127 +357,170 @@
             "zlib"
           ]
         },
-        "script": "build_core.sh",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ],
-          "script": "test_core.sh",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_linux-aarch64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_linux-aarch64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_linux-aarch64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -434,30 +530,46 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.sh",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       }
     ],
     "package": {
-      "name": "mcpl",
+      "name": "mcpl-lib",
       "version": "2.2.8"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake >=3.25",
+        "make",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "zlib"
+      ],
+      "host": [
+        "zlib"
+      ],
+      "run": [
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "folder": "src",
       "sha256": "6f139822cde2fd7d14b6732c25e312bde77627aeb8ef3b03960acea85935d03b",
       "url": "https://github.com/mctools/mcpl/archive/v2.2.8.tar.gz"
     }
@@ -469,7 +581,9 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-aarch64",
         "make",
+        "python",
         "zlib"
       ]
     },
@@ -497,7 +611,8 @@
     "test": {
       "__set__": true,
       "elements": [
-        "c-compiler",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "make",
         "pip",
@@ -507,26 +622,28 @@
   },
   "meta_yaml": {
     "about": {
-      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.\n",
+      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.",
       "dev_url": "https://github.com/mctools/mcpl",
       "doc_url": "https://mctools.github.io/mcpl",
       "home": "https://github.com/mctools/mcpl",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "src/LICENSE",
       "summary": "MCPL - Monte Carlo Particle Lists"
     },
     "build": {
-      "noarch": "python",
-      "number": "0"
+      "number": "1",
+      "script": "build_core"
     },
     "extra": {
+      "feedstock-name": "mcpl",
       "recipe-maintainers": [
         "tkittel"
       ]
     },
     "outputs": [
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -543,127 +660,161 @@
             "zlib"
           ]
         },
-        "script": "build_core.sh",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ],
-          "script": "test_core.sh",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
           "build": [],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
           "build": [],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
           "build": [],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -673,23 +824,26 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.sh",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -706,127 +860,170 @@
             "zlib"
           ]
         },
-        "script": "build_core.sh",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ],
-          "script": "test_core.sh",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_linux-aarch64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_linux-aarch64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_linux-aarch64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -836,23 +1033,26 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.sh",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -869,127 +1069,170 @@
             "zlib"
           ]
         },
-        "script": "build_core.sh",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ],
-          "script": "test_core.sh",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -999,23 +1242,26 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.sh",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -1032,127 +1278,170 @@
             "zlib"
           ]
         },
-        "script": "build_core.sh",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ],
-          "script": "test_core.sh",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-arm64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-arm64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-arm64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -1162,23 +1451,26 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.sh",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -1194,125 +1486,168 @@
             "zlib"
           ]
         },
-        "script": "build_core.bat",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "c-compiler"
-          ],
-          "script": "test_core.bat",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_win-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_win-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_win-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -1321,57 +1656,75 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.bat",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       }
     ],
     "package": {
-      "name": "mcpl",
+      "name": "mcpl-lib",
       "version": "2.2.8"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake >=3.25",
+        "make",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "zlib"
+      ],
+      "host": [
+        "zlib"
+      ],
+      "run": [
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "folder": "src",
       "sha256": "6f139822cde2fd7d14b6732c25e312bde77627aeb8ef3b03960acea85935d03b",
       "url": "https://github.com/mctools/mcpl/archive/v2.2.8.tar.gz"
     }
   },
-  "name": "mcpl",
+  "name": "mcpl-lib",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.\n",
+      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.",
       "dev_url": "https://github.com/mctools/mcpl",
       "doc_url": "https://mctools.github.io/mcpl",
       "home": "https://github.com/mctools/mcpl",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "src/LICENSE",
       "summary": "MCPL - Monte Carlo Particle Lists"
     },
     "build": {
-      "noarch": "python",
-      "number": "0"
+      "number": "1",
+      "script": "build_core"
     },
     "extra": {
+      "feedstock-name": "mcpl",
       "recipe-maintainers": [
         "tkittel"
       ]
     },
     "outputs": [
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -1388,127 +1741,170 @@
             "zlib"
           ]
         },
-        "script": "build_core.sh",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ],
-          "script": "test_core.sh",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -1518,30 +1914,46 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.sh",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       }
     ],
     "package": {
-      "name": "mcpl",
+      "name": "mcpl-lib",
       "version": "2.2.8"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake >=3.25",
+        "make",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "zlib"
+      ],
+      "host": [
+        "zlib"
+      ],
+      "run": [
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "folder": "src",
       "sha256": "6f139822cde2fd7d14b6732c25e312bde77627aeb8ef3b03960acea85935d03b",
       "url": "https://github.com/mctools/mcpl/archive/v2.2.8.tar.gz"
     }
@@ -1553,7 +1965,9 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_osx-64",
         "make",
+        "python",
         "zlib"
       ]
     },
@@ -1581,7 +1995,8 @@
     "test": {
       "__set__": true,
       "elements": [
-        "c-compiler",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "make",
         "pip",
@@ -1591,26 +2006,28 @@
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.\n",
+      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.",
       "dev_url": "https://github.com/mctools/mcpl",
       "doc_url": "https://mctools.github.io/mcpl",
       "home": "https://github.com/mctools/mcpl",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "src/LICENSE",
       "summary": "MCPL - Monte Carlo Particle Lists"
     },
     "build": {
-      "noarch": "python",
-      "number": "0"
+      "number": "1",
+      "script": "build_core"
     },
     "extra": {
+      "feedstock-name": "mcpl",
       "recipe-maintainers": [
         "tkittel"
       ]
     },
     "outputs": [
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -1627,127 +2044,170 @@
             "zlib"
           ]
         },
-        "script": "build_core.sh",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ],
-          "script": "test_core.sh",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-arm64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-arm64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_osx-arm64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "make",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "make",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -1757,30 +2217,46 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.sh",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       }
     ],
     "package": {
-      "name": "mcpl",
+      "name": "mcpl-lib",
       "version": "2.2.8"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake >=3.25",
+        "make",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "zlib"
+      ],
+      "host": [
+        "zlib"
+      ],
+      "run": [
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "folder": "src",
       "sha256": "6f139822cde2fd7d14b6732c25e312bde77627aeb8ef3b03960acea85935d03b",
       "url": "https://github.com/mctools/mcpl/archive/v2.2.8.tar.gz"
     }
@@ -1792,7 +2268,9 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_osx-arm64",
         "make",
+        "python",
         "zlib"
       ]
     },
@@ -1820,7 +2298,8 @@
     "test": {
       "__set__": true,
       "elements": [
-        "c-compiler",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "make",
         "pip",
@@ -1849,13 +2328,17 @@
   "pr_info": {
     "__lazy_json__": "pr_info/mcpl.json"
   },
-  "raw_meta_yaml": "{% set version = \"2.2.8\" %}\n\npackage:\n  name: mcpl\n  version: {{ version }}\n\nsource:\n  url: https://github.com/mctools/mcpl/archive/v{{ version }}.tar.gz\n  sha256: 6f139822cde2fd7d14b6732c25e312bde77627aeb8ef3b03960acea85935d03b\n  #NB get sha256 with: curl -sL <URL> | openssl sha256\n  folder: src\n\nbuild:\n  noarch: python\n  number: 0\n\noutputs:\n  - name: mcpl-lib\n    script: build_core.sh  # [unix]\n    script: build_core.bat  # [win]\n    requirements:\n      build:\n        - cmake >=3.25\n        - make  # [not win]\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - zlib\n      host:\n        - zlib\n      run:\n        - zlib\n    test:\n      requires:\n        - cmake >=3.25\n        - make  # [not win]\n        - c-compiler\n      source_files:\n        - ./src/examples/downstream_cmake\n        - ./src/examples/example.mcpl\n      script: test_core.sh  # [unix]\n      script: test_core.bat  # [win]\n\n  - name: mcpl-core\n    build:\n      noarch: python\n      script: python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation\n    requirements:\n      build:\n        - python  {{ python_min }}  # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}  # [build_platform != target_platform]\n      host:\n        - python  {{ python_min }}\n        - pip\n        - setuptools >=75.3.2\n      run:\n        - python >={{ python_min }}\n        - mcpl-lib ={{ version }}\n    test:\n      requires:\n        - python {{ python_min }}\n        - pip\n      commands:\n        - pip check\n        - pip show mcpl-core\n        - conda list\n\n  - name: mcpl-python\n    build:\n      noarch: python\n      script: python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation\n      entry_points:\n        - pymcpltool = mcpl.mcpl:main\n    requirements:\n      build:\n        - python  {{ python_min }}  # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}  # [build_platform != target_platform]\n      host:\n        - python  {{ python_min }}\n        - pip\n        - setuptools >=64.0\n      run:\n        - python >={{ python_min }}\n        - numpy >=1.22\n    test:\n      imports:\n        - mcpl\n      requires:\n        - python {{ python_min }}\n        - pip\n      commands:\n        - pip check\n        - pip show mcpl-python\n        - pymcpltool --help\n\n  - name: mcpl\n    build:\n      noarch: python\n      script: python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation\n    requirements:\n      build:\n        - python  {{ python_min }}  # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}  # [build_platform != target_platform]\n      host:\n        - python  {{ python_min }}\n        - pip\n        - setuptools >=75.3.2\n      run:\n        - python >={{ python_min }}\n        - mcpl-core ={{ version }}\n        - mcpl-python ={{ version }}\n    test:\n      requires:\n        - python {{ python_min }}\n        - pip\n        - cmake >=3.25\n        - make  # [not win]\n        - c-compiler\n      imports:\n        - mcpl\n      commands:\n        - mcpl-config --help\n        - mcpl-config -s\n        - mcpltool --version\n        - mcpltool --help\n        - pymcpltool --help\n        - cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST\n\n  - name: mcpl-extra\n    script: build_extra.sh  # [unix]\n    script: build_extra.bat  # [win]\n    requirements:\n      build:\n        - cmake >=3.25\n        - make  # [not win]\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n      host:\n        - mcpl-lib ={{ version }}\n      run:\n        - mcpl-lib ={{ version }}\n    test:\n      commands:\n        - ssw2mcpl --help\n        - mcpl2ssw --help\n        - phits2mcpl --help\n        - mcpl2phits --help\n\nabout:\n  home: https://github.com/mctools/mcpl\n  summary: MCPL - Monte Carlo Particle Lists\n  description: |\n    Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\n    format with lists of particle state information, for interchanging and\n    reshooting events between various Monte Carlo simulation applications.\n  license: Apache-2.0\n  license_family: Apache\n  license_file: src/LICENSE\n  doc_url: https://mctools.github.io/mcpl\n  dev_url: https://github.com/mctools/mcpl\n\nextra:\n  recipe-maintainers:\n    - tkittel\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"2.2.8\"\n\nrecipe:\n  name: mcpl\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/mctools/mcpl/archive/v${{ version }}.tar.gz\n  sha256: 6f139822cde2fd7d14b6732c25e312bde77627aeb8ef3b03960acea85935d03b\n  #NB get sha256 with: curl -sL <URL> | openssl sha256\n  target_directory: src\n\nbuild:\n  number: 1\n\noutputs:\n  - package:\n      name: mcpl-lib\n    build:\n      script: build_core\n    requirements:\n      build:\n        - cmake >=3.25\n        - if: not win\n          then: make\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - zlib\n      host:\n        - zlib\n      run:\n        - zlib\n    tests:\n      - script:\n          file: test_core\n        requirements:\n          build:\n            - cmake >=3.25\n            - if: not win\n              then: make\n            - ${{ compiler('c') }}\n            - ${{ stdlib('c') }}\n        files:\n          source:\n            - src/examples/downstream_cmake/\n            - src/examples/example.mcpl\n\n  - package:\n      name: mcpl-core\n    build:\n      noarch: python\n      script: python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation\n    requirements:\n      build:\n        # (when cross-compiling, e.g. osx-arm64 on osx-64, the python of the\n        # host environment can not run)\n        - if: build_platform != target_platform\n          then:\n            - python ${{ python_min }}.*\n            - cross-python_${{ target_platform }}\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools >=75.3.2\n      run:\n        - python >=${{ python_min }}\n        # A version pin, not pin_subpackage(..., exact=True): this noarch\n        # package is one file for all platforms, while mcpl-lib has a\n        # different build (string) on each platform, so an exact pin would\n        # only be installable on one platform. The same goes for the\n        # dependencies of the noarch mcpl package below.\n        - mcpl-lib =${{ version }}\n    tests:\n      - script:\n          - pip check\n          - pip show mcpl-core\n        requirements:\n          run:\n            - python ${{ python_min }}.*\n            - pip\n\n  - package:\n      name: mcpl-python\n    build:\n      noarch: python\n      script: python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation\n      python:\n        entry_points:\n          - pymcpltool = mcpl.mcpl:main\n    requirements:\n      build:\n        # (when cross-compiling, e.g. osx-arm64 on osx-64, the python of the\n        # host environment can not run)\n        - if: build_platform != target_platform\n          then:\n            - python ${{ python_min }}.*\n            - cross-python_${{ target_platform }}\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools >=64.0\n      run:\n        - python >=${{ python_min }}\n        - numpy >=1.22\n    tests:\n      - python:\n          imports:\n            - mcpl\n          python_version: ${{ python_min }}.*\n      - script:\n          - pip show mcpl-python\n          - pymcpltool --help\n        requirements:\n          run:\n            - python ${{ python_min }}.*\n            - pip\n\n  - package:\n      name: mcpl\n    build:\n      noarch: python\n      script: python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation\n    requirements:\n      build:\n        # (when cross-compiling, e.g. osx-arm64 on osx-64, the python of the\n        # host environment can not run)\n        - if: build_platform != target_platform\n          then:\n            - python ${{ python_min }}.*\n            - cross-python_${{ target_platform }}\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools >=75.3.2\n      run:\n        - python >=${{ python_min }}\n        - mcpl-core =${{ version }}\n        - mcpl-python =${{ version }}\n    tests:\n      - python:\n          imports:\n            - mcpl\n          python_version: ${{ python_min }}.*\n      - script:\n          - mcpl-config --help\n          - mcpl-config -s\n          - mcpltool --version\n          - mcpltool --help\n          - pymcpltool --help\n          - cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST\n        requirements:\n          build:\n            - cmake >=3.25\n            - if: not win\n              then: make\n            - ${{ compiler('c') }}\n            - ${{ stdlib('c') }}\n          run:\n            - python ${{ python_min }}.*\n\n  - package:\n      name: mcpl-extra\n    build:\n      script: build_extra\n    requirements:\n      build:\n        - cmake >=3.25\n        - if: not win\n          then: make\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n      host:\n        - ${{ pin_subpackage('mcpl-lib', exact=True) }}\n      run:\n        # (exact pins are possible here, since mcpl-extra and mcpl-lib are\n        # both built for each platform)\n        - ${{ pin_subpackage('mcpl-lib', exact=True) }}\n    tests:\n      - script:\n          - ssw2mcpl --help\n          - mcpl2ssw --help\n          - phits2mcpl --help\n          - mcpl2phits --help\n\nabout:\n  homepage: https://github.com/mctools/mcpl\n  summary: MCPL - Monte Carlo Particle Lists\n  description: |\n    Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\n    format with lists of particle state information, for interchanging and\n    reshooting events between various Monte Carlo simulation applications.\n  license: Apache-2.0\n  license_file: src/LICENSE\n  documentation: https://mctools.github.io/mcpl\n  repository: https://github.com/mctools/mcpl\n\nextra:\n  # (conda-smithy otherwise names the feedstock after one of the outputs)\n  feedstock-name: mcpl\n  recipe-maintainers:\n    - tkittel\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
       "c_stdlib_stub",
       "cmake",
+      "cross-python_linux-aarch64",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
+      "cross-python_win-64",
       "make",
       "mcpl-core",
       "mcpl-lib",
@@ -1874,7 +2357,12 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-aarch64",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
         "make",
+        "python",
         "zlib"
       ]
     },
@@ -1883,6 +2371,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "mcpl-lib",
         "pip",
         "python",
@@ -1895,6 +2384,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "mcpl-core",
         "mcpl-lib",
         "mcpl-python",
@@ -1906,7 +2396,8 @@
     "test": {
       "__set__": true,
       "elements": [
-        "c-compiler",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "make",
         "pip",
@@ -1922,16 +2413,21 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake >=3.25",
+        "cross-python_linux-aarch64",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
         "make",
+        "python 3.11.*",
         "zlib"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "mcpl-lib =2.2.8",
+        "mcpl-lib",
         "pip",
-        "python  3.10",
+        "python 3.11.*",
         "setuptools >=64.0",
         "setuptools >=75.3.2",
         "zlib"
@@ -1940,22 +2436,24 @@
     "run": {
       "__set__": true,
       "elements": [
-        "mcpl-core =2.2.8",
-        "mcpl-lib =2.2.8",
-        "mcpl-python =2.2.8",
+        "mcpl-core 2.2.8.*",
+        "mcpl-lib",
+        "mcpl-lib 2.2.8.*",
+        "mcpl-python 2.2.8.*",
         "numpy >=1.22",
-        "python >=3.10",
+        "python >=3.11",
         "zlib"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "c-compiler",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake >=3.25",
         "make",
         "pip",
-        "python 3.10"
+        "python 3.11.*"
       ]
     }
   },
@@ -1966,26 +2464,28 @@
   },
   "win_64_meta_yaml": {
     "about": {
-      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.\n",
+      "description": "Utilities and API for accessing MCPL (.mcpl) files. MCPL is a binary\nformat with lists of particle state information, for interchanging and\nreshooting events between various Monte Carlo simulation applications.",
       "dev_url": "https://github.com/mctools/mcpl",
       "doc_url": "https://mctools.github.io/mcpl",
       "home": "https://github.com/mctools/mcpl",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "src/LICENSE",
       "summary": "MCPL - Monte Carlo Particle Lists"
     },
     "build": {
-      "noarch": "python",
-      "number": "0"
+      "number": "1",
+      "script": "build_core"
     },
     "extra": {
+      "feedstock-name": "mcpl",
       "recipe-maintainers": [
         "tkittel"
       ]
     },
     "outputs": [
       {
+        "build": null,
         "name": "mcpl-lib",
         "requirements": {
           "build": [
@@ -2001,125 +2501,168 @@
             "zlib"
           ]
         },
-        "script": "build_core.bat",
-        "test": {
-          "requires": [
-            "cmake >=3.25",
-            "c-compiler"
-          ],
-          "script": "test_core.bat",
-          "source_files": [
-            "./src/examples/downstream_cmake",
-            "./src/examples/example.mcpl"
-          ]
-        }
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "src/examples/downstream_cmake/",
+                "src/examples/example.mcpl"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ]
+            },
+            "script": {
+              "file": "test_core"
+            }
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_core/empty_pypkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl-core",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_win-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-lib =2.2.8"
+            "python >=3.11",
+            "mcpl-lib 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-core",
-            "conda list"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip check",
+              "pip show mcpl-core"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "entry_points": [
-            "pymcpltool = mcpl.mcpl:main"
-          ],
           "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_python\" -vv --no-deps --no-build-isolation"
+          "python": {
+            "entry_points": [
+              "pymcpltool = mcpl.mcpl:main"
+            ]
+          }
         },
         "name": "mcpl-python",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_win-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=64.0"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "numpy >=1.22"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "pip show mcpl-python",
-            "pymcpltool --help"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pip"
+              ]
+            },
+            "script": [
+              "pip show mcpl-python",
+              "pymcpltool --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
         "build": {
-          "noarch": "python",
-          "script": "python -m pip install \"./src/mcpl_metapkg\" -vv --no-deps --no-build-isolation"
+          "noarch": "python"
         },
         "name": "mcpl",
         "requirements": {
-          "build": [],
+          "build": [
+            "python 3.11.*",
+            "cross-python_win-64"
+          ],
           "host": [
-            "python  3.10",
+            "python 3.11.*",
             "pip",
             "setuptools >=75.3.2"
           ],
           "run": [
-            "python >=3.10",
-            "mcpl-core =2.2.8",
-            "mcpl-python =2.2.8"
+            "python >=3.11",
+            "mcpl-core 2.2.8.*",
+            "mcpl-python 2.2.8.*"
           ]
         },
-        "test": {
-          "commands": [
-            "mcpl-config --help",
-            "mcpl-config -s",
-            "mcpltool --version",
-            "mcpltool --help",
-            "pymcpltool --help",
-            "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
-          ],
-          "imports": [
-            "mcpl"
-          ],
-          "requires": [
-            "python 3.10",
-            "pip",
-            "cmake >=3.25",
-            "c-compiler"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "mcpl"
+              ],
+              "python_version": "3.11.*"
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "cmake >=3.25",
+                "c_compiler_stub",
+                "c_stdlib_stub"
+              ],
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "mcpl-config --help",
+              "mcpl-config -s",
+              "mcpltool --version",
+              "mcpltool --help",
+              "pymcpltool --help",
+              "cmake --find-package -DNAME=MCPL -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       },
       {
+        "build": null,
         "name": "mcpl-extra",
         "requirements": {
           "build": [
@@ -2128,30 +2671,45 @@
             "c_stdlib_stub"
           ],
           "host": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ],
           "run": [
-            "mcpl-lib =2.2.8"
+            "mcpl-lib"
           ]
         },
-        "script": "build_extra.bat",
-        "test": {
-          "commands": [
-            "ssw2mcpl --help",
-            "mcpl2ssw --help",
-            "phits2mcpl --help",
-            "mcpl2phits --help"
-          ]
-        }
+        "tests": [
+          {
+            "script": [
+              "ssw2mcpl --help",
+              "mcpl2ssw --help",
+              "phits2mcpl --help",
+              "mcpl2phits --help"
+            ]
+          }
+        ],
+        "version": "2.2.8"
       }
     ],
     "package": {
-      "name": "mcpl",
+      "name": "mcpl-lib",
       "version": "2.2.8"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake >=3.25",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "zlib"
+      ],
+      "host": [
+        "zlib"
+      ],
+      "run": [
+        "zlib"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "folder": "src",
       "sha256": "6f139822cde2fd7d14b6732c25e312bde77627aeb8ef3b03960acea85935d03b",
       "url": "https://github.com/mctools/mcpl/archive/v2.2.8.tar.gz"
     }
@@ -2163,6 +2721,8 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_win-64",
+        "python",
         "zlib"
       ]
     },
@@ -2190,7 +2750,8 @@
     "test": {
       "__set__": true,
       "elements": [
-        "c-compiler",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "pip",
         "python"
