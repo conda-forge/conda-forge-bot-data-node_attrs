@@ -4,21 +4,30 @@
   "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nocaml_compiler:\n- ocaml\nocaml_compiler_version:\n- 5.4.0\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "build_platform": {
+      "linux_ppc64le": "linux_64",
+      "linux_riscv64": "linux_64",
+      "linux_s390x": "linux_64"
+    },
     "conda_build": {
       "error_overlinking": true
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
-      "osx_arm64": "default"
-    }
+      "linux_aarch64": "default",
+      "osx_arm64": "default",
+      "win_arm64": "default"
+    },
+    "test": "all"
   },
-  "feedstock_hash": "cfa036c5d5fd0f79b6b7ee5bcabd11417b4de1de",
-  "feedstock_hash_ts": 1792206490,
+  "feedstock_hash": "9349c58660abe7509200125ccaabdbf211779ec8",
+  "feedstock_hash_ts": 1792271755,
   "feedstock_name": "ocaml-cmdliner",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -32,7 +41,7 @@
       "summary": "Declarative definition of command line interfaces for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.sh"
     },
     "extra": {
@@ -67,6 +76,129 @@
                 "share/powershell/*"
               ],
               "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "2.1.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/cmdliner",
+                "lib/ocaml/cmdliner/*",
+                "share/bash-completion/completions/*",
+                "share/zsh/site-functions/*",
+                "share/powershell/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "2.1.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/cmdliner",
+                "lib/ocaml/cmdliner/*",
+                "share/bash-completion/completions/*",
+                "share/zsh/site-functions/*",
+                "share/powershell/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
             }
           }
         ],
@@ -114,7 +246,262 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/dbuenzli/cmdliner",
+      "doc_url": "https://erratique.ch/software/cmdliner/doc",
+      "home": "https://erratique.ch/software/cmdliner",
+      "license": "ISC",
+      "license_family": "ISC",
+      "license_file": "LICENSE.md",
+      "summary": "Declarative definition of command line interfaces for OCaml"
+    },
+    "build": {
+      "number": "2",
+      "script": "build.sh"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+            "make"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/cmdliner",
+                "lib/ocaml/cmdliner/*",
+                "share/bash-completion/completions/*",
+                "share/zsh/site-functions/*",
+                "share/powershell/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "aarch64"
+              }
+            }
+          }
+        ],
+        "version": "2.1.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-cmdliner",
+      "version": "2.1.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "make"
+      ],
+      "host": [
+        "ocaml 5.4.0.*"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "05b938d1def4f54c478178f1982822834510431ed98f2ac67cb4d90aa120d6b6",
+      "url": "https://erratique.ch/software/cmdliner/releases/cmdliner-2.1.1.tbz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "make",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_linux-aarch64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml"
+      ]
+    },
+    "run": {
+      "__set__": true,
       "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
+    }
+  },
+  "linux_ppc64le_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/dbuenzli/cmdliner",
+      "doc_url": "https://erratique.ch/software/cmdliner/doc",
+      "home": "https://erratique.ch/software/cmdliner",
+      "license": "ISC",
+      "license_family": "ISC",
+      "license_file": "LICENSE.md",
+      "summary": "Declarative definition of command line interfaces for OCaml"
+    },
+    "build": {
+      "number": "2",
+      "script": "build.sh"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+            "make"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/cmdliner",
+                "lib/ocaml/cmdliner/*",
+                "share/bash-completion/completions/*",
+                "share/zsh/site-functions/*",
+                "share/powershell/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "PowerPC"
+              }
+            }
+          }
+        ],
+        "version": "2.1.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-cmdliner",
+      "version": "2.1.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "make"
+      ],
+      "host": [
+        "ocaml 5.4.0.*"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "05b938d1def4f54c478178f1982822834510431ed98f2ac67cb4d90aa120d6b6",
+      "url": "https://erratique.ch/software/cmdliner/releases/cmdliner-2.1.1.tbz"
+    }
+  },
+  "linux_ppc64le_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "make",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_linux-ppc64le"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "meta_yaml": {
@@ -128,7 +515,7 @@
       "summary": "Declarative definition of command line interfaces for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.sh"
     },
     "extra": {
@@ -164,6 +551,129 @@
               ],
               "strict": true
             }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "2.1.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/cmdliner",
+                "lib/ocaml/cmdliner/*",
+                "share/bash-completion/completions/*",
+                "share/zsh/site-functions/*",
+                "share/powershell/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "2.1.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/cmdliner",
+                "lib/ocaml/cmdliner/*",
+                "share/bash-completion/completions/*",
+                "share/zsh/site-functions/*",
+                "share/powershell/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
           }
         ],
         "version": "2.1.1"
@@ -176,6 +686,113 @@
             "ocaml_compiler_stub",
             "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+            "make"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/cmdliner",
+                "lib/ocaml/cmdliner/*",
+                "share/bash-completion/completions/*",
+                "share/zsh/site-functions/*",
+                "share/powershell/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "aarch64"
+              }
+            }
+          }
+        ],
+        "version": "2.1.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+            "make"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/cmdliner",
+                "lib/ocaml/cmdliner/*",
+                "share/bash-completion/completions/*",
+                "share/zsh/site-functions/*",
+                "share/powershell/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "set -eu",
+                "found=0",
+                "tmp=\"$(mktemp -d)\"",
+                "for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n  found=1\n  d=\"${tmp}/$(basename \"$a\" .a)\"\n  mkdir -p \"$d\"\n  (cd \"$d\" && ar x \"$a\")\n  out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1",
+                "for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n  [ -e \"$s\" ] || continue\n  file -L \"$s\"\n  file -L \"$s\" | grep -q \"${ELF_ARCH}\"\ndone\n"
+              ],
+              "env": {
+                "ELF_ARCH": "PowerPC"
+              }
+            }
+          }
+        ],
+        "version": "2.1.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
             "make"
           ],
           "host": [
@@ -207,6 +824,7 @@
             "ocaml_compiler_stub",
             "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
             "make"
           ],
           "host": [
@@ -300,6 +918,42 @@
           }
         ],
         "version": "2.1.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.* gcc_*",
+            "m2-make",
+            "m2-bash >=5.2",
+            "m2-coreutils"
+          ],
+          "host": [
+            "ocaml 5.4.0.*",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/bin/cmdliner.exe",
+                "Library/lib/ocaml/cmdliner/*",
+                "Library/share/bash-completion/completions/*",
+                "Library/share/zsh/site-functions/*",
+                "Library/share/powershell/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "2.1.1"
       }
     ],
     "package": {
@@ -312,17 +966,23 @@
         "c_stdlib_stub",
         "make",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
         "m2w64_c_stdlib_stub",
         "ocaml_win-64 5.4.0.* c_compiler_stub",
         "ocaml_linux-64 5.4.0.* gcc_*",
         "m2-make",
         "m2-bash >=5.2",
         "m2-coreutils",
-        "c_compiler_stub"
+        "c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ],
       "host": [
         "ocaml 5.4.0.*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "schema_version": 1,
@@ -343,7 +1003,7 @@
       "summary": "Declarative definition of command line interfaces for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.sh"
     },
     "extra": {
@@ -361,6 +1021,7 @@
             "ocaml_compiler_stub",
             "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
             "make"
           ],
           "host": [
@@ -394,6 +1055,7 @@
         "ocaml_compiler_stub",
         "c_stdlib_stub",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
         "make"
       ],
       "host": [
@@ -413,7 +1075,8 @@
         "c_stdlib_stub",
         "make",
         "ocaml_compiler_stub",
-        "ocaml_linux-64"
+        "ocaml_linux-64",
+        "ocaml_osx-64"
       ]
     },
     "host": {
@@ -442,7 +1105,7 @@
       "summary": "Declarative definition of command line interfaces for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.sh"
     },
     "extra": {
@@ -460,6 +1123,7 @@
             "ocaml_compiler_stub",
             "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
             "make"
           ],
           "host": [
@@ -493,6 +1157,7 @@
         "ocaml_compiler_stub",
         "c_stdlib_stub",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
         "make"
       ],
       "host": [
@@ -512,7 +1177,8 @@
         "c_stdlib_stub",
         "make",
         "ocaml_compiler_stub",
-        "ocaml_linux-64"
+        "ocaml_linux-64",
+        "ocaml_osx-arm64"
       ]
     },
     "host": {
@@ -539,14 +1205,17 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
+    "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/ocaml-cmdliner.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"2.1.1\"\n  build_number: 1\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n\npackage:\n  name: ocaml-cmdliner\n  version: ${{ version }}\n\nsource:\n  url: https://erratique.ch/software/cmdliner/releases/cmdliner-${{ version }}.tbz\n  sha256: 05b938d1def4f54c478178f1982822834510431ed98f2ac67cb4d90aa120d6b6\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script: build.sh\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # ocaml_win-64 >=14 only run-constrains the C compiler; activate it here, once (vs2022, zig)\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler(\"c\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # the cross compiler does not pull the native one; the build runs OCaml on the build machine\n    - if: build_platform != target_platform and unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n    # windows cross: the self-contained gcc track needs no vcvars\n    - if: build_platform != target_platform and not unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.* gcc_*\n    - ${{ m2 }}make\n    # build.sh runs under MSYS2 bash; the Makefile calls install(1)\n    - if: not unix\n      then:\n        - ${{ m2 }}bash >=5.2\n        - ${{ m2 }}coreutils\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # the noarch ocaml metapackage does not pin the windows toolchain track\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n  # the ocaml run_export does not encode the windows toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - ${{ library }}bin/cmdliner${{ \".exe\" if not unix }}\n        - ${{ library }}lib/ocaml/cmdliner/*\n        - ${{ library }}share/bash-completion/completions/*\n        - ${{ library }}share/zsh/site-functions/*\n        - ${{ library }}share/powershell/*\n\nabout:\n  homepage: https://erratique.ch/software/cmdliner\n  repository: https://github.com/dbuenzli/cmdliner\n  documentation: https://erratique.ch/software/cmdliner/doc\n  summary: Declarative definition of command line interfaces for OCaml\n  license: ISC\n  license_file: LICENSE.md\n\nextra:\n  recipe-maintainers:\n    - ManuelLerchner\n    - MementoRC\n",
+  "raw_meta_yaml": "context:\n  version: \"2.1.1\"\n  build_number: 2\n\n  # ELF machine token `file` prints for the target; checked by the arch test\n  elf_arch: ${{ \"x86-64\" if target_platform == \"linux-64\" else \"aarch64\" if target_platform == \"linux-aarch64\" else \"PowerPC\" if target_platform == \"linux-ppc64le\" else \"RISC-V\" if target_platform == \"linux-riscv64\" else \"S/390\" if target_platform == \"linux-s390x\" else \"\" }}\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n\npackage:\n  name: ocaml-cmdliner\n  version: ${{ version }}\n\nsource:\n  url: https://erratique.ch/software/cmdliner/releases/cmdliner-${{ version }}.tbz\n  sha256: 05b938d1def4f54c478178f1982822834510431ed98f2ac67cb4d90aa120d6b6\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script: build.sh\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # ocaml_win-64 >=14 only run-constrains the C compiler; activate it here, once (vs2022, zig)\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler(\"c\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # the cross compiler does not pull the native one; the build runs OCaml on the build machine\n    - if: build_platform != target_platform and unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n        # ocaml >=17: the cross compiler activates itself (shims, OCAMLLIB, host OCAMLPATH) and has natdynlink\n        - ocaml_${{ target_platform }}[version=\"${{ ocaml_compiler_version }}.*\", build_number=\">=17\"]\n    # windows cross: the self-contained gcc track needs no vcvars\n    - if: build_platform != target_platform and not unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.* gcc_*\n    - ${{ m2 }}make\n    # build.sh runs under MSYS2 bash; the Makefile calls install(1)\n    - if: not unix\n      then:\n        - ${{ m2 }}bash >=5.2\n        - ${{ m2 }}coreutils\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # the noarch ocaml metapackage does not pin the windows toolchain track\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n  # the ocaml run_export does not encode the windows toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - ${{ library }}bin/cmdliner${{ \".exe\" if not unix }}\n        - ${{ library }}lib/ocaml/cmdliner/*\n        - ${{ library }}share/bash-completion/completions/*\n        - ${{ library }}share/zsh/site-functions/*\n        - ${{ library }}share/powershell/*\n  # cross lanes test under qemu binfmt, which would also run a build-machine\n  # binary; check the native objects' ELF headers name the target instead\n  - if: linux\n    then:\n      script:\n        # test scripts are not jinja-rendered; hand the token over by env\n        env:\n          ELF_ARCH: ${{ elf_arch }}\n        content:\n          - set -eu\n          - found=0\n          - tmp=\"$(mktemp -d)\"\n          - |\n            for a in $(find \"${PREFIX}/lib/ocaml/cmdliner\" -name '*.a'); do\n              found=1\n              d=\"${tmp}/$(basename \"$a\" .a)\"\n              mkdir -p \"$d\"\n              (cd \"$d\" && ar x \"$a\")\n              out=\"$(find \"$d\" -name '*.o' -exec file -L {} +)\"\n              echo \"$out\"\n              if echo \"$out\" | grep -v \"${ELF_ARCH}\" | grep -q .; then echo \"wrong arch in $a\"; exit 1; fi\n            done\n          - test \"$found\" = 1\n          - |\n            for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*cmdliner*.so; do\n              [ -e \"$s\" ] || continue\n              file -L \"$s\"\n              file -L \"$s\" | grep -q \"${ELF_ARCH}\"\n            done\n      requirements:\n        build:\n          - file\n          - binutils\n\nabout:\n  homepage: https://erratique.ch/software/cmdliner\n  repository: https://github.com/dbuenzli/cmdliner\n  documentation: https://erratique.ch/software/cmdliner/doc\n  summary: Declarative definition of command line interfaces for OCaml\n  license: ISC\n  license_file: LICENSE.md\n\nextra:\n  recipe-maintainers:\n    - ManuelLerchner\n    - MementoRC\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -560,7 +1229,12 @@
       "ocaml",
       "ocaml_compiler_stub",
       "ocaml_linux-64",
-      "ocaml_win-64"
+      "ocaml_linux-aarch64",
+      "ocaml_linux-ppc64le",
+      "ocaml_osx-64",
+      "ocaml_osx-arm64",
+      "ocaml_win-64",
+      "ocaml_win-arm64"
     ]
   },
   "requirements": {
@@ -576,7 +1250,12 @@
         "make",
         "ocaml_compiler_stub",
         "ocaml_linux-64",
-        "ocaml_win-64"
+        "ocaml_linux-aarch64",
+        "ocaml_linux-ppc64le",
+        "ocaml_osx-64",
+        "ocaml_osx-arm64",
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "host": {
@@ -585,7 +1264,8 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "ocaml",
-        "ocaml_win-64"
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "run": {
@@ -598,7 +1278,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "strong_exports": false,
@@ -616,14 +1299,20 @@
         "ocaml_compiler_stub",
         "ocaml_linux-64 5.4.0.*",
         "ocaml_linux-64 5.4.0.* gcc_*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
         "ocaml 5.4.0.*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "run": {
@@ -632,7 +1321,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "url": "https://erratique.ch/software/cmdliner/releases/cmdliner-2.1.1.tbz",
@@ -651,7 +1343,7 @@
       "summary": "Declarative definition of command line interfaces for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.sh"
     },
     "extra": {
@@ -780,6 +1472,120 @@
       "elements": [
         "ocaml",
         "ocaml_win-64"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/dbuenzli/cmdliner",
+      "doc_url": "https://erratique.ch/software/cmdliner/doc",
+      "home": "https://erratique.ch/software/cmdliner",
+      "license": "ISC",
+      "license_family": "ISC",
+      "license_file": "LICENSE.md",
+      "summary": "Declarative definition of command line interfaces for OCaml"
+    },
+    "build": {
+      "number": "2",
+      "script": "build.sh"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-cmdliner",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.* gcc_*",
+            "m2-make",
+            "m2-bash >=5.2",
+            "m2-coreutils"
+          ],
+          "host": [
+            "ocaml 5.4.0.*",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/bin/cmdliner.exe",
+                "Library/lib/ocaml/cmdliner/*",
+                "Library/share/bash-completion/completions/*",
+                "Library/share/zsh/site-functions/*",
+                "Library/share/powershell/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "2.1.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-cmdliner",
+      "version": "2.1.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+        "ocaml_linux-64 5.4.0.* gcc_*",
+        "m2-make",
+        "m2-bash >=5.2",
+        "m2-coreutils"
+      ],
+      "host": [
+        "ocaml 5.4.0.*",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "05b938d1def4f54c478178f1982822834510431ed98f2ac67cb4d90aa120d6b6",
+      "url": "https://erratique.ch/software/cmdliner/releases/cmdliner-2.1.1.tbz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "m2-bash",
+        "m2-coreutils",
+        "m2-make",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_win-arm64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml",
+        "ocaml_win-arm64"
       ]
     },
     "run": {
