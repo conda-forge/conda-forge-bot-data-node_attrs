@@ -4,21 +4,30 @@
   "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nocaml_compiler:\n- ocaml\nocaml_compiler_version:\n- 5.4.0\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "build_platform": {
+      "linux_ppc64le": "linux_64",
+      "linux_riscv64": "linux_64",
+      "linux_s390x": "linux_64"
+    },
     "conda_build": {
       "error_overlinking": true
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
-      "osx_arm64": "default"
-    }
+      "linux_aarch64": "default",
+      "osx_arm64": "default",
+      "win_arm64": "default"
+    },
+    "test": "all"
   },
-  "feedstock_hash": "f3c429662a0a6f7ea4847248e0d979add9588544",
-  "feedstock_hash_ts": 1792204394,
+  "feedstock_hash": "30f03c678aed9b0e50660564c37892258151a724",
+  "feedstock_hash_ts": 1792271672,
   "feedstock_name": "ocaml-yojson",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -31,7 +40,7 @@
       "summary": "Low-level JSON parsing and printing library for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "dune build --profile=release -p yojson @install",
         "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" yojson"
@@ -68,6 +77,106 @@
                 "doc/yojson/odoc-pages/*"
               ],
               "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "3.0.0"
+      },
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/ydump",
+                "lib/ocaml/yojson/*",
+                "doc/yojson/*",
+                "doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "3.0.0"
+      },
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/ydump",
+                "lib/ocaml/yojson/*",
+                "doc/yojson/*",
+                "doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
             }
           }
         ],
@@ -115,7 +224,250 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/ocaml-community/yojson",
+      "home": "https://github.com/ocaml-community/yojson",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE.md",
+      "summary": "Low-level JSON parsing and printing library for OCaml"
+    },
+    "build": {
+      "number": "2",
+      "script": [
+        "dune build --profile=release -p yojson @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" yojson"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/ydump",
+                "lib/ocaml/yojson/*",
+                "doc/yojson/*",
+                "doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "aarch64"
+              }
+            }
+          }
+        ],
+        "version": "3.0.0"
+      }
+    ],
+    "package": {
+      "name": "ocaml-yojson",
+      "version": "3.0.0"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml-dune >=2.7"
+      ],
+      "host": [
+        "ocaml 5.4.0.*"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "99414da7609b92a02474ef4b49ecda15edc8cbba5229341b124e7e4695c39610",
+      "url": "https://github.com/ocaml-community/yojson/releases/download/3.0.0/yojson-3.0.0.tbz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_linux-aarch64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml"
+      ]
+    },
+    "run": {
+      "__set__": true,
       "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
+    }
+  },
+  "linux_ppc64le_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/ocaml-community/yojson",
+      "home": "https://github.com/ocaml-community/yojson",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE.md",
+      "summary": "Low-level JSON parsing and printing library for OCaml"
+    },
+    "build": {
+      "number": "2",
+      "script": [
+        "dune build --profile=release -p yojson @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" yojson"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/ydump",
+                "lib/ocaml/yojson/*",
+                "doc/yojson/*",
+                "doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "PowerPC"
+              }
+            }
+          }
+        ],
+        "version": "3.0.0"
+      }
+    ],
+    "package": {
+      "name": "ocaml-yojson",
+      "version": "3.0.0"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "ocaml-dune >=2.7"
+      ],
+      "host": [
+        "ocaml 5.4.0.*"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "99414da7609b92a02474ef4b49ecda15edc8cbba5229341b124e7e4695c39610",
+      "url": "https://github.com/ocaml-community/yojson/releases/download/3.0.0/yojson-3.0.0.tbz"
+    }
+  },
+  "linux_ppc64le_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_linux-ppc64le"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "meta_yaml": {
@@ -128,10 +480,11 @@
       "summary": "Low-level JSON parsing and printing library for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "dune build --profile=release -p yojson @install",
         "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" yojson",
+        "set DUNE_CACHE=disabled",
         "dune build --cache=disabled --profile=release -p yojson @install",
         "if errorlevel 1 exit 1",
         "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" yojson"
@@ -169,6 +522,106 @@
               ],
               "strict": true
             }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "3.0.0"
+      },
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/ydump",
+                "lib/ocaml/yojson/*",
+                "doc/yojson/*",
+                "doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "3.0.0"
+      },
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/ydump",
+                "lib/ocaml/yojson/*",
+                "doc/yojson/*",
+                "doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
           }
         ],
         "version": "3.0.0"
@@ -181,6 +634,97 @@
             "ocaml_compiler_stub",
             "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/ydump",
+                "lib/ocaml/yojson/*",
+                "doc/yojson/*",
+                "doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "aarch64"
+              }
+            }
+          }
+        ],
+        "version": "3.0.0"
+      },
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "bin/ydump",
+                "lib/ocaml/yojson/*",
+                "doc/yojson/*",
+                "doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": "set -eu\nout=$(file -L \"${PREFIX}/bin/ydump\")\necho \"$out\"\necho \"$out\" | grep -q \"${ELF_ARCH}\"\nn=0\nfor a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n  n=$((n + 1))\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  for o in \"$d\"/*.o; do\n    out=$(file -L \"$o\")\n    echo \"$out\"\n    echo \"$out\" | grep -q \"${ELF_ARCH}\"\n  done\ndone\ntest \"$n\" -gt 0\nfor s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n  [ -e \"$s\" ] || continue\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  echo \"$out\" | grep -q \"${ELF_ARCH}\"\ndone\n",
+              "env": {
+                "ELF_ARCH": "PowerPC"
+              }
+            }
+          }
+        ],
+        "version": "3.0.0"
+      },
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
             "ocaml-dune >=2.7"
           ],
           "host": [
@@ -211,6 +755,7 @@
             "ocaml_compiler_stub",
             "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
             "ocaml-dune >=2.7"
           ],
           "host": [
@@ -297,6 +842,39 @@
           }
         ],
         "version": "3.0.0"
+      },
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.* gcc_*",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/bin/ydump.exe",
+                "Library/lib/ocaml/yojson/*",
+                "Library/doc/yojson/*",
+                "Library/doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "3.0.0"
       }
     ],
     "package": {
@@ -309,14 +887,20 @@
         "c_stdlib_stub",
         "ocaml-dune >=2.7",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
         "m2w64_c_stdlib_stub",
         "ocaml_win-64 5.4.0.* c_compiler_stub",
         "ocaml_linux-64 5.4.0.* gcc_*",
-        "c_compiler_stub"
+        "c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ],
       "host": [
         "ocaml 5.4.0.*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "schema_version": 1,
@@ -336,7 +920,7 @@
       "summary": "Low-level JSON parsing and printing library for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "dune build --profile=release -p yojson @install",
         "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" yojson"
@@ -357,6 +941,7 @@
             "ocaml_compiler_stub",
             "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
             "ocaml-dune >=2.7"
           ],
           "host": [
@@ -389,6 +974,7 @@
         "ocaml_compiler_stub",
         "c_stdlib_stub",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
         "ocaml-dune >=2.7"
       ],
       "host": [
@@ -408,7 +994,8 @@
         "c_stdlib_stub",
         "ocaml-dune",
         "ocaml_compiler_stub",
-        "ocaml_linux-64"
+        "ocaml_linux-64",
+        "ocaml_osx-64"
       ]
     },
     "host": {
@@ -436,7 +1023,7 @@
       "summary": "Low-level JSON parsing and printing library for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "dune build --profile=release -p yojson @install",
         "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" yojson"
@@ -457,6 +1044,7 @@
             "ocaml_compiler_stub",
             "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
             "ocaml-dune >=2.7"
           ],
           "host": [
@@ -489,6 +1077,7 @@
         "ocaml_compiler_stub",
         "c_stdlib_stub",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
         "ocaml-dune >=2.7"
       ],
       "host": [
@@ -508,7 +1097,8 @@
         "c_stdlib_stub",
         "ocaml-dune",
         "ocaml_compiler_stub",
-        "ocaml_linux-64"
+        "ocaml_linux-64",
+        "ocaml_osx-arm64"
       ]
     },
     "host": {
@@ -535,14 +1125,17 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
+    "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/ocaml-yojson.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"3.0.0\"\n  build_number: 1\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n\npackage:\n  name: ocaml-yojson\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml-community/yojson/releases/download/${{ version }}/yojson-${{ version }}.tbz\n  sha256: 99414da7609b92a02474ef4b49ecda15edc8cbba5229341b124e7e4695c39610\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script:\n    - if: unix\n      then:\n        - dune build --profile=release -p yojson @install\n        - dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" yojson\n      else:\n        # Plain cmd.exe, not MSYS2 bash: pure OCaml, no stubs, so no wrapper is\n        # needed and the backslashed install prefix reaches dune intact. The\n        # dune cache trips over mixed path separators on windows.\n        - dune build --cache=disabled --profile=release -p yojson @install\n        - if errorlevel 1 exit 1\n        - dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" yojson\n        - if errorlevel 1 exit 1\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # ocaml_win-64 >=14 only run-constrains the C compiler; activate it here, once (vs2022, zig)\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler(\"c\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # the cross compiler does not pull the native one; the build runs OCaml on the build machine\n    - if: build_platform != target_platform and unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n    # windows cross: the self-contained gcc track needs no vcvars\n    - if: build_platform != target_platform and not unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.* gcc_*\n    - ocaml-dune >=2.7\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # the noarch ocaml metapackage does not pin the windows toolchain track\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n  # the ocaml run_export does not encode the windows toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - if: unix\n          then: bin/ydump\n          else: Library/bin/ydump.exe\n        - ${{ library }}lib/ocaml/yojson/*\n        - ${{ library }}doc/yojson/*\n        - ${{ library }}doc/yojson/odoc-pages/*\n\nabout:\n  homepage: https://github.com/ocaml-community/yojson\n  repository: https://github.com/ocaml-community/yojson\n  summary: Low-level JSON parsing and printing library for OCaml\n  license: BSD-3-Clause\n  license_file: LICENSE.md\n\nextra:\n  recipe-maintainers:\n    - ManuelLerchner\n    - MementoRC\n",
+  "raw_meta_yaml": "context:\n  version: \"3.0.0\"\n  build_number: 2\n\n  # ELF machine token `file` prints for the target; checked by the arch test\n  elf_arch: ${{ \"x86-64\" if target_platform == \"linux-64\" else \"aarch64\" if target_platform == \"linux-aarch64\" else \"PowerPC\" if target_platform == \"linux-ppc64le\" else \"RISC-V\" if target_platform == \"linux-riscv64\" else \"S/390\" if target_platform == \"linux-s390x\" else \"\" }}\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n\npackage:\n  name: ocaml-yojson\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml-community/yojson/releases/download/${{ version }}/yojson-${{ version }}.tbz\n  sha256: 99414da7609b92a02474ef4b49ecda15edc8cbba5229341b124e7e4695c39610\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script:\n    - if: unix\n      then:\n        - dune build --profile=release -p yojson @install\n        - dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" yojson\n      else:\n        # Plain cmd.exe, not MSYS2 bash: pure OCaml, no stubs, so no wrapper is\n        # needed and the backslashed install prefix reaches dune intact. The\n        # dune cache trips over mixed path separators on windows.\n        # dune install also opens the shared cache; disable it for every dune call\n        - set DUNE_CACHE=disabled\n        - dune build --cache=disabled --profile=release -p yojson @install\n        - if errorlevel 1 exit 1\n        - dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" yojson\n        - if errorlevel 1 exit 1\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # ocaml_win-64 >=14 only run-constrains the C compiler; activate it here, once (vs2022, zig)\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler(\"c\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # the cross compiler does not pull the native one; the build runs OCaml on the build machine\n    - if: build_platform != target_platform and unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n        # ocaml >=17: the cross compiler activates itself (shims, OCAMLLIB, host OCAMLPATH) and has natdynlink\n        - ocaml_${{ target_platform }}[version=\"${{ ocaml_compiler_version }}.*\", build_number=\">=17\"]\n    # windows cross: the self-contained gcc track needs no vcvars\n    - if: build_platform != target_platform and not unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.* gcc_*\n    - ocaml-dune >=2.7\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # the noarch ocaml metapackage does not pin the windows toolchain track\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n  # the ocaml run_export does not encode the windows toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - if: unix\n          then: bin/ydump\n          else: Library/bin/ydump.exe\n        - ${{ library }}lib/ocaml/yojson/*\n        - ${{ library }}doc/yojson/*\n        - ${{ library }}doc/yojson/odoc-pages/*\n  # cross lanes test under qemu binfmt, which would also run a build-machine\n  # binary; check the native objects' ELF headers name the target instead\n  - if: linux\n    then:\n      script:\n        # test scripts are not jinja-rendered; hand the token over by env\n        env:\n          ELF_ARCH: ${{ elf_arch }}\n        content:\n          - |\n            set -eu\n            out=$(file -L \"${PREFIX}/bin/ydump\")\n            echo \"$out\"\n            echo \"$out\" | grep -q \"${ELF_ARCH}\"\n            n=0\n            for a in $(find \"${PREFIX}/lib/ocaml/yojson\" -name '*.a'); do\n              n=$((n + 1))\n              d=$(mktemp -d)\n              (cd \"$d\" && ar x \"$a\")\n              for o in \"$d\"/*.o; do\n                out=$(file -L \"$o\")\n                echo \"$out\"\n                echo \"$out\" | grep -q \"${ELF_ARCH}\"\n              done\n            done\n            test \"$n\" -gt 0\n            for s in \"${PREFIX}\"/lib/ocaml/stublibs/dll*yojson*.so; do\n              [ -e \"$s\" ] || continue\n              out=$(file -L \"$s\")\n              echo \"$out\"\n              echo \"$out\" | grep -q \"${ELF_ARCH}\"\n            done\n      requirements:\n        build:\n          - file\n          - binutils\n\nabout:\n  homepage: https://github.com/ocaml-community/yojson\n  repository: https://github.com/ocaml-community/yojson\n  summary: Low-level JSON parsing and printing library for OCaml\n  license: BSD-3-Clause\n  license_file: LICENSE.md\n\nextra:\n  recipe-maintainers:\n    - ManuelLerchner\n    - MementoRC\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -553,7 +1146,12 @@
       "ocaml-dune",
       "ocaml_compiler_stub",
       "ocaml_linux-64",
-      "ocaml_win-64"
+      "ocaml_linux-aarch64",
+      "ocaml_linux-ppc64le",
+      "ocaml_osx-64",
+      "ocaml_osx-arm64",
+      "ocaml_win-64",
+      "ocaml_win-arm64"
     ]
   },
   "requirements": {
@@ -566,7 +1164,12 @@
         "ocaml-dune",
         "ocaml_compiler_stub",
         "ocaml_linux-64",
-        "ocaml_win-64"
+        "ocaml_linux-aarch64",
+        "ocaml_linux-ppc64le",
+        "ocaml_osx-64",
+        "ocaml_osx-arm64",
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "host": {
@@ -575,7 +1178,8 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "ocaml",
-        "ocaml_win-64"
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "run": {
@@ -588,7 +1192,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "strong_exports": false,
@@ -603,14 +1210,20 @@
         "ocaml_compiler_stub",
         "ocaml_linux-64 5.4.0.*",
         "ocaml_linux-64 5.4.0.* gcc_*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
         "ocaml 5.4.0.*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "run": {
@@ -619,7 +1232,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "url": "https://github.com/ocaml-community/yojson/releases/download/3.0.0/yojson-3.0.0.tbz",
@@ -637,8 +1253,9 @@
       "summary": "Low-level JSON parsing and printing library for OCaml"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
+        "set DUNE_CACHE=disabled",
         "dune build --cache=disabled --profile=release -p yojson @install",
         "if errorlevel 1 exit 1",
         "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" yojson"
@@ -760,6 +1377,117 @@
       "elements": [
         "ocaml",
         "ocaml_win-64"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/ocaml-community/yojson",
+      "home": "https://github.com/ocaml-community/yojson",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE.md",
+      "summary": "Low-level JSON parsing and printing library for OCaml"
+    },
+    "build": {
+      "number": "2",
+      "script": [
+        "set DUNE_CACHE=disabled",
+        "dune build --cache=disabled --profile=release -p yojson @install",
+        "if errorlevel 1 exit 1",
+        "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" yojson"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-yojson",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.* gcc_*",
+            "ocaml-dune >=2.7"
+          ],
+          "host": [
+            "ocaml 5.4.0.*",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/bin/ydump.exe",
+                "Library/lib/ocaml/yojson/*",
+                "Library/doc/yojson/*",
+                "Library/doc/yojson/odoc-pages/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "3.0.0"
+      }
+    ],
+    "package": {
+      "name": "ocaml-yojson",
+      "version": "3.0.0"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+        "ocaml_linux-64 5.4.0.* gcc_*",
+        "ocaml-dune >=2.7"
+      ],
+      "host": [
+        "ocaml 5.4.0.*",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "99414da7609b92a02474ef4b49ecda15edc8cbba5229341b124e7e4695c39610",
+      "url": "https://github.com/ocaml-community/yojson/releases/download/3.0.0/yojson-3.0.0.tbz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_win-arm64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml",
+        "ocaml_win-arm64"
       ]
     },
     "run": {
