@@ -4,21 +4,30 @@
   "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nocaml_compiler:\n- ocaml\nocaml_compiler_version:\n- 5.4.0\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "build_platform": {
+      "linux_ppc64le": "linux_64",
+      "linux_riscv64": "linux_64",
+      "linux_s390x": "linux_64"
+    },
     "conda_build": {
       "error_overlinking": true
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
-      "osx_arm64": "default"
-    }
+      "linux_aarch64": "default",
+      "osx_arm64": "default",
+      "win_arm64": "default"
+    },
+    "test": "all"
   },
-  "feedstock_hash": "2dd8f1d0e00f484162840d525e96b249296b710f",
-  "feedstock_hash_ts": 1792201365,
+  "feedstock_hash": "b9089774f6b2613e9f775ca9c895d5a8c6af14f6",
+  "feedstock_hash_ts": 1792271728,
   "feedstock_name": "ocaml-ppx-derivers",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -31,7 +40,7 @@
       "summary": "Shared ppx_deriving and ppx_type_conv registry for ppx derivers"
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": [
         "dune build --profile=release -p ppx_derivers @install",
         "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ppx_derivers"
@@ -49,8 +58,8 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
-            "c_stdlib_stub",
             "ocaml_compiler_stub",
+            "c_stdlib_stub",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -67,6 +76,117 @@
               ],
               "strict": true
             }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_derivers/*",
+                "doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_derivers/*",
+                "doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
           }
         ],
         "version": "1.2.1"
@@ -78,8 +198,8 @@
     },
     "requirements": {
       "build": [
-        "c_stdlib_stub",
         "ocaml_compiler_stub",
+        "c_stdlib_stub",
         "ocaml-dune >=1.0"
       ],
       "host": [
@@ -113,7 +233,256 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/ocaml-ppx/ppx_derivers",
+      "home": "https://github.com/ocaml-ppx/ppx_derivers",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE.md",
+      "summary": "Shared ppx_deriving and ppx_type_conv registry for ppx derivers"
+    },
+    "build": {
+      "number": "4",
+      "script": [
+        "dune build --profile=release -p ppx_derivers @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ppx_derivers"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_derivers/*",
+                "doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "aarch64"
+              }
+            }
+          }
+        ],
+        "version": "1.2.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-ppx-derivers",
+      "version": "1.2.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml-dune >=1.0"
+      ],
+      "host": [
+        "ocaml 5.4.0.*"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "b6595ee187dea792b31fc54a0e1524ab1e48bc6068d3066c45215a138cc73b95",
+      "url": "https://github.com/ocaml-ppx/ppx_derivers/archive/1.2.1.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_linux-aarch64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml"
+      ]
+    },
+    "run": {
+      "__set__": true,
       "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
+    }
+  },
+  "linux_ppc64le_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/ocaml-ppx/ppx_derivers",
+      "home": "https://github.com/ocaml-ppx/ppx_derivers",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE.md",
+      "summary": "Shared ppx_deriving and ppx_type_conv registry for ppx derivers"
+    },
+    "build": {
+      "number": "4",
+      "script": [
+        "dune build --profile=release -p ppx_derivers @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ppx_derivers"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_derivers/*",
+                "doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "PowerPC"
+              }
+            }
+          }
+        ],
+        "version": "1.2.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-ppx-derivers",
+      "version": "1.2.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "ocaml-dune >=1.0"
+      ],
+      "host": [
+        "ocaml 5.4.0.*"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "b6595ee187dea792b31fc54a0e1524ab1e48bc6068d3066c45215a138cc73b95",
+      "url": "https://github.com/ocaml-ppx/ppx_derivers/archive/1.2.1.tar.gz"
+    }
+  },
+  "linux_ppc64le_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_linux-ppc64le"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "meta_yaml": {
@@ -126,10 +495,11 @@
       "summary": "Shared ppx_deriving and ppx_type_conv registry for ppx derivers"
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": [
         "dune build --profile=release -p ppx_derivers @install",
         "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ppx_derivers",
+        "set DUNE_CACHE=disabled",
         "dune build --cache=disabled --profile=release -p ppx_derivers @install",
         "if errorlevel 1 exit 1",
         "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ppx_derivers"
@@ -147,8 +517,8 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
-            "c_stdlib_stub",
             "ocaml_compiler_stub",
+            "c_stdlib_stub",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -165,6 +535,25 @@
               ],
               "strict": true
             }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
           }
         ],
         "version": "1.2.1"
@@ -174,9 +563,102 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
-            "c_stdlib_stub",
             "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_derivers/*",
+                "doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_derivers/*",
+                "doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -193,6 +675,25 @@
               ],
               "strict": true
             }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "aarch64"
+              }
+            }
           }
         ],
         "version": "1.2.1"
@@ -202,9 +703,58 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
-            "c_stdlib_stub",
             "ocaml_compiler_stub",
+            "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_derivers/*",
+                "doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "found=0",
+                "for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n  found=1\n  d=$(mktemp -d)\n  (cd \"$d\" && ar x \"$a\")\n  out=$(file -L \"$d\"/*.o)\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\ndone\n",
+                "for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n  out=$(file -L \"$s\")\n  echo \"$out\"\n  if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\ndone\n",
+                "test \"$found\" = 1"
+              ],
+              "env": {
+                "ELF_ARCH": "PowerPC"
+              }
+            }
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -230,10 +780,39 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_derivers/*",
+                "doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
             "m2w64_c_stdlib_stub",
-            "ocaml_compiler_stub",
             "ocaml_win-64 5.4.0.* c_compiler_stub",
-            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-64 5.4.0.* gcc_*",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -260,16 +839,47 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
+            "ocaml_compiler_stub",
             "c_stdlib_stub",
             "c_compiler_stub",
-            "ocaml_compiler_stub",
             "ocaml_win-64 5.4.0.* c_compiler_stub",
-            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-64 5.4.0.* gcc_*",
             "ocaml-dune >=1.0"
           ],
           "host": [
             "ocaml 5.4.0.*",
             "ocaml_win-64 5.4.0.* c_compiler_stub"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/lib/ocaml/ppx_derivers/*",
+                "Library/doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.2.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.* gcc_*",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub"
           ],
           "run": []
         },
@@ -293,17 +903,24 @@
     },
     "requirements": {
       "build": [
-        "c_stdlib_stub",
         "ocaml_compiler_stub",
+        "c_stdlib_stub",
         "ocaml-dune >=1.0",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
         "m2w64_c_stdlib_stub",
         "ocaml_win-64 5.4.0.* c_compiler_stub",
-        "c_compiler_stub"
+        "ocaml_linux-64 5.4.0.* gcc_*",
+        "c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ],
       "host": [
         "ocaml 5.4.0.*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "schema_version": 1,
@@ -323,7 +940,7 @@
       "summary": "Shared ppx_deriving and ppx_type_conv registry for ppx derivers"
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": [
         "dune build --profile=release -p ppx_derivers @install",
         "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ppx_derivers"
@@ -341,9 +958,10 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
-            "c_stdlib_stub",
             "ocaml_compiler_stub",
+            "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -371,9 +989,10 @@
     },
     "requirements": {
       "build": [
-        "c_stdlib_stub",
         "ocaml_compiler_stub",
+        "c_stdlib_stub",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
         "ocaml-dune >=1.0"
       ],
       "host": [
@@ -393,7 +1012,8 @@
         "c_stdlib_stub",
         "ocaml-dune",
         "ocaml_compiler_stub",
-        "ocaml_linux-64"
+        "ocaml_linux-64",
+        "ocaml_osx-64"
       ]
     },
     "host": {
@@ -421,7 +1041,7 @@
       "summary": "Shared ppx_deriving and ppx_type_conv registry for ppx derivers"
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": [
         "dune build --profile=release -p ppx_derivers @install",
         "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ppx_derivers"
@@ -439,9 +1059,10 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
-            "c_stdlib_stub",
             "ocaml_compiler_stub",
+            "c_stdlib_stub",
             "ocaml_linux-64 5.4.0.*",
+            "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -469,9 +1090,10 @@
     },
     "requirements": {
       "build": [
-        "c_stdlib_stub",
         "ocaml_compiler_stub",
+        "c_stdlib_stub",
         "ocaml_linux-64 5.4.0.*",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
         "ocaml-dune >=1.0"
       ],
       "host": [
@@ -491,7 +1113,8 @@
         "c_stdlib_stub",
         "ocaml-dune",
         "ocaml_compiler_stub",
-        "ocaml_linux-64"
+        "ocaml_linux-64",
+        "ocaml_osx-arm64"
       ]
     },
     "host": {
@@ -518,14 +1141,17 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
+    "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/ocaml-ppx-derivers.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"1.2.1\"\n  build_number: 3\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n\npackage:\n  name: ocaml-ppx-derivers\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml-ppx/ppx_derivers/archive/${{ version }}.tar.gz\n  sha256: b6595ee187dea792b31fc54a0e1524ab1e48bc6068d3066c45215a138cc73b95\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script:\n    - if: unix\n      then:\n        - dune build --profile=release -p ppx_derivers @install\n        - dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ppx_derivers\n      else:\n        # Plain cmd.exe, not MSYS2 bash: pure OCaml, no stubs, so no wrapper is\n        # needed and the backslashed install prefix reaches dune intact. The\n        # dune cache trips over mixed path separators on windows.\n        - dune build --cache=disabled --profile=release -p ppx_derivers @install\n        - if errorlevel 1 exit 1\n        - dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ppx_derivers\n        - if errorlevel 1 exit 1\n\nrequirements:\n  build:\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # MSVC is activated here, once: ocaml_win-64 >=14 only run-constrains it.\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler('c') }}\n    - ${{ compiler(\"ocaml\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows.\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - if: build_platform != target_platform\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n    - ocaml-dune >=1.0\n  host:\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # The noarch ocaml metapackage does not pin the windows toolchain track.\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n  # The ocaml run_export does not encode the windows toolchain track.\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - ${{ library }}lib/ocaml/ppx_derivers/*\n        - ${{ library }}doc/ppx_derivers/*\n\nabout:\n  homepage: https://github.com/ocaml-ppx/ppx_derivers\n  repository: https://github.com/ocaml-ppx/ppx_derivers\n  summary: Shared ppx_deriving and ppx_type_conv registry for ppx derivers\n  license: BSD-3-Clause\n  license_file: LICENSE.md\n\nextra:\n  recipe-maintainers:\n    - ManuelLerchner\n    - MementoRC\n",
+  "raw_meta_yaml": "context:\n  version: \"1.2.1\"\n  build_number: 4\n\n  # ELF machine token `file` prints for the target; checked by the arch test\n  elf_arch: ${{ \"x86-64\" if target_platform == \"linux-64\" else \"aarch64\" if target_platform == \"linux-aarch64\" else \"PowerPC\" if target_platform == \"linux-ppc64le\" else \"RISC-V\" if target_platform == \"linux-riscv64\" else \"S/390\" if target_platform == \"linux-s390x\" else \"\" }}\n\n  # ocaml_win-64 ships gcc_* and vs2022_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n\npackage:\n  name: ocaml-ppx-derivers\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml-ppx/ppx_derivers/archive/${{ version }}.tar.gz\n  sha256: b6595ee187dea792b31fc54a0e1524ab1e48bc6068d3066c45215a138cc73b95\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script:\n    - if: unix\n      then:\n        - dune build --profile=release -p ppx_derivers @install\n        - dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ppx_derivers\n      else:\n        # Plain cmd.exe, not MSYS2 bash: pure OCaml, no stubs, so no wrapper is\n        # needed and the backslashed install prefix reaches dune intact. The\n        # dune cache trips over mixed path separators on windows.\n        # dune install also opens the shared cache; disable it for every dune call\n        - set DUNE_CACHE=disabled\n        - dune build --cache=disabled --profile=release -p ppx_derivers @install\n        - if errorlevel 1 exit 1\n        - dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ppx_derivers\n        - if errorlevel 1 exit 1\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # ocaml_win-64 >=14 only run-constrains the C compiler; activate it here, once (vs2022, zig)\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler(\"c\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # the cross compiler does not pull the native one; the build runs OCaml on the build machine\n    - if: build_platform != target_platform and unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n        # ocaml >=17: the cross compiler activates itself (shims, OCAMLLIB, host OCAMLPATH) and has natdynlink\n        - ocaml_${{ target_platform }}[version=\"${{ ocaml_compiler_version }}.*\", build_number=\">=17\"]\n    # windows cross: the self-contained gcc track needs no vcvars\n    - if: build_platform != target_platform and not unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.* gcc_*\n    - ocaml-dune >=1.0\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # the noarch ocaml metapackage does not pin the windows toolchain track\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n  # the ocaml run_export does not encode the windows toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - ${{ library }}lib/ocaml/ppx_derivers/*\n        - ${{ library }}doc/ppx_derivers/*\n  # cross lanes test under qemu binfmt, which would also run a build-machine\n  # binary; check the native objects' ELF headers name the target instead\n  - if: linux\n    then:\n      script:\n        # test scripts are not jinja-rendered; hand the token over by env\n        env:\n          ELF_ARCH: ${{ elf_arch }}\n        content:\n          - found=0\n          - |\n            for a in $(find \"${PREFIX}/lib/ocaml/ppx_derivers\" -name '*.a'); do\n              found=1\n              d=$(mktemp -d)\n              (cd \"$d\" && ar x \"$a\")\n              out=$(file -L \"$d\"/*.o)\n              echo \"$out\"\n              if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $a\"; exit 1; fi\n            done\n          - |\n            for s in $(find \"${PREFIX}/lib/ocaml/stublibs\" -name 'dll*ppx_derivers*.so' 2>/dev/null); do\n              out=$(file -L \"$s\")\n              echo \"$out\"\n              if echo \"$out\" | grep -v \"${ELF_ARCH}\"; then echo \"wrong arch in $s\"; exit 1; fi\n            done\n          - test \"$found\" = 1\n      requirements:\n        build:\n          - file\n          - binutils\n\nabout:\n  homepage: https://github.com/ocaml-ppx/ppx_derivers\n  repository: https://github.com/ocaml-ppx/ppx_derivers\n  summary: Shared ppx_deriving and ppx_type_conv registry for ppx derivers\n  license: BSD-3-Clause\n  license_file: LICENSE.md\n\nextra:\n  recipe-maintainers:\n    - ManuelLerchner\n    - MementoRC\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -536,7 +1162,12 @@
       "ocaml-dune",
       "ocaml_compiler_stub",
       "ocaml_linux-64",
-      "ocaml_win-64"
+      "ocaml_linux-aarch64",
+      "ocaml_linux-ppc64le",
+      "ocaml_osx-64",
+      "ocaml_osx-arm64",
+      "ocaml_win-64",
+      "ocaml_win-arm64"
     ]
   },
   "requirements": {
@@ -549,7 +1180,12 @@
         "ocaml-dune",
         "ocaml_compiler_stub",
         "ocaml_linux-64",
-        "ocaml_win-64"
+        "ocaml_linux-aarch64",
+        "ocaml_linux-ppc64le",
+        "ocaml_osx-64",
+        "ocaml_osx-arm64",
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "host": {
@@ -558,7 +1194,8 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "ocaml",
-        "ocaml_win-64"
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "run": {
@@ -571,7 +1208,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "strong_exports": false,
@@ -585,14 +1225,21 @@
         "ocaml-dune >=1.0",
         "ocaml_compiler_stub",
         "ocaml_linux-64 5.4.0.*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_linux-64 5.4.0.* gcc_*",
+        "ocaml_linux-aarch64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_linux-ppc64le 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_osx-arm64 5.4.0.*[build_number=\">=17\"]",
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
         "ocaml 5.4.0.*",
-        "ocaml_win-64 5.4.0.* c_compiler_stub"
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ]
     },
     "run": {
@@ -601,7 +1248,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "binutils",
+        "file"
+      ]
     }
   },
   "url": "https://github.com/ocaml-ppx/ppx_derivers/archive/1.2.1.tar.gz",
@@ -619,8 +1269,9 @@
       "summary": "Shared ppx_deriving and ppx_type_conv registry for ppx derivers"
     },
     "build": {
-      "number": "3",
+      "number": "4",
       "script": [
+        "set DUNE_CACHE=disabled",
         "dune build --cache=disabled --profile=release -p ppx_derivers @install",
         "if errorlevel 1 exit 1",
         "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ppx_derivers"
@@ -638,10 +1289,10 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
-            "m2w64_c_stdlib_stub",
             "ocaml_compiler_stub",
+            "m2w64_c_stdlib_stub",
             "ocaml_win-64 5.4.0.* c_compiler_stub",
-            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-64 5.4.0.* gcc_*",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -668,11 +1319,11 @@
         "name": "ocaml-ppx-derivers",
         "requirements": {
           "build": [
+            "ocaml_compiler_stub",
             "c_stdlib_stub",
             "c_compiler_stub",
-            "ocaml_compiler_stub",
             "ocaml_win-64 5.4.0.* c_compiler_stub",
-            "ocaml_linux-64 5.4.0.*",
+            "ocaml_linux-64 5.4.0.* gcc_*",
             "ocaml-dune >=1.0"
           ],
           "host": [
@@ -701,10 +1352,10 @@
     },
     "requirements": {
       "build": [
-        "m2w64_c_stdlib_stub",
         "ocaml_compiler_stub",
+        "m2w64_c_stdlib_stub",
         "ocaml_win-64 5.4.0.* c_compiler_stub",
-        "ocaml_linux-64 5.4.0.*",
+        "ocaml_linux-64 5.4.0.* gcc_*",
         "ocaml-dune >=1.0",
         "c_stdlib_stub",
         "c_compiler_stub"
@@ -738,6 +1389,115 @@
       "elements": [
         "ocaml",
         "ocaml_win-64"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/ocaml-ppx/ppx_derivers",
+      "home": "https://github.com/ocaml-ppx/ppx_derivers",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE.md",
+      "summary": "Shared ppx_deriving and ppx_type_conv registry for ppx derivers"
+    },
+    "build": {
+      "number": "4",
+      "script": [
+        "set DUNE_CACHE=disabled",
+        "dune build --cache=disabled --profile=release -p ppx_derivers @install",
+        "if errorlevel 1 exit 1",
+        "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ppx_derivers"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "ManuelLerchner",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-ppx-derivers",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.* gcc_*",
+            "ocaml-dune >=1.0"
+          ],
+          "host": [
+            "ocaml 5.4.0.*",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/lib/ocaml/ppx_derivers/*",
+                "Library/doc/ppx_derivers/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "1.2.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-ppx-derivers",
+      "version": "1.2.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+        "ocaml_linux-64 5.4.0.* gcc_*",
+        "ocaml-dune >=1.0"
+      ],
+      "host": [
+        "ocaml 5.4.0.*",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "b6595ee187dea792b31fc54a0e1524ab1e48bc6068d3066c45215a138cc73b95",
+      "url": "https://github.com/ocaml-ppx/ppx_derivers/archive/1.2.1.tar.gz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_win-arm64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml",
+        "ocaml_win-arm64"
       ]
     },
     "run": {
