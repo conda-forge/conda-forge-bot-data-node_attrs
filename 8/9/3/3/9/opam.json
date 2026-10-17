@@ -1,12 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "bzip2:\n- '1'\nc_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncurl:\n- '8'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzstd:\n- '1.5'\n",
+  "ci_support_linux_64_.yaml": "bzip2:\n- '1'\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncurl:\n- '8'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nocaml_compiler:\n- ocaml\nocaml_compiler_version:\n- 5.4.0\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzstd:\n- '1.5'\n",
+  "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
-      "linux_aarch64": "linux_64",
       "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_riscv64": "linux_64",
+      "linux_s390x": "linux_64"
     },
     "conda_build": {
       "error_overlinking": true
@@ -20,12 +21,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "osx_arm64": "default",
+      "win_arm64": "default"
     },
     "test": "all"
   },
-  "feedstock_hash": "8e9be64c1bafbf82c3b0e8f501655196240d5187",
-  "feedstock_hash_ts": 1776858352,
+  "feedstock_hash": "99b64d48d95a1cfe53552ffdb5036d2e21118ca4",
+  "feedstock_hash_ts": 1792254914,
   "feedstock_name": "opam",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -39,7 +41,8 @@
       "summary": "Objective Caml (OCaml) is an implementation of the ML language."
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "script": "bash \"${RECIPE_DIR}/build.sh\""
     },
     "extra": {
       "recipe-maintainers": [
@@ -70,7 +73,7 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
             "file",
             "unzip",
             "zstd"
@@ -131,7 +134,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml"
+                "ocaml 5.4.0.*"
               ]
             },
             "script": "python testing/test-opam-version.py\n"
@@ -146,7 +149,219 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml",
+                "ocaml 5.4.0.*",
+                "ocaml-dune"
+              ]
+            },
+            "script": "python testing/test-opam-functional.py\npython testing/test-opam-activation.py\n"
+          }
+        ],
+        "version": "2.5.0"
+      },
+      {
+        "build": null,
+        "name": "opam",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "bash >=5.2",
+            "bzip2",
+            "findutils",
+            "gawk",
+            "grep",
+            "make",
+            "sed",
+            "ocaml-cppo",
+            "ocaml-dune",
+            "ocaml-menhir",
+            "binutils",
+            "curl",
+            "git",
+            "ocaml_compiler_stub",
+            "file",
+            "unzip",
+            "zstd"
+          ],
+          "host": [],
+          "run": [
+            "c-compiler",
+            "curl",
+            "git",
+            "make",
+            "rsync",
+            "unzip",
+            "bubblewrap"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "opam",
+                "opam-installer"
+              ],
+              "files": [
+                "share/man/man1/opam*",
+                "etc/conda/activate.d/opam-activate.sh",
+                "etc/conda/deactivate.d/opam-deactivate.sh",
+                "share/opam/conda/.opam-switch/{environment,lock,switch-config}",
+                "share/opam/{config,config.lock,lock}",
+                "share/opam/opam-init/complete.{sh,zsh}",
+                "share/opam/opam-init/hooks/sandbox.{sh,sh.hash}",
+                "share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}",
+                "share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}",
+                "share/opam/repo/{default/repo,lock,repos-config}",
+                "etc/conda/test-files/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-arch.sh"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "binutils"
+              ]
+            },
+            "script": "bash testing/test-opam-arch.sh"
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-version.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python >=3.9",
+                "ocaml 5.4.0.*"
+              ]
+            },
+            "script": "python testing/test-opam-version.py\n"
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-functional.py",
+                "testing/test-opam-activation.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python >=3.9",
+                "ocaml 5.4.0.*",
+                "ocaml-dune"
+              ]
+            },
+            "script": "python testing/test-opam-functional.py\npython testing/test-opam-activation.py\n"
+          }
+        ],
+        "version": "2.5.0"
+      },
+      {
+        "build": null,
+        "name": "opam",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "bash >=5.2",
+            "bzip2",
+            "findutils",
+            "gawk",
+            "grep",
+            "make",
+            "sed",
+            "ocaml-cppo",
+            "ocaml-dune",
+            "ocaml-menhir",
+            "binutils",
+            "curl",
+            "git",
+            "ocaml_compiler_stub",
+            "file",
+            "unzip",
+            "zstd"
+          ],
+          "host": [],
+          "run": [
+            "c-compiler",
+            "curl",
+            "git",
+            "make",
+            "rsync",
+            "unzip",
+            "bubblewrap"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "opam",
+                "opam-installer"
+              ],
+              "files": [
+                "share/man/man1/opam*",
+                "etc/conda/activate.d/opam-activate.sh",
+                "etc/conda/deactivate.d/opam-deactivate.sh",
+                "share/opam/conda/.opam-switch/{environment,lock,switch-config}",
+                "share/opam/{config,config.lock,lock}",
+                "share/opam/opam-init/complete.{sh,zsh}",
+                "share/opam/opam-init/hooks/sandbox.{sh,sh.hash}",
+                "share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}",
+                "share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}",
+                "share/opam/repo/{default/repo,lock,repos-config}",
+                "etc/conda/test-files/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-arch.sh"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "binutils"
+              ]
+            },
+            "script": "bash testing/test-opam-arch.sh"
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-version.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python >=3.9",
+                "ocaml 5.4.0.*"
+              ]
+            },
+            "script": "python testing/test-opam-version.py\n"
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-functional.py",
+                "testing/test-opam-activation.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python >=3.9",
+                "ocaml 5.4.0.*",
                 "ocaml-dune"
               ]
             },
@@ -178,7 +393,7 @@
         "binutils",
         "curl",
         "git",
-        "ocaml >=5.3.0 *_12",
+        "ocaml_compiler_stub",
         "file",
         "unzip",
         "zstd"
@@ -216,10 +431,10 @@
         "git",
         "grep",
         "make",
-        "ocaml",
         "ocaml-cppo",
         "ocaml-dune",
         "ocaml-menhir",
+        "ocaml_compiler_stub",
         "sed",
         "unzip",
         "zstd"
@@ -262,7 +477,8 @@
       "summary": "Objective Caml (OCaml) is an implementation of the ML language."
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "script": "bash \"${RECIPE_DIR}/build.sh\""
     },
     "extra": {
       "recipe-maintainers": [
@@ -293,7 +509,8 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "file",
             "unzip",
@@ -357,7 +574,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml"
+                "ocaml 5.4.0.*"
               ]
             },
             "script": "python testing/test-opam-version.py\n"
@@ -372,7 +589,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml",
+                "ocaml 5.4.0.*",
                 "ocaml-dune"
               ]
             },
@@ -404,7 +621,8 @@
         "binutils",
         "curl",
         "git",
-        "ocaml >=5.3.0 *_12",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64 5.4.0.*",
         "python >=3.9",
         "file",
         "unzip",
@@ -446,10 +664,11 @@
         "git",
         "grep",
         "make",
-        "ocaml",
         "ocaml-cppo",
         "ocaml-dune",
         "ocaml-menhir",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
         "python",
         "sed",
         "unzip",
@@ -495,7 +714,8 @@
       "summary": "Objective Caml (OCaml) is an implementation of the ML language."
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "script": "bash \"${RECIPE_DIR}/build.sh\""
     },
     "extra": {
       "recipe-maintainers": [
@@ -526,7 +746,8 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "file",
             "unzip",
@@ -590,7 +811,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml"
+                "ocaml 5.4.0.*"
               ]
             },
             "script": "python testing/test-opam-version.py\n"
@@ -605,7 +826,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml",
+                "ocaml 5.4.0.*",
                 "ocaml-dune"
               ]
             },
@@ -637,7 +858,8 @@
         "binutils",
         "curl",
         "git",
-        "ocaml >=5.3.0 *_12",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64 5.4.0.*",
         "python >=3.9",
         "file",
         "unzip",
@@ -679,10 +901,11 @@
         "git",
         "grep",
         "make",
-        "ocaml",
         "ocaml-cppo",
         "ocaml-dune",
         "ocaml-menhir",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
         "python",
         "sed",
         "unzip",
@@ -728,7 +951,11 @@
       "summary": "Objective Caml (OCaml) is an implementation of the ML language."
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "script": [
+        "call \"%RECIPE_DIR%\\build.bat\"",
+        "if errorlevel 1 exit 1"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -759,7 +986,7 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
             "file",
             "unzip",
             "zstd"
@@ -820,7 +1047,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml"
+                "ocaml 5.4.0.*"
               ]
             },
             "script": "python testing/test-opam-version.py\n"
@@ -835,7 +1062,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml",
+                "ocaml 5.4.0.*",
                 "ocaml-dune"
               ]
             },
@@ -865,7 +1092,220 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "file",
+            "unzip",
+            "zstd"
+          ],
+          "host": [],
+          "run": [
+            "c-compiler",
+            "curl",
+            "git",
+            "make",
+            "rsync",
+            "unzip",
+            "bubblewrap"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "opam",
+                "opam-installer"
+              ],
+              "files": [
+                "share/man/man1/opam*",
+                "etc/conda/activate.d/opam-activate.sh",
+                "etc/conda/deactivate.d/opam-deactivate.sh",
+                "share/opam/conda/.opam-switch/{environment,lock,switch-config}",
+                "share/opam/{config,config.lock,lock}",
+                "share/opam/opam-init/complete.{sh,zsh}",
+                "share/opam/opam-init/hooks/sandbox.{sh,sh.hash}",
+                "share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}",
+                "share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}",
+                "share/opam/repo/{default/repo,lock,repos-config}",
+                "etc/conda/test-files/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-arch.sh"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "binutils"
+              ]
+            },
+            "script": "bash testing/test-opam-arch.sh"
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-version.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python >=3.9",
+                "ocaml 5.4.0.*"
+              ]
+            },
+            "script": "python testing/test-opam-version.py\n"
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-functional.py",
+                "testing/test-opam-activation.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python >=3.9",
+                "ocaml 5.4.0.*",
+                "ocaml-dune"
+              ]
+            },
+            "script": "python testing/test-opam-functional.py\npython testing/test-opam-activation.py\n"
+          }
+        ],
+        "version": "2.5.0"
+      },
+      {
+        "build": null,
+        "name": "opam",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "bash >=5.2",
+            "bzip2",
+            "findutils",
+            "gawk",
+            "grep",
+            "make",
+            "sed",
+            "ocaml-cppo",
+            "ocaml-dune",
+            "ocaml-menhir",
+            "binutils",
+            "curl",
+            "git",
+            "ocaml_compiler_stub",
+            "file",
+            "unzip",
+            "zstd"
+          ],
+          "host": [],
+          "run": [
+            "c-compiler",
+            "curl",
+            "git",
+            "make",
+            "rsync",
+            "unzip",
+            "bubblewrap"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "opam",
+                "opam-installer"
+              ],
+              "files": [
+                "share/man/man1/opam*",
+                "etc/conda/activate.d/opam-activate.sh",
+                "etc/conda/deactivate.d/opam-deactivate.sh",
+                "share/opam/conda/.opam-switch/{environment,lock,switch-config}",
+                "share/opam/{config,config.lock,lock}",
+                "share/opam/opam-init/complete.{sh,zsh}",
+                "share/opam/opam-init/hooks/sandbox.{sh,sh.hash}",
+                "share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}",
+                "share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}",
+                "share/opam/repo/{default/repo,lock,repos-config}",
+                "etc/conda/test-files/*"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-arch.sh"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "binutils"
+              ]
+            },
+            "script": "bash testing/test-opam-arch.sh"
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-version.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python >=3.9",
+                "ocaml 5.4.0.*"
+              ]
+            },
+            "script": "python testing/test-opam-version.py\n"
+          },
+          {
+            "files": {
+              "recipe": [
+                "testing/test-opam-functional.py",
+                "testing/test-opam-activation.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python >=3.9",
+                "ocaml 5.4.0.*",
+                "ocaml-dune"
+              ]
+            },
+            "script": "python testing/test-opam-functional.py\npython testing/test-opam-activation.py\n"
+          }
+        ],
+        "version": "2.5.0"
+      },
+      {
+        "build": null,
+        "name": "opam",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "bash >=5.2",
+            "bzip2",
+            "findutils",
+            "gawk",
+            "grep",
+            "make",
+            "sed",
+            "ocaml-cppo",
+            "ocaml-dune",
+            "ocaml-menhir",
+            "binutils",
+            "curl",
+            "git",
+            "ocaml_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "file",
             "unzip",
@@ -929,7 +1369,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml"
+                "ocaml 5.4.0.*"
               ]
             },
             "script": "python testing/test-opam-version.py\n"
@@ -944,7 +1384,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml",
+                "ocaml 5.4.0.*",
                 "ocaml-dune"
               ]
             },
@@ -974,7 +1414,8 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "file",
             "unzip",
@@ -1038,7 +1479,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml"
+                "ocaml 5.4.0.*"
               ]
             },
             "script": "python testing/test-opam-version.py\n"
@@ -1053,7 +1494,7 @@
             "requirements": {
               "run": [
                 "python >=3.9",
-                "ocaml",
+                "ocaml 5.4.0.*",
                 "ocaml-dune"
               ]
             },
@@ -1083,7 +1524,8 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "file",
             "unzip",
@@ -1091,7 +1533,9 @@
             "lld",
             "llvm-tools"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": [
             "c-compiler",
             "curl",
@@ -1156,7 +1600,8 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "file",
             "unzip",
@@ -1164,7 +1609,9 @@
             "lld",
             "llvm-tools"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": [
             "c-compiler",
             "curl",
@@ -1229,13 +1676,144 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_win-64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "m2-coreutils",
             "m2-diffutils",
             "m2-which"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
+          "run": [
+            "c-compiler",
+            "curl",
+            "git"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "opam",
+                "opam-installer"
+              ],
+              "files": [
+                "Library/share/man/man1/opam*",
+                "etc/conda/activate.d/opam-activate.bat",
+                "etc/conda/deactivate.d/opam-deactivate.bat",
+                "Library/share/opam/conda/.opam-switch/{environment,lock,switch-config}",
+                "Library/share/opam/{config,config.lock,lock}",
+                "Library/share/opam/opam-init/complete.{sh,zsh}",
+                "Library/share/opam/opam-init/hooks/sandbox.{sh,sh.hash}",
+                "Library/share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}",
+                "Library/share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}",
+                "Library/share/opam/repo/{default/repo,lock,repos-config}",
+                "etc/conda/test-files/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "2.5.0"
+      },
+      {
+        "build": null,
+        "name": "opam",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "m2-bash >=5.2",
+            "m2-bzip2",
+            "m2-findutils",
+            "m2-gawk",
+            "m2-grep",
+            "m2-make",
+            "m2-sed",
+            "ocaml-cppo",
+            "ocaml-dune",
+            "ocaml-menhir",
+            "binutils",
+            "curl",
+            "git",
+            "ocaml_compiler_stub",
+            "ocaml_win-64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "python >=3.9",
+            "m2-coreutils",
+            "m2-diffutils",
+            "m2-which"
+          ],
+          "host": [
+            "zstd"
+          ],
+          "run": [
+            "c-compiler",
+            "curl",
+            "git"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "opam",
+                "opam-installer"
+              ],
+              "files": [
+                "Library/share/man/man1/opam*",
+                "etc/conda/activate.d/opam-activate.bat",
+                "etc/conda/deactivate.d/opam-deactivate.bat",
+                "Library/share/opam/conda/.opam-switch/{environment,lock,switch-config}",
+                "Library/share/opam/{config,config.lock,lock}",
+                "Library/share/opam/opam-init/complete.{sh,zsh}",
+                "Library/share/opam/opam-init/hooks/sandbox.{sh,sh.hash}",
+                "Library/share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}",
+                "Library/share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}",
+                "Library/share/opam/repo/{default/repo,lock,repos-config}",
+                "etc/conda/test-files/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "2.5.0"
+      },
+      {
+        "build": null,
+        "name": "opam",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "m2-bash >=5.2",
+            "m2-bzip2",
+            "m2-findutils",
+            "m2-gawk",
+            "m2-grep",
+            "m2-make",
+            "m2-sed",
+            "ocaml-cppo",
+            "ocaml-dune",
+            "ocaml-menhir",
+            "curl",
+            "git",
+            "ocaml_compiler_stub",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "python >=3.9",
+            "m2-coreutils",
+            "m2-diffutils",
+            "m2-which"
+          ],
+          "host": [
+            "zstd"
+          ],
           "run": [
             "c-compiler",
             "curl",
@@ -1291,10 +1869,11 @@
         "binutils",
         "curl",
         "git",
-        "ocaml >=5.3.0 *_12",
+        "ocaml_compiler_stub",
         "file",
         "unzip",
         "zstd",
+        "ocaml_linux-64 5.4.0.*",
         "python >=3.9",
         "lld",
         "llvm-tools",
@@ -1308,9 +1887,11 @@
         "m2-grep",
         "m2-make",
         "m2-sed",
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
         "m2-coreutils",
         "m2-diffutils",
-        "m2-which"
+        "m2-which",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub"
       ],
       "host": [
         "zstd"
@@ -1343,7 +1924,8 @@
       "summary": "Objective Caml (OCaml) is an implementation of the ML language."
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "script": "bash \"${RECIPE_DIR}/build.sh\""
     },
     "extra": {
       "recipe-maintainers": [
@@ -1374,7 +1956,8 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "file",
             "unzip",
@@ -1382,7 +1965,9 @@
             "lld",
             "llvm-tools"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": [
             "c-compiler",
             "curl",
@@ -1449,13 +2034,17 @@
         "binutils",
         "curl",
         "git",
-        "ocaml >=5.3.0 *_12",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64 5.4.0.*",
         "python >=3.9",
         "file",
         "unzip",
         "zstd",
         "lld",
         "llvm-tools"
+      ],
+      "host": [
+        "zstd"
       ],
       "run": [
         "c-compiler",
@@ -1491,10 +2080,11 @@
         "lld",
         "llvm-tools",
         "make",
-        "ocaml",
         "ocaml-cppo",
         "ocaml-dune",
         "ocaml-menhir",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
         "python",
         "sed",
         "unzip",
@@ -1503,7 +2093,9 @@
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "zstd"
+      ]
     },
     "run": {
       "__set__": true,
@@ -1532,7 +2124,8 @@
       "summary": "Objective Caml (OCaml) is an implementation of the ML language."
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "script": "bash \"${RECIPE_DIR}/build.sh\""
     },
     "extra": {
       "recipe-maintainers": [
@@ -1563,7 +2156,8 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "file",
             "unzip",
@@ -1571,7 +2165,9 @@
             "lld",
             "llvm-tools"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": [
             "c-compiler",
             "curl",
@@ -1638,13 +2234,17 @@
         "binutils",
         "curl",
         "git",
-        "ocaml >=5.3.0 *_12",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64 5.4.0.*",
         "python >=3.9",
         "file",
         "unzip",
         "zstd",
         "lld",
         "llvm-tools"
+      ],
+      "host": [
+        "zstd"
       ],
       "run": [
         "c-compiler",
@@ -1680,10 +2280,11 @@
         "lld",
         "llvm-tools",
         "make",
-        "ocaml",
         "ocaml-cppo",
         "ocaml-dune",
         "ocaml-menhir",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
         "python",
         "sed",
         "unzip",
@@ -1692,7 +2293,9 @@
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "zstd"
+      ]
     },
     "run": {
       "__set__": true,
@@ -1716,19 +2319,20 @@
       "opam"
     ]
   },
-  "parsing_error": "feedstock parsing error: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error CalledProcessError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n                 ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 766, in load_feedstock_local\n    return populate_feedstock_attributes(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 419, in populate_feedstock_attributes\n    parse_recipe_yaml(\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 380, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 547, in parse_recipe_yaml_local\n    rendered_recipes = _render_recipe_yaml(\n                       ^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 662, in _render_recipe_yaml\n    res.check_returncode()\n  File \"/opt/conda/lib/python3.12/subprocess.py\", line 502, in check_returncode\n    raise CalledProcessError(self.returncode, self.args, self.stdout,\nsubprocess.CalledProcessError: Command '['rattler-build', 'build', '--render-only', '--variant-config', '/tmp/tmpxh83dni8/opam-feedstock-main/.ci_support/linux_64_.yaml', '--target-platform', 'linux-64']' returned non-zero exit status 1.\n\nTraceback (most recent call last):\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/make_graph.py\", line 140, in try_load_feedstock\n    data = load_feedstock(name, attrs.data, mark_not_archived=mark_not_archived)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 887, in load_feedstock\n    return load_feedstock_containerized(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 839, in load_feedstock_containerized\n    data = run_container_operation(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/micromamba/envs/conda-forge-bot/lib/python3.12/site-packages/conda_forge_feedstock_ops/container_utils.py\", line 218, in run_container_operation\n    raise ContainerRuntimeError(\nconda_forge_feedstock_ops.container_utils.ContainerRuntimeError: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error CalledProcessError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n                 ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 766, in load_feedstock_local\n    return populate_feedstock_attributes(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 419, in populate_feedstock_attributes\n    parse_recipe_yaml(\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 380, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 547, in parse_recipe_yaml_local\n    rendered_recipes = _render_recipe_yaml(\n                       ^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 662, in _render_recipe_yaml\n    res.check_returncode()\n  File \"/opt/conda/lib/python3.12/subprocess.py\", line 502, in check_returncode\n    raise CalledProcessError(self.returncode, self.args, self.stdout,\nsubprocess.CalledProcessError: Command '['rattler-build', 'build', '--render-only', '--variant-config', '/tmp/tmpxh83dni8/opam-feedstock-main/.ci_support/linux_64_.yaml', '--target-platform', 'linux-64']' returned non-zero exit status 1.\n\n",
+  "parsing_error": false,
   "platforms": [
     "linux_64",
     "linux_aarch64",
     "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/opam.json"
   },
-  "raw_meta_yaml": "context:\n  build_number: 1\n  name: opam\n  version: 2.5.0\n\n  library: ${{ \"Library/\" if not unix }}\n  m2: ${{ \"m2-\" if not unix }}\n  sh: ${{ \"sh\" if unix else \"bat\" }}\n\nrecipe:\n  name: opam-packages\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/ocaml/${{ name }}/releases/download/${{ version }}/${{ name }}-full-${{ version }}.tar.gz\n    sha256: 25fb98f962c4227c1261e142afc68a416778e6e819600bd5ee3ec4a18ae1e238\n    target_directory: opam\n\nbuild:\n  number: ${{ build_number }}\n  dynamic_linking:\n    missing_dso_allowlist:\n      - if: not unix\n        then:\n          - C:/Windows/system32/SHLWAPI.dll\n          - C:/Windows/system32/VERSION.dll\n\noutputs:\n  - package:\n      name: ${{ name }}\n      version: ${{ version }}\n    requirements:\n      build:\n        - if: unix\n          then:\n            - ${{ compiler(\"c\") }}\n            - ${{ compiler(\"cxx\") }}\n            - ${{ stdlib(\"c\") }}\n          else:\n            - ${{ compiler(\"m2w64_c\") }}\n            - ${{ compiler(\"m2w64_cxx\") }}\n            - ${{ stdlib(\"m2w64_c\") }}\n        - ${{ m2 }}bash >=5.2\n        - ${{ m2 }}bzip2\n        - ${{ m2 }}findutils\n        - ${{ m2 }}gawk\n        - ${{ m2 }}grep\n        - ${{ m2 }}make\n        - ${{ m2 }}sed\n        - ocaml-cppo\n        - ocaml-dune\n        - ocaml-menhir\n        - binutils\n        - curl\n        - git\n        - ocaml >=5.3.0 *_12\n        - if: build_platform != target_platform\n          then:\n            - python >=3.9\n        - if: unix\n          then:\n            # OCaml compiler has zstd paths embedded from its build environment.\n            # We need zstd in build env so those paths resolve correctly.\n            - file\n            - unzip\n            - zstd\n          else:\n            - ${{ m2 }}coreutils\n            - ${{ m2 }}diffutils\n            - ${{ m2 }}which\n        - if: osx\n          then:\n            - lld\n            - llvm-tools\n      host:\n        - if: aarch64 or ppc64le\n          then:\n            - zstd\n      run:\n        - c-compiler\n        - curl\n        - git\n        - if: unix\n          then:\n            - make\n            - rsync\n            - unzip\n        - if: linux\n          then:\n            - bubblewrap\n          # Once we have ocaml 5.4.0_1\n          # - ocaml-compiler\n    tests:\n      # Package contents validation (using brace expansion for conciseness)\n      - package_contents:\n          strict: true\n          bin:\n            - opam\n            - opam-installer\n          files:\n            - ${{ library }}share/man/man1/opam*\n            - etc/conda/activate.d/opam-activate.${{ sh }}\n            - etc/conda/deactivate.d/opam-deactivate.${{ sh }}\n            - ${{ library }}share/opam/conda/.opam-switch/{environment,lock,switch-config}\n            - ${{ library }}share/opam/{config,config.lock,lock}\n            - ${{ library }}share/opam/opam-init/complete.{sh,zsh}\n            - ${{ library }}share/opam/opam-init/hooks/sandbox.{sh,sh.hash}\n            - ${{ library }}share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}\n            - ${{ library }}share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}\n            - ${{ library }}share/opam/repo/{default/repo,lock,repos-config}\n            - etc/conda/test-files/*\n\n      # Architecture verification - Unix only (uses otool/readelf)\n      - if: unix\n        then:\n          script: bash testing/test-opam-arch.sh\n          files:\n            recipe:\n              - testing/test-opam-arch.sh\n          requirements:\n            run:\n              - if: linux\n                then:\n                  - binutils\n\n      # Version check - native builds OR Linux cross-compile (QEMU/binfmt available)\n      # macOS cross-compile: can't run ARM64 binaries, skip this test\n      - if: build_platform == target_platform or linux\n        then:\n          script: |\n            python testing/test-opam-version.py\n          files:\n            recipe:\n              - testing/test-opam-version.py\n          requirements:\n            run:\n              - python >=3.9\n              - ocaml\n\n      # Functional tests - native builds OR Linux cross-compile\n      # These run opam commands; Linux uses QEMU, macOS cross can't run ARM64\n      - if: build_platform == target_platform or linux\n        then:\n          script: |\n            python testing/test-opam-functional.py\n            python testing/test-opam-activation.py\n          files:\n            recipe:\n              - testing/test-opam-functional.py\n              - testing/test-opam-activation.py\n          requirements:\n            run:\n              - python >=3.9\n              - ocaml\n              - ocaml-dune\n\nabout:\n  homepage: https://github.com/ocaml/opam\n  license: LGPL-2.1-only\n  license_family: LGPL\n  license_file: opam/LICENSE\n  summary: Objective Caml (OCaml) is an implementation of the ML language.\n  description: |\n    opam is a source-based package manager. It supports multiple simultaneous compiler\n    installations, flexible package constraints, and a Git-friendly development workflow.\n  repository: https://github.com/ocaml/opam\n\nextra:\n  recipe-maintainers:\n    - dslarm\n    - fasiha\n    - MementoRC\n",
+  "raw_meta_yaml": "context:\n  build_number: 2\n  name: opam\n  version: 2.5.0\n\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n  sh: ${{ \"sh\" if unix else \"bat\" }}\n  # ocaml_win-64 ships gcc_* and vs2022_* tracks; follow the c_compiler lane\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n\nrecipe:\n  name: opam-packages\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/ocaml/${{ name }}/releases/download/${{ version }}/${{ name }}-full-${{ version }}.tar.gz\n    sha256: 25fb98f962c4227c1261e142afc68a416778e6e819600bd5ee3ec4a18ae1e238\n    target_directory: opam\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix else \"\" }}h${{ hash }}_${{ build_number }}\n  dynamic_linking:\n    missing_dso_allowlist:\n      - if: not unix\n        then:\n          - C:/Windows/system32/SHLWAPI.dll\n          - C:/Windows/system32/VERSION.dll\n\noutputs:\n  - package:\n      name: ${{ name }}\n      version: ${{ version }}\n    build:\n      # rattler-build 0.76 runs a bare \"build.sh\" as an inline command (exit 127)\n      script:\n        - if: unix\n          then: bash \"${RECIPE_DIR}/build.sh\"\n          else:\n            - call \"%RECIPE_DIR%\\build.bat\"\n            - if errorlevel 1 exit 1\n    requirements:\n      build:\n        - if: unix or arm64 or c_compiler == \"vs2022\"\n          then:\n            - ${{ compiler(\"c\") }}\n            - ${{ compiler(\"cxx\") }}\n            - ${{ stdlib(\"c\") }}\n          else:\n            - ${{ compiler(\"m2w64_c\") }}\n            - ${{ compiler(\"m2w64_cxx\") }}\n            - ${{ stdlib(\"m2w64_c\") }}\n        - ${{ m2 }}bash >=5.2\n        - ${{ m2 }}bzip2\n        - ${{ m2 }}findutils\n        - ${{ m2 }}gawk\n        - ${{ m2 }}grep\n        - ${{ m2 }}make\n        - ${{ m2 }}sed\n        - ocaml-cppo\n        - ocaml-dune\n        - ocaml-menhir\n        # no binutils package for win-arm64\n        - if: not (win and arm64)\n          then: binutils\n        - curl\n        - git\n        - ${{ compiler(\"ocaml\") }}\n        # compiler() has no build string; pin the gcc/vs2022/zig track on Windows\n        - if: not unix\n          then: ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n        # cross lanes build and run a native opam first (man pages, vendored parsers);\n        # the cross compiler no longer pulls in the native one\n        - if: build_platform != target_platform\n          then: ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n        - if: build_platform != target_platform or target_platform == \"win-arm64\"\n          then:\n            - python >=3.9\n        - if: unix\n          then:\n            # OCaml compiler has zstd paths embedded from its build environment.\n            # We need zstd in build env so those paths resolve correctly.\n            - file\n            - unzip\n            - zstd\n          else:\n            - ${{ m2 }}coreutils\n            - ${{ m2 }}diffutils\n            - ${{ m2 }}which\n        - if: osx\n          then:\n            - lld\n            - llvm-tools\n      host:\n        # the ocaml cross compiler links -lzstd into target executables (e.g.\n        # dune's context_flags helpers); there is no zstd package for s390x\n        - if: build_platform != target_platform and target_platform != \"linux-s390x\"\n          then:\n            - zstd\n      ignore_run_exports:\n        # opam itself does not link libzstd\n        by_name:\n          - zstd\n      run:\n        # c-compiler, curl, git, make, rsync are not yet built for linux-s390x\n        - if: target_platform != \"linux-s390x\"\n          then:\n            - c-compiler\n            - curl\n            - git\n        - if: unix and target_platform != \"linux-s390x\"\n          then:\n            - make\n            - rsync\n        # no unzip package for linux-riscv64 / linux-s390x\n        - if: unix and not (target_platform == \"linux-riscv64\" or target_platform == \"linux-s390x\")\n          then: unzip\n        # no bubblewrap package for linux-s390x; opam sandboxing is optional\n        - if: linux and target_platform != \"linux-s390x\"\n          then:\n            - bubblewrap\n    tests:\n      # Package contents validation (using brace expansion for conciseness)\n      - package_contents:\n          strict: true\n          bin:\n            - opam\n            - opam-installer\n          files:\n            - ${{ library }}share/man/man1/opam*\n            - etc/conda/activate.d/opam-activate.${{ sh }}\n            - etc/conda/deactivate.d/opam-deactivate.${{ sh }}\n            - ${{ library }}share/opam/conda/.opam-switch/{environment,lock,switch-config}\n            - ${{ library }}share/opam/{config,config.lock,lock}\n            - ${{ library }}share/opam/opam-init/complete.{sh,zsh}\n            - ${{ library }}share/opam/opam-init/hooks/sandbox.{sh,sh.hash}\n            - ${{ library }}share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}\n            - ${{ library }}share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}\n            - ${{ library }}share/opam/repo/{default/repo,lock,repos-config}\n            - etc/conda/test-files/*\n\n      # Architecture verification - Unix only (uses otool/readelf)\n      - if: unix\n        then:\n          script: bash testing/test-opam-arch.sh\n          files:\n            recipe:\n              - testing/test-opam-arch.sh\n          requirements:\n            run:\n              - if: linux\n                then:\n                  - binutils\n\n      # Version check - native builds OR Linux cross-compile (QEMU/binfmt available)\n      # macOS cross-compile: can't run ARM64 binaries, skip this test\n      # no python for linux-s390x yet; package_contents and the arch check still run there\n      - if: (build_platform == target_platform or linux) and target_platform != \"linux-s390x\"\n        then:\n          script: |\n            python testing/test-opam-version.py\n          files:\n            recipe:\n              - testing/test-opam-version.py\n          requirements:\n            run:\n              - python >=3.9\n              - ocaml ${{ ocaml_compiler_version }}.*\n              - if: not unix\n                then: ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n\n      # Functional tests - native builds OR Linux cross-compile\n      # These run opam commands; Linux uses QEMU, macOS cross can't run ARM64\n      - if: (build_platform == target_platform or linux) and target_platform != \"linux-s390x\"\n        then:\n          script: |\n            python testing/test-opam-functional.py\n            python testing/test-opam-activation.py\n          files:\n            recipe:\n              - testing/test-opam-functional.py\n              - testing/test-opam-activation.py\n          requirements:\n            run:\n              - python >=3.9\n              - ocaml ${{ ocaml_compiler_version }}.*\n              - if: not unix\n                then: ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n              - ocaml-dune\n\nabout:\n  homepage: https://github.com/ocaml/opam\n  license: LGPL-2.1-only\n  license_family: LGPL\n  license_file: opam/LICENSE\n  summary: Objective Caml (OCaml) is an implementation of the ML language.\n  description: |\n    opam is a source-based package manager. It supports multiple simultaneous compiler\n    installations, flexible package constraints, and a Git-friendly development workflow.\n  repository: https://github.com/ocaml/opam\n\nextra:\n  recipe-maintainers:\n    - dslarm\n    - fasiha\n    - MementoRC\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1762,10 +2366,13 @@
       "m2w64_c_stdlib_stub",
       "m2w64_cxx_compiler_stub",
       "make",
-      "ocaml",
       "ocaml-cppo",
       "ocaml-dune",
       "ocaml-menhir",
+      "ocaml_compiler_stub",
+      "ocaml_linux-64",
+      "ocaml_win-64",
+      "ocaml_win-arm64",
       "python",
       "rsync",
       "sed",
@@ -1805,10 +2412,13 @@
         "m2w64_c_stdlib_stub",
         "m2w64_cxx_compiler_stub",
         "make",
-        "ocaml",
         "ocaml-cppo",
         "ocaml-dune",
         "ocaml-menhir",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_win-64",
+        "ocaml_win-arm64",
         "python",
         "sed",
         "unzip",
@@ -1884,10 +2494,13 @@
         "m2w64_c_stdlib_stub",
         "m2w64_cxx_compiler_stub",
         "make",
-        "ocaml >=5.3.0 *_12",
         "ocaml-cppo",
         "ocaml-dune",
         "ocaml-menhir",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64 5.4.0.*",
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub",
         "python >=3.9",
         "sed",
         "unzip",
@@ -1916,7 +2529,7 @@
       "__set__": true,
       "elements": [
         "binutils",
-        "ocaml",
+        "ocaml 5.4.0.*",
         "ocaml-dune",
         "python >=3.9"
       ]
@@ -1938,7 +2551,11 @@
       "summary": "Objective Caml (OCaml) is an implementation of the ML language."
     },
     "build": {
-      "number": "1"
+      "number": "2",
+      "script": [
+        "call \"%RECIPE_DIR%\\build.bat\"",
+        "if errorlevel 1 exit 1"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -1969,13 +2586,81 @@
             "binutils",
             "curl",
             "git",
-            "ocaml >=5.3.0 *_12",
+            "ocaml_compiler_stub",
+            "ocaml_win-64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
             "python >=3.9",
             "m2-coreutils",
             "m2-diffutils",
             "m2-which"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
+          "run": [
+            "c-compiler",
+            "curl",
+            "git"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "opam",
+                "opam-installer"
+              ],
+              "files": [
+                "Library/share/man/man1/opam*",
+                "etc/conda/activate.d/opam-activate.bat",
+                "etc/conda/deactivate.d/opam-deactivate.bat",
+                "Library/share/opam/conda/.opam-switch/{environment,lock,switch-config}",
+                "Library/share/opam/{config,config.lock,lock}",
+                "Library/share/opam/opam-init/complete.{sh,zsh}",
+                "Library/share/opam/opam-init/hooks/sandbox.{sh,sh.hash}",
+                "Library/share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}",
+                "Library/share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}",
+                "Library/share/opam/repo/{default/repo,lock,repos-config}",
+                "etc/conda/test-files/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "2.5.0"
+      },
+      {
+        "build": null,
+        "name": "opam",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "m2-bash >=5.2",
+            "m2-bzip2",
+            "m2-findutils",
+            "m2-gawk",
+            "m2-grep",
+            "m2-make",
+            "m2-sed",
+            "ocaml-cppo",
+            "ocaml-dune",
+            "ocaml-menhir",
+            "binutils",
+            "curl",
+            "git",
+            "ocaml_compiler_stub",
+            "ocaml_win-64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "python >=3.9",
+            "m2-coreutils",
+            "m2-diffutils",
+            "m2-which"
+          ],
+          "host": [
+            "zstd"
+          ],
           "run": [
             "c-compiler",
             "curl",
@@ -2031,11 +2716,19 @@
         "binutils",
         "curl",
         "git",
-        "ocaml >=5.3.0 *_12",
+        "ocaml_compiler_stub",
+        "ocaml_win-64 5.4.0.* c_compiler_stub",
+        "ocaml_linux-64 5.4.0.*",
         "python >=3.9",
         "m2-coreutils",
         "m2-diffutils",
-        "m2-which"
+        "m2-which",
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub"
+      ],
+      "host": [
+        "zstd"
       ],
       "run": [
         "c-compiler",
@@ -2054,7 +2747,10 @@
       "__set__": true,
       "elements": [
         "binutils",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "curl",
+        "cxx_compiler_stub",
         "git",
         "m2-bash",
         "m2-bzip2",
@@ -2069,16 +2765,200 @@
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
         "m2w64_cxx_compiler_stub",
-        "ocaml",
         "ocaml-cppo",
         "ocaml-dune",
         "ocaml-menhir",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_win-64",
         "python"
       ]
     },
     "host": {
       "__set__": true,
+      "elements": [
+        "zstd"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "c-compiler",
+        "curl",
+        "git"
+      ]
+    },
+    "test": {
+      "__set__": true,
       "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "description": "opam is a source-based package manager. It supports multiple simultaneous compiler\ninstallations, flexible package constraints, and a Git-friendly development workflow.",
+      "dev_url": "https://github.com/ocaml/opam",
+      "home": "https://github.com/ocaml/opam",
+      "license": "LGPL-2.1-only",
+      "license_family": "LGPL-2.1-only",
+      "license_file": "opam/LICENSE",
+      "summary": "Objective Caml (OCaml) is an implementation of the ML language."
+    },
+    "build": {
+      "number": "2",
+      "script": [
+        "call \"%RECIPE_DIR%\\build.bat\"",
+        "if errorlevel 1 exit 1"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "dslarm",
+        "fasiha",
+        "MementoRC"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "opam",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "m2-bash >=5.2",
+            "m2-bzip2",
+            "m2-findutils",
+            "m2-gawk",
+            "m2-grep",
+            "m2-make",
+            "m2-sed",
+            "ocaml-cppo",
+            "ocaml-dune",
+            "ocaml-menhir",
+            "curl",
+            "git",
+            "ocaml_compiler_stub",
+            "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+            "ocaml_linux-64 5.4.0.*",
+            "python >=3.9",
+            "m2-coreutils",
+            "m2-diffutils",
+            "m2-which"
+          ],
+          "host": [
+            "zstd"
+          ],
+          "run": [
+            "c-compiler",
+            "curl",
+            "git"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "opam",
+                "opam-installer"
+              ],
+              "files": [
+                "Library/share/man/man1/opam*",
+                "etc/conda/activate.d/opam-activate.bat",
+                "etc/conda/deactivate.d/opam-deactivate.bat",
+                "Library/share/opam/conda/.opam-switch/{environment,lock,switch-config}",
+                "Library/share/opam/{config,config.lock,lock}",
+                "Library/share/opam/opam-init/complete.{sh,zsh}",
+                "Library/share/opam/opam-init/hooks/sandbox.{sh,sh.hash}",
+                "Library/share/opam/opam-init/init.{cmd,csh,fish,ps1,sh,zsh}",
+                "Library/share/opam/opam-init/variables.{cmd,csh,fish,ps1,sh}",
+                "Library/share/opam/repo/{default/repo,lock,repos-config}",
+                "etc/conda/test-files/*"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "2.5.0"
+      }
+    ],
+    "package": {
+      "name": "opam",
+      "version": "2.5.0"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "m2-bash >=5.2",
+        "m2-bzip2",
+        "m2-findutils",
+        "m2-gawk",
+        "m2-grep",
+        "m2-make",
+        "m2-sed",
+        "ocaml-cppo",
+        "ocaml-dune",
+        "ocaml-menhir",
+        "curl",
+        "git",
+        "ocaml_compiler_stub",
+        "ocaml_win-arm64 5.4.0.* c_compiler_stub",
+        "ocaml_linux-64 5.4.0.*",
+        "python >=3.9",
+        "m2-coreutils",
+        "m2-diffutils",
+        "m2-which"
+      ],
+      "host": [
+        "zstd"
+      ],
+      "run": [
+        "c-compiler",
+        "curl",
+        "git"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "25fb98f962c4227c1261e142afc68a416778e6e819600bd5ee3ec4a18ae1e238",
+      "url": "https://github.com/ocaml/opam/releases/download/2.5.0/opam-full-2.5.0.tar.gz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "curl",
+        "cxx_compiler_stub",
+        "git",
+        "m2-bash",
+        "m2-bzip2",
+        "m2-coreutils",
+        "m2-diffutils",
+        "m2-findutils",
+        "m2-gawk",
+        "m2-grep",
+        "m2-make",
+        "m2-sed",
+        "m2-which",
+        "ocaml-cppo",
+        "ocaml-dune",
+        "ocaml-menhir",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_win-arm64",
+        "python"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "zstd"
+      ]
     },
     "run": {
       "__set__": true,
