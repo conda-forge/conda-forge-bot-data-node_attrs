@@ -2,7 +2,12 @@
   "archived": false,
   "branch": "main",
   "ci_support_linux_64_python3.11.____cpython.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\n",
-  "ci_support_migrations": {},
+  "ci_support_migrations": {
+    "python315": {
+      "migration_number": 1,
+      "migrator_ts": 1755739490
+    }
+  },
   "conda-forge.yml": {
     "bot": {
       "inspection": "update-grayskull"
@@ -21,8 +26,8 @@
       "linux_aarch64": "default"
     }
   },
-  "feedstock_hash": "311cdf2ccd20c4b8dc36caf7b389fdbef05f5f14",
-  "feedstock_hash_ts": 1788949893,
+  "feedstock_hash": "ada7e5893dfbb4dcf3f575f31e9e2b9f90f05895",
+  "feedstock_hash_ts": 1792240686,
   "feedstock_name": "datatable",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -34,7 +39,7 @@
       "summary": "Python library for fast multi-threaded data manipulation and munging."
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "${{ PYTHON }} ci/ext.py build\n${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n"
     },
     "extra": {
@@ -304,7 +309,7 @@
       "summary": "Python library for fast multi-threaded data manipulation and munging."
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "${{ PYTHON }} ci/ext.py build\n${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n"
     },
     "extra": {
@@ -574,7 +579,7 @@
       "summary": "Python library for fast multi-threaded data manipulation and munging."
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "${{ PYTHON }} ci/ext.py build\n${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n"
     },
     "extra": {
@@ -1172,7 +1177,7 @@
       "summary": "Python library for fast multi-threaded data manipulation and munging."
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "${{ PYTHON }} ci/ext.py build\n${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n"
     },
     "extra": {
@@ -1448,7 +1453,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/datatable.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: datatable\n  version: \"1.1.0\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/datatable-${{ version }}.tar.gz\n  sha256: 8a9f6953ef6b02ede3d7c490f17d5c18c9b1bf2d58dd5451a8cac40ed887d775\n  patches:\n    # the vendored flatbuffers has an invalid span::operator= that GCC 15\n    # rejects at template definition time\n    - patches/0001-remove-invalid-span-assignment-operator.patch\n    # _PySys_GetSizeOf() left the public C API in python 3.13\n    - patches/0002-use-sys-getsizeof-on-python-3.13.patch\n    # dt.Type patched tp_basicsize of a type() -- created class, which\n    # collides with the managed __dict__ of python 3.11+ and segfaults\n    # during garbage collection on 3.13\n    - patches/0003-make-dt-type-a-static-extension-type.patch\n    # np.NaN was removed and repr() of NaT changed in numpy 2\n    - patches/0004-fix-tests-for-numpy-2.patch\n\nbuild:\n  number: 2\n  skip: match(python, \">3.13\") or win\n  script: |\n    ${{ PYTHON }} ci/ext.py build\n    ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib(\"c\") }}\n  host:\n    - pip\n    - python\n  run:\n    - python\n\ntests:\n  - python:\n      imports:\n        - datatable\n      pip_check: false\n  - files:\n      recipe:\n        - setup.cfg\n      source:\n        - src\n        - tests\n        - tests_random\n        - LICENSE\n    requirements:\n      run:\n        - pip\n        - numpy\n        - pandas\n        - pyarrow\n        - xlrd <=1.2.0\n        - docutils >=0.15\n        - pygments >=2.6\n        - sphinx >=4.0,<5.0\n        - sphinx_rtd_theme >=0.5\n        - nbsphinx >=0.5\n        - pytest >=3.1\n        - pytest-cov\n    script:\n      - rm tests/test-docs.py\n      # test_multiprocessing_threadpool hangs on macOS, where multiprocessing\n      # defaults to the \"spawn\" start method and each child starts a thread\n      # pool of its own\n      - if: osx\n        then: pytest tests -k 'not test_fread_from_cmd2 and not test_dt_version and not test_random_attack and not test_multiprocessing_threadpool'\n        else: pytest tests -k 'not test_fread_from_cmd2 and not test_dt_version and not test_random_attack'\n\nabout:\n  summary: Python library for fast multi-threaded data manipulation and munging.\n  license: MPL-2.0\n  license_file: LICENSE\n  homepage: https://github.com/h2oai/datatable\n\nextra:\n  recipe-maintainers:\n    - xylar\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: datatable\n  version: \"1.1.0\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/datatable-${{ version }}.tar.gz\n  sha256: 8a9f6953ef6b02ede3d7c490f17d5c18c9b1bf2d58dd5451a8cac40ed887d775\n  patches:\n    # the vendored flatbuffers has an invalid span::operator= that GCC 15\n    # rejects at template definition time\n    - patches/0001-remove-invalid-span-assignment-operator.patch\n    # _PySys_GetSizeOf() left the public C API in python 3.13\n    - patches/0002-use-sys-getsizeof-on-python-3.13.patch\n    # dt.Type patched tp_basicsize of a type() -- created class, which\n    # collides with the managed __dict__ of python 3.11+ and segfaults\n    # during garbage collection on 3.13\n    - patches/0003-make-dt-type-a-static-extension-type.patch\n    # np.NaN was removed and repr() of NaT changed in numpy 2\n    - patches/0004-fix-tests-for-numpy-2.patch\n\nbuild:\n  number: 3\n  skip: match(python, \">3.13\") or win\n  script: |\n    ${{ PYTHON }} ci/ext.py build\n    ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib(\"c\") }}\n  host:\n    - pip\n    - python\n  run:\n    - python\n\ntests:\n  - python:\n      imports:\n        - datatable\n      pip_check: false\n  - files:\n      recipe:\n        - setup.cfg\n      source:\n        - src\n        - tests\n        - tests_random\n        - LICENSE\n    requirements:\n      run:\n        - pip\n        - numpy\n        - pandas\n        - pyarrow\n        - xlrd <=1.2.0\n        - docutils >=0.15\n        - pygments >=2.6\n        - sphinx >=4.0,<5.0\n        - sphinx_rtd_theme >=0.5\n        - nbsphinx >=0.5\n        - pytest >=3.1\n        - pytest-cov\n    script:\n      - rm tests/test-docs.py\n      # test_multiprocessing_threadpool hangs on macOS, where multiprocessing\n      # defaults to the \"spawn\" start method and each child starts a thread\n      # pool of its own\n      - if: osx\n        then: pytest tests -k 'not test_fread_from_cmd2 and not test_dt_version and not test_random_attack and not test_multiprocessing_threadpool'\n        else: pytest tests -k 'not test_fread_from_cmd2 and not test_dt_version and not test_random_attack'\n\nabout:\n  summary: Python library for fast multi-threaded data manipulation and munging.\n  license: MPL-2.0\n  license_file: LICENSE\n  homepage: https://github.com/h2oai/datatable\n\nextra:\n  recipe-maintainers:\n    - xylar\n",
   "req": {
     "__set__": true,
     "elements": [
