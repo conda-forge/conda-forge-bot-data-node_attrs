@@ -25,8 +25,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "eadf0ad40ecf3e6f9304b15bfd6ea0cfb8bbfb22",
-  "feedstock_hash_ts": 1792205599,
+  "feedstock_hash": "06b0aa24fc5beb0ebc12f76cf10e0bbf8675a1e8",
+  "feedstock_hash_ts": 1792237588,
   "feedstock_name": "spirv-tools",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -37,12 +37,10 @@
       "summary": "The SPIR-V Tools project provides an API and commands for processing SPIR-V modules."
     },
     "build": {
-      "number": "1",
-      "run_exports": [
-        "spirv-tools"
-      ]
+      "number": "2"
     },
     "extra": {
+      "feedstock-name": "spirv-tools",
       "recipe-maintainers": [
         "oleksandr-pavlyk",
         "ZzEeKkAa",
@@ -52,8 +50,184 @@
         "baszalmstra"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      }
+    ],
     "package": {
-      "name": "spirv-tools",
+      "name": "spirv-tools-split",
       "version": "2026.4"
     },
     "requirements": {
@@ -62,13 +236,10 @@
         "c_stdlib_stub",
         "cmake",
         "make",
-        "python"
+        "python >=3"
       ],
       "host": [
         "spirv-headers 1.4.363.0"
-      ],
-      "run_constrained": [
-        "spirv-headers"
       ]
     },
     "schema_version": 0,
@@ -79,30 +250,6 @@
       ],
       "sha256": "c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd",
       "url": "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2026.4.zip"
-    },
-    "test": {
-      "commands": [
-        "spirv-as -h",
-        "spirv-as test/compute.spvasm -o compute.spv",
-        "spirv-val compute.spv",
-        "spirv-opt --strip-debug compute.spv -o stripped.spv",
-        "spirv-opt -O compute.spv -o optimized.spv",
-        "spirv-val optimized.spv",
-        "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
-        "cmake --build test-build",
-        "./test-build/test-spirv-tools"
-      ],
-      "files": [
-        "test/CMakeLists.txt",
-        "test/main.cpp",
-        "test/compute.spvasm"
-      ],
-      "requires": [
-        "cxx_compiler_stub",
-        "c_stdlib_stub",
-        "cmake",
-        "ninja"
-      ]
     }
   },
   "linux_64_requirements": {
@@ -119,12 +266,16 @@
     "host": {
       "__set__": true,
       "elements": [
-        "spirv-headers"
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "spirv-headers",
+        "spirv-tools"
+      ]
     },
     "test": {
       "__set__": true,
@@ -144,12 +295,10 @@
       "summary": "The SPIR-V Tools project provides an API and commands for processing SPIR-V modules."
     },
     "build": {
-      "number": "1",
-      "run_exports": [
-        "spirv-tools"
-      ]
+      "number": "2"
     },
     "extra": {
+      "feedstock-name": "spirv-tools",
       "recipe-maintainers": [
         "oleksandr-pavlyk",
         "ZzEeKkAa",
@@ -159,8 +308,97 @@
         "baszalmstra"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      }
+    ],
     "package": {
-      "name": "spirv-tools",
+      "name": "spirv-tools-split",
       "version": "2026.4"
     },
     "requirements": {
@@ -169,13 +407,10 @@
         "c_stdlib_stub",
         "cmake",
         "make",
-        "python"
+        "python >=3"
       ],
       "host": [
         "spirv-headers 1.4.363.0"
-      ],
-      "run_constrained": [
-        "spirv-headers"
       ]
     },
     "schema_version": 0,
@@ -186,30 +421,6 @@
       ],
       "sha256": "c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd",
       "url": "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2026.4.zip"
-    },
-    "test": {
-      "commands": [
-        "spirv-as -h",
-        "spirv-as test/compute.spvasm -o compute.spv",
-        "spirv-val compute.spv",
-        "spirv-opt --strip-debug compute.spv -o stripped.spv",
-        "spirv-opt -O compute.spv -o optimized.spv",
-        "spirv-val optimized.spv",
-        "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
-        "cmake --build test-build",
-        "./test-build/test-spirv-tools"
-      ],
-      "files": [
-        "test/CMakeLists.txt",
-        "test/main.cpp",
-        "test/compute.spvasm"
-      ],
-      "requires": [
-        "cxx_compiler_stub",
-        "c_stdlib_stub",
-        "cmake",
-        "ninja"
-      ]
     }
   },
   "linux_aarch64_requirements": {
@@ -226,12 +437,16 @@
     "host": {
       "__set__": true,
       "elements": [
-        "spirv-headers"
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "spirv-headers",
+        "spirv-tools"
+      ]
     },
     "test": {
       "__set__": true,
@@ -251,12 +466,10 @@
       "summary": "The SPIR-V Tools project provides an API and commands for processing SPIR-V modules."
     },
     "build": {
-      "number": "1",
-      "run_exports": [
-        "spirv-tools"
-      ]
+      "number": "2"
     },
     "extra": {
+      "feedstock-name": "spirv-tools",
       "recipe-maintainers": [
         "oleksandr-pavlyk",
         "ZzEeKkAa",
@@ -266,8 +479,97 @@
         "baszalmstra"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      }
+    ],
     "package": {
-      "name": "spirv-tools",
+      "name": "spirv-tools-split",
       "version": "2026.4"
     },
     "requirements": {
@@ -276,13 +578,10 @@
         "c_stdlib_stub",
         "cmake",
         "make",
-        "python"
+        "python >=3"
       ],
       "host": [
         "spirv-headers 1.4.363.0"
-      ],
-      "run_constrained": [
-        "spirv-headers"
       ]
     },
     "schema_version": 0,
@@ -293,30 +592,6 @@
       ],
       "sha256": "c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd",
       "url": "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2026.4.zip"
-    },
-    "test": {
-      "commands": [
-        "spirv-as -h",
-        "spirv-as test/compute.spvasm -o compute.spv",
-        "spirv-val compute.spv",
-        "spirv-opt --strip-debug compute.spv -o stripped.spv",
-        "spirv-opt -O compute.spv -o optimized.spv",
-        "spirv-val optimized.spv",
-        "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
-        "cmake --build test-build",
-        "./test-build/test-spirv-tools"
-      ],
-      "files": [
-        "test/CMakeLists.txt",
-        "test/main.cpp",
-        "test/compute.spvasm"
-      ],
-      "requires": [
-        "cxx_compiler_stub",
-        "c_stdlib_stub",
-        "cmake",
-        "ninja"
-      ]
     }
   },
   "linux_ppc64le_requirements": {
@@ -333,12 +608,16 @@
     "host": {
       "__set__": true,
       "elements": [
-        "spirv-headers"
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "spirv-headers",
+        "spirv-tools"
+      ]
     },
     "test": {
       "__set__": true,
@@ -358,12 +637,10 @@
       "summary": "The SPIR-V Tools project provides an API and commands for processing SPIR-V modules."
     },
     "build": {
-      "number": "1",
-      "run_exports": [
-        "spirv-tools"
-      ]
+      "number": "2"
     },
     "extra": {
+      "feedstock-name": "spirv-tools",
       "recipe-maintainers": [
         "oleksandr-pavlyk",
         "ZzEeKkAa",
@@ -373,8 +650,706 @@
         "baszalmstra"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.bat",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "if exist %LIBRARY_INC%\\spirv-tools-private exit 1",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "test-build\\\\test-spirv-tools.exe"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.bat",
+        "test": {
+          "commands": [
+            "if not exist %LIBRARY_INC%\\spirv-tools-private\\source\\opt\\build_module.h exit 1",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "test-build\\\\test-spirv-tools-internal.exe"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.bat",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "if exist %LIBRARY_INC%\\spirv-tools-private exit 1",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "test-build\\\\test-spirv-tools.exe"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.bat",
+        "test": {
+          "commands": [
+            "if not exist %LIBRARY_INC%\\spirv-tools-private\\source\\opt\\build_module.h exit 1",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "test-build\\\\test-spirv-tools-internal.exe"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      }
+    ],
     "package": {
-      "name": "spirv-tools",
+      "name": "spirv-tools-split",
       "version": "2026.4"
     },
     "requirements": {
@@ -383,14 +1358,11 @@
         "c_stdlib_stub",
         "cmake",
         "make",
-        "python",
+        "python >=3",
         "ninja"
       ],
       "host": [
         "spirv-headers 1.4.363.0"
-      ],
-      "run_constrained": [
-        "spirv-headers"
       ]
     },
     "schema_version": 0,
@@ -401,34 +1373,9 @@
       ],
       "sha256": "c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd",
       "url": "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2026.4.zip"
-    },
-    "test": {
-      "commands": [
-        "spirv-as -h",
-        "spirv-as test/compute.spvasm -o compute.spv",
-        "spirv-val compute.spv",
-        "spirv-opt --strip-debug compute.spv -o stripped.spv",
-        "spirv-opt -O compute.spv -o optimized.spv",
-        "spirv-val optimized.spv",
-        "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
-        "cmake --build test-build",
-        "./test-build/test-spirv-tools",
-        "test-build\\\\test-spirv-tools.exe"
-      ],
-      "files": [
-        "test/CMakeLists.txt",
-        "test/main.cpp",
-        "test/compute.spvasm"
-      ],
-      "requires": [
-        "cxx_compiler_stub",
-        "c_stdlib_stub",
-        "cmake",
-        "ninja"
-      ]
     }
   },
-  "name": "spirv-tools",
+  "name": "spirv-tools-split",
   "osx_64_meta_yaml": {
     "about": {
       "home": "https://github.com/KhronosGroup/SPIRV-Tools",
@@ -437,12 +1384,10 @@
       "summary": "The SPIR-V Tools project provides an API and commands for processing SPIR-V modules."
     },
     "build": {
-      "number": "1",
-      "run_exports": [
-        "spirv-tools"
-      ]
+      "number": "2"
     },
     "extra": {
+      "feedstock-name": "spirv-tools",
       "recipe-maintainers": [
         "oleksandr-pavlyk",
         "ZzEeKkAa",
@@ -452,8 +1397,97 @@
         "baszalmstra"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      }
+    ],
     "package": {
-      "name": "spirv-tools",
+      "name": "spirv-tools-split",
       "version": "2026.4"
     },
     "requirements": {
@@ -462,13 +1496,10 @@
         "c_stdlib_stub",
         "cmake",
         "make",
-        "python"
+        "python >=3"
       ],
       "host": [
         "spirv-headers 1.4.363.0"
-      ],
-      "run_constrained": [
-        "spirv-headers"
       ]
     },
     "schema_version": 0,
@@ -479,30 +1510,6 @@
       ],
       "sha256": "c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd",
       "url": "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2026.4.zip"
-    },
-    "test": {
-      "commands": [
-        "spirv-as -h",
-        "spirv-as test/compute.spvasm -o compute.spv",
-        "spirv-val compute.spv",
-        "spirv-opt --strip-debug compute.spv -o stripped.spv",
-        "spirv-opt -O compute.spv -o optimized.spv",
-        "spirv-val optimized.spv",
-        "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
-        "cmake --build test-build",
-        "./test-build/test-spirv-tools"
-      ],
-      "files": [
-        "test/CMakeLists.txt",
-        "test/main.cpp",
-        "test/compute.spvasm"
-      ],
-      "requires": [
-        "cxx_compiler_stub",
-        "c_stdlib_stub",
-        "cmake",
-        "ninja"
-      ]
     }
   },
   "osx_64_requirements": {
@@ -519,12 +1526,16 @@
     "host": {
       "__set__": true,
       "elements": [
-        "spirv-headers"
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "spirv-headers",
+        "spirv-tools"
+      ]
     },
     "test": {
       "__set__": true,
@@ -544,12 +1555,10 @@
       "summary": "The SPIR-V Tools project provides an API and commands for processing SPIR-V modules."
     },
     "build": {
-      "number": "1",
-      "run_exports": [
-        "spirv-tools"
-      ]
+      "number": "2"
     },
     "extra": {
+      "feedstock-name": "spirv-tools",
       "recipe-maintainers": [
         "oleksandr-pavlyk",
         "ZzEeKkAa",
@@ -559,8 +1568,97 @@
         "baszalmstra"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.sh",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "test ! -e ${PREFIX}/include/spirv-tools-private",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.sh",
+        "test": {
+          "commands": [
+            "test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "./test-build/test-spirv-tools-internal"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      }
+    ],
     "package": {
-      "name": "spirv-tools",
+      "name": "spirv-tools-split",
       "version": "2026.4"
     },
     "requirements": {
@@ -569,13 +1667,10 @@
         "c_stdlib_stub",
         "cmake",
         "make",
-        "python"
+        "python >=3"
       ],
       "host": [
         "spirv-headers 1.4.363.0"
-      ],
-      "run_constrained": [
-        "spirv-headers"
       ]
     },
     "schema_version": 0,
@@ -586,30 +1681,6 @@
       ],
       "sha256": "c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd",
       "url": "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2026.4.zip"
-    },
-    "test": {
-      "commands": [
-        "spirv-as -h",
-        "spirv-as test/compute.spvasm -o compute.spv",
-        "spirv-val compute.spv",
-        "spirv-opt --strip-debug compute.spv -o stripped.spv",
-        "spirv-opt -O compute.spv -o optimized.spv",
-        "spirv-val optimized.spv",
-        "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
-        "cmake --build test-build",
-        "./test-build/test-spirv-tools"
-      ],
-      "files": [
-        "test/CMakeLists.txt",
-        "test/main.cpp",
-        "test/compute.spvasm"
-      ],
-      "requires": [
-        "cxx_compiler_stub",
-        "c_stdlib_stub",
-        "cmake",
-        "ninja"
-      ]
     }
   },
   "osx_arm64_requirements": {
@@ -626,12 +1697,16 @@
     "host": {
       "__set__": true,
       "elements": [
-        "spirv-headers"
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "spirv-headers",
+        "spirv-tools"
+      ]
     },
     "test": {
       "__set__": true,
@@ -646,7 +1721,8 @@
   "outputs_names": {
     "__set__": true,
     "elements": [
-      "spirv-tools"
+      "spirv-tools",
+      "spirv-tools-internal"
     ]
   },
   "parsing_error": false,
@@ -662,7 +1738,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/spirv-tools.json"
   },
-  "raw_meta_yaml": "{% set version = \"2026.4\" %}\n# The SPIRV-Headers revision pinned by v{{ version }}'s DEPS.\n{% set headers_version = \"1.4.363.0\" %}\n\npackage:\n  name: spirv-tools\n  version: \"{{ version }}\"\n\nsource:\n  url: https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v{{ version }}.zip\n  sha256: c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd\n  patches:\n    - 0001-Get-package-version-and-description-from-conda-build.patch\n    # Export the C++ API with dllexport/dllimport instead of\n    # CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS. Not upstream yet, see\n    # https://github.com/KhronosGroup/SPIRV-Tools/issues/3909\n    - 0002-Export-the-CXX-API-of-the-shared-libraries.patch\n\nbuild:\n  run_exports:\n    # They seem to be using calver, so their version numbers are not very informative\n    # But we expect these to be rather stable\n    # so lets try 'x' https://github.com/conda-forge/spirv-tools-feedstock/issues/3\n    - {{ pin_subpackage('spirv-tools', 'x') }}\n  number: 1\n\nrequirements:\n  build:\n    - {{ compiler('cxx') }}\n    - {{ stdlib('c') }}\n    - cmake\n    - make    # [unix]\n    - ninja   # [win]\n    - python\n  host:\n    - spirv-headers {{ headers_version }}\n  run_constrained:\n    - {{ pin_compatible('spirv-headers', max_pin='x.x.x.x') }}\n\ntest:\n  requires:\n    - {{ compiler('cxx') }}\n    - {{ stdlib('c') }}\n    - cmake\n    - ninja\n  files:\n    - test/CMakeLists.txt\n    - test/main.cpp\n    - test/compute.spvasm\n  commands:\n    - spirv-as -h\n    # Run the optimizer through the command line tools\n    - spirv-as test/compute.spvasm -o compute.spv\n    - spirv-val compute.spv\n    - spirv-opt --strip-debug compute.spv -o stripped.spv\n    - spirv-opt -O compute.spv -o optimized.spv\n    - spirv-val optimized.spv\n    # MSVC single-config generators default to a Debug build, whose debug C++\n    # runtime and STL layouts are not ABI compatible with the Release DLLs.\n    - cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release\n    - cmake --build test-build\n    - ./test-build/test-spirv-tools  # [unix]\n    - test-build\\\\test-spirv-tools.exe  # [win]\n\nabout:\n  home: https://github.com/KhronosGroup/SPIRV-Tools\n  license: Apache-2.0\n  license_file: LICENSE\n  summary: The SPIR-V Tools project provides an API and commands for processing SPIR-V modules.\n\nextra:\n  recipe-maintainers:\n    - oleksandr-pavlyk\n    - ZzEeKkAa\n    - isuruf\n    - hmaarrfk\n    - JarrettSJohnson\n    # baszalmstra is insterested in helping windows failures\n    - baszalmstra\n",
+  "raw_meta_yaml": "{% set version = \"2026.4\" %}\n# The SPIRV-Headers revision pinned by v{{ version }}'s DEPS.\n{% set headers_version = \"1.4.363.0\" %}\n\npackage:\n  name: spirv-tools-split\n  version: \"{{ version }}\"\n\nsource:\n  url: https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v{{ version }}.zip\n  sha256: c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd\n  patches:\n    - 0001-Get-package-version-and-description-from-conda-build.patch\n    # Export the C++ API with dllexport/dllimport instead of\n    # CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS. Not upstream yet, see\n    # https://github.com/KhronosGroup/SPIRV-Tools/issues/3909\n    - 0002-Export-the-CXX-API-of-the-shared-libraries.patch\n\nbuild:\n  number: 2\n\nrequirements:\n  build:\n    - {{ compiler('cxx') }}\n    - {{ stdlib('c') }}\n    - cmake\n    - make    # [unix]\n    - ninja   # [win]\n    - python >=3\n  host:\n    - spirv-headers {{ headers_version }}\n\noutputs:\n  - name: spirv-tools\n    script: install.sh   # [unix]\n    script: install.bat  # [win]\n    build:\n      run_exports:\n        # They seem to be using calver, so their version numbers are not very informative\n        # But we expect these to be rather stable\n        # so lets try 'x' https://github.com/conda-forge/spirv-tools-feedstock/issues/3\n        - {{ pin_subpackage('spirv-tools', 'x') }}\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n        - cmake\n      host:\n        - spirv-headers {{ headers_version }}\n      run_constrained:\n        - {{ pin_compatible('spirv-headers', max_pin='x.x.x.x') }}\n    test:\n      requires:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n        - cmake\n        - ninja\n      files:\n        - test/CMakeLists.txt\n        - test/main.cpp\n        - test/compute.spvasm\n      commands:\n        - spirv-as -h\n        # Run the optimizer through the command line tools\n        - spirv-as test/compute.spvasm -o compute.spv\n        - spirv-val compute.spv\n        - spirv-opt --strip-debug compute.spv -o stripped.spv\n        - spirv-opt -O compute.spv -o optimized.spv\n        - spirv-val optimized.spv\n        - test ! -e ${PREFIX}/include/spirv-tools-private  # [unix]\n        - if exist %LIBRARY_INC%\\spirv-tools-private exit 1  # [win]\n        # MSVC single-config generators default to a Debug build, whose debug C++\n        # runtime and STL layouts are not ABI compatible with the Release DLLs.\n        - cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release\n        - cmake --build test-build\n        - ./test-build/test-spirv-tools  # [unix]\n        - test-build\\\\test-spirv-tools.exe  # [win]\n\n  - name: spirv-tools-internal\n    script: install_internal.sh   # [unix]\n    script: install_internal.bat  # [win]\n    build:\n      run_exports:\n        - {{ pin_subpackage('spirv-tools', max_pin='x.x') }}\n    requirements:\n      build:\n        - cmake\n      host:\n        - {{ pin_subpackage('spirv-tools', exact=True) }}\n        - spirv-headers {{ headers_version }}\n      run:\n        - {{ pin_subpackage('spirv-tools', exact=True) }}\n        - {{ pin_compatible('spirv-headers', max_pin='x.x.x.x') }}\n    test:\n      requires:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n        - cmake\n        - ninja\n      files:\n        - test-internal/CMakeLists.txt\n        - test-internal/main.cpp\n      commands:\n        - test -f ${PREFIX}/include/spirv-tools-private/source/opt/build_module.h  # [unix]\n        - if not exist %LIBRARY_INC%\\spirv-tools-private\\source\\opt\\build_module.h exit 1  # [win]\n        - cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release\n        - cmake --build test-build\n        - ./test-build/test-spirv-tools-internal  # [unix]\n        - test-build\\\\test-spirv-tools-internal.exe  # [win]\n\nabout:\n  home: https://github.com/KhronosGroup/SPIRV-Tools\n  license: Apache-2.0\n  license_file: LICENSE\n  summary: The SPIR-V Tools project provides an API and commands for processing SPIR-V modules.\n\nextra:\n  feedstock-name: spirv-tools\n  recipe-maintainers:\n    - oleksandr-pavlyk\n    - ZzEeKkAa\n    - isuruf\n    - hmaarrfk\n    - JarrettSJohnson\n    # baszalmstra is insterested in helping windows failures\n    - baszalmstra\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -672,7 +1748,8 @@
       "make",
       "ninja",
       "python",
-      "spirv-headers"
+      "spirv-headers",
+      "spirv-tools"
     ]
   },
   "requirements": {
@@ -692,14 +1769,17 @@
       "elements": [
         "c_stdlib_stub",
         "cxx_compiler_stub",
-        "spirv-headers"
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "c_stdlib_stub",
-        "cxx_compiler_stub"
+        "cxx_compiler_stub",
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "test": {
@@ -722,18 +1802,22 @@
         "cxx_compiler_stub",
         "make",
         "ninja",
-        "python"
+        "python >=3"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "spirv-headers 1.4.363.0"
+        "spirv-headers 1.4.363.0",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "spirv-headers",
+        "spirv-tools"
+      ]
     },
     "test": {
       "__set__": true,
@@ -758,12 +1842,10 @@
       "summary": "The SPIR-V Tools project provides an API and commands for processing SPIR-V modules."
     },
     "build": {
-      "number": "1",
-      "run_exports": [
-        "spirv-tools"
-      ]
+      "number": "2"
     },
     "extra": {
+      "feedstock-name": "spirv-tools",
       "recipe-maintainers": [
         "oleksandr-pavlyk",
         "ZzEeKkAa",
@@ -773,8 +1855,97 @@
         "baszalmstra"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.bat",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "if exist %LIBRARY_INC%\\spirv-tools-private exit 1",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "test-build\\\\test-spirv-tools.exe"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.bat",
+        "test": {
+          "commands": [
+            "if not exist %LIBRARY_INC%\\spirv-tools-private\\source\\opt\\build_module.h exit 1",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "test-build\\\\test-spirv-tools-internal.exe"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      }
+    ],
     "package": {
-      "name": "spirv-tools",
+      "name": "spirv-tools-split",
       "version": "2026.4"
     },
     "requirements": {
@@ -783,13 +1954,10 @@
         "c_stdlib_stub",
         "cmake",
         "ninja",
-        "python"
+        "python >=3"
       ],
       "host": [
         "spirv-headers 1.4.363.0"
-      ],
-      "run_constrained": [
-        "spirv-headers"
       ]
     },
     "schema_version": 0,
@@ -800,30 +1968,6 @@
       ],
       "sha256": "c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd",
       "url": "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2026.4.zip"
-    },
-    "test": {
-      "commands": [
-        "spirv-as -h",
-        "spirv-as test/compute.spvasm -o compute.spv",
-        "spirv-val compute.spv",
-        "spirv-opt --strip-debug compute.spv -o stripped.spv",
-        "spirv-opt -O compute.spv -o optimized.spv",
-        "spirv-val optimized.spv",
-        "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
-        "cmake --build test-build",
-        "test-build\\\\test-spirv-tools.exe"
-      ],
-      "files": [
-        "test/CMakeLists.txt",
-        "test/main.cpp",
-        "test/compute.spvasm"
-      ],
-      "requires": [
-        "cxx_compiler_stub",
-        "c_stdlib_stub",
-        "cmake",
-        "ninja"
-      ]
     }
   },
   "win_64_requirements": {
@@ -840,12 +1984,16 @@
     "host": {
       "__set__": true,
       "elements": [
-        "spirv-headers"
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "spirv-headers",
+        "spirv-tools"
+      ]
     },
     "test": {
       "__set__": true,
@@ -865,12 +2013,10 @@
       "summary": "The SPIR-V Tools project provides an API and commands for processing SPIR-V modules."
     },
     "build": {
-      "number": "1",
-      "run_exports": [
-        "spirv-tools"
-      ]
+      "number": "2"
     },
     "extra": {
+      "feedstock-name": "spirv-tools",
       "recipe-maintainers": [
         "oleksandr-pavlyk",
         "ZzEeKkAa",
@@ -880,8 +2026,97 @@
         "baszalmstra"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake"
+          ],
+          "host": [
+            "spirv-headers 1.4.363.0"
+          ],
+          "run_constrained": [
+            "spirv-headers"
+          ]
+        },
+        "script": "install.bat",
+        "test": {
+          "commands": [
+            "spirv-as -h",
+            "spirv-as test/compute.spvasm -o compute.spv",
+            "spirv-val compute.spv",
+            "spirv-opt --strip-debug compute.spv -o stripped.spv",
+            "spirv-opt -O compute.spv -o optimized.spv",
+            "spirv-val optimized.spv",
+            "if exist %LIBRARY_INC%\\spirv-tools-private exit 1",
+            "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "test-build\\\\test-spirv-tools.exe"
+          ],
+          "files": [
+            "test/CMakeLists.txt",
+            "test/main.cpp",
+            "test/compute.spvasm"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "spirv-tools"
+          ]
+        },
+        "name": "spirv-tools-internal",
+        "requirements": {
+          "build": [
+            "cmake"
+          ],
+          "host": [
+            "spirv-tools",
+            "spirv-headers 1.4.363.0"
+          ],
+          "run": [
+            "spirv-tools",
+            "spirv-headers"
+          ]
+        },
+        "script": "install_internal.bat",
+        "test": {
+          "commands": [
+            "if not exist %LIBRARY_INC%\\spirv-tools-private\\source\\opt\\build_module.h exit 1",
+            "cmake -G Ninja -S test-internal -B test-build -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build test-build",
+            "test-build\\\\test-spirv-tools-internal.exe"
+          ],
+          "files": [
+            "test-internal/CMakeLists.txt",
+            "test-internal/main.cpp"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ]
+        }
+      }
+    ],
     "package": {
-      "name": "spirv-tools",
+      "name": "spirv-tools-split",
       "version": "2026.4"
     },
     "requirements": {
@@ -890,13 +2125,10 @@
         "c_stdlib_stub",
         "cmake",
         "ninja",
-        "python"
+        "python >=3"
       ],
       "host": [
         "spirv-headers 1.4.363.0"
-      ],
-      "run_constrained": [
-        "spirv-headers"
       ]
     },
     "schema_version": 0,
@@ -907,30 +2139,6 @@
       ],
       "sha256": "c2399673510cfaa515e9197db18c2ae5860925f497ad8735c93f00f931c41cbd",
       "url": "https://github.com/KhronosGroup/SPIRV-Tools/archive/refs/tags/v2026.4.zip"
-    },
-    "test": {
-      "commands": [
-        "spirv-as -h",
-        "spirv-as test/compute.spvasm -o compute.spv",
-        "spirv-val compute.spv",
-        "spirv-opt --strip-debug compute.spv -o stripped.spv",
-        "spirv-opt -O compute.spv -o optimized.spv",
-        "spirv-val optimized.spv",
-        "cmake -G Ninja -S test -B test-build -DCMAKE_BUILD_TYPE=Release",
-        "cmake --build test-build",
-        "test-build\\\\test-spirv-tools.exe"
-      ],
-      "files": [
-        "test/CMakeLists.txt",
-        "test/main.cpp",
-        "test/compute.spvasm"
-      ],
-      "requires": [
-        "cxx_compiler_stub",
-        "c_stdlib_stub",
-        "cmake",
-        "ninja"
-      ]
     }
   },
   "win_arm64_requirements": {
@@ -947,12 +2155,16 @@
     "host": {
       "__set__": true,
       "elements": [
-        "spirv-headers"
+        "spirv-headers",
+        "spirv-tools"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "spirv-headers",
+        "spirv-tools"
+      ]
     },
     "test": {
       "__set__": true,
