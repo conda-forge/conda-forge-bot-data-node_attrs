@@ -31,8 +31,8 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "b8cf613cdfa09e99819c4b692387fafbd561f491",
-  "feedstock_hash_ts": 1792366973,
+  "feedstock_hash": "3f2b854e5fa4d74d85f538f9a7a89c4524d6aba6",
+  "feedstock_hash_ts": 1792373111,
   "feedstock_name": "fastar",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -45,7 +45,7 @@
       "summary": "High-level bindings for the Rust tar crate"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": {
         "content": [
           "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
@@ -548,7 +548,7 @@
       "summary": "High-level bindings for the Rust tar crate"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": {
         "content": [
           "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
@@ -1051,7 +1051,7 @@
       "summary": "High-level bindings for the Rust tar crate"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": {
         "content": [
           "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
@@ -3180,7 +3180,7 @@
       "summary": "High-level bindings for the Rust tar crate"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": {
         "content": [
           "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
@@ -3701,7 +3701,7 @@
       "summary": "High-level bindings for the Rust tar crate"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": {
         "content": [
           "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
@@ -4229,7 +4229,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/fastar.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.12.0\"\n  cov_fail_linux: \"83\"\n\npackage:\n  name: fastar\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/f/fastar/fastar-${{ version }}.tar.gz\n  sha256: bba71522eae6a7627a5514ffdd4ac9645ef27d82e23931d79fd974bb49c3f2ad\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO: cargo-auditable-wrapper${{ \".bat\" if win }}\n      ZSTD_SYS_USE_PKG_CONFIG: \"1\"\n    content:\n      - if: win\n        then:\n          - copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"\n        else:\n          - cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n      # the benchmarks are not actionable, and pytest-codspeed-feedstock seems broken\n      - ${{ PYTHON }} -c \"import shutil; shutil.rmtree('tests/benchmarks')\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"rust\") }}\n    - ${{ compiler(\"c\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-bundle-licenses\n    - cargo-auditable\n    - pkg-config\n  host:\n    - maturin >=1.14.1,<2.0\n    - pip\n    - python\n    - zstd\n  run:\n    - python\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - etc/conda/test-files/fastar/**\n      site_packages:\n        - fastar/**\n        - fastar-${{ version }}.dist-info/**\n  - python:\n      imports: fastar\n      pip_check: true\n  - files:\n      source:\n        - tests/\n    requirements:\n      run:\n        - backports.zstd\n        - mypy\n        - psutil\n        - pytest-cov\n    script:\n      env:\n        # upstream tests on linux; most of the below are due to OS-level\n        # differences in error message strings\n        PYTEST_ADDOPTS: |-\n          ${{\n            '-k \"not unpack_raises_if_file_would_overwrite_existing_directory\"'\n            if osx\n          }}${{\n            ('-k \"not (' ~ ( [\n              'append_preserves_directory_permissions',\n              'append_preserves_file_permissions',\n              'close_closes_archive',\n              'context_manager_closes_archive',\n              'open_raises_if_file_does_not_exist',\n              'open_raises_if_insufficient_permissions',\n              'open_raises_if_no_permissions',\n              'open_raises_if_path_is_directory',\n              'unpack_keeps_contents_of_conflicting_directories',\n              'unpack_overwrites_permissions_of_conflicting_directories',\n              'unpack_overwrites_permissions_of_conflicting_files',\n              'unpack_preserves_directory_permissions',\n              'unpack_preserves_file_permissions',\n              'unpack_raises_if_file_would_overwrite_existing_directory',\n            ] | join(' or ') ) ~ ')\"')\n            if win\n          }}\n      content:\n        - coverage run --source=fastar --branch -m pytest -vv --tb=long --color=yes\n        - coverage report --show-missing --skip-covered ${{ '--fail-under ' ~ cov_fail_linux if linux }}\n        - mypy -p fastar\n\nabout:\n  summary: High-level bindings for the Rust tar crate\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://pypi.org/project/fastar\n  repository: https://github.com/DoctorJohn/fastar\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.12.0\"\n  cov_fail_linux: \"83\"\n\npackage:\n  name: fastar\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/f/fastar/fastar-${{ version }}.tar.gz\n  sha256: bba71522eae6a7627a5514ffdd4ac9645ef27d82e23931d79fd974bb49c3f2ad\n\nbuild:\n  number: 2\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO: cargo-auditable-wrapper${{ \".bat\" if win }}\n      ZSTD_SYS_USE_PKG_CONFIG: \"1\"\n    content:\n      - if: win\n        then:\n          - copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"\n        else:\n          - cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n      # the benchmarks are not actionable, and pytest-codspeed-feedstock seems broken\n      - ${{ PYTHON }} -c \"import shutil; shutil.rmtree('tests/benchmarks')\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"rust\") }}\n    - ${{ compiler(\"c\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-bundle-licenses\n    - cargo-auditable\n    - pkg-config\n  host:\n    - maturin >=1.14.1,<2.0\n    - pip\n    - python\n    - zstd\n  run:\n    - python\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - etc/conda/test-files/fastar/**\n      site_packages:\n        - fastar/**\n        - fastar-${{ version }}.dist-info/**\n  - python:\n      imports: fastar\n      pip_check: true\n  - files:\n      source:\n        - tests/\n    requirements:\n      run:\n        - backports.zstd\n        - mypy\n        - psutil\n        - pytest-cov\n    script:\n      env:\n        # upstream tests on linux; most of the below are due to OS-level\n        # differences in error message strings\n        PYTEST_ADDOPTS: |-\n          ${{\n            '-k \"not unpack_raises_if_file_would_overwrite_existing_directory\"'\n            if osx\n          }}${{\n            ('-k \"not (' ~ ( [\n              'append_preserves_directory_permissions',\n              'append_preserves_file_permissions',\n              'close_closes_archive',\n              'context_manager_closes_archive',\n              'open_raises_if_file_does_not_exist',\n              'open_raises_if_insufficient_permissions',\n              'open_raises_if_no_permissions',\n              'open_raises_if_path_is_directory',\n              'unpack_keeps_contents_of_conflicting_directories',\n              'unpack_overwrites_permissions_of_conflicting_directories',\n              'unpack_overwrites_permissions_of_conflicting_files',\n              'unpack_preserves_directory_permissions',\n              'unpack_preserves_file_permissions',\n              'unpack_raises_if_file_would_overwrite_existing_directory',\n            ] | join(' or ') ) ~ ')\"')\n            if win\n          }}\n      content:\n        - coverage run --source=fastar --branch -m pytest -vv --tb=long --color=yes\n        - coverage report --show-missing --skip-covered ${{ '--fail-under ' ~ cov_fail_linux if linux }}\n        - mypy -p fastar\n\nabout:\n  summary: High-level bindings for the Rust tar crate\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://pypi.org/project/fastar\n  repository: https://github.com/DoctorJohn/fastar\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -4341,7 +4341,7 @@
       "summary": "High-level bindings for the Rust tar crate"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": {
         "content": [
           "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"",
