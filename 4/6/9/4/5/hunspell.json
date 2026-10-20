@@ -1,81 +1,140 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '12'\ncdt_name:\n- cos6\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '12'\ndocker_image:\n- quay.io/condaforge/linux-anvil-cos7-x86_64\nreadline:\n- '8'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibiconv:\n- '1'\nncurses:\n- '6'\nreadline:\n- '8'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
-    "build_platform": {
-      "osx_arm64": "osx_64"
-    },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
+    },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "74f4e58d3c6bb9c1f3cdf2127740b9cfc81e1ff0",
-  "feedstock_hash_ts": 1777048925,
+  "feedstock_hash": "2332a0f1fd4f34b0841bc562a5d28e427d1aafe3",
+  "feedstock_hash_ts": 1792508808,
   "feedstock_name": "hunspell",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.\n",
+      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.",
       "dev_url": "https://github.com/hunspell/hunspell",
-      "doc_url": "http://hunspell.github.io/",
       "home": "http://hunspell.github.io/",
-      "license": "MPL 1.1/GPL 2.0/LGPL 2.1",
-      "license_family": "GPL",
+      "license": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
+      "license_family": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "The most popular spellchecking library."
     },
     "build": {
-      "has_prefix_files": [
-        "bin/hunspell"
-      ],
-      "number": "1"
+      "number": "0",
+      "script": [
+        "autoreconf -vfi",
+        "./configure \"--prefix=${{ PREFIX }}\" --with-readline --with-ui",
+        "make \"-j${CPU_COUNT}\"",
+        "make check || (cat tests/test-suite.log && exit 1)",
+        "make install",
+        "mkdir -p \"${{ PREFIX }}/${{ dict_path }}\"",
+        "echo \"\" >> \"${{ PREFIX }}/${{ dict_path }}/.empty\"",
+        "ln -s \"${{ PREFIX }}/${{ dict_path }}\" \"${{ PREFIX }}/${{ legacy_path }}\"",
+        "ls \"${{ PREFIX }}/${{ legacy_path }}/.empty\""
+      ]
     },
     "extra": {
       "recipe-maintainers": [
         "scopatz",
-        "asmeurer"
+        "asmeurer",
+        "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "hunspell",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "autoconf",
+            "automake",
+            "gettext",
+            "libtool",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libiconv",
+            "ncurses",
+            "readline"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "{affixcompress,analyze,chmorph,hunspell,hunzip,hzip,ispellaff2myspell,makealias,munch,unmunch,wordforms,wordlist2hunspell}"
+              ]
+            }
+          },
+          {
+            "script": {
+              "content": [
+                "cd \"${CONDA_PREFIX}/${{ dict_path }}\"",
+                "echo \"ok\" > test.words",
+                "wordlist2hunspell test.words \"${{ test_lang }}\"",
+                "rm test.words",
+                "cd \"${SRC_DIR}\"",
+                "${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;",
+                "hunspell --version",
+                "hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"",
+                "${{ hunspell_d }}",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"",
+                "ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\""
+              ]
+            }
+          }
+        ],
+        "version": "1.7.3"
+      }
+    ],
     "package": {
       "name": "hunspell",
-      "version": "1.7.2"
+      "version": "1.7.3"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
         "autoconf",
         "automake",
+        "gettext",
         "libtool",
         "make",
-        "c_compiler_stub",
-        "cxx_compiler_stub"
+        "pkg-config"
       ],
       "host": [
-        "gettext",
-        "readline"
-      ],
-      "run": [
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "fn": "hunspell-1.7.2.tar.gz",
-      "sha256": "69fa312d3586c988789266eaf7ffc9861d9f6396c31fc930a014d551b59bbd6e",
-      "url": "https://github.com/hunspell/hunspell/archive/v1.7.2.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "hunspell --help"
-      ]
+      "sha256": "933be3dac6fd55f6e752331a170efb7e33800e40fae1156d8434cc8c85379a1b",
+      "url": "https://github.com/hunspell/hunspell/archive/v1.7.3.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -85,24 +144,170 @@
         "autoconf",
         "automake",
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cxx_compiler_stub",
+        "gettext",
         "libtool",
-        "make"
+        "make",
+        "pkg-config"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": [
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.",
+      "dev_url": "https://github.com/hunspell/hunspell",
+      "home": "http://hunspell.github.io/",
+      "license": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
+      "license_family": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
+      "license_file": "COPYING",
+      "summary": "The most popular spellchecking library."
+    },
+    "build": {
+      "number": "0",
+      "script": [
+        "autoreconf -vfi",
+        "./configure \"--prefix=${{ PREFIX }}\" --with-readline --with-ui",
+        "make \"-j${CPU_COUNT}\"",
+        "make check || (cat tests/test-suite.log && exit 1)",
+        "make install",
+        "mkdir -p \"${{ PREFIX }}/${{ dict_path }}\"",
+        "echo \"\" >> \"${{ PREFIX }}/${{ dict_path }}/.empty\"",
+        "ln -s \"${{ PREFIX }}/${{ dict_path }}\" \"${{ PREFIX }}/${{ legacy_path }}\"",
+        "ls \"${{ PREFIX }}/${{ legacy_path }}/.empty\""
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "scopatz",
+        "asmeurer",
+        "bollwyvl"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "hunspell",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "autoconf",
+            "automake",
+            "gettext",
+            "libtool",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libiconv",
+            "ncurses",
+            "readline"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "{affixcompress,analyze,chmorph,hunspell,hunzip,hzip,ispellaff2myspell,makealias,munch,unmunch,wordforms,wordlist2hunspell}"
+              ]
+            }
+          },
+          {
+            "script": {
+              "content": [
+                "cd \"${CONDA_PREFIX}/${{ dict_path }}\"",
+                "echo \"ok\" > test.words",
+                "wordlist2hunspell test.words \"${{ test_lang }}\"",
+                "rm test.words",
+                "cd \"${SRC_DIR}\"",
+                "${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;",
+                "hunspell --version",
+                "hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"",
+                "${{ hunspell_d }}",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"",
+                "ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\""
+              ]
+            }
+          }
+        ],
+        "version": "1.7.3"
+      }
+    ],
+    "package": {
+      "name": "hunspell",
+      "version": "1.7.3"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "autoconf",
+        "automake",
         "gettext",
+        "libtool",
+        "make",
+        "pkg-config"
+      ],
+      "host": [
+        "libiconv",
+        "ncurses",
         "readline"
       ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "933be3dac6fd55f6e752331a170efb7e33800e40fae1156d8434cc8c85379a1b",
+      "url": "https://github.com/hunspell/hunspell/archive/v1.7.3.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "autoconf",
+        "automake",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "gettext",
+        "libtool",
+        "make",
+        "pkg-config"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "libiconv",
+        "ncurses",
+        "readline"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
     },
     "test": {
       "__set__": true,
@@ -111,117 +316,397 @@
   },
   "meta_yaml": {
     "about": {
-      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.\n",
+      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.",
       "dev_url": "https://github.com/hunspell/hunspell",
-      "doc_url": "http://hunspell.github.io/",
       "home": "http://hunspell.github.io/",
-      "license": "MPL 1.1/GPL 2.0/LGPL 2.1",
-      "license_family": "GPL",
+      "license": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
+      "license_family": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "The most popular spellchecking library."
     },
     "build": {
-      "has_prefix_files": [
-        "bin/hunspell"
-      ],
-      "number": "1"
+      "number": "0",
+      "script": [
+        "autoreconf -vfi",
+        "./configure \"--prefix=${{ PREFIX }}\" --with-readline --with-ui",
+        "make \"-j${CPU_COUNT}\"",
+        "make check || (cat tests/test-suite.log && exit 1)",
+        "make install",
+        "mkdir -p \"${{ PREFIX }}/${{ dict_path }}\"",
+        "echo \"\" >> \"${{ PREFIX }}/${{ dict_path }}/.empty\"",
+        "ln -s \"${{ PREFIX }}/${{ dict_path }}\" \"${{ PREFIX }}/${{ legacy_path }}\"",
+        "ls \"${{ PREFIX }}/${{ legacy_path }}/.empty\"",
+        "cd tests",
+        "rm gh646.*",
+        "grep -v 'gh646' Makefile.am > Makefile.am-osx",
+        "mv Makefile.am-osx Makefile.am",
+        "cat Makefile.am",
+        "cd .."
+      ]
     },
     "extra": {
       "recipe-maintainers": [
         "scopatz",
-        "asmeurer"
+        "asmeurer",
+        "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "hunspell",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "autoconf",
+            "automake",
+            "gettext",
+            "libtool",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libiconv",
+            "ncurses",
+            "readline"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "{affixcompress,analyze,chmorph,hunspell,hunzip,hzip,ispellaff2myspell,makealias,munch,unmunch,wordforms,wordlist2hunspell}"
+              ]
+            }
+          },
+          {
+            "script": {
+              "content": [
+                "cd \"${CONDA_PREFIX}/${{ dict_path }}\"",
+                "echo \"ok\" > test.words",
+                "wordlist2hunspell test.words \"${{ test_lang }}\"",
+                "rm test.words",
+                "cd \"${SRC_DIR}\"",
+                "${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;",
+                "hunspell --version",
+                "hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"",
+                "${{ hunspell_d }}",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"",
+                "ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\""
+              ]
+            }
+          }
+        ],
+        "version": "1.7.3"
+      },
+      {
+        "build": null,
+        "name": "hunspell",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "autoconf",
+            "automake",
+            "gettext",
+            "libtool",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libiconv",
+            "ncurses",
+            "readline"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "{affixcompress,analyze,chmorph,hunspell,hunzip,hzip,ispellaff2myspell,makealias,munch,unmunch,wordforms,wordlist2hunspell}"
+              ]
+            }
+          },
+          {
+            "script": {
+              "content": [
+                "cd \"${CONDA_PREFIX}/${{ dict_path }}\"",
+                "echo \"ok\" > test.words",
+                "wordlist2hunspell test.words \"${{ test_lang }}\"",
+                "rm test.words",
+                "cd \"${SRC_DIR}\"",
+                "${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;",
+                "hunspell --version",
+                "hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"",
+                "${{ hunspell_d }}",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"",
+                "ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\""
+              ]
+            }
+          }
+        ],
+        "version": "1.7.3"
+      },
+      {
+        "build": null,
+        "name": "hunspell",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "autoconf",
+            "automake",
+            "gettext",
+            "libtool",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libiconv",
+            "ncurses",
+            "readline"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "{affixcompress,analyze,chmorph,hunspell,hunzip,hzip,ispellaff2myspell,makealias,munch,unmunch,wordforms,wordlist2hunspell}"
+              ]
+            }
+          },
+          {
+            "script": {
+              "content": [
+                "cd \"${CONDA_PREFIX}/${{ dict_path }}\"",
+                "echo \"ok\" > test.words",
+                "wordlist2hunspell test.words \"${{ test_lang }}\"",
+                "rm test.words",
+                "cd \"${SRC_DIR}\"",
+                "${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;",
+                "hunspell --version",
+                "hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"",
+                "${{ hunspell_d }}",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"",
+                "ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\""
+              ]
+            }
+          }
+        ],
+        "version": "1.7.3"
+      },
+      {
+        "build": null,
+        "name": "hunspell",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "autoconf",
+            "automake",
+            "gettext",
+            "libtool",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libiconv",
+            "ncurses",
+            "readline"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "{affixcompress,analyze,chmorph,hunspell,hunzip,hzip,ispellaff2myspell,makealias,munch,unmunch,wordforms,wordlist2hunspell}"
+              ]
+            }
+          },
+          {
+            "script": {
+              "content": [
+                "cd \"${CONDA_PREFIX}/${{ dict_path }}\"",
+                "echo \"ok\" > test.words",
+                "wordlist2hunspell test.words \"${{ test_lang }}\"",
+                "rm test.words",
+                "cd \"${SRC_DIR}\"",
+                "${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;",
+                "hunspell --version",
+                "hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"",
+                "${{ hunspell_d }}",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"",
+                "ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\""
+              ]
+            }
+          }
+        ],
+        "version": "1.7.3"
+      }
+    ],
     "package": {
       "name": "hunspell",
-      "version": "1.7.2"
+      "version": "1.7.3"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
         "autoconf",
         "automake",
+        "gettext",
         "libtool",
         "make",
-        "c_compiler_stub",
-        "cxx_compiler_stub"
+        "pkg-config"
       ],
       "host": [
-        "gettext",
-        "readline"
-      ],
-      "run": [
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "fn": "hunspell-1.7.2.tar.gz",
-      "sha256": "69fa312d3586c988789266eaf7ffc9861d9f6396c31fc930a014d551b59bbd6e",
-      "url": "https://github.com/hunspell/hunspell/archive/v1.7.2.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "hunspell --help"
-      ]
+      "sha256": "933be3dac6fd55f6e752331a170efb7e33800e40fae1156d8434cc8c85379a1b",
+      "url": "https://github.com/hunspell/hunspell/archive/v1.7.3.tar.gz"
     }
   },
   "name": "hunspell",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.\n",
+      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.",
       "dev_url": "https://github.com/hunspell/hunspell",
-      "doc_url": "http://hunspell.github.io/",
       "home": "http://hunspell.github.io/",
-      "license": "MPL 1.1/GPL 2.0/LGPL 2.1",
-      "license_family": "GPL",
+      "license": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
+      "license_family": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "The most popular spellchecking library."
     },
     "build": {
-      "has_prefix_files": [
-        "bin/hunspell"
-      ],
-      "number": "1"
+      "number": "0",
+      "script": [
+        "cd tests",
+        "rm gh646.*",
+        "grep -v 'gh646' Makefile.am > Makefile.am-osx",
+        "mv Makefile.am-osx Makefile.am",
+        "cat Makefile.am",
+        "cd ..",
+        "autoreconf -vfi",
+        "./configure \"--prefix=${{ PREFIX }}\" --with-readline --with-ui",
+        "make \"-j${CPU_COUNT}\"",
+        "make check || (cat tests/test-suite.log && exit 1)",
+        "make install",
+        "mkdir -p \"${{ PREFIX }}/${{ dict_path }}\"",
+        "echo \"\" >> \"${{ PREFIX }}/${{ dict_path }}/.empty\"",
+        "ln -s \"${{ PREFIX }}/${{ dict_path }}\" \"${{ PREFIX }}/${{ legacy_path }}\"",
+        "ls \"${{ PREFIX }}/${{ legacy_path }}/.empty\""
+      ]
     },
     "extra": {
       "recipe-maintainers": [
         "scopatz",
-        "asmeurer"
+        "asmeurer",
+        "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "hunspell",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "autoconf",
+            "automake",
+            "gettext",
+            "libtool",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libiconv",
+            "ncurses",
+            "readline"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "{affixcompress,analyze,chmorph,hunspell,hunzip,hzip,ispellaff2myspell,makealias,munch,unmunch,wordforms,wordlist2hunspell}"
+              ]
+            }
+          },
+          {
+            "script": {
+              "content": [
+                "cd \"${CONDA_PREFIX}/${{ dict_path }}\"",
+                "echo \"ok\" > test.words",
+                "wordlist2hunspell test.words \"${{ test_lang }}\"",
+                "rm test.words",
+                "cd \"${SRC_DIR}\"",
+                "${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;",
+                "hunspell --version",
+                "hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"",
+                "${{ hunspell_d }}",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"",
+                "ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\""
+              ]
+            }
+          }
+        ],
+        "version": "1.7.3"
+      }
+    ],
     "package": {
       "name": "hunspell",
-      "version": "1.7.2"
+      "version": "1.7.3"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
         "autoconf",
         "automake",
+        "gettext",
         "libtool",
         "make",
-        "c_compiler_stub",
-        "cxx_compiler_stub"
+        "pkg-config"
       ],
       "host": [
-        "gettext",
-        "readline"
-      ],
-      "run": [
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "fn": "hunspell-1.7.2.tar.gz",
-      "sha256": "69fa312d3586c988789266eaf7ffc9861d9f6396c31fc930a014d551b59bbd6e",
-      "url": "https://github.com/hunspell/hunspell/archive/v1.7.2.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "hunspell --help"
-      ]
+      "sha256": "933be3dac6fd55f6e752331a170efb7e33800e40fae1156d8434cc8c85379a1b",
+      "url": "https://github.com/hunspell/hunspell/archive/v1.7.3.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -231,24 +716,25 @@
         "autoconf",
         "automake",
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cxx_compiler_stub",
+        "gettext",
         "libtool",
-        "make"
+        "make",
+        "pkg-config"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "gettext",
-        "readline"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
@@ -257,59 +743,121 @@
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.\n",
+      "description": "Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\nGoogle Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\nmemoQ, Opera and SDL Trados.",
       "dev_url": "https://github.com/hunspell/hunspell",
-      "doc_url": "http://hunspell.github.io/",
       "home": "http://hunspell.github.io/",
-      "license": "MPL 1.1/GPL 2.0/LGPL 2.1",
-      "license_family": "GPL",
+      "license": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
+      "license_family": "MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "The most popular spellchecking library."
     },
     "build": {
-      "has_prefix_files": [
-        "bin/hunspell"
-      ],
-      "number": "1"
+      "number": "0",
+      "script": [
+        "cd tests",
+        "rm gh646.*",
+        "grep -v 'gh646' Makefile.am > Makefile.am-osx",
+        "mv Makefile.am-osx Makefile.am",
+        "cat Makefile.am",
+        "cd ..",
+        "autoreconf -vfi",
+        "./configure \"--prefix=${{ PREFIX }}\" --with-readline --with-ui",
+        "make \"-j${CPU_COUNT}\"",
+        "make check || (cat tests/test-suite.log && exit 1)",
+        "make install",
+        "mkdir -p \"${{ PREFIX }}/${{ dict_path }}\"",
+        "echo \"\" >> \"${{ PREFIX }}/${{ dict_path }}/.empty\"",
+        "ln -s \"${{ PREFIX }}/${{ dict_path }}\" \"${{ PREFIX }}/${{ legacy_path }}\"",
+        "ls \"${{ PREFIX }}/${{ legacy_path }}/.empty\""
+      ]
     },
     "extra": {
       "recipe-maintainers": [
         "scopatz",
-        "asmeurer"
+        "asmeurer",
+        "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "hunspell",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "autoconf",
+            "automake",
+            "gettext",
+            "libtool",
+            "make",
+            "pkg-config"
+          ],
+          "host": [
+            "libiconv",
+            "ncurses",
+            "readline"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "{affixcompress,analyze,chmorph,hunspell,hunzip,hzip,ispellaff2myspell,makealias,munch,unmunch,wordforms,wordlist2hunspell}"
+              ]
+            }
+          },
+          {
+            "script": {
+              "content": [
+                "cd \"${CONDA_PREFIX}/${{ dict_path }}\"",
+                "echo \"ok\" > test.words",
+                "wordlist2hunspell test.words \"${{ test_lang }}\"",
+                "rm test.words",
+                "cd \"${SRC_DIR}\"",
+                "${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;",
+                "hunspell --version",
+                "hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"",
+                "${{ hunspell_d }}",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"",
+                "${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"",
+                "ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\""
+              ]
+            }
+          }
+        ],
+        "version": "1.7.3"
+      }
+    ],
     "package": {
       "name": "hunspell",
-      "version": "1.7.2"
+      "version": "1.7.3"
     },
     "requirements": {
       "build": [
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
         "autoconf",
         "automake",
+        "gettext",
         "libtool",
         "make",
-        "c_compiler_stub",
-        "cxx_compiler_stub"
+        "pkg-config"
       ],
       "host": [
-        "gettext",
-        "readline"
-      ],
-      "run": [
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "fn": "hunspell-1.7.2.tar.gz",
-      "sha256": "69fa312d3586c988789266eaf7ffc9861d9f6396c31fc930a014d551b59bbd6e",
-      "url": "https://github.com/hunspell/hunspell/archive/v1.7.2.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "hunspell --help"
-      ]
+      "sha256": "933be3dac6fd55f6e752331a170efb7e33800e40fae1156d8434cc8c85379a1b",
+      "url": "https://github.com/hunspell/hunspell/archive/v1.7.3.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -319,24 +867,25 @@
         "autoconf",
         "automake",
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cxx_compiler_stub",
+        "gettext",
         "libtool",
-        "make"
+        "make",
+        "pkg-config"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "gettext",
-        "readline"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
@@ -352,23 +901,28 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
     "osx_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/hunspell.json"
   },
-  "raw_meta_yaml": "{% set name = \"hunspell\" %}\n{% set version = \"1.7.2\" %}\n{% set sha256 = \"69fa312d3586c988789266eaf7ffc9861d9f6396c31fc930a014d551b59bbd6e\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  fn: {{ name }}-{{ version }}.tar.gz\n  url: https://github.com/hunspell/hunspell/archive/v{{ version }}.tar.gz\n  sha256: {{ sha256 }}\n\nbuild:\n  number: 1\n  skip: true  # [win]\n  has_prefix_files:\n    - bin/hunspell\n\nrequirements:\n  build:\n    - autoconf\n    - automake\n    - libtool\n    - make\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n  host:\n    - gettext\n    - readline\n  run:\n    - gettext\n    - readline\n\ntest:\n  commands:\n    - hunspell --help\n\nabout:\n  home: http://hunspell.github.io/\n  license: MPL 1.1/GPL 2.0/LGPL 2.1\n  license_family: GPL\n  license_file: COPYING\n  summary: The most popular spellchecking library.\n  description: |\n    Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\n    Google Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\n    memoQ, Opera and SDL Trados.\n  doc_url: http://hunspell.github.io/\n  dev_url: https://github.com/hunspell/hunspell\n\nextra:\n  recipe-maintainers:\n    - scopatz\n    - asmeurer\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"1.7.3\"\n  build_number: 0\n  # well-known upstream path\n  dict_path: share/hunspell\n  # legacy path for hunspell <1.7.3\n  legacy_path: share/hunspell_dictionaries\n  # smoke-testable binaries and scripts that return 0 for --help\n  bin_with_help: hunspell hunzip makealias\n  # binaries/scripts with no --help option, or that don't exit 0\n  bin_no_help: affixcompress analyze chmorph hzip ispellaff2myspell munch unmunch wordforms wordlist2hunspell\n  all_bin: ${{ bin_with_help }} ${{ bin_no_help }}\n  # explicit test language to avoid locale detection for en_US (or whatever)\n  test_lang: en_CF\n  hunspell_d: hunspell -D -d ${{ test_lang }}\n\npackage:\n  name: hunspell\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/hunspell/hunspell/archive/v${{ version }}.tar.gz\n  sha256: 933be3dac6fd55f6e752331a170efb7e33800e40fae1156d8434cc8c85379a1b\n\nbuild:\n  number: ${{ build_number }}\n  skip: win\n  script:\n    # delete, and skip discovery of, broken osx tests\n    - if: osx\n      then:\n        - cd tests\n        # some libtool issue\n        - rm gh646.*\n        - grep -v 'gh646' Makefile.am > Makefile.am-osx\n        - mv Makefile.am-osx Makefile.am\n        - cat Makefile.am\n        - cd ..\n    - autoreconf -vfi\n    - ./configure \"--prefix=${{ PREFIX }}\" --with-readline --with-ui\n    - make \"-j${CPU_COUNT}\"\n    - if: host_platform == target_platform\n      then:\n        - make check || (cat tests/test-suite.log && exit 1)\n    - make install\n    - mkdir -p \"${{ PREFIX }}/${{ dict_path }}\"\n    # rattler-build doesn't ship empty directories: https://github.com/prefix-dev/rattler-build/issues/371\n    - echo \"\" >> \"${{ PREFIX }}/${{ dict_path }}/.empty\"\n    # legacy path symlink\n    - ln -s \"${{ PREFIX }}/${{ dict_path }}\" \"${{ PREFIX }}/${{ legacy_path }}\"\n    - ls \"${{ PREFIX }}/${{ legacy_path }}/.empty\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ stdlib(\"c\") }}\n    - autoconf\n    - automake\n    - gettext\n    - libtool\n    - make\n    - pkg-config\n  host:\n    - libiconv\n    - ncurses\n    - readline\n\ntests:\n  - package_contents:\n      bin:\n        - ${{ \"{\" ~ (all_bin | split | sort | join(',')) ~ \"}\" }}\n  - script:\n      content:\n        # build a test dictionary\n        - cd \"${CONDA_PREFIX}/${{ dict_path }}\"\n        - echo \"ok\" > test.words\n        - wordlist2hunspell test.words \"${{ test_lang }}\"\n        - rm test.words\n        - cd \"${SRC_DIR}\"\n        # check basic commands that exit with 0\n        - ${{ bin_with_help | split | join(' --help || exit 1; ') }} --help || exit 1;\n        # check versions\n        - hunspell --version\n        - hunspell --version | grep -iEo \"\\(but really Hunspell ${{ version | replace(\".\", \"\\\\.\") }}\\)\"\n        # check discovery\n        - ${{ hunspell_d }}\n        - ${{ hunspell_d }} 2>&1 | grep -iEo \"^\\.::${CONDA_PREFIX}/${{ dict_path }}:\"\n        - ${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.dic\"\n        - ${{ hunspell_d }} 2>&1 | grep -iEo \"${CONDA_PREFIX}/${{ dict_path }}/${{ test_lang }}.aff\"\n        # check symlink\n        - ls \"${CONDA_PREFIX}/${{ legacy_path }}/${{ test_lang }}.dic\"\n\nabout:\n  license: MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later\n  license_file:\n    - COPYING\n    - COPYING.LESSER\n    - COPYING.MPL\n  summary: The most popular spellchecking library.\n  description: |\n    Hunspell is the spell checker of LibreOffice, OpenOffice.org, Mozilla Firefox 3 & Thunderbird,\n    Google Chrome, and it is also used by proprietary software packages, like macOS, InDesign,\n    memoQ, Opera and SDL Trados.\n  homepage: http://hunspell.github.io\n  repository: https://github.com/hunspell/hunspell\n\nextra:\n  recipe-maintainers:\n    - scopatz\n    - asmeurer\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
       "autoconf",
       "automake",
       "c_compiler_stub",
+      "c_stdlib_stub",
       "cxx_compiler_stub",
       "gettext",
+      "libiconv",
       "libtool",
       "make",
+      "ncurses",
+      "pkg-config",
       "readline"
     ]
   },
@@ -379,17 +933,22 @@
         "autoconf",
         "automake",
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cxx_compiler_stub",
+        "gettext",
         "libtool",
-        "make"
+        "make",
+        "pkg-config"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cxx_compiler_stub",
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
@@ -397,9 +956,8 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "cxx_compiler_stub",
-        "gettext",
-        "readline"
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
       ]
     },
     "test": {
@@ -415,32 +973,33 @@
         "autoconf",
         "automake",
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cxx_compiler_stub",
+        "gettext",
         "libtool",
-        "make"
+        "make",
+        "pkg-config"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "gettext",
+        "libiconv",
+        "ncurses",
         "readline"
       ]
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "gettext",
-        "readline"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
       "elements": []
     }
   },
-  "url": "https://github.com/hunspell/hunspell/archive/v1.7.2.tar.gz",
-  "version": "1.7.2",
+  "url": "https://github.com/hunspell/hunspell/archive/v1.7.3.tar.gz",
+  "version": "1.7.3",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/hunspell.json"
   }
