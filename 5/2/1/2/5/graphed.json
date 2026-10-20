@@ -9,13 +9,20 @@
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
-    }
+    },
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default",
+      "win_arm64": "default"
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "d715bef61483a2b809b11a84a3d06ceb86555930",
-  "feedstock_hash_ts": 1792445765,
+  "feedstock_hash": "41cf908a687785c8c6164efdfd5978d462ee6de6",
+  "feedstock_hash_ts": 1792455254,
   "feedstock_name": "graphed",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -123,12 +130,12 @@
             "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
           }
         ],
-        "version": "0.0.3"
+        "version": "0.0.4"
       }
     ],
     "package": {
       "name": "graphed",
-      "version": "0.0.3"
+      "version": "0.0.4"
     },
     "requirements": {
       "build": [
@@ -151,8 +158,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "4d3a0d38d3f4111f3398cfda359464131708957d3df51bf903ec19c41c8c6574",
-      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.3.tar.gz"
+      "sha256": "0b665cb16ab97c4fa80b915db711aa20ad51b41217786bc53b5d3dd10b41c29f",
+      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.4.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -162,6 +169,189 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "cloudpickle",
+        "executing",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "hypothesis",
+        "pip",
+        "pytest"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "graphed reduces a task graph to a concise set of stage nodes incrementally as the user\nbuilds it, so a large un-reduced graph never exists. Reduction runs in a Rust extension\nusing equality saturation over e-graphs. The serializable IR - not cloudpickle - is the\ncanonical durable representation, so plans are reproducible and resumable.",
+      "dev_url": "https://github.com/graphed-org/graphed",
+      "doc_url": "https://graphed.readthedocs.io/",
+      "home": "https://github.com/graphed-org/graphed",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE",
+      "summary": "Schedulable, serializable, debuggable HEP task graphs with an interned Rust IR"
+    },
+    "build": {
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
+          "${{ PYTHON }} -m pip install . -vv"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "lgray"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "graphed",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.9.4,<2"
+          ],
+          "run": [
+            "python",
+            "executing >=2.0",
+            "cloudpickle"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "graphed",
+                "graphed.core"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "graphed/__init__.py",
+                "graphed/core/graphed_core.abi3.so"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/graphed/core/graphed_core.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          },
+          {
+            "files": {
+              "source": [
+                "tests/frozen/core/",
+                "conftest.py",
+                "pyproject.toml"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "hypothesis"
+              ]
+            },
+            "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
+          }
+        ],
+        "version": "0.0.4"
+      }
+    ],
+    "package": {
+      "name": "graphed",
+      "version": "0.0.4"
+    },
+    "requirements": {
+      "build": [
+        "python",
+        "cross-python_linux-aarch64",
+        "maturin >=1.9.4,<2",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
+      ],
+      "host": [
+        "python",
+        "python-abi3",
+        "pip",
+        "maturin >=1.9.4,<2"
+      ],
+      "run": [
+        "python",
+        "executing >=2.0",
+        "cloudpickle"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "0b665cb16ab97c4fa80b915db711aa20ad51b41217786bc53b5d3dd10b41c29f",
+      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.4.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "maturin",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -297,7 +487,84 @@
             "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
           }
         ],
-        "version": "0.0.3"
+        "version": "0.0.4"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "graphed",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.9.4,<2"
+          ],
+          "run": [
+            "python",
+            "executing >=2.0",
+            "cloudpickle"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "graphed",
+                "graphed.core"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "graphed/__init__.py",
+                "graphed/core/graphed_core.abi3.so"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/graphed/core/graphed_core.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          },
+          {
+            "files": {
+              "source": [
+                "tests/frozen/core/",
+                "conftest.py",
+                "pyproject.toml"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "hypothesis"
+              ]
+            },
+            "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
+          }
+        ],
+        "version": "0.0.4"
       },
       {
         "build": {
@@ -374,7 +641,84 @@
             "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
           }
         ],
-        "version": "0.0.3"
+        "version": "0.0.4"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "graphed",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.9.4,<2"
+          ],
+          "run": [
+            "python",
+            "executing >=2.0",
+            "cloudpickle"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "graphed",
+                "graphed.core"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "graphed/__init__.py",
+                "graphed/core/graphed_core.abi3.so"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/graphed/core/graphed_core.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          },
+          {
+            "files": {
+              "source": [
+                "tests/frozen/core/",
+                "conftest.py",
+                "pyproject.toml"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "hypothesis"
+              ]
+            },
+            "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
+          }
+        ],
+        "version": "0.0.4"
       },
       {
         "build": {
@@ -451,12 +795,89 @@
             "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
           }
         ],
-        "version": "0.0.3"
+        "version": "0.0.4"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "graphed",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-arm64",
+            "maturin >=1.9.4,<2",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.9.4,<2"
+          ],
+          "run": [
+            "python",
+            "executing >=2.0",
+            "cloudpickle"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "graphed",
+                "graphed.core"
+              ],
+              "python_version": [
+                "3.14.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "graphed/__init__.py",
+                "graphed/core/graphed_core.pyd"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit %SP_DIR%\\graphed\\core\\graphed_core.pyd -s -v --assume-minimum-abi3 ${{ python_min }}"
+          },
+          {
+            "files": {
+              "source": [
+                "tests/frozen/core/",
+                "conftest.py",
+                "pyproject.toml"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "hypothesis"
+              ]
+            },
+            "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
+          }
+        ],
+        "version": "0.0.4"
       }
     ],
     "package": {
       "name": "graphed",
-      "version": "0.0.3"
+      "version": "0.0.4"
     },
     "requirements": {
       "build": [
@@ -465,9 +886,12 @@
         "rust_compiler_stub",
         "cargo-bundle-licenses",
         "python",
-        "cross-python_osx-64",
+        "cross-python_linux-aarch64",
         "maturin >=1.9.4,<2",
-        "cross-python_win-64"
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "cross-python_win-arm64"
       ],
       "host": [
         "python",
@@ -483,8 +907,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "4d3a0d38d3f4111f3398cfda359464131708957d3df51bf903ec19c41c8c6574",
-      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.3.tar.gz"
+      "sha256": "0b665cb16ab97c4fa80b915db711aa20ad51b41217786bc53b5d3dd10b41c29f",
+      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.4.tar.gz"
     }
   },
   "name": "graphed",
@@ -596,12 +1020,12 @@
             "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
           }
         ],
-        "version": "0.0.3"
+        "version": "0.0.4"
       }
     ],
     "package": {
       "name": "graphed",
-      "version": "0.0.3"
+      "version": "0.0.4"
     },
     "requirements": {
       "build": [
@@ -627,8 +1051,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "4d3a0d38d3f4111f3398cfda359464131708957d3df51bf903ec19c41c8c6574",
-      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.3.tar.gz"
+      "sha256": "0b665cb16ab97c4fa80b915db711aa20ad51b41217786bc53b5d3dd10b41c29f",
+      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.4.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -671,6 +1095,189 @@
       ]
     }
   },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "description": "graphed reduces a task graph to a concise set of stage nodes incrementally as the user\nbuilds it, so a large un-reduced graph never exists. Reduction runs in a Rust extension\nusing equality saturation over e-graphs. The serializable IR - not cloudpickle - is the\ncanonical durable representation, so plans are reproducible and resumable.",
+      "dev_url": "https://github.com/graphed-org/graphed",
+      "doc_url": "https://graphed.readthedocs.io/",
+      "home": "https://github.com/graphed-org/graphed",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE",
+      "summary": "Schedulable, serializable, debuggable HEP task graphs with an interned Rust IR"
+    },
+    "build": {
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
+          "${{ PYTHON }} -m pip install . -vv"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "lgray"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "graphed",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.9.4,<2"
+          ],
+          "run": [
+            "python",
+            "executing >=2.0",
+            "cloudpickle"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "graphed",
+                "graphed.core"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "graphed/__init__.py",
+                "graphed/core/graphed_core.abi3.so"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/graphed/core/graphed_core.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          },
+          {
+            "files": {
+              "source": [
+                "tests/frozen/core/",
+                "conftest.py",
+                "pyproject.toml"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "hypothesis"
+              ]
+            },
+            "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
+          }
+        ],
+        "version": "0.0.4"
+      }
+    ],
+    "package": {
+      "name": "graphed",
+      "version": "0.0.4"
+    },
+    "requirements": {
+      "build": [
+        "python",
+        "cross-python_osx-arm64",
+        "maturin >=1.9.4,<2",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
+      ],
+      "host": [
+        "python",
+        "python-abi3",
+        "pip",
+        "maturin >=1.9.4,<2"
+      ],
+      "run": [
+        "python",
+        "executing >=2.0",
+        "cloudpickle"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "0b665cb16ab97c4fa80b915db711aa20ad51b41217786bc53b5d3dd10b41c29f",
+      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.4.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
+        "cross-python_osx-arm64",
+        "maturin",
+        "python",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "cloudpickle",
+        "executing",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "hypothesis",
+        "pip",
+        "pytest"
+      ]
+    }
+  },
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -680,13 +1287,16 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
-    "win_64"
+    "osx_arm64",
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/graphed.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.0.3\"\n\npackage:\n  name: graphed\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/g/graphed/graphed-${{ version }}.tar.gz\n  sha256: 4d3a0d38d3f4111f3398cfda359464131708957d3df51bf903ec19c41c8c6574\n\nbuild:\n  number: 0\n  # pyproject.toml pins `pyo3/abi3-py311`, so one limited-API build serves every CPython.\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO_PROFILE_RELEASE_LTO: fat\n    content:\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n      - ${{ PYTHON }} -m pip install . -vv\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - maturin >=1.9.4,<2\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-bundle-licenses\n  host:\n    - python\n    - if: is_abi3\n      then: python-abi3\n    - pip\n    - maturin >=1.9.4,<2\n  run:\n    - python\n    - executing >=2.0\n    - cloudpickle\n\ntests:\n  - python:\n      imports:\n        - graphed\n        - graphed.core\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then: ${{ python_min }}.*\n        - \"*\"\n  - package_contents:\n      site_packages:\n        - graphed/__init__.py\n        - if: is_abi3\n          then: graphed/core/graphed_core.${{ 'abi3.so' if unix else 'pyd' }}\n          else: graphed/core/graphed_core.${{ '*.so' if unix else '*.pyd' }}\n  - if: is_abi3\n    then:\n      requirements:\n        run:\n          - abi3audit\n      script:\n        - if: unix\n          then: abi3audit $SP_DIR/graphed/core/graphed_core.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n          else: abi3audit %SP_DIR%\\graphed\\core\\graphed_core.pyd -s -v --assume-minimum-abi3 ${{ python_min }}\n  - files:\n      source:\n        - tests/frozen/core/\n        - conftest.py\n        - pyproject.toml\n    requirements:\n      run:\n        - pytest\n        - hypothesis\n    script:\n      # the Rust IR suite; wall-clock scaling benchmarks are deselected as too noisy for CI\n      - pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\"\n\nabout:\n  summary: Schedulable, serializable, debuggable HEP task graphs with an interned Rust IR\n  description: |\n    graphed reduces a task graph to a concise set of stage nodes incrementally as the user\n    builds it, so a large un-reduced graph never exists. Reduction runs in a Rust extension\n    using equality saturation over e-graphs. The serializable IR - not cloudpickle - is the\n    canonical durable representation, so plans are reproducible and resumable.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://github.com/graphed-org/graphed\n  repository: https://github.com/graphed-org/graphed\n  documentation: https://graphed.readthedocs.io\n\nextra:\n  recipe-maintainers:\n    - lgray\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.0.4\"\n\npackage:\n  name: graphed\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/g/graphed/graphed-${{ version }}.tar.gz\n  sha256: 0b665cb16ab97c4fa80b915db711aa20ad51b41217786bc53b5d3dd10b41c29f\n\nbuild:\n  number: 0\n  # pyproject.toml pins `pyo3/abi3-py311`, so one limited-API build serves every CPython.\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO_PROFILE_RELEASE_LTO: fat\n    content:\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n      - ${{ PYTHON }} -m pip install . -vv\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - maturin >=1.9.4,<2\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-bundle-licenses\n  host:\n    - python\n    - if: is_abi3\n      then: python-abi3\n    - pip\n    - maturin >=1.9.4,<2\n  run:\n    - python\n    - executing >=2.0\n    - cloudpickle\n\ntests:\n  - python:\n      imports:\n        - graphed\n        - graphed.core\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then: ${{ python_min }}.*\n        - \"*\"\n  - package_contents:\n      site_packages:\n        - graphed/__init__.py\n        - if: is_abi3\n          then: graphed/core/graphed_core.${{ 'abi3.so' if unix else 'pyd' }}\n          else: graphed/core/graphed_core.${{ '*.so' if unix else '*.pyd' }}\n  - if: is_abi3\n    then:\n      requirements:\n        run:\n          - abi3audit\n      script:\n        - if: unix\n          then: abi3audit $SP_DIR/graphed/core/graphed_core.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n          else: abi3audit %SP_DIR%\\graphed\\core\\graphed_core.pyd -s -v --assume-minimum-abi3 ${{ python_min }}\n  - files:\n      source:\n        - tests/frozen/core/\n        - conftest.py\n        - pyproject.toml\n    requirements:\n      run:\n        - pytest\n        - hypothesis\n    script:\n      # the Rust IR suite; wall-clock scaling benchmarks are deselected as too noisy for CI\n      - pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\"\n\nabout:\n  summary: Schedulable, serializable, debuggable HEP task graphs with an interned Rust IR\n  description: |\n    graphed reduces a task graph to a concise set of stage nodes incrementally as the user\n    builds it, so a large un-reduced graph never exists. Reduction runs in a Rust extension\n    using equality saturation over e-graphs. The serializable IR - not cloudpickle - is the\n    canonical durable representation, so plans are reproducible and resumable.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://github.com/graphed-org/graphed\n  repository: https://github.com/graphed-org/graphed\n  documentation: https://graphed.readthedocs.io\n\nextra:\n  recipe-maintainers:\n    - lgray\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -694,8 +1304,11 @@
       "c_stdlib_stub",
       "cargo-bundle-licenses",
       "cloudpickle",
+      "cross-python_linux-aarch64",
       "cross-python_osx-64",
+      "cross-python_osx-arm64",
       "cross-python_win-64",
+      "cross-python_win-arm64",
       "executing",
       "maturin",
       "pip",
@@ -711,8 +1324,11 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
         "cross-python_osx-64",
+        "cross-python_osx-arm64",
         "cross-python_win-64",
+        "cross-python_win-arm64",
         "maturin",
         "python",
         "rust_compiler_stub"
@@ -759,8 +1375,11 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
         "cross-python_osx-64",
+        "cross-python_osx-arm64",
         "cross-python_win-64",
+        "cross-python_win-arm64",
         "maturin >=1.9.4,<2",
         "python",
         "rust_compiler_stub"
@@ -793,8 +1412,8 @@
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.3.tar.gz",
-  "version": "0.0.3",
+  "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.4.tar.gz",
+  "version": "0.0.4",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/graphed.json"
   },
@@ -906,12 +1525,12 @@
             "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
           }
         ],
-        "version": "0.0.3"
+        "version": "0.0.4"
       }
     ],
     "package": {
       "name": "graphed",
-      "version": "0.0.3"
+      "version": "0.0.4"
     },
     "requirements": {
       "build": [
@@ -937,8 +1556,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "4d3a0d38d3f4111f3398cfda359464131708957d3df51bf903ec19c41c8c6574",
-      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.3.tar.gz"
+      "sha256": "0b665cb16ab97c4fa80b915db711aa20ad51b41217786bc53b5d3dd10b41c29f",
+      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.4.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -949,6 +1568,189 @@
         "c_stdlib_stub",
         "cargo-bundle-licenses",
         "cross-python_win-64",
+        "maturin",
+        "python",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "cloudpickle",
+        "executing",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "hypothesis",
+        "pip",
+        "pytest"
+      ]
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "description": "graphed reduces a task graph to a concise set of stage nodes incrementally as the user\nbuilds it, so a large un-reduced graph never exists. Reduction runs in a Rust extension\nusing equality saturation over e-graphs. The serializable IR - not cloudpickle - is the\ncanonical durable representation, so plans are reproducible and resumable.",
+      "dev_url": "https://github.com/graphed-org/graphed",
+      "doc_url": "https://graphed.readthedocs.io/",
+      "home": "https://github.com/graphed-org/graphed",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE",
+      "summary": "Schedulable, serializable, debuggable HEP task graphs with an interned Rust IR"
+    },
+    "build": {
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
+          "${{ PYTHON }} -m pip install . -vv"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "lgray"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "graphed",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-arm64",
+            "maturin >=1.9.4,<2",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "pip",
+            "maturin >=1.9.4,<2"
+          ],
+          "run": [
+            "python",
+            "executing >=2.0",
+            "cloudpickle"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "graphed",
+                "graphed.core"
+              ],
+              "python_version": [
+                "3.14.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "graphed/__init__.py",
+                "graphed/core/graphed_core.pyd"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit %SP_DIR%\\graphed\\core\\graphed_core.pyd -s -v --assume-minimum-abi3 ${{ python_min }}"
+          },
+          {
+            "files": {
+              "source": [
+                "tests/frozen/core/",
+                "conftest.py",
+                "pyproject.toml"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest",
+                "hypothesis"
+              ]
+            },
+            "script": "pytest -p no:cacheprovider tests/frozen/core -k \"not benchmark and not subquadratic and not reduces_fast\""
+          }
+        ],
+        "version": "0.0.4"
+      }
+    ],
+    "package": {
+      "name": "graphed",
+      "version": "0.0.4"
+    },
+    "requirements": {
+      "build": [
+        "python",
+        "cross-python_win-arm64",
+        "maturin >=1.9.4,<2",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-bundle-licenses"
+      ],
+      "host": [
+        "python",
+        "python-abi3",
+        "pip",
+        "maturin >=1.9.4,<2"
+      ],
+      "run": [
+        "python",
+        "executing >=2.0",
+        "cloudpickle"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "0b665cb16ab97c4fa80b915db711aa20ad51b41217786bc53b5d3dd10b41c29f",
+      "url": "https://pypi.org/packages/source/g/graphed/graphed-0.0.4.tar.gz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-bundle-licenses",
+        "cross-python_win-arm64",
         "maturin",
         "python",
         "rust_compiler_stub"
