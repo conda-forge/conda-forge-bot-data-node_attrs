@@ -1,16 +1,8 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_is_freethreadingfalsepython3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nis_freethreading:\n- false\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n- - python\n  - is_freethreading\n",
+  "ci_support_linux_64_is_abi3falseis_freethreadingtruepython3.14.____cp314t.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_freethreading:\n- true\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.12'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n- - python\n  - is_freethreading\n  - is_abi3\n",
   "ci_support_migrations": {
-    "python313t": {
-      "migration_number": 1,
-      "migrator_ts": 1724712608
-    },
-    "python314": {
-      "migration_number": 1,
-      "migrator_ts": 1724712607
-    },
     "python314t": {
       "migration_number": 1,
       "migrator_ts": 1755739493
@@ -40,8 +32,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "06645a47b2abed1cf12c498c9913619c9801756b",
-  "feedstock_hash_ts": 1777023269,
+  "feedstock_hash": "4337466601f3b0be22a0036ee65f5fd5c35d8058",
+  "feedstock_hash_ts": 1792538128,
   "feedstock_name": "geoana",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -55,7 +47,17 @@
       "summary": "Interactive geoscience (mostly) analytic functions."
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": [
+        "mkdir builddir",
+        "export PKG_CONFIG_PATH=$(numpy-config --pkgconfigdir):${PKG_CONFIG_PATH}",
+        "meson setup ${MESON_ARGS} -Dwith_extensions=true -Dpython.allow_limited_api=false builddir/",
+        "${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation --config-settings=builddir=builddir",
+        "meson setup ${MESON_ARGS} -Dwith_extensions=true builddir/"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -74,20 +76,19 @@
             "cxx_compiler_stub"
           ],
           "host": [
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -99,14 +100,24 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "*"
               ]
             }
+          },
+          {
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
@@ -115,20 +126,20 @@
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -140,180 +151,31 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       }
     ],
     "package": {
       "name": "geoana",
-      "version": "0.8.1"
+      "version": "0.9.0"
     },
     "requirements": {
       "build": [
@@ -322,27 +184,27 @@
         "cxx_compiler_stub"
       ],
       "host": [
+        "python",
         "pip",
-        "meson-python",
+        "meson-python >=0.21.0",
         "ninja",
         "pkg-config",
-        "python",
-        "python-build",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
-        "setuptools_scm >=6.2"
+        "setuptools_scm >=6.2",
+        "python-abi3"
       ],
       "run": [
-        "python",
-        "numpy >=1.22",
-        "scipy >=1.12",
+        "python >=3.12",
+        "numpy >=1.26.0",
+        "scipy >=1.11.2",
         "libdlf"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "20fb32b805827e4fef3eb5f41f95c9b606433681a8a2339d19416a2bfec5f76f",
-      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.8.1.tar.gz"
+      "sha256": "cc83c4cd2e3031f0ac71feb5b280636ac82d8c50f025185860f54450eb4dfba0",
+      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.9.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -364,7 +226,7 @@
         "pip",
         "pkg-config",
         "python",
-        "python-build",
+        "python-abi3",
         "setuptools_scm"
       ]
     },
@@ -380,6 +242,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
@@ -395,7 +258,16 @@
       "summary": "Interactive geoscience (mostly) analytic functions."
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": [
+        "mkdir builddir",
+        "export PKG_CONFIG_PATH=$(numpy-config --pkgconfigdir):${PKG_CONFIG_PATH}",
+        "meson setup ${MESON_ARGS} -Dwith_extensions=true builddir/",
+        "${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation --config-settings=builddir=builddir"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -405,36 +277,40 @@
     },
     "outputs": [
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_linux-aarch64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -446,244 +322,67 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-aarch64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-aarch64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-aarch64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-aarch64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       }
     ],
     "package": {
       "name": "geoana",
-      "version": "0.8.1"
+      "version": "0.9.0"
     },
     "requirements": {
       "build": [
         "python",
         "cross-python_linux-aarch64",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
         "ninja",
         "pkg-config",
-        "meson-python",
+        "meson-python >=0.21.0",
         "c_stdlib_stub",
         "c_compiler_stub",
         "cxx_compiler_stub"
       ],
       "host": [
+        "python-abi3",
+        "python",
         "pip",
-        "meson-python",
+        "meson-python >=0.21.0",
         "ninja",
         "pkg-config",
-        "python",
-        "python-build",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
         "setuptools_scm >=6.2"
       ],
       "run": [
-        "python",
-        "numpy >=1.22",
-        "scipy >=1.12",
+        "python >=3.12",
+        "numpy >=1.26.0",
+        "scipy >=1.11.2",
         "libdlf"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "20fb32b805827e4fef3eb5f41f95c9b606433681a8a2339d19416a2bfec5f76f",
-      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.8.1.tar.gz"
+      "sha256": "cc83c4cd2e3031f0ac71feb5b280636ac82d8c50f025185860f54450eb4dfba0",
+      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.9.0.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -712,7 +411,7 @@
         "pip",
         "pkg-config",
         "python",
-        "python-build",
+        "python-abi3",
         "setuptools_scm"
       ]
     },
@@ -728,6 +427,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
@@ -743,7 +443,16 @@
       "summary": "Interactive geoscience (mostly) analytic functions."
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": [
+        "mkdir builddir",
+        "export PKG_CONFIG_PATH=$(numpy-config --pkgconfigdir):${PKG_CONFIG_PATH}",
+        "meson setup ${MESON_ARGS} -Dwith_extensions=true builddir/",
+        "${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation --config-settings=builddir=builddir"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -753,36 +462,40 @@
     },
     "outputs": [
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_linux-ppc64le",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -794,244 +507,67 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-ppc64le",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-ppc64le",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-ppc64le",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-ppc64le",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       }
     ],
     "package": {
       "name": "geoana",
-      "version": "0.8.1"
+      "version": "0.9.0"
     },
     "requirements": {
       "build": [
         "python",
         "cross-python_linux-ppc64le",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
         "ninja",
         "pkg-config",
-        "meson-python",
+        "meson-python >=0.21.0",
         "c_stdlib_stub",
         "c_compiler_stub",
         "cxx_compiler_stub"
       ],
       "host": [
+        "python-abi3",
+        "python",
         "pip",
-        "meson-python",
+        "meson-python >=0.21.0",
         "ninja",
         "pkg-config",
-        "python",
-        "python-build",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
         "setuptools_scm >=6.2"
       ],
       "run": [
-        "python",
-        "numpy >=1.22",
-        "scipy >=1.12",
+        "python >=3.12",
+        "numpy >=1.26.0",
+        "scipy >=1.11.2",
         "libdlf"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "20fb32b805827e4fef3eb5f41f95c9b606433681a8a2339d19416a2bfec5f76f",
-      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.8.1.tar.gz"
+      "sha256": "cc83c4cd2e3031f0ac71feb5b280636ac82d8c50f025185860f54450eb4dfba0",
+      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.9.0.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
@@ -1060,7 +596,7 @@
         "pip",
         "pkg-config",
         "python",
-        "python-build",
+        "python-abi3",
         "setuptools_scm"
       ]
     },
@@ -1076,6 +612,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
@@ -1091,7 +628,8 @@
       "summary": "Interactive geoscience (mostly) analytic functions."
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "script": "${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation -Csetup-args=-Dwith_extensions=true"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1110,20 +648,19 @@
             "cxx_compiler_stub"
           ],
           "host": [
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -1135,14 +672,24 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "*"
               ]
             }
+          },
+          {
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
@@ -1151,20 +698,20 @@
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -1176,207 +723,62 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
+        "build": {
+          "python": {
+            "version_independent": true
+          }
         },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_linux-aarch64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -1388,235 +790,62 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-aarch64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-aarch64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-aarch64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
+        "build": {
+          "python": {
+            "version_independent": true
+          }
         },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-aarch64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_linux-ppc64le",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -1628,203 +857,26 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-ppc64le",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-ppc64le",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-ppc64le",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_linux-ppc64le",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
         "build": null,
@@ -1833,30 +885,29 @@
           "build": [
             "python",
             "cross-python_osx-64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -1868,43 +919,53 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "*"
               ]
             }
+          },
+          {
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_osx-64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -1916,203 +977,26 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
         "build": null,
@@ -2121,30 +1005,29 @@
           "build": [
             "python",
             "cross-python_osx-arm64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -2156,43 +1039,53 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "*"
               ]
             }
+          },
+          {
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_osx-arm64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -2204,203 +1097,26 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-arm64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-arm64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-arm64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-arm64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
         "build": null,
@@ -2409,30 +1125,29 @@
           "build": [
             "python",
             "cross-python_win-64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -2444,43 +1159,53 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "*"
               ]
             }
+          },
+          {
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_win-64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -2492,208 +1217,31 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_win-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_win-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "for %%f in (%SP_DIR%\\geoana\\kernels\\_extensions\\*.pyd) do abi3audit \"%%f\" -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_win-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_win-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       }
     ],
     "package": {
       "name": "geoana",
-      "version": "0.8.1"
+      "version": "0.9.0"
     },
     "requirements": {
       "build": [
@@ -2702,38 +1250,38 @@
         "cxx_compiler_stub",
         "python",
         "cross-python_linux-aarch64",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
         "ninja",
         "pkg-config",
-        "meson-python",
+        "meson-python >=0.21.0",
         "cross-python_linux-ppc64le",
         "cross-python_osx-64",
         "cross-python_osx-arm64",
         "cross-python_win-64"
       ],
       "host": [
+        "python",
         "pip",
-        "meson-python",
+        "meson-python >=0.21.0",
         "ninja",
         "pkg-config",
-        "python",
-        "python-build",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
-        "setuptools_scm >=6.2"
+        "setuptools_scm >=6.2",
+        "python-abi3"
       ],
       "run": [
-        "python",
-        "numpy >=1.22",
-        "scipy >=1.12",
+        "python >=3.12",
+        "numpy >=1.26.0",
+        "scipy >=1.11.2",
         "libdlf"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "20fb32b805827e4fef3eb5f41f95c9b606433681a8a2339d19416a2bfec5f76f",
-      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.8.1.tar.gz"
+      "sha256": "cc83c4cd2e3031f0ac71feb5b280636ac82d8c50f025185860f54450eb4dfba0",
+      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.9.0.tar.gz"
     }
   },
   "name": "geoana",
@@ -2748,7 +1296,17 @@
       "summary": "Interactive geoscience (mostly) analytic functions."
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": [
+        "mkdir builddir",
+        "export PKG_CONFIG_PATH=$(numpy-config --pkgconfigdir):${PKG_CONFIG_PATH}",
+        "meson setup ${MESON_ARGS} -Dwith_extensions=true -Dpython.allow_limited_api=false builddir/",
+        "${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation --config-settings=builddir=builddir",
+        "meson setup ${MESON_ARGS} -Dwith_extensions=true builddir/"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -2764,30 +1322,29 @@
           "build": [
             "python",
             "cross-python_osx-64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -2799,43 +1356,53 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "*"
               ]
             }
+          },
+          {
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_osx-64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -2847,244 +1414,67 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       }
     ],
     "package": {
       "name": "geoana",
-      "version": "0.8.1"
+      "version": "0.9.0"
     },
     "requirements": {
       "build": [
         "python",
         "cross-python_osx-64",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
         "ninja",
         "pkg-config",
-        "meson-python",
+        "meson-python >=0.21.0",
         "c_stdlib_stub",
         "c_compiler_stub",
         "cxx_compiler_stub"
       ],
       "host": [
+        "python",
         "pip",
-        "meson-python",
+        "meson-python >=0.21.0",
         "ninja",
         "pkg-config",
-        "python",
-        "python-build",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
-        "setuptools_scm >=6.2"
+        "setuptools_scm >=6.2",
+        "python-abi3"
       ],
       "run": [
-        "python",
-        "numpy >=1.22",
-        "scipy >=1.12",
+        "python >=3.12",
+        "numpy >=1.26.0",
+        "scipy >=1.11.2",
         "libdlf"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "20fb32b805827e4fef3eb5f41f95c9b606433681a8a2339d19416a2bfec5f76f",
-      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.8.1.tar.gz"
+      "sha256": "cc83c4cd2e3031f0ac71feb5b280636ac82d8c50f025185860f54450eb4dfba0",
+      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.9.0.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -3113,7 +1503,7 @@
         "pip",
         "pkg-config",
         "python",
-        "python-build",
+        "python-abi3",
         "setuptools_scm"
       ]
     },
@@ -3129,6 +1519,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
@@ -3144,7 +1535,17 @@
       "summary": "Interactive geoscience (mostly) analytic functions."
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": [
+        "mkdir builddir",
+        "export PKG_CONFIG_PATH=$(numpy-config --pkgconfigdir):${PKG_CONFIG_PATH}",
+        "meson setup ${MESON_ARGS} -Dwith_extensions=true -Dpython.allow_limited_api=false builddir/",
+        "${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation --config-settings=builddir=builddir",
+        "meson setup ${MESON_ARGS} -Dwith_extensions=true builddir/"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -3160,30 +1561,29 @@
           "build": [
             "python",
             "cross-python_osx-arm64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -3195,43 +1595,53 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "*"
               ]
             }
+          },
+          {
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_osx-arm64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -3243,244 +1653,67 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-arm64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-arm64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-arm64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_osx-arm64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       }
     ],
     "package": {
       "name": "geoana",
-      "version": "0.8.1"
+      "version": "0.9.0"
     },
     "requirements": {
       "build": [
         "python",
         "cross-python_osx-arm64",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
         "ninja",
         "pkg-config",
-        "meson-python",
+        "meson-python >=0.21.0",
         "c_stdlib_stub",
         "c_compiler_stub",
         "cxx_compiler_stub"
       ],
       "host": [
+        "python",
         "pip",
-        "meson-python",
+        "meson-python >=0.21.0",
         "ninja",
         "pkg-config",
-        "python",
-        "python-build",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
-        "setuptools_scm >=6.2"
+        "setuptools_scm >=6.2",
+        "python-abi3"
       ],
       "run": [
-        "python",
-        "numpy >=1.22",
-        "scipy >=1.12",
+        "python >=3.12",
+        "numpy >=1.26.0",
+        "scipy >=1.11.2",
         "libdlf"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "20fb32b805827e4fef3eb5f41f95c9b606433681a8a2339d19416a2bfec5f76f",
-      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.8.1.tar.gz"
+      "sha256": "cc83c4cd2e3031f0ac71feb5b280636ac82d8c50f025185860f54450eb4dfba0",
+      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.9.0.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -3509,7 +1742,7 @@
         "pip",
         "pkg-config",
         "python",
-        "python-build",
+        "python-abi3",
         "setuptools_scm"
       ]
     },
@@ -3525,6 +1758,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
@@ -3547,7 +1781,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/geoana.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.8.1\"\n  # ensure is_freethreading gets detected as a used variable\n  touch_is_freethreading: ${{ is_freethreading }}\n\npackage:\n  name: geoana\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/g/geoana/geoana-${{ version }}.tar.gz\n  sha256: 20fb32b805827e4fef3eb5f41f95c9b606433681a8a2339d19416a2bfec5f76f\n\nbuild:\n  number: 0\n  skip: match(python, \"<3.11\") or (match(python, \"=3.14\") and linux and is_freethreading and (aarch64 or ppc64le))\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - cython\n        - numpy\n        - ninja\n        - pkg-config\n        - meson-python\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n  host:\n    - pip\n    - meson-python\n    - ninja\n    - pkg-config\n    - python\n    - python-build\n    - cython\n    - numpy\n    - setuptools_scm >=6.2\n  run:\n    - python\n    - numpy >=1.22\n    - scipy >=1.12\n    - libdlf\n\ntests:\n  - python:\n      imports:\n        - geoana\n        - geoana.earthquake\n        - geoana.em\n        - geoana.kernels._extensions\n\nabout:\n  homepage: https://www.simpeg.xyz\n  license: MIT\n  license_file: LICENSE\n  summary: Interactive geoscience (mostly) analytic functions.\n  repository: https://github.com/simpeg/geoana\n  documentation: https://geoana.simpeg.xyz\n\nextra:\n  recipe-maintainers:\n    - lheagy\n    - jcapriot\n",
+  "raw_meta_yaml": "context:\n  version: \"0.9.0\"\n  # ensure is_freethreading gets detected as a used variable\n  touch_is_freethreading: ${{ is_freethreading }}\n\npackage:\n  name: geoana\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/g/geoana/geoana-${{ version }}.tar.gz\n  sha256: cc83c4cd2e3031f0ac71feb5b280636ac82d8c50f025185860f54450eb4dfba0\n\nbuild:\n  number: 0\n  skip:\n    - match(python, \"<\" ~ python_min)\n    # the abi3 build is made once on python_min and covers every later (non-freethreading) python\n    - is_abi3 and not match(python, python_min ~ \".*\")\n    - match(python, \"=3.14\") and linux and is_freethreading and (aarch64 or ppc64le)\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    - if: unix\n      then:\n        # configure with meson directly so ${MESON_ARGS} (the cross file for osx-arm64, linux-aarch64 and linux-ppc64le) is used\n        - mkdir builddir\n        - export PKG_CONFIG_PATH=$(numpy-config --pkgconfigdir):${PKG_CONFIG_PATH}\n        - if: is_abi3\n          then: meson setup ${MESON_ARGS} -Dwith_extensions=true builddir/\n          # Cython can't target the free-threaded stable ABI (abi3t) yet, so those builds opt out of the limited API\n          else: meson setup ${MESON_ARGS} -Dwith_extensions=true -Dpython.allow_limited_api=false builddir/\n        - ${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation --config-settings=builddir=builddir\n      else:\n        - if: is_abi3\n          then: ${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation -Csetup-args=-Dwith_extensions=true\n          else: ${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation -Csetup-args=-Dwith_extensions=true -Csetup-args=-Dpython.allow_limited_api=false\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - cython >=3.1.0\n        - numpy\n        - ninja\n        - pkg-config\n        - meson-python >=0.21.0\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n  host:\n    - if: is_abi3\n      then: python-abi3\n    - python\n    - pip\n    - meson-python >=0.21.0\n    - ninja\n    - pkg-config\n    - cython >=3.1.0\n    - numpy\n    - setuptools_scm >=6.2\n  run:\n    - python >=${{ python_min }}\n    - numpy >=1.26.0\n    - scipy >=1.11.2\n    - libdlf\n\ntests:\n  - python:\n      imports:\n        - geoana\n        - geoana.earthquake\n        - geoana.em\n        - geoana.kernels._extensions\n      python_version:\n        - if: is_abi3\n          then: ${{ python_min }}.*\n        - \"*\"\n  - script:\n      # without the compiled extensions geoana still imports (pure python), so check they were built\n      - python -c \"import geoana; assert geoana.show_config()['compiled']\"\n  - if: is_abi3\n    then:\n      requirements:\n        run:\n          - abi3audit\n      script:\n        - if: unix\n          then:\n            - abi3audit $SP_DIR/geoana/kernels/_extensions/*.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n          else:\n            - for %%f in (%SP_DIR%\\geoana\\kernels\\_extensions\\*.pyd) do abi3audit \"%%f\" -s -v --assume-minimum-abi3 ${{ python_min }}\n\nabout:\n  homepage: https://www.simpeg.xyz\n  license: MIT\n  license_file: LICENSE\n  summary: Interactive geoscience (mostly) analytic functions.\n  repository: https://github.com/simpeg/geoana\n  documentation: https://geoana.simpeg.xyz\n\nextra:\n  recipe-maintainers:\n    - lheagy\n    - jcapriot\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -3567,7 +1801,7 @@
       "pip",
       "pkg-config",
       "python",
-      "python-build",
+      "python-abi3",
       "scipy",
       "setuptools_scm"
     ]
@@ -3606,7 +1840,7 @@
         "pip",
         "pkg-config",
         "python",
-        "python-build",
+        "python-abi3",
         "setuptools_scm"
       ]
     },
@@ -3626,6 +1860,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
@@ -3643,8 +1878,8 @@
         "cross-python_osx-arm64",
         "cross-python_win-64",
         "cxx_compiler_stub",
-        "cython",
-        "meson-python",
+        "cython >=3.1.0",
+        "meson-python >=0.21.0",
         "ninja",
         "numpy",
         "pkg-config",
@@ -3654,14 +1889,14 @@
     "host": {
       "__set__": true,
       "elements": [
-        "cython",
-        "meson-python",
+        "cython >=3.1.0",
+        "meson-python >=0.21.0",
         "ninja",
         "numpy",
         "pip",
         "pkg-config",
         "python",
-        "python-build",
+        "python-abi3",
         "setuptools_scm >=6.2"
       ]
     },
@@ -3669,20 +1904,21 @@
       "__set__": true,
       "elements": [
         "libdlf",
-        "numpy >=1.22",
-        "python",
-        "scipy >=1.12"
+        "numpy >=1.26.0",
+        "python >=3.12",
+        "scipy >=1.11.2"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/g/geoana/geoana-0.8.1.tar.gz",
-  "version": "0.8.1",
+  "url": "https://pypi.org/packages/source/g/geoana/geoana-0.9.0.tar.gz",
+  "version": "0.9.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/geoana.json"
   },
@@ -3697,7 +1933,11 @@
       "summary": "Interactive geoscience (mostly) analytic functions."
     },
     "build": {
-      "number": "0"
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": "${{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation -Csetup-args=-Dwith_extensions=true"
     },
     "extra": {
       "recipe-maintainers": [
@@ -3713,30 +1953,29 @@
           "build": [
             "python",
             "cross-python_win-64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -3748,43 +1987,53 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "*"
               ]
             }
+          },
+          {
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
           }
         ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "geoana",
         "requirements": {
           "build": [
             "python",
             "cross-python_win-64",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "ninja",
             "pkg-config",
-            "meson-python",
+            "meson-python >=0.21.0",
             "c_stdlib_stub",
             "c_compiler_stub",
             "cxx_compiler_stub"
           ],
           "host": [
+            "python-abi3",
+            "python",
             "pip",
-            "meson-python",
+            "meson-python >=0.21.0",
             "ninja",
             "pkg-config",
-            "python",
-            "python-build",
-            "cython",
+            "cython >=3.1.0",
             "numpy",
             "setuptools_scm >=6.2"
           ],
           "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
+            "python >=3.12",
+            "numpy >=1.26.0",
+            "scipy >=1.11.2",
             "libdlf"
           ]
         },
@@ -3796,244 +2045,67 @@
                 "geoana.earthquake",
                 "geoana.em",
                 "geoana.kernels._extensions"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_win-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_win-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
+            "script": "python -c \"import geoana; assert geoana.show_config()['compiled']\""
+          },
           {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
+            "requirements": {
+              "run": [
+                "abi3audit"
               ]
-            }
+            },
+            "script": "for %%f in (%SP_DIR%\\geoana\\kernels\\_extensions\\*.pyd) do abi3audit \"%%f\" -s -v --assume-minimum-abi3 ${{ python_min }}"
           }
         ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_win-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
-      },
-      {
-        "build": null,
-        "name": "geoana",
-        "requirements": {
-          "build": [
-            "python",
-            "cross-python_win-64",
-            "cython",
-            "numpy",
-            "ninja",
-            "pkg-config",
-            "meson-python",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "pip",
-            "meson-python",
-            "ninja",
-            "pkg-config",
-            "python",
-            "python-build",
-            "cython",
-            "numpy",
-            "setuptools_scm >=6.2"
-          ],
-          "run": [
-            "python",
-            "numpy >=1.22",
-            "scipy >=1.12",
-            "libdlf"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "geoana",
-                "geoana.earthquake",
-                "geoana.em",
-                "geoana.kernels._extensions"
-              ]
-            }
-          }
-        ],
-        "version": "0.8.1"
+        "version": "0.9.0"
       }
     ],
     "package": {
       "name": "geoana",
-      "version": "0.8.1"
+      "version": "0.9.0"
     },
     "requirements": {
       "build": [
         "python",
         "cross-python_win-64",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
         "ninja",
         "pkg-config",
-        "meson-python",
+        "meson-python >=0.21.0",
         "c_stdlib_stub",
         "c_compiler_stub",
         "cxx_compiler_stub"
       ],
       "host": [
+        "python",
         "pip",
-        "meson-python",
+        "meson-python >=0.21.0",
         "ninja",
         "pkg-config",
-        "python",
-        "python-build",
-        "cython",
+        "cython >=3.1.0",
         "numpy",
-        "setuptools_scm >=6.2"
+        "setuptools_scm >=6.2",
+        "python-abi3"
       ],
       "run": [
-        "python",
-        "numpy >=1.22",
-        "scipy >=1.12",
+        "python >=3.12",
+        "numpy >=1.26.0",
+        "scipy >=1.11.2",
         "libdlf"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "20fb32b805827e4fef3eb5f41f95c9b606433681a8a2339d19416a2bfec5f76f",
-      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.8.1.tar.gz"
+      "sha256": "cc83c4cd2e3031f0ac71feb5b280636ac82d8c50f025185860f54450eb4dfba0",
+      "url": "https://pypi.org/packages/source/g/geoana/geoana-0.9.0.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -4062,7 +2134,7 @@
         "pip",
         "pkg-config",
         "python",
-        "python-build",
+        "python-abi3",
         "setuptools_scm"
       ]
     },
@@ -4078,6 +2150,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
