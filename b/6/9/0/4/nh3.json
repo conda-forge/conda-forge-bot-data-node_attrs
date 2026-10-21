@@ -1,12 +1,8 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_is_abi3falsepython3.14.____cp314t.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.10'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - is_abi3\n",
+  "ci_support_linux_64_is_abi3false.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - is_abi3\n",
   "ci_support_migrations": {
-    "python314": {
-      "migration_number": 1,
-      "migrator_ts": 1724712607
-    },
     "python314t": {
       "migration_number": 1,
       "migrator_ts": 1755739493
@@ -18,6 +14,9 @@
     },
     "bot": {
       "inspection": "hint-grayskull"
+    },
+    "build_platform": {
+      "linux_riscv64": "linux_64"
     },
     "conda_build": {
       "pkg_format": "2"
@@ -33,10 +32,11 @@
       "linux_aarch64": "default",
       "linux_ppc64le": "default",
       "osx_arm64": "default"
-    }
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "17594569411b7be4fc74237e29208efe243ec400",
-  "feedstock_hash_ts": 1787526760,
+  "feedstock_hash": "4a77abc3715e07bf342e5b4e395f2ad705b05a03",
+  "feedstock_hash_ts": 1792543370,
   "feedstock_name": "nh3",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -50,19 +50,19 @@
       "summary": "Python binding to Ammonia HTML sanitizer Rust crate"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install -vv . --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         }
@@ -96,9 +96,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -139,22 +154,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -167,15 +195,148 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.3.7"
+      },
+      {
+        "build": null,
+        "name": "nh3",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "nh3"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest-cov"
+              ]
+            },
+            "script": [
+              "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
+              "coverage report --show-missing --skip-covered --fail-under=83"
+            ]
+          }
+        ],
+        "version": "0.3.7"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "nh3",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python 3.14.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python >=3.14",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "nh3"
+              ],
+              "python_version": [
+                "3.14.*",
+                "3.15.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest-cov",
+                "python 3.14.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
+              "coverage report --show-missing --skip-covered --fail-under=83",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -198,16 +359,21 @@
         "maturin >=1.0,<2.0",
         "pip",
         "python",
-        "python-abi3"
+        "python 3.11.*",
+        "python-abi3",
+        "python 3.14.*"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3",
+        "python >=3.14"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848",
-      "url": "https://pypi.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -233,7 +399,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -257,19 +424,19 @@
       "summary": "Python binding to Ammonia HTML sanitizer Rust crate"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install -vv . --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         }
@@ -286,6 +453,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-aarch64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -303,9 +472,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -337,6 +521,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-aarch64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -346,22 +532,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -374,15 +573,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -395,6 +593,8 @@
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_linux-aarch64",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
@@ -405,16 +605,19 @@
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848",
-      "url": "https://pypi.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -425,6 +628,8 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -440,7 +645,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -464,19 +670,19 @@
       "summary": "Python binding to Ammonia HTML sanitizer Rust crate"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install -vv . --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         }
@@ -493,6 +699,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-ppc64le",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -510,9 +718,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -544,6 +767,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-ppc64le",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -553,22 +778,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -581,15 +819,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -602,6 +839,8 @@
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_linux-ppc64le",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
@@ -612,16 +851,19 @@
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848",
-      "url": "https://pypi.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
@@ -632,6 +874,8 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-ppc64le",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -647,7 +891,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -671,14 +916,14 @@
       "summary": "Python binding to Ammonia HTML sanitizer Rust crate"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install -vv . --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
-          "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\""
+          "copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\""
         ],
         "env": {
           "CARGO": "cargo-auditable-wrapper.bat",
@@ -715,9 +960,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -758,22 +1018,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -786,15 +1059,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -822,9 +1094,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -865,22 +1152,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.14.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.14",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.14.*",
+                "3.15.*"
               ]
             }
           },
@@ -893,15 +1193,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.14.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -912,6 +1211,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-aarch64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -929,9 +1230,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -963,6 +1279,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-aarch64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -972,22 +1290,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -1000,15 +1331,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -1019,6 +1349,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-ppc64le",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1036,9 +1368,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1070,6 +1417,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-ppc64le",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1079,22 +1428,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -1107,15 +1469,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -1126,6 +1487,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1143,9 +1506,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1177,6 +1555,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1186,22 +1566,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -1214,15 +1607,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -1233,6 +1625,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-arm64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1250,9 +1644,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1284,6 +1693,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-arm64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1293,22 +1704,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -1321,15 +1745,152 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
+            ]
+          }
+        ],
+        "version": "0.3.7"
+      },
+      {
+        "build": null,
+        "name": "nh3",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "nh3"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest-cov"
+              ]
+            },
+            "script": [
+              "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
+              "coverage report --show-missing --skip-covered --fail-under=83"
+            ]
+          }
+        ],
+        "version": "0.3.7"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "nh3",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=1.0,<2.0",
+            "pip",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "nh3"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.15.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest-cov",
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
+              "coverage report --show-missing --skip-covered --fail-under=83",
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"%SP_DIR%\\nh3\\nh3.pyd\""
             ]
           }
         ],
@@ -1346,22 +1907,33 @@
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64"
       ],
       "host": [
         "maturin >=1.0,<2.0",
         "pip",
         "python",
-        "python-abi3"
+        "python 3.11.*",
+        "python-abi3",
+        "python 3.14.*"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3",
+        "python >=3.14"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848",
-      "url": "https://pypi.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
     }
   },
   "name": "nh3",
@@ -1376,19 +1948,19 @@
       "summary": "Python binding to Ammonia HTML sanitizer Rust crate"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install -vv . --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         }
@@ -1405,6 +1977,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1422,9 +1996,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1456,6 +2045,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1465,22 +2056,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -1493,15 +2097,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -1514,6 +2117,8 @@
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_osx-64",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
@@ -1524,16 +2129,19 @@
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848",
-      "url": "https://pypi.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -1544,6 +2152,8 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_osx-64",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1559,7 +2169,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1583,19 +2194,19 @@
       "summary": "Python binding to Ammonia HTML sanitizer Rust crate"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --disable-pip-version-check",
+          "cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
+          "${{ PYTHON }} -m pip install -vv . --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols"
         }
@@ -1612,6 +2223,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-arm64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1629,9 +2242,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1663,6 +2291,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-arm64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1672,22 +2302,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -1700,15 +2343,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\""
             ]
           }
         ],
@@ -1721,6 +2363,8 @@
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_osx-arm64",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
@@ -1731,16 +2375,19 @@
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848",
-      "url": "https://pypi.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -1751,6 +2398,8 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_osx-arm64",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1766,7 +2415,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1797,7 +2447,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/nh3.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.3.7\"\n  python_check_max: \"3.14\"\n  abi3_ext: ${{ \"pyd\" if win else \"abi3.so\" }}\n  unix_sp_dir: |-\n    $(python -c \"print(__import__('site').getsitepackages()[-1])\")/nh3\n  win_sp_dir: |-\n    Lib\\site-packages\\nh3\n  sp_dir: |-\n    ${{ \"%PREFIX%\\\\\" ~ win_sp_dir if win else unix_sp_dir }}\n\npackage:\n  name: nh3\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/n/nh3/nh3-${{ version }}.tar.gz\n  sha256: 71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848\n\nbuild:\n  number: 0\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO: cargo-auditable-wrapper${{ \".bat\" if win }}\n    content:\n      - if: win\n        then:\n          - copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"\n        else:\n          - cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n      - ${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --disable-pip-version-check\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n  host:\n    - maturin >=1.0,<2.0\n    - pip\n    - python\n    - if: is_abi3\n      then:\n        - python-abi3\n  run:\n    - python\n\ntests:\n  - if: is_abi3\n    then:\n      python:\n        imports: nh3\n        pip_check: true\n        python_version:\n          - ${{ python_min }}.*\n          - ${{ python_check_max }}.*\n    else:\n      python:\n        imports: nh3\n        pip_check: true\n  - files:\n      source:\n        - tests/\n    requirements:\n      run:\n        - pytest-cov\n        - if: is_abi3\n          then:\n            - python ${{ python_min }}.*\n            - abi3audit\n    script:\n      - coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes\n      - coverage report --show-missing --skip-covered --fail-under=83\n      - if: is_abi3\n        then:\n          - cd ${{ sp_dir }}\n          - abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}\n\nabout:\n  summary: Python binding to Ammonia HTML sanitizer Rust crate\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://pypi.org/project/nh3\n  repository: https://github.com/messense/nh3\n  documentation: https://nh3.readthedocs.io\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.3.7\"\n  python_check_max: \"3.15\"\n  cargo_wrapper: cargo-auditable-wrapper.${{ \"bat\" if win else \"sh\" }}\n\npackage:\n  name: nh3\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/n/nh3/nh3-${{ version }}.tar.gz\n  sha256: 71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848\n\nbuild:\n  number: 1\n  skip: is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO: ${{ cargo_wrapper }}\n    content:\n      - if: win\n        then:\n          - copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\"\n        else:\n          - cp \"${RECIPE_DIR}/${{ cargo_wrapper }}\" \"${BUILD_PREFIX}/bin/\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"\n      - ${{ PYTHON }} -m pip install -vv . --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n\nrequirements:\n  build:\n    - if: build_platform != host_platform\n      then:\n        - python\n        - cross-python_${{ host_platform }}\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n  host:\n    - maturin >=1.0,<2.0\n    - pip\n    - if: is_abi3\n      then:\n        - python ${{ python_min }}.*\n        - python-abi3\n      else:\n        - python\n  run:\n    - if: is_abi3\n      then:\n        - python >=${{ python_min }}\n        - python-abi3\n      else:\n        - python\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - etc/conda/test-files/nh3/**\n      site_packages:\n        - nh3/**\n        - nh3-${{ version }}.dist-info/**\n  - python:\n      imports: nh3\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then:\n            - ${{ python_min }}.*\n            - ${{ python_check_max }}.*\n          else:\n            - \"*\"\n  - files:\n      source:\n        - tests/\n    requirements:\n      run:\n        - pytest-cov\n        - if: is_abi3\n          then:\n            - python ${{ python_min }}.*\n            - abi3audit\n    script:\n      - coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes\n      - coverage report --show-missing --skip-covered --fail-under=83\n      - if: is_abi3 and unix\n        then: abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"${SP_DIR}/nh3/nh3.abi3.so\"\n      - if: is_abi3 and win\n        then: abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"%SP_DIR%\\nh3\\nh3.pyd\"\n\nabout:\n  summary: Python binding to Ammonia HTML sanitizer Rust crate\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://pypi.org/project/nh3\n  repository: https://github.com/messense/nh3\n  documentation: https://nh3.readthedocs.io\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1805,6 +2455,11 @@
       "c_stdlib_stub",
       "cargo-auditable",
       "cargo-bundle-licenses",
+      "cross-python_linux-aarch64",
+      "cross-python_linux-ppc64le",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
+      "cross-python_win-64",
       "maturin",
       "pip",
       "python",
@@ -1820,6 +2475,12 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1828,6 +2489,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "maturin",
         "pip",
         "python",
@@ -1839,7 +2501,9 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "python"
+        "cross-python",
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1861,6 +2525,12 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1870,13 +2540,18 @@
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
+        "python 3.14.*",
         "python-abi3"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python >=3.14",
+        "python-abi3"
       ]
     },
     "test": {
@@ -1885,11 +2560,12 @@
         "abi3audit",
         "pip",
         "pytest-cov",
-        "python 3.10.*"
+        "python 3.11.*",
+        "python 3.14.*"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/n/nh3/nh3-0.3.7.tar.gz",
+  "url": "https://files.pythonhosted.org/packages/source/n/nh3/nh3-0.3.7.tar.gz",
   "version": "0.3.7",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/nh3.json"
@@ -1905,14 +2581,14 @@
       "summary": "Python binding to Ammonia HTML sanitizer Rust crate"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "version_independent": true
       },
       "script": {
         "content": [
-          "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"",
-          "${{ PYTHON }} -m pip install . --no-deps --no-build-isolation --disable-pip-version-check",
+          "copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\"",
+          "${{ PYTHON }} -m pip install -vv . --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
@@ -1933,6 +2609,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_win-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1950,9 +2628,24 @@
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
             "python": {
               "imports": [
                 "nh3"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1984,6 +2677,8 @@
         "name": "nh3",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_win-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
@@ -1993,22 +2688,35 @@
           "host": [
             "maturin >=1.0,<2.0",
             "pip",
-            "python",
+            "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python"
+            "python >=3.11",
+            "python-abi3"
           ]
         },
         "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/nh3/**"
+              ],
+              "site_packages": [
+                "nh3/**",
+                "nh3-0.3.7.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
           {
             "python": {
               "imports": [
                 "nh3"
               ],
               "python_version": [
-                "3.10.*",
-                "3.14.*"
+                "3.11.*",
+                "3.15.*"
               ]
             }
           },
@@ -2021,15 +2729,14 @@
             "requirements": {
               "run": [
                 "pytest-cov",
-                "python 3.10.*",
+                "python 3.11.*",
                 "abi3audit"
               ]
             },
             "script": [
               "coverage run --source=nh3 --branch -m pytest -vv --tb=long --color=yes",
               "coverage report --show-missing --skip-covered --fail-under=83",
-              "cd ${{ sp_dir }}",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} nh3.${{ abi3_ext }}"
+              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} \"%SP_DIR%\\nh3\\nh3.pyd\""
             ]
           }
         ],
@@ -2042,6 +2749,8 @@
     },
     "requirements": {
       "build": [
+        "python",
+        "cross-python_win-64",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
@@ -2052,16 +2761,19 @@
         "maturin >=1.0,<2.0",
         "pip",
         "python",
+        "python 3.11.*",
         "python-abi3"
       ],
       "run": [
-        "python"
+        "python",
+        "python >=3.11",
+        "python-abi3"
       ]
     },
     "schema_version": 1,
     "source": {
       "sha256": "71860d01c16f4d8c72e334e0674beb2b0899dbd0bf760de18932ef4390303848",
-      "url": "https://pypi.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
+      "url": "https://files.pythonhosted.org/packages/source/n/nh3/nh3-0.3.7.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -2072,6 +2784,8 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_win-64",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -2087,7 +2801,8 @@
     "run": {
       "__set__": true,
       "elements": [
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "test": {
