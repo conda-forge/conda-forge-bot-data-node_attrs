@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_mpimpich.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '14'\nlibblas:\n- 3.9.* *netlib\nliblapack:\n- 3.9.* *netlib\nmpi:\n- mpich\nmpich:\n- '5'\nopenmpi:\n- '5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\n",
+  "ci_support_linux_64_mpimpich.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nlibblas:\n- 3.9.* *netlib\nliblapack:\n- 3.9.* *netlib\nmpi:\n- mpich\nmpich:\n- '5'\nopenmpi:\n- '5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\n",
   "ci_support_migrations": {
     "mpich5": {
       "migration_number": 1,
@@ -33,23 +33,23 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "e4063b2ae91711186f405d3bb031508d58b78835",
-  "feedstock_hash_ts": 1784531548,
+  "feedstock_hash": "3016171df671c48e3f28c1e6d96febf1081636b0",
+  "feedstock_hash_ts": 1792580757,
   "feedstock_name": "dbcsr",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication, among other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed as a part of CP2K, where it provides core functionality for linear scaling electronic structure theory. It is now released as a standalone library for integration in other projects..",
+      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication,\namong other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed\nas a part of CP2K, where it provides core functionality for linear scaling electronic structure theory.\nIt is now released as a standalone library for integration in other projects.",
       "dev_url": "https://github.com/cp2k/dbcsr",
       "doc_url": "https://cp2k.github.io/dbcsr/develop/page/2-user-guide/index.html",
       "home": "https://cp2k.github.io/dbcsr",
-      "license": "GPL-2.0-only",
-      "license_family": "GPL-2.0-only",
+      "license": "GPL-2.0-or-later",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "LICENSE",
       "summary": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "dbcsr",
@@ -60,7 +60,8 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "martin-g"
+        "martin-g",
+        "mkrack"
       ]
     },
     "outputs": [
@@ -82,8 +83,7 @@
             "fortran_compiler_stub",
             "cmake",
             "make",
-            "fypp",
-            "libgomp"
+            "fypp"
           ],
           "host": [
             "libgomp",
@@ -91,23 +91,57 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -131,8 +165,7 @@
             "fortran_compiler_stub",
             "cmake",
             "make",
-            "fypp",
-            "libgomp"
+            "fypp"
           ],
           "host": [
             "libgomp",
@@ -140,23 +173,57 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -175,8 +242,7 @@
         "fortran_compiler_stub",
         "cmake",
         "make",
-        "fypp",
-        "libgomp"
+        "fypp"
       ],
       "host": [
         "libgomp",
@@ -184,17 +250,10 @@
         "liblapack",
         "mpich",
         "openmpi"
-      ],
-      "run": [
-        "mpich",
-        "openmpi"
       ]
     },
     "schema_version": 1,
     "source": {
-      "patches": [
-        "dbcsr-shared.patch"
-      ],
       "sha256": "3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9",
       "url": "https://github.com/cp2k/dbcsr/releases/download/v2.10.0/dbcsr-2.10.0.tar.gz"
     }
@@ -209,7 +268,6 @@
         "cxx_compiler_stub",
         "fortran_compiler_stub",
         "fypp",
-        "libgomp",
         "make"
       ]
     },
@@ -225,29 +283,32 @@
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "mpich",
-        "openmpi"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "make"
+      ]
     }
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication, among other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed as a part of CP2K, where it provides core functionality for linear scaling electronic structure theory. It is now released as a standalone library for integration in other projects..",
+      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication,\namong other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed\nas a part of CP2K, where it provides core functionality for linear scaling electronic structure theory.\nIt is now released as a standalone library for integration in other projects.",
       "dev_url": "https://github.com/cp2k/dbcsr",
       "doc_url": "https://cp2k.github.io/dbcsr/develop/page/2-user-guide/index.html",
       "home": "https://cp2k.github.io/dbcsr",
-      "license": "GPL-2.0-only",
-      "license_family": "GPL-2.0-only",
+      "license": "GPL-2.0-or-later",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "LICENSE",
       "summary": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "dbcsr",
@@ -258,7 +319,8 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "martin-g"
+        "martin-g",
+        "mkrack"
       ]
     },
     "outputs": [
@@ -280,8 +342,7 @@
             "fortran_compiler_stub",
             "cmake",
             "make",
-            "fypp",
-            "libgomp"
+            "fypp"
           ],
           "host": [
             "libgomp",
@@ -289,23 +350,57 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -330,8 +425,7 @@
             "cmake",
             "make",
             "fypp",
-            "openmpi",
-            "libgomp"
+            "openmpi"
           ],
           "host": [
             "libgomp",
@@ -339,23 +433,57 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -375,7 +503,6 @@
         "cmake",
         "make",
         "fypp",
-        "libgomp",
         "openmpi"
       ],
       "host": [
@@ -384,17 +511,10 @@
         "liblapack",
         "mpich",
         "openmpi"
-      ],
-      "run": [
-        "mpich",
-        "openmpi"
       ]
     },
     "schema_version": 1,
     "source": {
-      "patches": [
-        "dbcsr-shared.patch"
-      ],
       "sha256": "3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9",
       "url": "https://github.com/cp2k/dbcsr/releases/download/v2.10.0/dbcsr-2.10.0.tar.gz"
     }
@@ -409,7 +529,6 @@
         "cxx_compiler_stub",
         "fortran_compiler_stub",
         "fypp",
-        "libgomp",
         "make",
         "openmpi"
       ]
@@ -426,29 +545,32 @@
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "mpich",
-        "openmpi"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "make"
+      ]
     }
   },
   "linux_ppc64le_meta_yaml": {
     "about": {
-      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication, among other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed as a part of CP2K, where it provides core functionality for linear scaling electronic structure theory. It is now released as a standalone library for integration in other projects..",
+      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication,\namong other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed\nas a part of CP2K, where it provides core functionality for linear scaling electronic structure theory.\nIt is now released as a standalone library for integration in other projects.",
       "dev_url": "https://github.com/cp2k/dbcsr",
       "doc_url": "https://cp2k.github.io/dbcsr/develop/page/2-user-guide/index.html",
       "home": "https://cp2k.github.io/dbcsr",
-      "license": "GPL-2.0-only",
-      "license_family": "GPL-2.0-only",
+      "license": "GPL-2.0-or-later",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "LICENSE",
       "summary": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "dbcsr",
@@ -459,7 +581,8 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "martin-g"
+        "martin-g",
+        "mkrack"
       ]
     },
     "outputs": [
@@ -481,8 +604,7 @@
             "fortran_compiler_stub",
             "cmake",
             "make",
-            "fypp",
-            "libgomp"
+            "fypp"
           ],
           "host": [
             "libgomp",
@@ -490,23 +612,57 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -531,8 +687,7 @@
             "cmake",
             "make",
             "fypp",
-            "openmpi",
-            "libgomp"
+            "openmpi"
           ],
           "host": [
             "libgomp",
@@ -540,23 +695,57 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -576,7 +765,6 @@
         "cmake",
         "make",
         "fypp",
-        "libgomp",
         "openmpi"
       ],
       "host": [
@@ -585,17 +773,10 @@
         "liblapack",
         "mpich",
         "openmpi"
-      ],
-      "run": [
-        "mpich",
-        "openmpi"
       ]
     },
     "schema_version": 1,
     "source": {
-      "patches": [
-        "dbcsr-shared.patch"
-      ],
       "sha256": "3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9",
       "url": "https://github.com/cp2k/dbcsr/releases/download/v2.10.0/dbcsr-2.10.0.tar.gz"
     }
@@ -610,7 +791,6 @@
         "cxx_compiler_stub",
         "fortran_compiler_stub",
         "fypp",
-        "libgomp",
         "make",
         "openmpi"
       ]
@@ -627,29 +807,32 @@
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "mpich",
-        "openmpi"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "make"
+      ]
     }
   },
   "meta_yaml": {
     "about": {
-      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication, among other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed as a part of CP2K, where it provides core functionality for linear scaling electronic structure theory. It is now released as a standalone library for integration in other projects..",
+      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication,\namong other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed\nas a part of CP2K, where it provides core functionality for linear scaling electronic structure theory.\nIt is now released as a standalone library for integration in other projects.",
       "dev_url": "https://github.com/cp2k/dbcsr",
       "doc_url": "https://cp2k.github.io/dbcsr/develop/page/2-user-guide/index.html",
       "home": "https://cp2k.github.io/dbcsr",
-      "license": "GPL-2.0-only",
-      "license_family": "GPL-2.0-only",
+      "license": "GPL-2.0-or-later",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "LICENSE",
       "summary": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "dbcsr",
@@ -660,7 +843,8 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "martin-g"
+        "martin-g",
+        "mkrack"
       ]
     },
     "outputs": [
@@ -682,8 +866,7 @@
             "fortran_compiler_stub",
             "cmake",
             "make",
-            "fypp",
-            "libgomp"
+            "fypp"
           ],
           "host": [
             "libgomp",
@@ -691,23 +874,57 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -731,8 +948,7 @@
             "fortran_compiler_stub",
             "cmake",
             "make",
-            "fypp",
-            "libgomp"
+            "fypp"
           ],
           "host": [
             "libgomp",
@@ -740,23 +956,57 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -780,8 +1030,7 @@
             "fortran_compiler_stub",
             "cmake",
             "make",
-            "fypp",
-            "libgomp"
+            "fypp"
           ],
           "host": [
             "libgomp",
@@ -789,23 +1038,57 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -830,8 +1113,7 @@
             "cmake",
             "make",
             "fypp",
-            "openmpi",
-            "libgomp"
+            "openmpi"
           ],
           "host": [
             "libgomp",
@@ -839,23 +1121,57 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -879,8 +1195,7 @@
             "fortran_compiler_stub",
             "cmake",
             "make",
-            "fypp",
-            "libgomp"
+            "fypp"
           ],
           "host": [
             "libgomp",
@@ -888,23 +1203,57 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -929,8 +1278,7 @@
             "cmake",
             "make",
             "fypp",
-            "openmpi",
-            "libgomp"
+            "openmpi"
           ],
           "host": [
             "libgomp",
@@ -938,23 +1286,57 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -987,23 +1369,58 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "export OMPI_MCA_btl=self,tcp",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -1037,23 +1454,58 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "export OMPI_MCA_btl=self,tcp",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -1086,23 +1538,58 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "export OMPI_MCA_btl=self,tcp",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -1136,23 +1623,58 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "export OMPI_MCA_btl=self,tcp",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -1172,7 +1694,6 @@
         "cmake",
         "make",
         "fypp",
-        "libgomp",
         "openmpi",
         "llvm-openmp"
       ],
@@ -1183,17 +1704,10 @@
         "mpich",
         "openmpi",
         "llvm-openmp"
-      ],
-      "run": [
-        "mpich",
-        "openmpi"
       ]
     },
     "schema_version": 1,
     "source": {
-      "patches": [
-        "dbcsr-shared.patch"
-      ],
       "sha256": "3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9",
       "url": "https://github.com/cp2k/dbcsr/releases/download/v2.10.0/dbcsr-2.10.0.tar.gz"
     }
@@ -1201,17 +1715,17 @@
   "name": "dbcsr",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication, among other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed as a part of CP2K, where it provides core functionality for linear scaling electronic structure theory. It is now released as a standalone library for integration in other projects..",
+      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication,\namong other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed\nas a part of CP2K, where it provides core functionality for linear scaling electronic structure theory.\nIt is now released as a standalone library for integration in other projects.",
       "dev_url": "https://github.com/cp2k/dbcsr",
       "doc_url": "https://cp2k.github.io/dbcsr/develop/page/2-user-guide/index.html",
       "home": "https://cp2k.github.io/dbcsr",
-      "license": "GPL-2.0-only",
-      "license_family": "GPL-2.0-only",
+      "license": "GPL-2.0-or-later",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "LICENSE",
       "summary": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "dbcsr",
@@ -1222,7 +1736,8 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "martin-g"
+        "martin-g",
+        "mkrack"
       ]
     },
     "outputs": [
@@ -1253,23 +1768,58 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "export OMPI_MCA_btl=self,tcp",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -1303,23 +1853,58 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "export OMPI_MCA_btl=self,tcp",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -1348,17 +1933,10 @@
         "liblapack",
         "mpich",
         "openmpi"
-      ],
-      "run": [
-        "mpich",
-        "openmpi"
       ]
     },
     "schema_version": 1,
     "source": {
-      "patches": [
-        "dbcsr-shared.patch"
-      ],
       "sha256": "3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9",
       "url": "https://github.com/cp2k/dbcsr/releases/download/v2.10.0/dbcsr-2.10.0.tar.gz"
     }
@@ -1390,29 +1968,32 @@
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "mpich",
-        "openmpi"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "make"
+      ]
     }
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication, among other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed as a part of CP2K, where it provides core functionality for linear scaling electronic structure theory. It is now released as a standalone library for integration in other projects..",
+      "description": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication,\namong other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed\nas a part of CP2K, where it provides core functionality for linear scaling electronic structure theory.\nIt is now released as a standalone library for integration in other projects.",
       "dev_url": "https://github.com/cp2k/dbcsr",
       "doc_url": "https://cp2k.github.io/dbcsr/develop/page/2-user-guide/index.html",
       "home": "https://cp2k.github.io/dbcsr",
-      "license": "GPL-2.0-only",
-      "license_family": "GPL-2.0-only",
+      "license": "GPL-2.0-or-later",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "LICENSE",
       "summary": "DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "dbcsr",
@@ -1423,7 +2004,8 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "martin-g"
+        "martin-g",
+        "mkrack"
       ]
     },
     "outputs": [
@@ -1454,23 +2036,58 @@
             "liblapack",
             "mpich"
           ],
-          "run": [
-            "mpich"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "export OMPI_MCA_btl=self,tcp",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -1504,23 +2121,58 @@
             "liblapack",
             "openmpi"
           ],
-          "run": [
-            "openmpi"
-          ]
+          "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "files": [
+                "include/dbcsr_api.mod",
+                "include/dbcsr_tensor_api.mod",
+                "lib/cmake/dbcsr/DBCSRConfig.cmake",
+                "lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets.cmake",
+                "lib/cmake/dbcsr/DBCSRTargets-release.cmake"
+              ],
+              "include": [
+                "dbcsr.h",
+                "dbcsr_tensor.h"
+              ],
+              "lib": [
+                "dbcsr",
+                "dbcsr_c"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test/"
+              ],
+              "source": [
+                "examples/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "fortran_compiler_stub",
+                "cmake",
+                "make"
+              ]
+            },
             "script": [
-              "test -e ${PREFIX}/include/dbcsr.h",
-              "test -e ${PREFIX}/include/dbcsr_api.mod",
-              "test -e ${PREFIX}/include/dbcsr_tensor.h",
-              "test -e ${PREFIX}/include/dbcsr_tensor_api.mod",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake",
-              "test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake",
-              "test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}",
-              "test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}"
+              "export OMP_NUM_THREADS=1",
+              "export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1",
+              "export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none",
+              "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe",
+              "export HYDRA_LAUNCHER=fork",
+              "export OMPI_MCA_btl=self,tcp",
+              "cp -r examples test/",
+              "cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}",
+              "cmake --build build -j2",
+              "for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done"
             ]
           }
         ],
@@ -1549,17 +2201,10 @@
         "liblapack",
         "mpich",
         "openmpi"
-      ],
-      "run": [
-        "mpich",
-        "openmpi"
       ]
     },
     "schema_version": 1,
     "source": {
-      "patches": [
-        "dbcsr-shared.patch"
-      ],
       "sha256": "3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9",
       "url": "https://github.com/cp2k/dbcsr/releases/download/v2.10.0/dbcsr-2.10.0.tar.gz"
     }
@@ -1591,14 +2236,17 @@
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "mpich",
-        "openmpi"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "make"
+      ]
     }
   },
   "outputs_names": {
@@ -1618,7 +2266,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/dbcsr.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: dbcsr\n  version: \"2.10.0\"\n  mpi: ${{ mpi if mpi else \"openmpi\" }}\n  mpi_prefix: mpi_${{ mpi if mpi else \"openmpi\" }}\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/cp2k/dbcsr/releases/download/v${{ version }}/dbcsr-${{ version }}.tar.gz\n    sha256: 3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9\n    patches:\n      - dbcsr-shared.patch\n\nbuild:\n  number: 0\n  skip:\n    - win\n  string: ${{ mpi_prefix }}_h${{ hash }}_${{ build_number }}\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('fortran') }}\n    - cmake\n    - make\n    - fypp\n    - if: build_platform != host_platform and mpi == \"openmpi\"\n      then: ${{ mpi }}\n    - if: linux\n      then: libgomp\n    - if: osx\n      then: llvm-openmp\n  host:\n    - if: linux\n      then: libgomp\n    - if: osx\n      then: llvm-openmp\n    - libblas\n    - liblapack\n    - ${{ mpi }}\n  run:\n    - ${{ mpi }}\n  run_exports:\n    - ${{ pin_subpackage(name, upper_bound='x') }}\n    - ${{ name }} * ${{ mpi_prefix }}_*\n\ntests:\n  - script:\n      - if: unix\n        then:\n          - test -e ${PREFIX}/include/dbcsr.h\n          - test -e ${PREFIX}/include/dbcsr_api.mod\n          - test -e ${PREFIX}/include/dbcsr_tensor.h\n          - test -e ${PREFIX}/include/dbcsr_tensor_api.mod\n          - test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfig.cmake\n          - test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRConfigVersion.cmake\n          - test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets-release.cmake\n          - test -e ${PREFIX}/lib/cmake/dbcsr/DBCSRTargets.cmake\n          - test -e ${PREFIX}/lib/libdbcsr${SHLIB_EXT}\n          - test -e ${PREFIX}/lib/libdbcsr_c${SHLIB_EXT}\n\nabout:\n  homepage: https://cp2k.github.io/dbcsr\n  summary: DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication.\n  description: DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication, among other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed as a part of CP2K, where it provides core functionality for linear scaling electronic structure \n    theory. It is now released as a standalone library for integration in other projects..\n  license: GPL-2.0-only\n  license_file: LICENSE\n  repository: https://github.com/cp2k/dbcsr\n  documentation: https://cp2k.github.io/dbcsr/develop/page/2-user-guide/index.html\n\nextra:\n  recipe-maintainers:\n    - martin-g\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: dbcsr\n  version: \"2.10.0\"\n  mpi_prefix: \"mpi_${{ mpi }}\"\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/cp2k/dbcsr/releases/download/v${{ version }}/dbcsr-${{ version }}.tar.gz\n    sha256: 3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9\n\nbuild:\n  number: 1\n  skip:\n    - win\n  string: ${{ mpi_prefix }}_h${{ hash }}_${{ build_number }}\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('fortran') }}\n    - cmake\n    - make\n    - fypp\n    - if: build_platform != host_platform and mpi == \"openmpi\"\n      then: ${{ mpi }}\n    - if: osx\n      then: llvm-openmp\n  host:\n    - if: linux\n      then: libgomp\n    - if: osx\n      then: llvm-openmp\n    - libblas\n    - liblapack\n    - ${{ mpi }}\n  run_exports:\n    - ${{ pin_subpackage(name, upper_bound='x.x') }}\n    - ${{ name }} * ${{ mpi_prefix }}_*\n\ntests:\n  - package_contents:\n      include:\n        - dbcsr.h\n        - dbcsr_tensor.h\n      lib:\n        - dbcsr\n        - dbcsr_c\n      files:\n        - include/dbcsr_api.mod\n        - include/dbcsr_tensor_api.mod\n        - lib/cmake/dbcsr/DBCSRConfig.cmake\n        - lib/cmake/dbcsr/DBCSRConfigVersion.cmake\n        - lib/cmake/dbcsr/DBCSRTargets.cmake\n        - lib/cmake/dbcsr/DBCSRTargets-release.cmake\n  # Build the upstream examples against the installed package via\n  # find_package(DBCSR) and run them on 2 MPI ranks\n  - files:\n      recipe:\n        - test/\n      source:\n        - examples/\n    requirements:\n      run:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('fortran') }}\n        - cmake\n        - make\n    script:\n      - export OMP_NUM_THREADS=1\n      - export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1\n      - export OMPI_MCA_plm_ssh_agent=false OMPI_MCA_btl_sm_single_copy_mechanism=none\n      - export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe\n      - export HYDRA_LAUNCHER=fork\n      - if: osx\n        then: export OMPI_MCA_btl=self,tcp\n      - cp -r examples test/\n      - cmake -S test -B build -DCMAKE_PREFIX_PATH=${PREFIX}\n      - cmake --build build -j2\n      - for exe in dbcsr_example_1 dbcsr_example_2 dbcsr_example_3 dbcsr_example_3_cpp; do mpiexec -n 2 ./build/${exe}; done\n\nabout:\n  homepage: https://cp2k.github.io/dbcsr\n  summary: DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication.\n  description: |\n    DBCSR is a sparse matrix library designed to efficiently perform sparse matrix-matrix multiplication,\n    among other operations. It is MPI and OpenMP parallel, and can exploit accelerators. DBCSR was developed\n    as a part of CP2K, where it provides core functionality for linear scaling electronic structure theory.\n    It is now released as a standalone library for integration in other projects.\n  license: GPL-2.0-or-later\n  license_file: LICENSE\n  repository: https://github.com/cp2k/dbcsr\n  documentation: https://cp2k.github.io/dbcsr/develop/page/2-user-guide/index.html\n\nextra:\n  recipe-maintainers:\n    - martin-g\n    - mkrack\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1647,7 +2295,6 @@
         "cxx_compiler_stub",
         "fortran_compiler_stub",
         "fypp",
-        "libgomp",
         "llvm-openmp",
         "make",
         "openmpi"
@@ -1678,14 +2325,18 @@
         "ctng-compilers",
         "cxx_compiler_stub",
         "fortran_compiler_stub",
-        "mpich",
-        "openmp",
-        "openmpi"
+        "openmp"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "make"
+      ]
     }
   },
   "strong_exports": false,
@@ -1699,7 +2350,6 @@
         "cxx_compiler_stub",
         "fortran_compiler_stub",
         "fypp",
-        "libgomp",
         "llvm-openmp",
         "make",
         "openmpi"
@@ -1718,14 +2368,17 @@
     },
     "run": {
       "__set__": true,
-      "elements": [
-        "mpich",
-        "openmpi"
-      ]
+      "elements": []
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "fortran_compiler_stub",
+        "make"
+      ]
     }
   },
   "url": "https://github.com/cp2k/dbcsr/releases/download/v2.10.0/dbcsr-2.10.0.tar.gz",
