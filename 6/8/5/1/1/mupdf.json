@@ -28,8 +28,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "4ed4b8858fd4a378695152aeb2dec75ebe95a7e1",
-  "feedstock_hash_ts": 1792424089,
+  "feedstock_hash": "30849016575ea8117b2daad928bbc15486c21f4e",
+  "feedstock_hash_ts": 1792545889,
   "feedstock_name": "mupdf",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,7 +44,7 @@
       "summary": "A lightweight PDF, XPS, and E-book viewer"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -504,7 +504,7 @@
       "summary": "A lightweight PDF, XPS, and E-book viewer"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1467,6 +1467,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -1520,6 +1521,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -1573,6 +1575,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -1626,6 +1629,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -1679,6 +1683,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -1732,6 +1737,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -1817,7 +1823,7 @@
       "summary": "A lightweight PDF, XPS, and E-book viewer"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -2216,7 +2222,7 @@
       "summary": "A lightweight PDF, XPS, and E-book viewer"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -2619,7 +2625,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/mupdf.json"
   },
-  "raw_meta_yaml": "context:\n  name: mupdf\n  version: \"1.28.5\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://www.mupdf.com/downloads/archive/mupdf-${{ version }}-source.tar.gz\n  sha256: 98a5c10cda20c3992cdf76ff6b2a1149c32bd79cc796d3f703230b1185b7e934\n  patches:\n    - if: osx\n      then:\n        # Fix freetype lib name (-lfreetype not -lfreetype2) and remove\n        # xcrun wrappers that conflict with conda compilers\n        - Makerules.patch\n        # Fix .so/.dylib references in the Python binding build script\n        - wrap.patch\n        # Python extensions must be .so even on macOS, not .dylib\n        - python-ext-so.patch\n    # mupdfwrap.py unconditionally re-runs itself in a fresh venv, hiding\n    # conda-installed build dependencies\n    - no-autovenv.patch\n\nbuild:\n  number: 0\n  dynamic_linking:\n    missing_dso_allowlist:\n      - if: osx\n        then: /System/Library/Frameworks/GLUT.framework/Versions/A/GLUT\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    - if: linux\n      then:\n        - libgl-devel\n    - if: win\n      then:\n        - cmake\n        - ninja\n    - make\n    - pkg-config\n    # SWIG 4.5.0 dropped the Python 2 -> 3 compatibility shims that mupdf's\n    # generated bindings rely on, causing 'PyString_FromString' undeclared\n    # errors. Pin below 4.5 until upstream mupdf supports SWIG 4.5.\n    - swig <4.5\n    - python-clang <22\n    # mupdfwrap.py runs with the build python on unix\n    - if: unix\n      then: pipcl\n  host:\n    - brotli\n    - python\n    - if: win\n      then:\n        - pip\n        - setuptools\n        - pipcl\n        - python-clang <22\n    - if: linux\n      then:\n        - xorg-libxfixes\n        - libglu\n    - libgumbo\n    - if: unix\n      then: mesalib\n    - freetype\n    - jbig2dec\n    - openjpeg\n    - zlib\n    - curl\n    - harfbuzz\n    - if: linux or win\n      then: freeglut\n    - if: linux\n      then:\n        - tesseract\n        - leptonica\n  run:\n    - python\n    - if: linux\n      then:\n        - xorg-libxext\n        - xorg-libx11\n    - curl\n\ntests:\n  - script:\n      - if: unix\n        then:\n          - test -f $PREFIX/bin/mutool\n          - mutool -v\n      - if: win\n        then:\n          - if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1\n          - mutool -v\n  - python:\n      imports:\n        - mupdf\n\nabout:\n  homepage: https://www.mupdf.com/\n  license: AGPL-3.0-only\n  license_file: COPYING\n  summary: A lightweight PDF, XPS, and E-book viewer\n  description: |\n    The renderer in MuPDF is tailored for high quality anti-aliased graphics.\n    It renders text with metrics and spacing accurate to within fractions of\n    a pixel for the highest fidelity in reproducing the look of a printed page\n    on screen.\n  documentation: https://www.mupdf.com/docs\n  repository: http://git.ghostscript.com/?p=mupdf.git;a=summary\n\nextra:\n  recipe-maintainers:\n    - xmnlab\n    - scopatz\n    - jan-janssen\n    - benmoss\n",
+  "raw_meta_yaml": "context:\n  name: mupdf\n  version: \"1.28.5\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://www.mupdf.com/downloads/archive/mupdf-${{ version }}-source.tar.gz\n  sha256: 98a5c10cda20c3992cdf76ff6b2a1149c32bd79cc796d3f703230b1185b7e934\n  patches:\n    - if: osx\n      then:\n        # Fix freetype lib name (-lfreetype not -lfreetype2) and remove\n        # xcrun wrappers that conflict with conda compilers\n        - Makerules.patch\n        # Fix .so/.dylib references in the Python binding build script\n        - wrap.patch\n        # Python extensions must be .so even on macOS, not .dylib\n        - python-ext-so.patch\n    # mupdfwrap.py unconditionally re-runs itself in a fresh venv, hiding\n    # conda-installed build dependencies\n    - no-autovenv.patch\n\nbuild:\n  number: 1\n  dynamic_linking:\n    missing_dso_allowlist:\n      - if: osx\n        then: /System/Library/Frameworks/GLUT.framework/Versions/A/GLUT\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    - if: linux\n      then:\n        - libgl-devel\n    - if: win\n      then:\n        - cmake\n        - ninja\n    - make\n    - pkg-config\n    # SWIG 4.5.0 dropped the Python 2 -> 3 compatibility shims that mupdf's\n    # generated bindings rely on, causing 'PyString_FromString' undeclared\n    # errors. Pin below 4.5 until upstream mupdf supports SWIG 4.5.\n    - swig <4.5\n    - python-clang <22\n    # mupdfwrap.py runs with the build python on unix\n    - if: unix\n      then: pipcl\n  host:\n    - brotli\n    - python\n    - if: win\n      then:\n        - pip\n        - setuptools\n        - pipcl\n        - python-clang <22\n    - if: linux\n      then:\n        - xorg-libxfixes\n        - libglu\n    - libgumbo\n    - if: unix\n      then: mesalib\n    - freetype\n    - jbig2dec\n    - openjpeg\n    - zlib\n    - curl\n    - harfbuzz\n    - if: linux or win\n      then: freeglut\n    - if: linux\n      then:\n        - tesseract\n        - leptonica\n  run:\n    - python\n    - if: linux\n      then:\n        - xorg-libxext\n        - xorg-libx11\n    - curl\n\ntests:\n  - script:\n      - if: unix\n        then:\n          - test -f $PREFIX/bin/mutool\n          - mutool -v\n      - if: win\n        then:\n          - if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1\n          - if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1\n          - mutool -v\n  - python:\n      imports:\n        - mupdf\n\nabout:\n  homepage: https://www.mupdf.com/\n  license: AGPL-3.0-only\n  license_file: COPYING\n  summary: A lightweight PDF, XPS, and E-book viewer\n  description: |\n    The renderer in MuPDF is tailored for high quality anti-aliased graphics.\n    It renders text with metrics and spacing accurate to within fractions of\n    a pixel for the highest fidelity in reproducing the look of a printed page\n    on screen.\n  documentation: https://www.mupdf.com/docs\n  repository: http://git.ghostscript.com/?p=mupdf.git;a=summary\n\nextra:\n  recipe-maintainers:\n    - xmnlab\n    - scopatz\n    - jan-janssen\n    - benmoss\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2793,7 +2799,7 @@
       "summary": "A lightweight PDF, XPS, and E-book viewer"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -2844,6 +2850,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -2897,6 +2904,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -2950,6 +2958,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -3003,6 +3012,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -3056,6 +3066,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
@@ -3109,6 +3120,7 @@
           {
             "script": [
               "if not exist %LIBRARY_BIN%\\\\mutool.exe exit 1",
+              "if not exist %LIBRARY_LIB%\\\\mupdfcpp64.lib exit 1",
               "mutool -v"
             ]
           },
