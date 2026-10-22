@@ -1,18 +1,14 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '13'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\ncdt_name:\n- cos7\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-cos7-x86_64\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_stdlib_version\n  - cdt_name\n",
-  "ci_support_migrations": {
-    "r-base44_and_m2w64-ucrt": {
-      "migration_number": 1,
-      "migrator_ts": 1718391654
-    }
-  },
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
+  "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
       "linux_aarch64": "linux_64",
       "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "osx_arm64": "osx_64",
+      "win_arm64": "win_64"
     },
     "conda_build": {
       "error_overlinking": true,
@@ -25,12 +21,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "win_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "bf5b18cb290da74298b98e2b7aa5625bcee263d8",
-  "feedstock_hash_ts": 1777043564,
+  "feedstock_hash": "b65d3bd65a8c5a587e5110ed2de68e9ccaf4255e",
+  "feedstock_hash_ts": 1792655800,
   "feedstock_name": "xorg-xf86vidmodeproto",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -291,6 +288,10 @@
       "summary": "Print extension headers"
     },
     "build": {
+      "ignore_run_exports_from": [
+        "gcc_win-64",
+        "m2w64-sysroot_win-64"
+      ],
       "number": "1005"
     },
     "extra": {
@@ -322,7 +323,9 @@
         "m2-base",
         "m2-make",
         "m2w64_c_stdlib_stub",
-        "m2w64_c_compiler_stub"
+        "m2w64_c_compiler_stub",
+        "m2w64-sysroot_win-64 12.*",
+        "gcc_win-64 15.*"
       ],
       "host": [
         "xorg-util-macros"
@@ -521,12 +524,13 @@
     "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/xorg-xf86vidmodeproto.json"
   },
-  "raw_meta_yaml": "{% set xorg_name = \"xf86vidmodeproto\" %}\n{% set xorg_category = \"proto\" %}\n{% set name = \"xorg-\" ~ xorg_name %}\n{% set version = \"2.3.1\" %}\n{% set sha256 = \"45d9499aa7b73203fd6b3505b0259624afed5c16b941bd04fcf123e5de698770\" %}\n{% set am_version = \"1.16\" %} # keep synchronized with build.sh\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  fn: {{ name }}-{{ version }}.tar.bz2\n  url: https://www.x.org/releases/individual/{{ xorg_category }}/{{ xorg_name }}-{{ version }}.tar.bz2\n  sha256: {{ sha256 }}\n  patches:\n    - 0001-update-config-guess.patch\n\nbuild:\n  number: 1005\n\nrequirements:\n  build:\n    - m2-autoconf                  # [win]\n    - m2-automake{{ am_version }}  # [win]\n    - m2-libtool                   # [win]\n    - pkg-config                   # [unix]\n    - m2-pkg-config                # [win]\n    - gnuconfig                    # [unix]\n    - m2-base                      # [win]\n    - make                         # [unix]\n    - m2-make                      # [win]\n    - {{ stdlib(\"c\") }}            # [unix]\n    - {{ compiler(\"c\") }}          # [unix]\n    - {{ stdlib(\"m2w64_c\") }}      # [win]\n    - {{ compiler(\"m2w64_c\") }}    # [win]\n    - autoconf                     # [unix]\n    - automake                     # [unix]\n    - gettext                      # [unix]\n    - libtool                      # [unix]\n  host:\n    - xorg-util-macros\n\ntest:\n  commands:\n    - test -e $PREFIX/include/X11/extensions/xf86vmproto.h  # [not win]\n\nabout:\n  home: https://www.x.org/\n  license: MIT\n  license_family: MIT\n  license_file: COPYING\n  summary: 'Print extension headers'\n\nextra:\n  recipe-maintainers:\n    - epruesse\n    - pkgw\n    - ehfd\n",
+  "raw_meta_yaml": "{% set xorg_name = \"xf86vidmodeproto\" %}\n{% set xorg_category = \"proto\" %}\n{% set name = \"xorg-\" ~ xorg_name %}\n{% set version = \"2.3.1\" %}\n{% set sha256 = \"45d9499aa7b73203fd6b3505b0259624afed5c16b941bd04fcf123e5de698770\" %}\n{% set am_version = \"1.16\" %} # keep synchronized with build.sh\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  fn: {{ name }}-{{ version }}.tar.bz2\n  url: https://www.x.org/releases/individual/{{ xorg_category }}/{{ xorg_name }}-{{ version }}.tar.bz2\n  sha256: {{ sha256 }}\n  patches:\n    - 0001-update-config-guess.patch\n\nbuild:\n  number: 1005\n  ignore_run_exports_from:                # [win and arm64]\n    - {{ m2w64_c_compiler }}_win-64       # [win and arm64]\n    - {{ m2w64_c_stdlib }}_win-64         # [win and arm64]\n\nrequirements:\n  build:\n    - m2-autoconf                  # [win]\n    - m2-automake{{ am_version }}  # [win]\n    - m2-libtool                   # [win]\n    - pkg-config                   # [unix]\n    - m2-pkg-config                # [win]\n    - gnuconfig                    # [unix]\n    - m2-base                      # [win]\n    - make                         # [unix]\n    - m2-make                      # [win]\n    - {{ stdlib(\"c\") }}            # [unix]\n    - {{ compiler(\"c\") }}          # [unix]\n    - {{ stdlib(\"m2w64_c\") }}      # [win and x86_64]\n    - {{ compiler(\"m2w64_c\") }}    # [win and x86_64]\n    # Headers only: on win-arm64 the x86-64 MinGW compiler only runs configure's checks.\n    - {{ m2w64_c_stdlib }}_win-64 {{ m2w64_c_stdlib_version }}.*        # [win and arm64]\n    - {{ m2w64_c_compiler }}_win-64 {{ m2w64_c_compiler_version }}.*    # [win and arm64]\n    - autoconf                     # [unix]\n    - automake                     # [unix]\n    - gettext                      # [unix]\n    - libtool                      # [unix]\n  host:\n    - xorg-util-macros\n\ntest:\n  commands:\n    - test -e $PREFIX/include/X11/extensions/xf86vmproto.h  # [not win]\n\nabout:\n  home: https://www.x.org/\n  license: MIT\n  license_family: MIT\n  license_file: COPYING\n  summary: 'Print extension headers'\n\nextra:\n  recipe-maintainers:\n    - epruesse\n    - pkgw\n    - ehfd\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -534,6 +538,7 @@
       "automake",
       "c_compiler_stub",
       "c_stdlib_stub",
+      "gcc_win-64",
       "gettext",
       "gnuconfig",
       "libtool",
@@ -543,6 +548,7 @@
       "m2-libtool",
       "m2-make",
       "m2-pkg-config",
+      "m2w64-sysroot_win-64",
       "m2w64_c_compiler_stub",
       "m2w64_c_stdlib_stub",
       "make",
@@ -558,6 +564,7 @@
         "automake",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "gcc_win-64",
         "gettext",
         "gnuconfig",
         "libtool",
@@ -567,6 +574,7 @@
         "m2-libtool",
         "m2-make",
         "m2-pkg-config",
+        "m2w64-sysroot_win-64",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
         "make",
@@ -578,6 +586,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "ctng-compiler-activation",
+        "m2w64-sysroot",
         "xorg-util-macros"
       ]
     },
@@ -585,7 +595,9 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "c_stdlib_stub"
+        "c_stdlib_stub",
+        "ctng-compiler-activation",
+        "m2w64-sysroot"
       ]
     },
     "test": {
@@ -602,6 +614,7 @@
         "automake",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "gcc_win-64 15.*",
         "gettext",
         "gnuconfig",
         "libtool",
@@ -611,6 +624,7 @@
         "m2-libtool",
         "m2-make",
         "m2-pkg-config",
+        "m2w64-sysroot_win-64 12.*",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
         "make",
@@ -699,6 +713,89 @@
         "m2-pkg-config",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "xorg-util-macros"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "home": "https://www.x.org/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "COPYING",
+      "summary": "Print extension headers"
+    },
+    "build": {
+      "ignore_run_exports_from": [
+        "gcc_win-64",
+        "m2w64-sysroot_win-64"
+      ],
+      "number": "1005"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "epruesse",
+        "pkgw",
+        "ehfd"
+      ]
+    },
+    "package": {
+      "name": "xorg-xf86vidmodeproto",
+      "version": "2.3.1"
+    },
+    "requirements": {
+      "build": [
+        "m2-autoconf",
+        "m2-automake1.16",
+        "m2-libtool",
+        "m2-pkg-config",
+        "m2-base",
+        "m2-make",
+        "m2w64-sysroot_win-64 12.*",
+        "gcc_win-64 15.*"
+      ],
+      "host": [
+        "xorg-util-macros"
+      ]
+    },
+    "schema_version": 0,
+    "source": {
+      "fn": "xorg-xf86vidmodeproto-2.3.1.tar.bz2",
+      "patches": [
+        "0001-update-config-guess.patch"
+      ],
+      "sha256": "45d9499aa7b73203fd6b3505b0259624afed5c16b941bd04fcf123e5de698770",
+      "url": "https://www.x.org/releases/individual/proto/xf86vidmodeproto-2.3.1.tar.bz2"
+    },
+    "test": {
+      "commands": null
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "gcc_win-64",
+        "m2-autoconf",
+        "m2-automake1.16",
+        "m2-base",
+        "m2-libtool",
+        "m2-make",
+        "m2-pkg-config",
+        "m2w64-sysroot_win-64"
       ]
     },
     "host": {
