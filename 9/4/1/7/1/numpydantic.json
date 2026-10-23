@@ -1,78 +1,153 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.10'\n",
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
-      "automerge": true
+      "automerge": true,
+      "inspection": "hint-all"
     },
     "conda_build": {
       "error_overlinking": true
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "d493a0586b2b27af1580333381b7d16301e0e0c2",
-  "feedstock_hash_ts": 1782200574,
+  "feedstock_hash": "ab5da09604348408da6300deabe3c0b20b881737",
+  "feedstock_hash_ts": 1792719424,
   "feedstock_name": "numpydantic",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/p2p-ld/numpydantic",
       "doc_url": "https://numpydantic.readthedocs.io/",
-      "home": "https://github.com/p2p-ld/numpydantic",
+      "home": "https://pypi.org/project/numpydantic",
       "license": "MIT",
+      "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "Type and shape validation and serialization for numpy arrays in pydantic models"
+      "summary": "Type and shape validation and serialization for arbitrary array types in pydantic models"
     },
     "build": {
       "noarch": "python",
-      "number": "0",
-      "script": "PYTHON -m pip install . -vv --no-deps --no-build-isolation"
+      "number": "1",
+      "script": [
+        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+        "${{ PYTHON }} -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\""
+      ]
     },
     "extra": {
       "recipe-maintainers": [
         "sneakers-the-rat",
-        "apcamargo"
+        "apcamargo",
+        "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "numpydantic",
+        "requirements": {
+          "build": [],
+          "host": [
+            "pdm-backend",
+            "pip",
+            "python 3.11.*"
+          ],
+          "run": [
+            "numpy >=2.0.0",
+            "pydantic >=2.7.0",
+            "python >=3.11",
+            "typing-extensions >=4.11.0"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/numpydantic/**"
+              ],
+              "site_packages": [
+                "numpydantic/**",
+                "numpydantic-1.10.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "numpydantic"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.15.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=7.4.0",
+                "pytest-cov >=4.1.0",
+                "dask >=2024.4.0",
+                "h5py >=3.10.0",
+                "opencv >=4.9.0.80",
+                "zarr >=2.17.2,<3.0.0",
+                "pip",
+                "python 3.11.*",
+                "numpy 2.0.0.*",
+                "pydantic 2.7.0.*"
+              ]
+            },
+            "script": {
+              "content": [
+                "pip check",
+                "pytest -vv --tb=long --color=yes"
+              ],
+              "env": {
+                "NUMCODECS_ALLOW_UNSAFE_PICKLE_DECODE": "1"
+              }
+            }
+          }
+        ],
+        "version": "1.10.0"
+      }
+    ],
     "package": {
       "name": "numpydantic",
       "version": "1.10.0"
     },
     "requirements": {
       "host": [
-        "python 3.10",
         "pdm-backend",
-        "pip"
+        "pip",
+        "python 3.11.*"
       ],
       "run": [
-        "python >=3.10,<4.0",
-        "pydantic >=2.3.0",
-        "numpy >=1.24.0",
+        "numpy >=2.0.0",
+        "pydantic >=2.7.0",
+        "python >=3.11",
         "typing-extensions >=4.11.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "a17d5ccc3b893c4a2e539c81c2f18960d70884ad7fcaa09c9eb56a95e8daf4a3",
-      "url": "https://pypi.org/packages/source/n/numpydantic/numpydantic-1.10.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "numpydantic"
-      ],
-      "requires": [
-        "pip",
-        "python 3.10"
-      ]
+      "url": "https://files.pythonhosted.org/packages/source/n/numpydantic/numpydantic-1.10.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -100,8 +175,16 @@
     "test": {
       "__set__": true,
       "elements": [
+        "dask",
+        "h5py",
+        "numpy",
+        "opencv",
         "pip",
-        "python"
+        "pydantic",
+        "pytest",
+        "pytest-cov",
+        "python",
+        "zarr"
       ]
     }
   },
@@ -109,55 +192,127 @@
     "about": {
       "dev_url": "https://github.com/p2p-ld/numpydantic",
       "doc_url": "https://numpydantic.readthedocs.io/",
-      "home": "https://github.com/p2p-ld/numpydantic",
+      "home": "https://pypi.org/project/numpydantic",
       "license": "MIT",
+      "license_family": "MIT",
       "license_file": "LICENSE",
-      "summary": "Type and shape validation and serialization for numpy arrays in pydantic models"
+      "summary": "Type and shape validation and serialization for arbitrary array types in pydantic models"
     },
     "build": {
       "noarch": "python",
-      "number": "0",
-      "script": "PYTHON -m pip install . -vv --no-deps --no-build-isolation"
+      "number": "1",
+      "script": [
+        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+        "${{ PYTHON }} -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\""
+      ]
     },
     "extra": {
       "recipe-maintainers": [
         "sneakers-the-rat",
-        "apcamargo"
+        "apcamargo",
+        "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "numpydantic",
+        "requirements": {
+          "build": [],
+          "host": [
+            "pdm-backend",
+            "pip",
+            "python 3.11.*"
+          ],
+          "run": [
+            "numpy >=2.0.0",
+            "pydantic >=2.7.0",
+            "python >=3.11",
+            "typing-extensions >=4.11.0"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/numpydantic/**"
+              ],
+              "site_packages": [
+                "numpydantic/**",
+                "numpydantic-1.10.0.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "numpydantic"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.15.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=7.4.0",
+                "pytest-cov >=4.1.0",
+                "dask >=2024.4.0",
+                "h5py >=3.10.0",
+                "opencv >=4.9.0.80",
+                "zarr >=2.17.2,<3.0.0",
+                "pip",
+                "python 3.11.*",
+                "numpy 2.0.0.*",
+                "pydantic 2.7.0.*"
+              ]
+            },
+            "script": {
+              "content": [
+                "pip check",
+                "pytest -vv --tb=long --color=yes"
+              ],
+              "env": {
+                "NUMCODECS_ALLOW_UNSAFE_PICKLE_DECODE": "1"
+              }
+            }
+          }
+        ],
+        "version": "1.10.0"
+      }
+    ],
     "package": {
       "name": "numpydantic",
       "version": "1.10.0"
     },
     "requirements": {
       "host": [
-        "python 3.10",
         "pdm-backend",
-        "pip"
+        "pip",
+        "python 3.11.*"
       ],
       "run": [
-        "python >=3.10,<4.0",
-        "pydantic >=2.3.0",
-        "numpy >=1.24.0",
+        "numpy >=2.0.0",
+        "pydantic >=2.7.0",
+        "python >=3.11",
         "typing-extensions >=4.11.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "a17d5ccc3b893c4a2e539c81c2f18960d70884ad7fcaa09c9eb56a95e8daf4a3",
-      "url": "https://pypi.org/packages/source/n/numpydantic/numpydantic-1.10.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "numpydantic"
-      ],
-      "requires": [
-        "pip",
-        "python 3.10"
-      ]
+      "url": "https://files.pythonhosted.org/packages/source/n/numpydantic/numpydantic-1.10.0.tar.gz"
     }
   },
   "name": "numpydantic",
@@ -174,7 +329,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/numpydantic.json"
   },
-  "raw_meta_yaml": "{% set name = \"numpydantic\" %}\n{% set version = \"1.10.0\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/numpydantic-{{ version }}.tar.gz\n  sha256: a17d5ccc3b893c4a2e539c81c2f18960d70884ad7fcaa09c9eb56a95e8daf4a3\n\nbuild:\n  noarch: python\n  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  number: 0\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pdm-backend\n    - pip\n  run:\n    - python >={{ python_min }},<4.0\n    - pydantic >=2.3.0\n    - numpy >=1.24.0\n    - typing-extensions >=4.11.0\n\ntest:\n  imports:\n    - numpydantic\n  commands:\n    - pip check\n  requires:\n    - pip\n    - python {{ python_min }}\n\nabout:\n  home: https://github.com/p2p-ld/numpydantic\n  summary: Type and shape validation and serialization for numpy arrays in pydantic models\n  license: MIT\n  license_file: LICENSE\n  doc_url: https://numpydantic.readthedocs.io/\n  dev_url: https://github.com/p2p-ld/numpydantic\n\nextra:\n  recipe-maintainers:\n    - sneakers-the-rat\n    - apcamargo\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"1.10.0\"\n  # key dependency floors to `pip check`\n  pydantic_min: \"2.7.0\"\n  numpy_min: \"2.0.0\"\n  # check solve/import/check with a specific version of python instead of `*` (read: some python)\n  python_check_max: \"3.15\"\n  # tests that rely on specific type checker version outputs\n  unlink_tests: test_pyright.py test_mypy.py\n\npackage:\n  name: numpydantic\n  version: ${{ version }}\n\nsource:\n  - url: https://files.pythonhosted.org/packages/source/n/numpydantic/numpydantic-${{ version }}.tar.gz\n    sha256: a17d5ccc3b893c4a2e539c81c2f18960d70884ad7fcaa09c9eb56a95e8daf4a3\n  - target_directory: src/numpydantic/vendor/nptyping\n    url: https://raw.githubusercontent.com/ramonhagenaars/nptyping/refs/tags/v2.5.0/LICENSE\n    sha256: c9592e4cc7ac9023931008a31cf278ba39a4619b82ec5d045ba069fc3ac81a7b\n\nbuild:\n  number: 1\n  noarch: python\n  script:\n    - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n    - ${{ PYTHON }} -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"\n\nrequirements:\n  host:\n    - pdm-backend\n    - pip\n    - python ${{ python_min }}.*\n  run:\n    - numpy >=${{ numpy_min }}\n    - pydantic >=${{ pydantic_min }}\n    - python >=${{ python_min }}\n    - typing-extensions >=4.11.0\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - etc/conda/test-files/numpydantic/**\n      site_packages:\n        - numpydantic/**\n        - numpydantic-${{ version }}.dist-info/**\n  - python:\n      imports: numpydantic\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - ${{ python_check_max }}.*\n  - files:\n      source:\n        - pyproject.toml\n        - tests/**\n    requirements:\n      run:\n        - pytest >=7.4.0\n        - pytest-cov >=4.1.0\n        # all the runtime [extras]; add to `requirements/extras` when CEP-44 is ready\n        - dask >=2024.4.0\n        - h5py >=3.10.0\n        - opencv >=4.9.0.80\n        - zarr >=2.17.2,<3.0.0\n        # for extra floor pip check\n        - pip\n        - python ${{ python_min }}.*\n        - numpy ${{ numpy_min }}.*\n        - pydantic ${{ pydantic_min }}.*\n    script:\n      env:\n        NUMCODECS_ALLOW_UNSAFE_PICKLE_DECODE: \"1\"\n      content:\n        - pip check\n        - pytest -vv --tb=long --color=yes\n\nabout:\n  summary: |-\n    Type and shape validation and serialization for arbitrary array types in pydantic models\n  license: MIT\n  license_file:\n    - LICENSE\n    - src/numpydantic/vendor/nptyping/LICENSE\n  homepage: https://pypi.org/project/numpydantic\n  repository: https://github.com/p2p-ld/numpydantic\n  documentation: https://numpydantic.readthedocs.io\n\nextra:\n  recipe-maintainers:\n    - sneakers-the-rat\n    - apcamargo\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -211,8 +366,16 @@
     "test": {
       "__set__": true,
       "elements": [
+        "dask",
+        "h5py",
+        "numpy",
+        "opencv",
         "pip",
-        "python"
+        "pydantic",
+        "pytest",
+        "pytest-cov",
+        "python",
+        "zarr"
       ]
     }
   },
@@ -227,27 +390,35 @@
       "elements": [
         "pdm-backend",
         "pip",
-        "python 3.10"
+        "python 3.11.*"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "numpy >=1.24.0",
-        "pydantic >=2.3.0",
-        "python >=3.10,<4.0",
+        "numpy >=2.0.0",
+        "pydantic >=2.7.0",
+        "python >=3.11",
         "typing-extensions >=4.11.0"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
+        "dask >=2024.4.0",
+        "h5py >=3.10.0",
+        "numpy 2.0.0.*",
+        "opencv >=4.9.0.80",
         "pip",
-        "python 3.10"
+        "pydantic 2.7.0.*",
+        "pytest >=7.4.0",
+        "pytest-cov >=4.1.0",
+        "python 3.11.*",
+        "zarr >=2.17.2,<3.0.0"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/n/numpydantic/numpydantic-1.10.0.tar.gz",
+  "url": "https://files.pythonhosted.org/packages/source/n/numpydantic/numpydantic-1.10.0.tar.gz",
   "version": "1.10.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/numpydantic.json"
