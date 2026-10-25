@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -13,33 +13,44 @@
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
+      "linux_aarch64": "default",
       "win": "azure"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "4624d7cb6fbc76373f56354224fb013a0716663f",
-  "feedstock_hash_ts": 1778460861,
+  "feedstock_hash": "d479ff56244005f3e690dc30c8d699c60f1f1386",
+  "feedstock_hash_ts": 1792964494,
   "feedstock_name": "go-terraform-docs",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
+      "dev_url": "https://github.com/terraform-docs/terraform-docs",
       "home": "https://github.com/terraform-docs/terraform-docs",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": "LICENSE",
+      "license_file": "src/LICENSE",
       "summary": "Generate docs from Terraform modules"
     },
     "build": {
-      "number": "0",
-      "script_env": [
-        "BINARY_FILEPATH=PREFIX/bin/terraform-docs"
-      ]
+      "number": "1",
+      "script": {
+        "content": [
+          "cd src",
+          "go-licenses save . --save_path ../library_licenses --ignore github.com/terraform-docs/terraform-docs",
+          "go build -trimpath -ldflags \"-s -w -X main.version=${{ version }}\" -o $PREFIX/bin/terraform-docs"
+        ],
+        "env": {
+          "CGO_ENABLED": "0"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -49,6 +60,42 @@
         "dhirschfeld"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      }
+    ],
     "package": {
       "name": "go-terraform-docs",
       "version": "0.24.0"
@@ -59,19 +106,10 @@
         "go-licenses"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540",
       "url": "https://github.com/terraform-docs/terraform-docs/archive/v0.24.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "terraform-docs --help",
-        "terraform-docs --version | rg 0.24.0"
-      ],
-      "requires": [
-        "ripgrep"
-      ]
     }
   },
   "linux_64_requirements": {
@@ -97,20 +135,27 @@
       ]
     }
   },
-  "meta_yaml": {
+  "linux_aarch64_meta_yaml": {
     "about": {
+      "dev_url": "https://github.com/terraform-docs/terraform-docs",
       "home": "https://github.com/terraform-docs/terraform-docs",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": "LICENSE",
+      "license_file": "src/LICENSE",
       "summary": "Generate docs from Terraform modules"
     },
     "build": {
-      "number": "0",
-      "script_env": [
-        "BINARY_FILEPATH=PREFIX/bin/terraform-docs",
-        "BINARY_FILEPATH=PREFIX/bin/terraform-docs.exe"
-      ]
+      "number": "1",
+      "script": {
+        "content": [
+          "cd src",
+          "go-licenses save . --save_path ../library_licenses --ignore github.com/terraform-docs/terraform-docs",
+          "go build -trimpath -ldflags \"-s -w -X main.version=${{ version }}\" -o $PREFIX/bin/terraform-docs"
+        ],
+        "env": {
+          "CGO_ENABLED": "0"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -120,55 +165,42 @@
         "dhirschfeld"
       ]
     },
-    "package": {
-      "name": "go-terraform-docs",
-      "version": "0.24.0"
-    },
-    "requirements": {
-      "build": [
-        "go-nocgo_compiler_stub",
-        "go-licenses",
-        "posix"
-      ]
-    },
-    "schema_version": 0,
-    "source": {
-      "sha256": "e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540",
-      "url": "https://github.com/terraform-docs/terraform-docs/archive/v0.24.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "terraform-docs --help",
-        "terraform-docs --version | rg 0.24.0"
-      ],
-      "requires": [
-        "ripgrep"
-      ]
-    }
-  },
-  "name": "go-terraform-docs",
-  "osx_64_meta_yaml": {
-    "about": {
-      "home": "https://github.com/terraform-docs/terraform-docs",
-      "license": "MIT",
-      "license_family": "MIT",
-      "license_file": "LICENSE",
-      "summary": "Generate docs from Terraform modules"
-    },
-    "build": {
-      "number": "0",
-      "script_env": [
-        "BINARY_FILEPATH=PREFIX/bin/terraform-docs"
-      ]
-    },
-    "extra": {
-      "recipe-maintainers": [
-        "mxr-conda",
-        "andrew-mcgrath",
-        "pierrsc",
-        "dhirschfeld"
-      ]
-    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      }
+    ],
     "package": {
       "name": "go-terraform-docs",
       "version": "0.24.0"
@@ -179,19 +211,335 @@
         "go-licenses"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540",
       "url": "https://github.com/terraform-docs/terraform-docs/archive/v0.24.0.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "go-licenses",
+        "go-nocgo_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
     },
     "test": {
-      "commands": [
-        "terraform-docs --help",
-        "terraform-docs --version | rg 0.24.0"
-      ],
-      "requires": [
+      "__set__": true,
+      "elements": [
         "ripgrep"
       ]
+    }
+  },
+  "meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/terraform-docs/terraform-docs",
+      "home": "https://github.com/terraform-docs/terraform-docs",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
+      "summary": "Generate docs from Terraform modules"
+    },
+    "build": {
+      "number": "1",
+      "script": {
+        "content": [
+          "cd src",
+          "go-licenses save . --save_path ../library_licenses --ignore github.com/terraform-docs/terraform-docs",
+          "go build -trimpath -ldflags \"-s -w -X main.version=${{ version }}\" -o $PREFIX/bin/terraform-docs",
+          "go build -trimpath -ldflags \"-s -X main.version=${{ version }}\" -o %PREFIX%\\bin\\terraform-docs.exe"
+        ],
+        "env": {
+          "CGO_ENABLED": "0"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "mxr-conda",
+        "andrew-mcgrath",
+        "pierrsc",
+        "dhirschfeld"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      },
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      },
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      },
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      },
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      }
+    ],
+    "package": {
+      "name": "go-terraform-docs",
+      "version": "0.24.0"
+    },
+    "requirements": {
+      "build": [
+        "go-nocgo_compiler_stub",
+        "go-licenses"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540",
+      "url": "https://github.com/terraform-docs/terraform-docs/archive/v0.24.0.tar.gz"
+    }
+  },
+  "name": "go-terraform-docs",
+  "osx_64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/terraform-docs/terraform-docs",
+      "home": "https://github.com/terraform-docs/terraform-docs",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
+      "summary": "Generate docs from Terraform modules"
+    },
+    "build": {
+      "number": "1",
+      "script": {
+        "content": [
+          "cd src",
+          "go-licenses save . --save_path ../library_licenses --ignore github.com/terraform-docs/terraform-docs",
+          "go build -trimpath -ldflags \"-s -w -X main.version=${{ version }}\" -o $PREFIX/bin/terraform-docs"
+        ],
+        "env": {
+          "CGO_ENABLED": "0"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "mxr-conda",
+        "andrew-mcgrath",
+        "pierrsc",
+        "dhirschfeld"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      }
+    ],
+    "package": {
+      "name": "go-terraform-docs",
+      "version": "0.24.0"
+    },
+    "requirements": {
+      "build": [
+        "go-nocgo_compiler_stub",
+        "go-licenses"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540",
+      "url": "https://github.com/terraform-docs/terraform-docs/archive/v0.24.0.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -219,17 +567,25 @@
   },
   "osx_arm64_meta_yaml": {
     "about": {
+      "dev_url": "https://github.com/terraform-docs/terraform-docs",
       "home": "https://github.com/terraform-docs/terraform-docs",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": "LICENSE",
+      "license_file": "src/LICENSE",
       "summary": "Generate docs from Terraform modules"
     },
     "build": {
-      "number": "0",
-      "script_env": [
-        "BINARY_FILEPATH=PREFIX/bin/terraform-docs"
-      ]
+      "number": "1",
+      "script": {
+        "content": [
+          "cd src",
+          "go-licenses save . --save_path ../library_licenses --ignore github.com/terraform-docs/terraform-docs",
+          "go build -trimpath -ldflags \"-s -w -X main.version=${{ version }}\" -o $PREFIX/bin/terraform-docs"
+        ],
+        "env": {
+          "CGO_ENABLED": "0"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -239,6 +595,42 @@
         "dhirschfeld"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      }
+    ],
     "package": {
       "name": "go-terraform-docs",
       "version": "0.24.0"
@@ -249,19 +641,10 @@
         "go-licenses"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540",
       "url": "https://github.com/terraform-docs/terraform-docs/archive/v0.24.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "terraform-docs --help",
-        "terraform-docs --version | rg 0.24.0"
-      ],
-      "requires": [
-        "ripgrep"
-      ]
     }
   },
   "osx_arm64_requirements": {
@@ -296,6 +679,7 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
     "osx_arm64",
     "win_64"
@@ -303,13 +687,12 @@
   "pr_info": {
     "__lazy_json__": "pr_info/go-terraform-docs.json"
   },
-  "raw_meta_yaml": "{% set name = \"terraform-docs\" %}\n{% set version = \"0.24.0\" %}\n\npackage:\n  name: go-{{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/terraform-docs/terraform-docs/archive/v{{ version }}.tar.gz\n  sha256: e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540\n\nbuild:\n  number: 0\n  script_env:\n    - BINARY_FILEPATH={{ PREFIX }}/bin/terraform-docs.exe  # [win]\n    - BINARY_FILEPATH={{ PREFIX }}/bin/terraform-docs      # [not win]\n\nrequirements:\n  build:\n    - {{ compiler(\"go-nocgo\") }}\n    - go-licenses\n    - posix                  # [win]\n\ntest:\n  requires:\n    - ripgrep\n  commands:\n    - terraform-docs --help\n    - terraform-docs --version | rg {{ version }}\n\nabout:\n  home: https://github.com/terraform-docs/terraform-docs\n\n  license: MIT\n  license_family: MIT\n  license_file: LICENSE\n  summary: Generate docs from Terraform modules\n\nextra:\n  recipe-maintainers:\n    - mxr-conda\n    - andrew-mcgrath\n    - pierrsc\n    - dhirschfeld\n",
+  "raw_meta_yaml": "context:\n  version: \"0.24.0\"\n\npackage:\n  name: go-terraform-docs\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/terraform-docs/terraform-docs/archive/v${{ version }}.tar.gz\n  sha256: e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540\n  target_directory: src\n\nbuild:\n  number: 1\n  script:\n    env:\n      CGO_ENABLED: \"0\"\n    content:\n      - cd src\n      - go-licenses save . --save_path ../library_licenses --ignore github.com/terraform-docs/terraform-docs\n      - if: unix\n        then: go build -trimpath -ldflags \"-s -w -X main.version=${{ version }}\" -o $PREFIX/bin/terraform-docs\n        else: go build -trimpath -ldflags \"-s -X main.version=${{ version }}\" -o %PREFIX%\\bin\\terraform-docs.exe\n\nrequirements:\n  build:\n    - ${{ compiler(\"go-nocgo\") }}\n    - go-licenses\n\ntests:\n  - script:\n      - terraform-docs --help\n      - terraform-docs --version | rg ${{ version }}\n    requirements:\n      run:\n        - ripgrep\n  - package_contents:\n      bin:\n        - terraform-docs\n      strict: true\n\nabout:\n  homepage: https://github.com/terraform-docs/terraform-docs\n  repository: https://github.com/terraform-docs/terraform-docs\n  license: MIT\n  license_file:\n    - src/LICENSE\n    - library_licenses/\n  summary: Generate docs from Terraform modules\n\nextra:\n  recipe-maintainers:\n    - mxr-conda\n    - andrew-mcgrath\n    - pierrsc\n    - dhirschfeld\n",
   "req": {
     "__set__": true,
     "elements": [
       "go-licenses",
-      "go-nocgo_compiler_stub",
-      "posix"
+      "go-nocgo_compiler_stub"
     ]
   },
   "requirements": {
@@ -317,8 +700,7 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub",
-        "posix"
+        "go-nocgo_compiler_stub"
       ]
     },
     "host": {
@@ -342,8 +724,7 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub",
-        "posix"
+        "go-nocgo_compiler_stub"
       ]
     },
     "host": {
@@ -368,17 +749,25 @@
   },
   "win_64_meta_yaml": {
     "about": {
+      "dev_url": "https://github.com/terraform-docs/terraform-docs",
       "home": "https://github.com/terraform-docs/terraform-docs",
       "license": "MIT",
       "license_family": "MIT",
-      "license_file": "LICENSE",
+      "license_file": "src/LICENSE",
       "summary": "Generate docs from Terraform modules"
     },
     "build": {
-      "number": "0",
-      "script_env": [
-        "BINARY_FILEPATH=PREFIX/bin/terraform-docs.exe"
-      ]
+      "number": "1",
+      "script": {
+        "content": [
+          "cd src",
+          "go-licenses save . --save_path ../library_licenses --ignore github.com/terraform-docs/terraform-docs",
+          "go build -trimpath -ldflags \"-s -X main.version=${{ version }}\" -o %PREFIX%\\bin\\terraform-docs.exe"
+        ],
+        "env": {
+          "CGO_ENABLED": "0"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -388,6 +777,42 @@
         "dhirschfeld"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "go-terraform-docs",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "ripgrep"
+              ]
+            },
+            "script": [
+              "terraform-docs --help",
+              "terraform-docs --version | rg ${{ version }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "terraform-docs"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.24.0"
+      }
+    ],
     "package": {
       "name": "go-terraform-docs",
       "version": "0.24.0"
@@ -395,23 +820,13 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses",
-        "posix"
+        "go-licenses"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "e3c971a1f2a02732d964e19e65c901b4e02cca62c4b748c05d22e9690d055540",
       "url": "https://github.com/terraform-docs/terraform-docs/archive/v0.24.0.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "terraform-docs --help",
-        "terraform-docs --version | rg 0.24.0"
-      ],
-      "requires": [
-        "ripgrep"
-      ]
     }
   },
   "win_64_requirements": {
@@ -419,8 +834,7 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub",
-        "posix"
+        "go-nocgo_compiler_stub"
       ]
     },
     "host": {
