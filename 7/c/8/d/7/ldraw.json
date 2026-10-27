@@ -1,36 +1,48 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '11'\ncdt_name:\n- cos6\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-cos7-x86_64\nmkl:\n- '2022'\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "build_platform": {
+      "linux_ppc64le": "linux_64"
+    },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default",
       "win": "azure"
-    }
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "e881cd34a9b822395ef77ae39444766172bfc6cb",
-  "feedstock_hash_ts": 1776815295,
+  "feedstock_hash": "9979412c3625841e5bf7b0faca14f39b30465782",
+  "feedstock_hash_ts": 1793061382,
   "feedstock_name": "ldraw",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.\n",
+      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.",
       "home": "https://www.ldraw.org/",
-      "license": "CC-BY-2.0",
-      "license_family": "CC",
+      "license": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_family": "CC-BY-2.0 AND CC-BY-4.0",
       "license_file": "CAlicense.txt",
       "summary": "LDraw parts library"
     },
     "build": {
-      "number": "1"
+      "noarch": "generic",
+      "number": "0",
+      "script": {
+        "file": "build_parts"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -40,67 +52,236 @@
     },
     "outputs": [
       {
-        "name": "ldraw-parts",
-        "script": "build_parts.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/share/ldraw/LDConfig.ldr",
-            "test -f $PREFIX/share/ldraw/LDConfig_TLG.ldr",
-            "test -f $PREFIX/share/ldraw/LDCfgalt.ldr",
-            "test -d $PREFIX/share/ldraw/parts/",
-            "test -d $PREFIX/share/ldraw/models/",
-            "test -f $PREFIX/share/ldraw/models/car.ldr",
-            "test -f $PREFIX/share/ldraw/parts/u9462.dat"
-          ]
+        "build": {
+          "noarch": "generic"
         },
-        "version": "2206"
+        "name": "ldraw-parts",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f $PREFIX/share/ldraw/LDConfig.ldr",
+              "test -f $PREFIX/share/ldraw/LDConfig_TLG.ldr",
+              "test -f $PREFIX/share/ldraw/LDCfgalt.ldr",
+              "test -d $PREFIX/share/ldraw/parts/",
+              "test -d $PREFIX/share/ldraw/models/",
+              "test -f $PREFIX/share/ldraw/models/car.ldr",
+              "test -f $PREFIX/share/ldraw/parts/u9462.dat"
+            ]
+          }
+        ],
+        "version": "2610"
       },
       {
+        "build": null,
         "name": "ldraw-mklist",
         "requirements": {
           "build": [
             "c_compiler_stub",
+            "c_stdlib_stub",
             "unzip",
             "make"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "build_mklist.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/bin/mklist"
-          ]
-        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
         "version": "1.6"
       }
     ],
     "package": {
-      "name": "ldraw"
+      "name": "ldraw-parts",
+      "version": "2610"
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "a164a0bf1885213ff6c6ae90dd5805097d57ea858ccfae3129792b65f10f5aa9",
-        "url": "http://www.ldraw.org/library/updates/complete.zip"
-      },
-      {
-        "sha256": "1c41cfed43b935de8b2113d9e9617e786aacadb0b0329cea2842032fdf166905",
-        "url": "http://www.ldraw.org/library/official/LDConfig.ldr"
-      },
-      {
-        "sha256": "d42d739769ec6850eb691f0be6c8de6f7145a4580d9fdc2024888f43f4cb7189",
-        "url": "http://www.ldraw.org/library/official/LDCfgalt.ldr"
-      },
-      {
-        "sha256": "04103c69f43a2655d54d4158f119a850ba77f6a1cb8233392570c6c06f792f0b",
-        "url": "http://www.ldraw.org/library/official/LDConfig_TLG.ldr"
-      }
-    ]
+    "requirements": {},
+    "schema_version": 1,
+    "source": {
+      "sha256": "023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f",
+      "url": "https://library.ldraw.org/library/updates/complete.zip"
+    }
   },
   "linux_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "unzip"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.",
+      "home": "https://www.ldraw.org/",
+      "license": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_family": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_file": "CAlicense.txt",
+      "summary": "LDraw parts library"
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "file": "build_mklist"
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "SylvainCorlay",
+        "wolfv"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ldraw-mklist",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "unzip",
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
+        "version": "1.6"
+      }
+    ],
+    "package": {
+      "name": "ldraw-mklist",
+      "version": "1.6"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "unzip",
+        "make"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f",
+      "url": "https://library.ldraw.org/library/updates/complete.zip"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "unzip"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "linux_ppc64le_meta_yaml": {
+    "about": {
+      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.",
+      "home": "https://www.ldraw.org/",
+      "license": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_family": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_file": "CAlicense.txt",
+      "summary": "LDraw parts library"
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "file": "build_mklist"
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "SylvainCorlay",
+        "wolfv"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ldraw-mklist",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "unzip",
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
+        "version": "1.6"
+      }
+    ],
+    "package": {
+      "name": "ldraw-mklist",
+      "version": "1.6"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "unzip",
+        "make"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f",
+      "url": "https://library.ldraw.org/library/updates/complete.zip"
+    }
+  },
+  "linux_ppc64le_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "make",
         "unzip"
       ]
@@ -120,15 +301,18 @@
   },
   "meta_yaml": {
     "about": {
-      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.\n",
+      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.",
       "home": "https://www.ldraw.org/",
-      "license": "CC-BY-2.0",
-      "license_family": "CC",
+      "license": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_family": "CC-BY-2.0 AND CC-BY-4.0",
       "license_file": "CAlicense.txt",
       "summary": "LDraw parts library"
     },
     "build": {
-      "number": "1"
+      "number": "0",
+      "script": {
+        "file": "build_mklist"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -138,171 +322,186 @@
     },
     "outputs": [
       {
-        "name": "ldraw-parts",
-        "script": "build_parts.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/share/ldraw/LDConfig.ldr",
-            "test -f $PREFIX/share/ldraw/LDConfig_TLG.ldr",
-            "test -f $PREFIX/share/ldraw/LDCfgalt.ldr",
-            "test -d $PREFIX/share/ldraw/parts/",
-            "test -d $PREFIX/share/ldraw/models/",
-            "test -f $PREFIX/share/ldraw/models/car.ldr",
-            "test -f $PREFIX/share/ldraw/parts/u9462.dat"
-          ]
+        "build": {
+          "noarch": "generic"
         },
-        "version": "2206"
+        "name": "ldraw-parts",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f $PREFIX/share/ldraw/LDConfig.ldr",
+              "test -f $PREFIX/share/ldraw/LDConfig_TLG.ldr",
+              "test -f $PREFIX/share/ldraw/LDCfgalt.ldr",
+              "test -d $PREFIX/share/ldraw/parts/",
+              "test -d $PREFIX/share/ldraw/models/",
+              "test -f $PREFIX/share/ldraw/models/car.ldr",
+              "test -f $PREFIX/share/ldraw/parts/u9462.dat"
+            ]
+          }
+        ],
+        "version": "2610"
       },
       {
+        "build": null,
         "name": "ldraw-mklist",
         "requirements": {
           "build": [
             "c_compiler_stub",
+            "c_stdlib_stub",
             "unzip",
             "make"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "build_mklist.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/bin/mklist"
-          ]
-        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
         "version": "1.6"
       },
       {
-        "name": "ldraw-parts",
-        "script": "build_parts.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/share/ldraw/LDConfig.ldr",
-            "test -f $PREFIX/share/ldraw/LDConfig_TLG.ldr",
-            "test -f $PREFIX/share/ldraw/LDCfgalt.ldr",
-            "test -d $PREFIX/share/ldraw/parts/",
-            "test -d $PREFIX/share/ldraw/models/",
-            "test -f $PREFIX/share/ldraw/models/car.ldr",
-            "test -f $PREFIX/share/ldraw/parts/u9462.dat"
-          ]
-        },
-        "version": "2206"
-      },
-      {
+        "build": null,
         "name": "ldraw-mklist",
         "requirements": {
           "build": [
             "c_compiler_stub",
+            "c_stdlib_stub",
             "unzip",
             "make"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "build_mklist.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/bin/mklist"
-          ]
-        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
         "version": "1.6"
       },
       {
-        "name": "ldraw-parts",
-        "script": "build_parts.bat",
-        "test": {
-          "commands": [
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDConfig.ldr (exit 0) else (exit 1)",
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDConfig_TLG.ldr (exit 0) else (exit 1)",
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDfgalt.ldr (exit 0) else (exit 1)",
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\parts\\u9462.dat (exit 0) else (exit 1)",
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\models\\car.ldr (exit 0) else (exit 1)"
-          ]
-        },
-        "version": "2206"
-      },
-      {
+        "build": null,
         "name": "ldraw-mklist",
         "requirements": {
           "build": [
             "c_compiler_stub",
+            "c_stdlib_stub",
+            "unzip",
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
+        "version": "1.6"
+      },
+      {
+        "build": null,
+        "name": "ldraw-mklist",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "unzip",
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
+        "version": "1.6"
+      },
+      {
+        "build": null,
+        "name": "ldraw-mklist",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "unzip",
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
+        "version": "1.6"
+      },
+      {
+        "build": null,
+        "name": "ldraw-mklist",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
             "m2-unzip",
             "m2-sed",
             "make"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "build_mklist.bat",
-        "test": {
-          "commands": [
-            "if exist %LIBRARY_PREFIX%\\bin\\mklist.exe (exit 0) else (exit 1)"
-          ]
-        },
+        "tests": [
+          {
+            "script": "if exist \"%LIBRARY_PREFIX%\\bin\\mklist.exe\" (exit 0) else (exit 1)"
+          }
+        ],
         "version": "1.6"
       }
     ],
     "package": {
-      "name": "ldraw"
+      "name": "ldraw-mklist",
+      "version": "1.6"
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "a164a0bf1885213ff6c6ae90dd5805097d57ea858ccfae3129792b65f10f5aa9",
-        "url": "http://www.ldraw.org/library/updates/complete.zip"
-      },
-      {
-        "sha256": "1c41cfed43b935de8b2113d9e9617e786aacadb0b0329cea2842032fdf166905",
-        "url": "http://www.ldraw.org/library/official/LDConfig.ldr"
-      },
-      {
-        "sha256": "d42d739769ec6850eb691f0be6c8de6f7145a4580d9fdc2024888f43f4cb7189",
-        "url": "http://www.ldraw.org/library/official/LDCfgalt.ldr"
-      },
-      {
-        "sha256": "04103c69f43a2655d54d4158f119a850ba77f6a1cb8233392570c6c06f792f0b",
-        "url": "http://www.ldraw.org/library/official/LDConfig_TLG.ldr"
-      },
-      {
-        "sha256": "a164a0bf1885213ff6c6ae90dd5805097d57ea858ccfae3129792b65f10f5aa9",
-        "url": "http://www.ldraw.org/library/updates/complete.zip"
-      },
-      {
-        "sha256": "1c41cfed43b935de8b2113d9e9617e786aacadb0b0329cea2842032fdf166905",
-        "url": "http://www.ldraw.org/library/official/LDConfig.ldr"
-      },
-      {
-        "sha256": "d42d739769ec6850eb691f0be6c8de6f7145a4580d9fdc2024888f43f4cb7189",
-        "url": "http://www.ldraw.org/library/official/LDCfgalt.ldr"
-      },
-      {
-        "sha256": "04103c69f43a2655d54d4158f119a850ba77f6a1cb8233392570c6c06f792f0b",
-        "url": "http://www.ldraw.org/library/official/LDConfig_TLG.ldr"
-      },
-      {
-        "sha256": "a164a0bf1885213ff6c6ae90dd5805097d57ea858ccfae3129792b65f10f5aa9",
-        "url": "http://www.ldraw.org/library/updates/complete.zip"
-      },
-      {
-        "sha256": "1c41cfed43b935de8b2113d9e9617e786aacadb0b0329cea2842032fdf166905",
-        "url": "http://www.ldraw.org/library/official/LDConfig.ldr"
-      },
-      {
-        "sha256": "d42d739769ec6850eb691f0be6c8de6f7145a4580d9fdc2024888f43f4cb7189",
-        "url": "http://www.ldraw.org/library/official/LDCfgalt.ldr"
-      },
-      {
-        "sha256": "04103c69f43a2655d54d4158f119a850ba77f6a1cb8233392570c6c06f792f0b",
-        "url": "http://www.ldraw.org/library/official/LDConfig_TLG.ldr"
-      }
-    ]
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "m2-unzip",
+        "m2-sed",
+        "make"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f",
+      "url": "https://library.ldraw.org/library/updates/complete.zip"
+    }
   },
-  "name": "ldraw",
+  "name": "ldraw-mklist",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.\n",
+      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.",
       "home": "https://www.ldraw.org/",
-      "license": "CC-BY-2.0",
-      "license_family": "CC",
+      "license": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_family": "CC-BY-2.0 AND CC-BY-4.0",
       "license_file": "CAlicense.txt",
       "summary": "LDraw parts library"
     },
     "build": {
-      "number": "1"
+      "number": "0",
+      "script": {
+        "file": "build_mklist"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -312,67 +511,134 @@
     },
     "outputs": [
       {
-        "name": "ldraw-parts",
-        "script": "build_parts.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/share/ldraw/LDConfig.ldr",
-            "test -f $PREFIX/share/ldraw/LDConfig_TLG.ldr",
-            "test -f $PREFIX/share/ldraw/LDCfgalt.ldr",
-            "test -d $PREFIX/share/ldraw/parts/",
-            "test -d $PREFIX/share/ldraw/models/",
-            "test -f $PREFIX/share/ldraw/models/car.ldr",
-            "test -f $PREFIX/share/ldraw/parts/u9462.dat"
-          ]
-        },
-        "version": "2206"
-      },
-      {
+        "build": null,
         "name": "ldraw-mklist",
         "requirements": {
           "build": [
             "c_compiler_stub",
+            "c_stdlib_stub",
             "unzip",
             "make"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "build_mklist.sh",
-        "test": {
-          "commands": [
-            "test -f $PREFIX/bin/mklist"
-          ]
-        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
         "version": "1.6"
       }
     ],
     "package": {
-      "name": "ldraw"
+      "name": "ldraw-mklist",
+      "version": "1.6"
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "a164a0bf1885213ff6c6ae90dd5805097d57ea858ccfae3129792b65f10f5aa9",
-        "url": "http://www.ldraw.org/library/updates/complete.zip"
-      },
-      {
-        "sha256": "1c41cfed43b935de8b2113d9e9617e786aacadb0b0329cea2842032fdf166905",
-        "url": "http://www.ldraw.org/library/official/LDConfig.ldr"
-      },
-      {
-        "sha256": "d42d739769ec6850eb691f0be6c8de6f7145a4580d9fdc2024888f43f4cb7189",
-        "url": "http://www.ldraw.org/library/official/LDCfgalt.ldr"
-      },
-      {
-        "sha256": "04103c69f43a2655d54d4158f119a850ba77f6a1cb8233392570c6c06f792f0b",
-        "url": "http://www.ldraw.org/library/official/LDConfig_TLG.ldr"
-      }
-    ]
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "unzip",
+        "make"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f",
+      "url": "https://library.ldraw.org/library/updates/complete.zip"
+    }
   },
   "osx_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
+        "make",
+        "unzip"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.",
+      "home": "https://www.ldraw.org/",
+      "license": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_family": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_file": "CAlicense.txt",
+      "summary": "LDraw parts library"
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "file": "build_mklist"
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "SylvainCorlay",
+        "wolfv"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ldraw-mklist",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "unzip",
+            "make"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "test -f $PREFIX/bin/mklist"
+          }
+        ],
+        "version": "1.6"
+      }
+    ],
+    "package": {
+      "name": "ldraw-mklist",
+      "version": "1.6"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "unzip",
+        "make"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f",
+      "url": "https://library.ldraw.org/library/updates/complete.zip"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "make",
         "unzip"
       ]
@@ -400,17 +666,21 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
+    "linux_ppc64le",
     "osx_64",
+    "osx_arm64",
     "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/ldraw.json"
   },
-  "raw_meta_yaml": "{% set parts_version = \"2206\" %}\n{% set mklist_version = \"1.6\" %}\n{% set build_number = \"1\" %}\n\npackage:\n  name: ldraw\n\nsource:\n  - url: http://www.ldraw.org/library/updates/complete.zip\n    sha256: a164a0bf1885213ff6c6ae90dd5805097d57ea858ccfae3129792b65f10f5aa9\n\n  - url: http://www.ldraw.org/library/official/LDConfig.ldr\n    sha256: 1c41cfed43b935de8b2113d9e9617e786aacadb0b0329cea2842032fdf166905\n\n  - url: http://www.ldraw.org/library/official/LDCfgalt.ldr\n    sha256: d42d739769ec6850eb691f0be6c8de6f7145a4580d9fdc2024888f43f4cb7189\n\n  - url: http://www.ldraw.org/library/official/LDConfig_TLG.ldr\n    sha256: 04103c69f43a2655d54d4158f119a850ba77f6a1cb8233392570c6c06f792f0b\n\nbuild:\n  number: {{ build_number }}\n\noutputs:\n  - name: ldraw-parts\n    version: {{ parts_version }}\n    script: build_parts.sh   # [unix]\n    script: build_parts.bat  # [win]\n    test:\n      commands:\n        - test -f $PREFIX/share/ldraw/LDConfig.ldr      # [unix]\n        - test -f $PREFIX/share/ldraw/LDConfig_TLG.ldr  # [unix]\n        - test -f $PREFIX/share/ldraw/LDCfgalt.ldr      # [unix]\n        - test -d $PREFIX/share/ldraw/parts/            # [unix]\n        - test -d $PREFIX/share/ldraw/models/           # [unix]\n        - test -f $PREFIX/share/ldraw/models/car.ldr    # [unix]\n        - test -f $PREFIX/share/ldraw/parts/u9462.dat   # [unix]\n        - if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDConfig.ldr (exit 0) else (exit 1)  # [win]\n        - if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDConfig_TLG.ldr (exit 0) else (exit 1)  # [win]\n        - if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDfgalt.ldr (exit 0) else (exit 1)  # [win]\n        - if exist %LIBRARY_PREFIX%\\share\\ldraw\\parts\\u9462.dat (exit 0) else (exit 1)  # [win]\n        - if exist %LIBRARY_PREFIX%\\share\\ldraw\\models\\car.ldr (exit 0) else (exit 1)   # [win]\n\n  - name: ldraw-mklist\n    version: {{ mklist_version }}\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - unzip      # [not win]\n        - m2-unzip   # [win]\n        - m2-sed     # [win]\n        - make\n    script: build_mklist.sh    # [unix]\n    script: build_mklist.bat   # [win]\n    test:\n      commands:\n        - test -f $PREFIX/bin/mklist  # [unix]\n        - if exist %LIBRARY_PREFIX%\\bin\\mklist.exe (exit 0) else (exit 1)  # [win]\n\nabout:\n  home: https://www.ldraw.org/\n  license: CC-BY-2.0\n  license_family: CC\n  license_file: CAlicense.txt\n  summary: LDraw parts library\n  description: |\n    Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\n    in LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\n    LeoCAD and Konstruktor which allow one to construct LEGO models from\n    individual LDraw parts. It is also needed by rendering software such as LDView\n    and LdGLite or instruction creation software like LPub4 or Lic.\n\nextra:\n  recipe-maintainers:\n    - SylvainCorlay\n    - wolfv\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  parts_version: \"2610\"\n  mklist_version: \"1.6\"\n\nrecipe:\n  name: ldraw\n  version: ${{ parts_version }}\n\nsource:\n  - url: https://library.ldraw.org/library/updates/complete.zip\n    sha256: 023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f\n\nbuild:\n  number: 0\n\noutputs:\n  - package:\n      name: ldraw-parts\n      version: ${{ parts_version }}\n    build:\n      noarch: generic\n      skip: not (linux and x86_64)\n      script:\n        file: build_parts\n    tests:\n      - script:\n          - test -f $PREFIX/share/ldraw/LDConfig.ldr\n          - test -f $PREFIX/share/ldraw/LDConfig_TLG.ldr\n          - test -f $PREFIX/share/ldraw/LDCfgalt.ldr\n          - test -d $PREFIX/share/ldraw/parts/\n          - test -d $PREFIX/share/ldraw/models/\n          - test -f $PREFIX/share/ldraw/models/car.ldr\n          - test -f $PREFIX/share/ldraw/parts/u9462.dat\n\n  - package:\n      name: ldraw-mklist\n      version: ${{ mklist_version }}\n    build:\n      script:\n        file: build_mklist\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - if: unix\n          then: unzip\n        - if: win\n          then:\n            - m2-unzip\n            - m2-sed\n        - make\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f $PREFIX/bin/mklist\n            else:\n              - if exist \"%LIBRARY_PREFIX%\\bin\\mklist.exe\" (exit 0) else (exit 1)\n\nabout:\n  homepage: https://www.ldraw.org/\n  license: CC-BY-2.0 AND CC-BY-4.0\n  license_file:\n    - CAlicense.txt\n    - CAlicense4.txt\n  summary: LDraw parts library\n  description: |\n    Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\n    in LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\n    LeoCAD and Konstruktor which allow one to construct LEGO models from\n    individual LDraw parts. It is also needed by rendering software such as LDView\n    and LdGLite or instruction creation software like LPub4 or Lic.\n\nextra:\n  recipe-maintainers:\n    - SylvainCorlay\n    - wolfv\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
+      "c_stdlib_stub",
       "m2-sed",
       "m2-unzip",
       "make",
@@ -422,6 +692,7 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "m2-sed",
         "m2-unzip",
         "make",
@@ -431,13 +702,15 @@
     "host": {
       "__set__": true,
       "elements": [
-        "c_compiler_stub"
+        "c_compiler_stub",
+        "c_stdlib_stub"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "c_compiler_stub"
+        "c_compiler_stub",
+        "c_stdlib_stub"
       ]
     },
     "test": {
@@ -451,6 +724,7 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "m2-sed",
         "m2-unzip",
         "make",
@@ -470,22 +744,25 @@
       "elements": []
     }
   },
-  "url": "http://www.ldraw.org/library/updates/complete.zip",
-  "version": "2206",
+  "url": "https://library.ldraw.org/library/updates/complete.zip",
+  "version": "1.6",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/ldraw.json"
   },
   "win_64_meta_yaml": {
     "about": {
-      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.\n",
+      "description": "Collection of 3D LEGO parts, 3D part primitives and two example LEGO 3D models\nin LDraw format. This part library is needed by 3D CAD programs such as MLCAD,\nLeoCAD and Konstruktor which allow one to construct LEGO models from\nindividual LDraw parts. It is also needed by rendering software such as LDView\nand LdGLite or instruction creation software like LPub4 or Lic.",
       "home": "https://www.ldraw.org/",
-      "license": "CC-BY-2.0",
-      "license_family": "CC",
+      "license": "CC-BY-2.0 AND CC-BY-4.0",
+      "license_family": "CC-BY-2.0 AND CC-BY-4.0",
       "license_file": "CAlicense.txt",
       "summary": "LDraw parts library"
     },
     "build": {
-      "number": "1"
+      "number": "0",
+      "script": {
+        "file": "build_mklist"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -495,66 +772,52 @@
     },
     "outputs": [
       {
-        "name": "ldraw-parts",
-        "script": "build_parts.bat",
-        "test": {
-          "commands": [
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDConfig.ldr (exit 0) else (exit 1)",
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDConfig_TLG.ldr (exit 0) else (exit 1)",
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\LDfgalt.ldr (exit 0) else (exit 1)",
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\parts\\u9462.dat (exit 0) else (exit 1)",
-            "if exist %LIBRARY_PREFIX%\\share\\ldraw\\models\\car.ldr (exit 0) else (exit 1)"
-          ]
-        },
-        "version": "2206"
-      },
-      {
+        "build": null,
         "name": "ldraw-mklist",
         "requirements": {
           "build": [
             "c_compiler_stub",
+            "c_stdlib_stub",
             "m2-unzip",
             "m2-sed",
             "make"
-          ]
+          ],
+          "host": [],
+          "run": []
         },
-        "script": "build_mklist.bat",
-        "test": {
-          "commands": [
-            "if exist %LIBRARY_PREFIX%\\bin\\mklist.exe (exit 0) else (exit 1)"
-          ]
-        },
+        "tests": [
+          {
+            "script": "if exist \"%LIBRARY_PREFIX%\\bin\\mklist.exe\" (exit 0) else (exit 1)"
+          }
+        ],
         "version": "1.6"
       }
     ],
     "package": {
-      "name": "ldraw"
+      "name": "ldraw-mklist",
+      "version": "1.6"
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "a164a0bf1885213ff6c6ae90dd5805097d57ea858ccfae3129792b65f10f5aa9",
-        "url": "http://www.ldraw.org/library/updates/complete.zip"
-      },
-      {
-        "sha256": "1c41cfed43b935de8b2113d9e9617e786aacadb0b0329cea2842032fdf166905",
-        "url": "http://www.ldraw.org/library/official/LDConfig.ldr"
-      },
-      {
-        "sha256": "d42d739769ec6850eb691f0be6c8de6f7145a4580d9fdc2024888f43f4cb7189",
-        "url": "http://www.ldraw.org/library/official/LDCfgalt.ldr"
-      },
-      {
-        "sha256": "04103c69f43a2655d54d4158f119a850ba77f6a1cb8233392570c6c06f792f0b",
-        "url": "http://www.ldraw.org/library/official/LDConfig_TLG.ldr"
-      }
-    ]
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "m2-unzip",
+        "m2-sed",
+        "make"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "023083918da2d3697c794fb4267975509584f3611b993095874206a803fa610f",
+      "url": "https://library.ldraw.org/library/updates/complete.zip"
+    }
   },
   "win_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "m2-sed",
         "m2-unzip",
         "make"
