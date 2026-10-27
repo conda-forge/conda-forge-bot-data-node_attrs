@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.10'\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -18,8 +18,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "9aa59b10e8095669aa6ecf31008d1034066cb9cf",
-  "feedstock_hash_ts": 1780975944,
+  "feedstock_hash": "518891c6560f057cd49c8a0f342d06ab84052f90",
+  "feedstock_hash_ts": 1793124131,
   "feedstock_name": "botorch",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -35,8 +35,11 @@
     },
     "build": {
       "noarch": "python",
-      "number": "0",
-      "script": "${{ PYTHON }} -m pip install . -vv"
+      "number": "1",
+      "script": [
+        "sed -i '/^\\s*\"ninja\",$/d' pyproject.toml",
+        "${{ PYTHON }} -m pip install . -vv"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -73,8 +76,7 @@
             "numpyro >=0.18.0",
             "scipy",
             "multipledispatch",
-            "threadpoolctl",
-            "ninja-python"
+            "threadpoolctl"
           ]
         },
         "tests": [
@@ -131,8 +133,7 @@
         "numpyro >=0.18.0",
         "scipy",
         "multipledispatch",
-        "threadpoolctl",
-        "ninja-python"
+        "threadpoolctl"
       ]
     },
     "schema_version": 1,
@@ -165,7 +166,6 @@
         "jaxlib",
         "linear_operator",
         "multipledispatch",
-        "ninja-python",
         "numpyro",
         "pyre-extensions",
         "python",
@@ -195,8 +195,11 @@
     },
     "build": {
       "noarch": "python",
-      "number": "0",
-      "script": "${{ PYTHON }} -m pip install . -vv"
+      "number": "1",
+      "script": [
+        "sed -i '/^\\s*\"ninja\",$/d' pyproject.toml",
+        "${{ PYTHON }} -m pip install . -vv"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -233,8 +236,7 @@
             "numpyro >=0.18.0",
             "scipy",
             "multipledispatch",
-            "threadpoolctl",
-            "ninja-python"
+            "threadpoolctl"
           ]
         },
         "tests": [
@@ -291,8 +293,7 @@
         "numpyro >=0.18.0",
         "scipy",
         "multipledispatch",
-        "threadpoolctl",
-        "ninja-python"
+        "threadpoolctl"
       ]
     },
     "schema_version": 1,
@@ -315,7 +316,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/botorch.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: botorch\n  version: \"0.18.1\"\n  python_min: \"3.11\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/botorch-${{ version }}.tar.gz\n  sha256: f3e444efae2622b3ad88a5efe1859583ba2cd0913761f76677a189b2fd1aee99\n\nbuild:\n  number: 0\n  noarch: python\n  script:\n    - ${{ PYTHON }} -m pip install . -vv\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - setuptools\n    - setuptools_scm\n    - tomli\n    - wheel\n  run:\n    - python >=${{ python_min }}\n    - typing_extensions\n    - pyre-extensions\n    - gpytorch >=1.15.2\n    - linear_operator >=0.6.1\n    - pytorch >=2.4\n    - jax >=0.4.35,<0.10\n    - jaxlib >=0.4.35,<0.10\n    - numpyro >=0.18.0\n    - scipy\n    - multipledispatch\n    - threadpoolctl\n    - ninja-python\n\ntests:\n  - python:\n      imports:\n        - botorch\n        - botorch.acquisition\n        - botorch.exceptions\n        - botorch.generation\n        - botorch.models\n        - botorch.optim\n        - botorch.posteriors\n        - botorch.sampling\n        - botorch.test_functions\n        - botorch.utils\n        - botorch.cross_validation\n        - botorch.fit\n        - botorch.logging\n        - botorch.settings\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n\nabout:\n  license: MIT\n  license_file: LICENSE\n  summary: Bayesian Optimization in PyTorch\n  description: |\n    BoTorch is a library for Bayesian Optimization built on PyTorch.\n\n\n  homepage: https://botorch.org\n  repository: https://github.com/pytorch/botorch\n  documentation: https://botorch.org/docs/introduction\n\nextra:\n  recipe-maintainers:\n    - maclandrol\n    - ngam\n    - thewchan\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: botorch\n  version: \"0.18.1\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/botorch-${{ version }}.tar.gz\n  sha256: f3e444efae2622b3ad88a5efe1859583ba2cd0913761f76677a189b2fd1aee99\n\nbuild:\n  number: 1\n  noarch: python\n  script:\n    # ninja is only used by an optional torch.cpp_extension JIT path\n    # (acquisition/multi_objective/logei.py) that also needs a C++\n    # toolchain; conda-forge's ninja ships no dist-info, so drop the\n    # dependency before building to keep pip check honest.\n    - sed -i '/^\\s*\"ninja\",$/d' pyproject.toml\n    - ${{ PYTHON }} -m pip install . -vv\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - setuptools\n    - setuptools_scm\n    - tomli\n    - wheel\n  run:\n    - python >=${{ python_min }}\n    - typing_extensions\n    - pyre-extensions\n    - gpytorch >=1.15.2\n    - linear_operator >=0.6.1\n    - pytorch >=2.4\n    - jax >=0.4.35,<0.10\n    - jaxlib >=0.4.35,<0.10\n    - numpyro >=0.18.0\n    - scipy\n    - multipledispatch\n    - threadpoolctl\n\ntests:\n  - python:\n      imports:\n        - botorch\n        - botorch.acquisition\n        - botorch.exceptions\n        - botorch.generation\n        - botorch.models\n        - botorch.optim\n        - botorch.posteriors\n        - botorch.sampling\n        - botorch.test_functions\n        - botorch.utils\n        - botorch.cross_validation\n        - botorch.fit\n        - botorch.logging\n        - botorch.settings\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n\nabout:\n  license: MIT\n  license_file: LICENSE\n  summary: Bayesian Optimization in PyTorch\n  description: |\n    BoTorch is a library for Bayesian Optimization built on PyTorch.\n\n\n  homepage: https://botorch.org\n  repository: https://github.com/pytorch/botorch\n  documentation: https://botorch.org/docs/introduction\n\nextra:\n  recipe-maintainers:\n    - maclandrol\n    - ngam\n    - thewchan\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -324,7 +325,6 @@
       "jaxlib",
       "linear_operator",
       "multipledispatch",
-      "ninja-python",
       "numpyro",
       "pip",
       "pyre-extensions",
@@ -363,7 +363,6 @@
         "jaxlib",
         "linear_operator",
         "multipledispatch",
-        "ninja-python",
         "numpyro",
         "pyre-extensions",
         "python",
@@ -405,7 +404,6 @@
         "jaxlib >=0.4.35,<0.10",
         "linear_operator >=0.6.1",
         "multipledispatch",
-        "ninja-python",
         "numpyro >=0.18.0",
         "pyre-extensions",
         "python >=3.11",
