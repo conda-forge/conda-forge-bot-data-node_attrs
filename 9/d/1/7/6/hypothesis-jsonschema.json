@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "cdt_name:\n- conda\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.9'\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -10,30 +10,33 @@
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "db63c3321e5dc362fddf17f3a6a939535d205a90",
-  "feedstock_hash_ts": 1777049104,
+  "feedstock_hash": "d4dda873b6b4b49f2f5fb708f46cbcac6388decf",
+  "feedstock_hash_ts": 1793143908,
   "feedstock_name": "hypothesis-jsonschema",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/python-jsonschema/hypothesis-jsonschema",
-      "home": "https://pypi.org/project/hypothesis-jsonschema/",
+      "home": "https://pypi.org/project/hypothesis-jsonschema",
       "license": "MPL-2.0",
-      "license_family": "MOZILLA",
+      "license_family": "MPL-2.0",
       "license_file": "LICENSE",
       "summary": "Tools to generate test data from JSON schemata with Hypothesis"
     },
     "build": {
       "noarch": "python",
-      "number": "1",
+      "number": "0",
       "script": [
-        "PYTHON -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check"
+        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+        "${{ PYTHON }} -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\""
       ]
     },
     "extra": {
@@ -41,38 +44,97 @@
         "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "hypothesis-jsonschema",
+        "requirements": {
+          "build": [],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools"
+          ],
+          "run": [
+            "hypothesis >=6.170.10",
+            "jsonschema >=4.18.0",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/hypothesis-jsonschema/**"
+              ],
+              "site_packages": [
+                "hypothesis_jsonschema/**",
+                "hypothesis_jsonschema-0.23.2.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "hypothesis_jsonschema"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.15.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "hypothesis 6.170.10.*",
+                "jsonschema-with-format",
+                "pip",
+                "pytest-cov",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "pip check",
+              "coverage run --source=hypothesis_jsonschema --branch -m pytest -vv --tb=long --color=yes",
+              "coverage report --show-missing --skip-covered --fail-under=${{ cov_fail_under }}"
+            ]
+          }
+        ],
+        "version": "0.23.2"
+      }
+    ],
     "package": {
       "name": "hypothesis-jsonschema",
-      "version": "0.23.1"
+      "version": "0.23.2"
     },
     "requirements": {
       "host": [
         "pip",
-        "python 3.9",
+        "python 3.11.*",
         "setuptools"
       ],
       "run": [
-        "hypothesis >=6.84.3",
+        "hypothesis >=6.170.10",
         "jsonschema >=4.18.0",
-        "python >=3.9"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "f4ac032024342a4149a10253984f5a5736b82b3fe2afb0888f3834a31153f215",
-      "url": "https://pypi.org/packages/source/h/hypothesis-jsonschema/hypothesis-jsonschema-0.23.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "hypothesis_jsonschema"
-      ],
-      "requires": [
-        "pip",
-        "python 3.9"
-      ]
+      "sha256": "43a5f21c67f7cdccd6e3e0d1300cb5261bede6c046e3eff8a73c094b4afdf761",
+      "url": "https://files.pythonhosted.org/packages/source/h/hypothesis-jsonschema/hypothesis_jsonschema-0.23.2.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -99,7 +161,10 @@
     "test": {
       "__set__": true,
       "elements": [
+        "hypothesis",
+        "jsonschema-with-format",
         "pip",
+        "pytest-cov",
         "python"
       ]
     }
@@ -107,17 +172,18 @@
   "meta_yaml": {
     "about": {
       "dev_url": "https://github.com/python-jsonschema/hypothesis-jsonschema",
-      "home": "https://pypi.org/project/hypothesis-jsonschema/",
+      "home": "https://pypi.org/project/hypothesis-jsonschema",
       "license": "MPL-2.0",
-      "license_family": "MOZILLA",
+      "license_family": "MPL-2.0",
       "license_file": "LICENSE",
       "summary": "Tools to generate test data from JSON schemata with Hypothesis"
     },
     "build": {
       "noarch": "python",
-      "number": "1",
+      "number": "0",
       "script": [
-        "PYTHON -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check"
+        "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
+        "${{ PYTHON }} -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\""
       ]
     },
     "extra": {
@@ -125,38 +191,97 @@
         "bollwyvl"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "hypothesis-jsonschema",
+        "requirements": {
+          "build": [],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools"
+          ],
+          "run": [
+            "hypothesis >=6.170.10",
+            "jsonschema >=4.18.0",
+            "python >=3.11"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "etc/conda/test-files/hypothesis-jsonschema/**"
+              ],
+              "site_packages": [
+                "hypothesis_jsonschema/**",
+                "hypothesis_jsonschema-0.23.2.dist-info/**"
+              ],
+              "strict": true
+            }
+          },
+          {
+            "python": {
+              "imports": [
+                "hypothesis_jsonschema"
+              ],
+              "python_version": [
+                "3.11.*",
+                "3.15.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ],
+              "source": [
+                "tests/**"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "hypothesis 6.170.10.*",
+                "jsonschema-with-format",
+                "pip",
+                "pytest-cov",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "pip check",
+              "coverage run --source=hypothesis_jsonschema --branch -m pytest -vv --tb=long --color=yes",
+              "coverage report --show-missing --skip-covered --fail-under=${{ cov_fail_under }}"
+            ]
+          }
+        ],
+        "version": "0.23.2"
+      }
+    ],
     "package": {
       "name": "hypothesis-jsonschema",
-      "version": "0.23.1"
+      "version": "0.23.2"
     },
     "requirements": {
       "host": [
         "pip",
-        "python 3.9",
+        "python 3.11.*",
         "setuptools"
       ],
       "run": [
-        "hypothesis >=6.84.3",
+        "hypothesis >=6.170.10",
         "jsonschema >=4.18.0",
-        "python >=3.9"
+        "python >=3.11"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "f4ac032024342a4149a10253984f5a5736b82b3fe2afb0888f3834a31153f215",
-      "url": "https://pypi.org/packages/source/h/hypothesis-jsonschema/hypothesis-jsonschema-0.23.1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "pip check"
-      ],
-      "imports": [
-        "hypothesis_jsonschema"
-      ],
-      "requires": [
-        "pip",
-        "python 3.9"
-      ]
+      "sha256": "43a5f21c67f7cdccd6e3e0d1300cb5261bede6c046e3eff8a73c094b4afdf761",
+      "url": "https://files.pythonhosted.org/packages/source/h/hypothesis-jsonschema/hypothesis_jsonschema-0.23.2.tar.gz"
     }
   },
   "name": "hypothesis-jsonschema",
@@ -173,7 +298,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/hypothesis-jsonschema.json"
   },
-  "raw_meta_yaml": "{% set version = \"0.23.1\" %}\n\npackage:\n  name: hypothesis-jsonschema\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/h/hypothesis-jsonschema/hypothesis-jsonschema-{{ version }}.tar.gz\n  sha256: f4ac032024342a4149a10253984f5a5736b82b3fe2afb0888f3834a31153f215\n\nbuild:\n  number: 1\n  noarch: python\n  script:\n    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check\n\nrequirements:\n  host:\n    - pip\n    - python {{ python_min }}\n    - setuptools\n  run:\n    - hypothesis >=6.84.3\n    - jsonschema >=4.18.0\n    - python >={{ python_min }}\n\ntest:\n  requires:\n    - pip\n    - python {{ python_min }}\n  imports:\n    - hypothesis_jsonschema\n  commands:\n    - pip check\n\nabout:\n  home: https://pypi.org/project/hypothesis-jsonschema/\n  license: MPL-2.0\n  license_family: MOZILLA\n  license_file: LICENSE\n  summary: Tools to generate test data from JSON schemata with Hypothesis\n  dev_url: https://github.com/python-jsonschema/hypothesis-jsonschema\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.23.2\"\n  hypothesis_min: \"6.170.10\"\n  python_check_max: \"3.15\"\n  # test_from_schema.py:  expects many MB of JSON schema\n  # test_version.py:      only tests repo files\n  unlink_tests: test_from_schema.py test_version.py\n  # upstream doesn't tag, this file not in sdist\n  test_commit: fa38b03d8bb6f917ba749ef84ce1e4465d1e27cc\n  cov_fail_under: \"91\"\n\npackage:\n  name: hypothesis-jsonschema\n  version: ${{ version }}\n\nsource:\n  - url: https://files.pythonhosted.org/packages/source/h/hypothesis-jsonschema/hypothesis_jsonschema-${{ version }}.tar.gz\n    sha256: 43a5f21c67f7cdccd6e3e0d1300cb5261bede6c046e3eff8a73c094b4afdf761\n  - url: https://raw.githubusercontent.com/Zac-HD/hypothesis-jsonschema/${{ test_commit }}/tests/gen_schemas.py\n    sha256: 69d0e8d530a807968d90de0a900d9d301ef1a60d89ce0e5602bac30c8362fb2d\n    target_directory: tests\n\nbuild:\n  number: 0\n  noarch: python\n  script:\n    - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n    - ${{ PYTHON }} -c \"import os; [os.unlink(f'tests/{p}') for p in '''${{ unlink_tests }}'''.split()]\"\n\nrequirements:\n  host:\n    - pip\n    - python ${{ python_min }}.*\n    - setuptools\n  run:\n    - hypothesis >=${{ hypothesis_min }}\n    - jsonschema >=4.18.0\n    - python >=${{ python_min }}\n\ntests:\n  - package_contents:\n      strict: true\n      files:\n        - etc/conda/test-files/hypothesis-jsonschema/**\n      site_packages:\n        - hypothesis_jsonschema/**\n        - hypothesis_jsonschema-${{ version }}.dist-info/**\n  - python:\n      imports: hypothesis_jsonschema\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - ${{ python_check_max }}.*\n  - files:\n      source:\n        - tests/**\n      recipe:\n        - run_test.py\n    requirements:\n      run:\n        - hypothesis ${{ hypothesis_min }}.*\n        - jsonschema-with-format\n        - pip\n        - pytest-cov\n        - python ${{ python_min }}.*\n    script:\n      - pip check\n      - coverage run --source=hypothesis_jsonschema --branch -m pytest -vv --tb=long --color=yes\n      - coverage report --show-missing --skip-covered --fail-under=${{ cov_fail_under }}\n\nabout:\n  license: MPL-2.0\n  license_file: LICENSE\n  summary: Tools to generate test data from JSON schemata with Hypothesis\n  homepage: https://pypi.org/project/hypothesis-jsonschema\n  repository: https://github.com/python-jsonschema/hypothesis-jsonschema\n\nextra:\n  recipe-maintainers:\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -208,7 +333,10 @@
     "test": {
       "__set__": true,
       "elements": [
+        "hypothesis",
+        "jsonschema-with-format",
         "pip",
+        "pytest-cov",
         "python"
       ]
     }
@@ -223,28 +351,31 @@
       "__set__": true,
       "elements": [
         "pip",
-        "python 3.9",
+        "python 3.11.*",
         "setuptools"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "hypothesis >=6.84.3",
+        "hypothesis >=6.170.10",
         "jsonschema >=4.18.0",
-        "python >=3.9"
+        "python >=3.11"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
+        "hypothesis 6.170.10.*",
+        "jsonschema-with-format",
         "pip",
-        "python 3.9"
+        "pytest-cov",
+        "python 3.11.*"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/h/hypothesis-jsonschema/hypothesis-jsonschema-0.23.1.tar.gz",
-  "version": "0.23.1",
+  "url": "https://files.pythonhosted.org/packages/source/h/hypothesis-jsonschema/hypothesis_jsonschema-0.23.2.tar.gz",
+  "version": "0.23.2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/hypothesis-jsonschema.json"
   }
