@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
@@ -20,8 +20,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "32de7dc4a95694af1465f0103045b03dcaf3fa86",
-  "feedstock_hash_ts": 1779602130,
+  "feedstock_hash": "e9b3f9ab698a0630a75592a2032647b8a8a5eb73",
+  "feedstock_hash_ts": 1793194134,
   "feedstock_name": "ls-hpack",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -36,20 +36,12 @@
       "summary": "LiteSpeed HPACK (RFC7541) Library"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "ls-hpack"
         ]
-      },
-      "script": [
-        "cmake -B _build -G Ninja ${CMAKE_ARGS} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DSHARED=1 -DLSHPACK_XXH=1 .",
-        "cmake --build _build",
-        "install -d ${PREFIX}/lib ${PREFIX}/include",
-        "install -m 644 _build/libls-hpack.dylib ${PREFIX}/lib/ || install -m 644 _build/libls-hpack.so ${PREFIX}/lib/",
-        "install -m 644 lshpack.h ${PREFIX}/include/",
-        "install -m 644 lsxpack_header.h ${PREFIX}/include/"
-      ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -79,10 +71,30 @@
         "tests": [
           {
             "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
               "lib": [
                 "ls-hpack"
               ]
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "$CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test",
+              "./test"
+            ]
           }
         ],
         "version": "2.3.5"
@@ -102,6 +114,10 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "patches/0001-Use-bundled-queue.h-on-Windows.patch",
+        "patches/0002-Add-install-rules.patch"
+      ],
       "sha256": "430a1a36029e0ae1c81eaa0b2356920f1e65fde1cdd722351c671ebe513b7a96",
       "url": "https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v2.3.5.tar.gz"
     }
@@ -126,7 +142,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   },
   "linux_aarch64_meta_yaml": {
@@ -141,20 +159,12 @@
       "summary": "LiteSpeed HPACK (RFC7541) Library"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "ls-hpack"
         ]
-      },
-      "script": [
-        "cmake -B _build -G Ninja ${CMAKE_ARGS} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DSHARED=1 -DLSHPACK_XXH=1 .",
-        "cmake --build _build",
-        "install -d ${PREFIX}/lib ${PREFIX}/include",
-        "install -m 644 _build/libls-hpack.dylib ${PREFIX}/lib/ || install -m 644 _build/libls-hpack.so ${PREFIX}/lib/",
-        "install -m 644 lshpack.h ${PREFIX}/include/",
-        "install -m 644 lsxpack_header.h ${PREFIX}/include/"
-      ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -184,10 +194,30 @@
         "tests": [
           {
             "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
               "lib": [
                 "ls-hpack"
               ]
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "$CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test",
+              "./test"
+            ]
           }
         ],
         "version": "2.3.5"
@@ -207,6 +237,10 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "patches/0001-Use-bundled-queue.h-on-Windows.patch",
+        "patches/0002-Add-install-rules.patch"
+      ],
       "sha256": "430a1a36029e0ae1c81eaa0b2356920f1e65fde1cdd722351c671ebe513b7a96",
       "url": "https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v2.3.5.tar.gz"
     }
@@ -231,7 +265,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   },
   "meta_yaml": {
@@ -246,20 +282,12 @@
       "summary": "LiteSpeed HPACK (RFC7541) Library"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "ls-hpack"
         ]
-      },
-      "script": [
-        "cmake -B _build -G Ninja ${CMAKE_ARGS} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DSHARED=1 -DLSHPACK_XXH=1 .",
-        "cmake --build _build",
-        "install -d ${PREFIX}/lib ${PREFIX}/include",
-        "install -m 644 _build/libls-hpack.dylib ${PREFIX}/lib/ || install -m 644 _build/libls-hpack.so ${PREFIX}/lib/",
-        "install -m 644 lshpack.h ${PREFIX}/include/",
-        "install -m 644 lsxpack_header.h ${PREFIX}/include/"
-      ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -289,10 +317,30 @@
         "tests": [
           {
             "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
               "lib": [
                 "ls-hpack"
               ]
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "$CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test",
+              "./test"
+            ]
           }
         ],
         "version": "2.3.5"
@@ -319,10 +367,30 @@
         "tests": [
           {
             "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
               "lib": [
                 "ls-hpack"
               ]
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "$CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test",
+              "./test"
+            ]
           }
         ],
         "version": "2.3.5"
@@ -349,10 +417,30 @@
         "tests": [
           {
             "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
               "lib": [
                 "ls-hpack"
               ]
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "$CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test",
+              "./test"
+            ]
           }
         ],
         "version": "2.3.5"
@@ -379,10 +467,80 @@
         "tests": [
           {
             "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
               "lib": [
                 "ls-hpack"
               ]
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "$CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test",
+              "./test"
+            ]
+          }
+        ],
+        "version": "2.3.5"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "ls-hpack"
+            ]
+          }
+        },
+        "name": "ls-hpack",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
+              "lib": [
+                "ls-hpack"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "cl /nologo test.c /I%LIBRARY_INC% /link /LIBPATH:%LIBRARY_LIB% ls-hpack.lib",
+              "test.exe"
+            ]
           }
         ],
         "version": "2.3.5"
@@ -402,6 +560,10 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "patches/0001-Use-bundled-queue.h-on-Windows.patch",
+        "patches/0002-Add-install-rules.patch"
+      ],
       "sha256": "430a1a36029e0ae1c81eaa0b2356920f1e65fde1cdd722351c671ebe513b7a96",
       "url": "https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v2.3.5.tar.gz"
     }
@@ -419,20 +581,12 @@
       "summary": "LiteSpeed HPACK (RFC7541) Library"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "ls-hpack"
         ]
-      },
-      "script": [
-        "cmake -B _build -G Ninja ${CMAKE_ARGS} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DSHARED=1 -DLSHPACK_XXH=1 .",
-        "cmake --build _build",
-        "install -d ${PREFIX}/lib ${PREFIX}/include",
-        "install -m 644 _build/libls-hpack.dylib ${PREFIX}/lib/ || install -m 644 _build/libls-hpack.so ${PREFIX}/lib/",
-        "install -m 644 lshpack.h ${PREFIX}/include/",
-        "install -m 644 lsxpack_header.h ${PREFIX}/include/"
-      ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -462,10 +616,30 @@
         "tests": [
           {
             "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
               "lib": [
                 "ls-hpack"
               ]
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "$CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test",
+              "./test"
+            ]
           }
         ],
         "version": "2.3.5"
@@ -485,6 +659,10 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "patches/0001-Use-bundled-queue.h-on-Windows.patch",
+        "patches/0002-Add-install-rules.patch"
+      ],
       "sha256": "430a1a36029e0ae1c81eaa0b2356920f1e65fde1cdd722351c671ebe513b7a96",
       "url": "https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v2.3.5.tar.gz"
     }
@@ -509,7 +687,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   },
   "osx_arm64_meta_yaml": {
@@ -524,20 +704,12 @@
       "summary": "LiteSpeed HPACK (RFC7541) Library"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "ls-hpack"
         ]
-      },
-      "script": [
-        "cmake -B _build -G Ninja ${CMAKE_ARGS} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DSHARED=1 -DLSHPACK_XXH=1 .",
-        "cmake --build _build",
-        "install -d ${PREFIX}/lib ${PREFIX}/include",
-        "install -m 644 _build/libls-hpack.dylib ${PREFIX}/lib/ || install -m 644 _build/libls-hpack.so ${PREFIX}/lib/",
-        "install -m 644 lshpack.h ${PREFIX}/include/",
-        "install -m 644 lsxpack_header.h ${PREFIX}/include/"
-      ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -567,10 +739,30 @@
         "tests": [
           {
             "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
               "lib": [
                 "ls-hpack"
               ]
             }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "$CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test",
+              "./test"
+            ]
           }
         ],
         "version": "2.3.5"
@@ -590,6 +782,10 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "patches/0001-Use-bundled-queue.h-on-Windows.patch",
+        "patches/0002-Add-install-rules.patch"
+      ],
       "sha256": "430a1a36029e0ae1c81eaa0b2356920f1e65fde1cdd722351c671ebe513b7a96",
       "url": "https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v2.3.5.tar.gz"
     }
@@ -614,7 +810,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   },
   "outputs_names": {
@@ -628,12 +826,13 @@
     "linux_64",
     "linux_aarch64",
     "osx_64",
-    "osx_arm64"
+    "osx_arm64",
+    "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/ls-hpack.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"2.3.5\"\n\npackage:\n  name: ls-hpack\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 430a1a36029e0ae1c81eaa0b2356920f1e65fde1cdd722351c671ebe513b7a96\n\nbuild:\n  skip: win\n  script:\n    - cmake -B _build -G Ninja ${CMAKE_ARGS} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DSHARED=1 -DLSHPACK_XXH=1 .\n    - cmake --build _build\n    - install -d ${PREFIX}/lib ${PREFIX}/include\n    - install -m 644 _build/libls-hpack.dylib ${PREFIX}/lib/ || install -m 644 _build/libls-hpack.so ${PREFIX}/lib/\n    - install -m 644 lshpack.h ${PREFIX}/include/\n    - install -m 644 lsxpack_header.h ${PREFIX}/include/\n  number: 0\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - ninja\n  run_exports:\n    - ${{ pin_subpackage('ls-hpack', upper_bound='x.x.x') }}\n\ntests:\n  - package_contents:\n      lib:\n        - ls-hpack\n\nabout:\n  homepage: https://github.com/litespeedtech/ls-hpack\n  summary: LiteSpeed HPACK (RFC7541) Library\n  description: |\n    LS-HPACK provides functionality to encode and decode HTTP headers using HPACK compression mechanism specified in RFC 7541.\n  license: MIT\n  license_file: LICENSE\n  documentation: https://github.com/litespeedtech/ls-hpack\n  repository: https://github.com/litespeedtech/ls-hpack\n\nextra:\n  recipe-maintainers:\n    - pavelzw\n",
+  "raw_meta_yaml": "context:\n  version: \"2.3.5\"\n\npackage:\n  name: ls-hpack\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 430a1a36029e0ae1c81eaa0b2356920f1e65fde1cdd722351c671ebe513b7a96\n  patches:\n    - patches/0001-Use-bundled-queue.h-on-Windows.patch\n    - patches/0002-Add-install-rules.patch\n\nbuild:\n  number: 1\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - ninja\n  run_exports:\n    - ${{ pin_subpackage('ls-hpack', upper_bound='x.x.x') }}\n\ntests:\n  - package_contents:\n      lib:\n        - ls-hpack\n      include:\n        - lshpack.h\n        - lsxpack_header.h\n  - files:\n      recipe:\n        - test.c\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n    script:\n      - if: win\n        then:\n          - cl /nologo test.c /I%LIBRARY_INC% /link /LIBPATH:%LIBRARY_LIB% ls-hpack.lib\n          - test.exe\n        else:\n          - $CC $CFLAGS test.c -I$PREFIX/include $LDFLAGS -L$PREFIX/lib -lls-hpack -Wl,-rpath,$PREFIX/lib -o test\n          - ./test\n\nabout:\n  homepage: https://github.com/litespeedtech/ls-hpack\n  summary: LiteSpeed HPACK (RFC7541) Library\n  description: |\n    LS-HPACK provides functionality to encode and decode HTTP headers using HPACK compression mechanism specified in RFC 7541.\n  license: MIT\n  license_file: LICENSE\n  documentation: https://github.com/litespeedtech/ls-hpack\n  repository: https://github.com/litespeedtech/ls-hpack\n\nextra:\n  recipe-maintainers:\n    - pavelzw\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -669,7 +868,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   },
   "strong_exports": false,
@@ -693,12 +894,137 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   },
   "url": "https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v2.3.5.tar.gz",
   "version": "2.3.5",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/ls-hpack.json"
+  },
+  "win_64_meta_yaml": {
+    "about": {
+      "description": "LS-HPACK provides functionality to encode and decode HTTP headers using HPACK compression mechanism specified in RFC 7541.",
+      "dev_url": "https://github.com/litespeedtech/ls-hpack",
+      "doc_url": "https://github.com/litespeedtech/ls-hpack",
+      "home": "https://github.com/litespeedtech/ls-hpack",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE",
+      "summary": "LiteSpeed HPACK (RFC7541) Library"
+    },
+    "build": {
+      "number": "1",
+      "run_exports": {
+        "weak": [
+          "ls-hpack"
+        ]
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "pavelzw"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "ls-hpack"
+            ]
+          }
+        },
+        "name": "ls-hpack",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "lshpack.h",
+                "lsxpack_header.h"
+              ],
+              "lib": [
+                "ls-hpack"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "cl /nologo test.c /I%LIBRARY_INC% /link /LIBPATH:%LIBRARY_LIB% ls-hpack.lib",
+              "test.exe"
+            ]
+          }
+        ],
+        "version": "2.3.5"
+      }
+    ],
+    "package": {
+      "name": "ls-hpack",
+      "version": "2.3.5"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "ninja"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "patches/0001-Use-bundled-queue.h-on-Windows.patch",
+        "patches/0002-Add-install-rules.patch"
+      ],
+      "sha256": "430a1a36029e0ae1c81eaa0b2356920f1e65fde1cdd722351c671ebe513b7a96",
+      "url": "https://github.com/litespeedtech/ls-hpack/archive/refs/tags/v2.3.5.tar.gz"
+    }
+  },
+  "win_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub"
+      ]
+    }
   }
 }
