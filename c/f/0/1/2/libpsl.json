@@ -1,13 +1,17 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nicu:\n- '78'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nicu:\n- '79'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_migrations": {
+    "icu79": {
+      "migration_number": 1,
+      "migrator_ts": 1792698974.6739285
+    }
+  },
   "conda-forge.yml": {
     "build_platform": {
       "linux_ppc64le": "linux_64",
       "linux_riscv64": "linux_64",
-      "osx_arm64": "osx_64",
       "win_arm64": "win_64"
     },
     "conda_build": {
@@ -21,12 +25,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "d93d163e4ace3c8de663d880c0381630b65d4590",
-  "feedstock_hash_ts": 1786970668,
+  "feedstock_hash": "a150793e39cc4c465a603a589196f93629c14a56",
+  "feedstock_hash_ts": 1793221883,
   "feedstock_name": "libpsl",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -39,7 +44,7 @@
       "summary": "A C library to handle the Public Suffix List"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libpsl"
@@ -235,7 +240,7 @@
       "summary": "A C library to handle the Public Suffix List"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libpsl"
@@ -372,7 +377,7 @@
       "summary": "A C library to handle the Public Suffix List"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libpsl"
@@ -509,7 +514,7 @@
       "summary": "A C library to handle the Public Suffix List"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libpsl"
@@ -1031,7 +1036,7 @@
       "summary": "A C library to handle the Public Suffix List"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libpsl"
@@ -1168,7 +1173,7 @@
       "summary": "A C library to handle the Public Suffix List"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libpsl"
@@ -1315,7 +1320,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/libpsl.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.23.1\"\n  build_number: 1\n\nrecipe:\n  name: libpsl-packages\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/rockdaboot/libpsl/releases/download/${{ version }}/libpsl-${{ version }}.tar.gz\n  sha256: 8fbb03054556498ba9c4cc48fcaa36a4483748c6504a65bdb9ba348f555b0e56\n\nbuild:\n  number: ${{ build_number }}\n\noutputs:\n  - package:\n      name: libpsl\n      version: ${{ version }}\n    build:\n      script: build\n      files:\n        - ${{ \"Library/\" if win }}include/libpsl.h\n        - ${{ \"Library/\" if win }}lib/pkgconfig/libpsl.pc\n        - if: linux\n          then:\n            - lib/libpsl.so*\n        - if: osx\n          then:\n            - lib/libpsl*.dylib\n        - if: win\n          then:\n            - Library/bin/psl-*.dll\n            - Library/lib/psl.lib\n    requirements:\n      run_exports:\n        # Just a guess\n        - ${{ pin_subpackage('libpsl', upper_bound='x.x') }}\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('cxx') }}\n        - ninja\n        - pkg-config\n        - meson\n      host:\n        - if: not (win and arm64)\n          then:\n            - icu\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f ${PREFIX}/include/libpsl.h\n              - test -f ${PREFIX}/lib/pkgconfig/libpsl.pc\n              - test -f ${PREFIX}/lib/libpsl${SHLIB_EXT}\n              - test ! -f ${PREFIX}/lib/libpsl.a\n          - if: win\n            then:\n              - if not exist %LIBRARY_PREFIX%\\include\\libpsl.h (exit 1)\n              - if not exist %LIBRARY_PREFIX%\\lib\\pkgconfig\\libpsl.pc (exit 1)\n              - if not exist %LIBRARY_PREFIX%\\bin\\psl-*.dll (exit 1)\n              - if not exist %LIBRARY_PREFIX%\\lib\\psl.lib (exit 1)\n              - if exist %LIBRARY_PREFIX%\\lib\\libpsl.a (exit 1)\n  - package:\n      name: libpsl-static\n      version: ${{ version }}\n    build:\n      script: build\n      files:\n        - ${{ \"Library/\" if win }}lib/libpsl.a\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('cxx') }}\n        - ninja\n        - pkg-config\n        - meson\n      run:\n        - ${{ pin_subpackage('libpsl', exact=True) }}\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f ${PREFIX}/lib/libpsl.a\n          - if: win\n            then:\n              - if not exist %LIBRARY_PREFIX%\\lib\\libpsl.a (exit 1)\nabout:\n  homepage: https://github.com/rockdaboot/libpsl\n  repository: https://github.com/rockdaboot/libpsl\n  license: MIT\n  license_family: MIT\n  license_file: LICENSE\n  summary: A C library to handle the Public Suffix List\n\nextra:\n  recipe-maintainers:\n    - tschoonj\n    - JohanMabille\n",
+  "raw_meta_yaml": "context:\n  version: \"0.23.1\"\n  build_number: 2\n\nrecipe:\n  name: libpsl-packages\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/rockdaboot/libpsl/releases/download/${{ version }}/libpsl-${{ version }}.tar.gz\n  sha256: 8fbb03054556498ba9c4cc48fcaa36a4483748c6504a65bdb9ba348f555b0e56\n\nbuild:\n  number: ${{ build_number }}\n\noutputs:\n  - package:\n      name: libpsl\n      version: ${{ version }}\n    build:\n      script: build\n      files:\n        - ${{ \"Library/\" if win }}include/libpsl.h\n        - ${{ \"Library/\" if win }}lib/pkgconfig/libpsl.pc\n        - if: linux\n          then:\n            - lib/libpsl.so*\n        - if: osx\n          then:\n            - lib/libpsl*.dylib\n        - if: win\n          then:\n            - Library/bin/psl-*.dll\n            - Library/lib/psl.lib\n    requirements:\n      run_exports:\n        # Just a guess\n        - ${{ pin_subpackage('libpsl', upper_bound='x.x') }}\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('cxx') }}\n        - ninja\n        - pkg-config\n        - meson\n      host:\n        - if: not (win and arm64)\n          then:\n            - icu\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f ${PREFIX}/include/libpsl.h\n              - test -f ${PREFIX}/lib/pkgconfig/libpsl.pc\n              - test -f ${PREFIX}/lib/libpsl${SHLIB_EXT}\n              - test ! -f ${PREFIX}/lib/libpsl.a\n          - if: win\n            then:\n              - if not exist %LIBRARY_PREFIX%\\include\\libpsl.h (exit 1)\n              - if not exist %LIBRARY_PREFIX%\\lib\\pkgconfig\\libpsl.pc (exit 1)\n              - if not exist %LIBRARY_PREFIX%\\bin\\psl-*.dll (exit 1)\n              - if not exist %LIBRARY_PREFIX%\\lib\\psl.lib (exit 1)\n              - if exist %LIBRARY_PREFIX%\\lib\\libpsl.a (exit 1)\n  - package:\n      name: libpsl-static\n      version: ${{ version }}\n    build:\n      script: build\n      files:\n        - ${{ \"Library/\" if win }}lib/libpsl.a\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('cxx') }}\n        - ninja\n        - pkg-config\n        - meson\n      run:\n        - ${{ pin_subpackage('libpsl', exact=True) }}\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f ${PREFIX}/lib/libpsl.a\n          - if: win\n            then:\n              - if not exist %LIBRARY_PREFIX%\\lib\\libpsl.a (exit 1)\nabout:\n  homepage: https://github.com/rockdaboot/libpsl\n  repository: https://github.com/rockdaboot/libpsl\n  license: MIT\n  license_family: MIT\n  license_file: LICENSE\n  summary: A C library to handle the Public Suffix List\n\nextra:\n  recipe-maintainers:\n    - tschoonj\n    - JohanMabille\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1409,7 +1414,7 @@
       "summary": "A C library to handle the Public Suffix List"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libpsl"
@@ -1547,7 +1552,7 @@
       "summary": "A C library to handle the Public Suffix List"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libpsl"
