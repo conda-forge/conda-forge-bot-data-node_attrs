@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzstd:\n- '1.5'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
@@ -18,8 +18,8 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "6c8a99b2137236364e801f0014dee90c57137792",
-  "feedstock_hash_ts": 1791672179,
+  "feedstock_hash": "00b94a1546b97bb08c6de8708dbd0d49e0f25870",
+  "feedstock_hash_ts": 1793290274,
   "feedstock_name": "selenium-manager",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -27,17 +27,26 @@
       "home": "https://github.com/SeleniumHQ/selenium",
       "license": "Apache-2.0",
       "license_family": "Apache-2.0",
-      "license_file": "THIRDPARTY.yml",
+      "license_file": "rust/THIRDPARTY.yml",
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
       "number": "0",
       "script": {
+        "content": [
+          "mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"",
+          "cat <<EOF > \"${PREFIX}/etc/conda/env_vars.d/${{ env_d_json }}\"\n{\"SE_MANAGER_PATH\":\"${PREFIX}/bin/selenium-manager\"}\nEOF",
+          "export RUSTFLAGS=\"-C link-arg=-Wl,-rpath-link,${PREFIX}/lib -L${PREFIX}/lib\"",
+          "cd rust",
+          "cargo auditable install --locked --no-track --root=${{ PREFIX }} --path=.",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "cd \"${{ RECIPE_DIR }}\""
+        ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
-          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        },
-        "file": "build-selenium-manager"
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "ZSTD_SYS_USE_PKG_CONFIG": "1"
+        }
       }
     },
     "extra": {
@@ -56,26 +65,40 @@
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "pkg-config"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "selenium-manager"
+              ],
+              "files": [
+                "etc/conda/env_vars.d/selenium-manager.json"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
               "selenium-manager --version",
               "selenium-manager --help",
-              "ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\""
+              "ls \"${SE_MANAGER_PATH}\""
             ]
           }
         ],
-        "version": "4.51.0"
+        "version": "4.52.0"
       }
     ],
     "package": {
       "name": "selenium-manager",
-      "version": "4.51.0"
+      "version": "4.52.0"
     },
     "requirements": {
       "build": [
@@ -83,13 +106,17 @@
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "pkg-config"
+      ],
+      "host": [
+        "zstd"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "738e34604a63ca57b3d2b5faa4ac2d4b904142c059ac8bc017201a186e8a595d",
-      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.51.0.tar.gz"
+      "sha256": "3282451cad462cd5b7c941fbb71b8db1ace6d6ab160d2c90eed7c984068f4b1a",
+      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.52.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -100,12 +127,15 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "pkg-config",
         "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "zstd"
+      ]
     },
     "run": {
       "__set__": true,
@@ -121,17 +151,31 @@
       "home": "https://github.com/SeleniumHQ/selenium",
       "license": "Apache-2.0",
       "license_family": "Apache-2.0",
-      "license_file": "THIRDPARTY.yml",
+      "license_file": "rust/THIRDPARTY.yml",
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
       "number": "0",
       "script": {
+        "content": [
+          "mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"",
+          "cat <<EOF > \"${PREFIX}/etc/conda/env_vars.d/${{ env_d_json }}\"\n{\"SE_MANAGER_PATH\":\"${PREFIX}/bin/selenium-manager\"}\nEOF",
+          "export RUSTFLAGS=\"-C link-arg=-Wl,-rpath-link,${PREFIX}/lib -L${PREFIX}/lib\"",
+          "cd rust",
+          "cargo auditable install --locked --no-track --root=${{ PREFIX }} --path=.",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "cd \"${{ RECIPE_DIR }}\"",
+          "export RUSTFLAGS=\"-C link-args=-Wl,-rpath,${PREFIX}/lib\"",
+          "mkdir %PREFIX%\\etc\\conda\\env_vars.d",
+          "echo {\"SE_MANAGER_PATH\":\"%PREFIX%\\\\Scripts\\\\selenium-manager.exe\"} > \"%PREFIX%\\etc\\conda\\env_vars.d\\${{ env_d_json }}\"",
+          "md \"%SCRIPTS%\" || echo \"%SCRIPTS% already exists\"",
+          "move \"%PREFIX%\\bin\\selenium-manager.exe\" \"%SCRIPTS%\""
+        ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
-          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        },
-        "file": "build-selenium-manager"
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "ZSTD_SYS_USE_PKG_CONFIG": "1"
+        }
       }
     },
     "extra": {
@@ -150,21 +194,35 @@
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "pkg-config"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "selenium-manager"
+              ],
+              "files": [
+                "etc/conda/env_vars.d/selenium-manager.json"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
               "selenium-manager --version",
               "selenium-manager --help",
-              "ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\""
+              "ls \"${SE_MANAGER_PATH}\""
             ]
           }
         ],
-        "version": "4.51.0"
+        "version": "4.52.0"
       },
       {
         "build": null,
@@ -175,21 +233,35 @@
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "pkg-config"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "selenium-manager"
+              ],
+              "files": [
+                "etc/conda/env_vars.d/selenium-manager.json"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
               "selenium-manager --version",
               "selenium-manager --help",
-              "ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\""
+              "ls \"${SE_MANAGER_PATH}\""
             ]
           }
         ],
-        "version": "4.51.0"
+        "version": "4.52.0"
       },
       {
         "build": null,
@@ -200,21 +272,35 @@
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "pkg-config"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "selenium-manager"
+              ],
+              "files": [
+                "etc/conda/env_vars.d/selenium-manager.json"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
               "selenium-manager --version",
               "selenium-manager --help",
-              "ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\""
+              "ls \"${SE_MANAGER_PATH}\""
             ]
           }
         ],
-        "version": "4.51.0"
+        "version": "4.52.0"
       },
       {
         "build": null,
@@ -225,26 +311,40 @@
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "pkg-config"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "selenium-manager"
+              ],
+              "files": [
+                "etc/conda/env_vars.d/selenium-manager.json"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
               "selenium-manager --version",
               "selenium-manager --help",
-              "ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\""
+              "dir \"%SE_MANAGER_PATH%\""
             ]
           }
         ],
-        "version": "4.51.0"
+        "version": "4.52.0"
       }
     ],
     "package": {
       "name": "selenium-manager",
-      "version": "4.51.0"
+      "version": "4.52.0"
     },
     "requirements": {
       "build": [
@@ -252,13 +352,17 @@
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "pkg-config"
+      ],
+      "host": [
+        "zstd"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "738e34604a63ca57b3d2b5faa4ac2d4b904142c059ac8bc017201a186e8a595d",
-      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.51.0.tar.gz"
+      "sha256": "3282451cad462cd5b7c941fbb71b8db1ace6d6ab160d2c90eed7c984068f4b1a",
+      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.52.0.tar.gz"
     }
   },
   "name": "selenium-manager",
@@ -267,17 +371,26 @@
       "home": "https://github.com/SeleniumHQ/selenium",
       "license": "Apache-2.0",
       "license_family": "Apache-2.0",
-      "license_file": "THIRDPARTY.yml",
+      "license_file": "rust/THIRDPARTY.yml",
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
       "number": "0",
       "script": {
+        "content": [
+          "mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"",
+          "cat <<EOF > \"${PREFIX}/etc/conda/env_vars.d/${{ env_d_json }}\"\n{\"SE_MANAGER_PATH\":\"${PREFIX}/bin/selenium-manager\"}\nEOF",
+          "export RUSTFLAGS=\"-C link-args=-Wl,-rpath,${PREFIX}/lib\"",
+          "cd rust",
+          "cargo auditable install --locked --no-track --root=${{ PREFIX }} --path=.",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "cd \"${{ RECIPE_DIR }}\""
+        ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
-          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        },
-        "file": "build-selenium-manager"
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "ZSTD_SYS_USE_PKG_CONFIG": "1"
+        }
       }
     },
     "extra": {
@@ -296,26 +409,40 @@
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "pkg-config"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "selenium-manager"
+              ],
+              "files": [
+                "etc/conda/env_vars.d/selenium-manager.json"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
               "selenium-manager --version",
               "selenium-manager --help",
-              "ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\""
+              "ls \"${SE_MANAGER_PATH}\""
             ]
           }
         ],
-        "version": "4.51.0"
+        "version": "4.52.0"
       }
     ],
     "package": {
       "name": "selenium-manager",
-      "version": "4.51.0"
+      "version": "4.52.0"
     },
     "requirements": {
       "build": [
@@ -323,13 +450,17 @@
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "pkg-config"
+      ],
+      "host": [
+        "zstd"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "738e34604a63ca57b3d2b5faa4ac2d4b904142c059ac8bc017201a186e8a595d",
-      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.51.0.tar.gz"
+      "sha256": "3282451cad462cd5b7c941fbb71b8db1ace6d6ab160d2c90eed7c984068f4b1a",
+      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.52.0.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -340,12 +471,15 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "pkg-config",
         "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "zstd"
+      ]
     },
     "run": {
       "__set__": true,
@@ -361,17 +495,26 @@
       "home": "https://github.com/SeleniumHQ/selenium",
       "license": "Apache-2.0",
       "license_family": "Apache-2.0",
-      "license_file": "THIRDPARTY.yml",
+      "license_file": "rust/THIRDPARTY.yml",
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
       "number": "0",
       "script": {
+        "content": [
+          "mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"",
+          "cat <<EOF > \"${PREFIX}/etc/conda/env_vars.d/${{ env_d_json }}\"\n{\"SE_MANAGER_PATH\":\"${PREFIX}/bin/selenium-manager\"}\nEOF",
+          "export RUSTFLAGS=\"-C link-args=-Wl,-rpath,${PREFIX}/lib\"",
+          "cd rust",
+          "cargo auditable install --locked --no-track --root=${{ PREFIX }} --path=.",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "cd \"${{ RECIPE_DIR }}\""
+        ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
-          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        },
-        "file": "build-selenium-manager"
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "ZSTD_SYS_USE_PKG_CONFIG": "1"
+        }
       }
     },
     "extra": {
@@ -390,26 +533,40 @@
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "pkg-config"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "selenium-manager"
+              ],
+              "files": [
+                "etc/conda/env_vars.d/selenium-manager.json"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
               "selenium-manager --version",
               "selenium-manager --help",
-              "ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\""
+              "ls \"${SE_MANAGER_PATH}\""
             ]
           }
         ],
-        "version": "4.51.0"
+        "version": "4.52.0"
       }
     ],
     "package": {
       "name": "selenium-manager",
-      "version": "4.51.0"
+      "version": "4.52.0"
     },
     "requirements": {
       "build": [
@@ -417,13 +574,17 @@
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "pkg-config"
+      ],
+      "host": [
+        "zstd"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "738e34604a63ca57b3d2b5faa4ac2d4b904142c059ac8bc017201a186e8a595d",
-      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.51.0.tar.gz"
+      "sha256": "3282451cad462cd5b7c941fbb71b8db1ace6d6ab160d2c90eed7c984068f4b1a",
+      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.52.0.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -434,12 +595,15 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "pkg-config",
         "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "zstd"
+      ]
     },
     "run": {
       "__set__": true,
@@ -466,7 +630,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/selenium-manager.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"4.51.0\"\n\npackage:\n  name: selenium-manager\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-${{ version }}.tar.gz\n  sha256: 738e34604a63ca57b3d2b5faa4ac2d4b904142c059ac8bc017201a186e8a595d\n\nbuild:\n  number: 0\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n    file: build-selenium-manager\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n\ntests:\n  - script:\n      - selenium-manager --version\n      - selenium-manager --help\n      - ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\"\n\nabout:\n  homepage: https://github.com/SeleniumHQ/selenium\n  license: Apache-2.0\n  license_file:\n    - THIRDPARTY.yml\n    - LICENSE\n    - NOTICE\n  summary: |-\n    Selenium Manager is a standalone tool that automatically manages the browser\n    infrastructure required by Selenium (i.e., browsers and drivers).\n\nextra:\n  recipe-maintainers:\n    - conda-forge/selenium\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"4.52.0\"\n  env_d_json: selenium-manager.json\n\npackage:\n  name: selenium-manager\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-${{ version }}.tar.gz\n  sha256: 3282451cad462cd5b7c941fbb71b8db1ace6d6ab160d2c90eed7c984068f4b1a\n\nbuild:\n  number: 0\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      ZSTD_SYS_USE_PKG_CONFIG: \"1\"\n    content:\n      - if: unix\n        then:\n          - mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"\n          - |-\n            cat <<EOF > \"${PREFIX}/etc/conda/env_vars.d/${{ env_d_json }}\"\n            {\"SE_MANAGER_PATH\":\"${PREFIX}/bin/selenium-manager\"}\n            EOF\n        else:\n          - mkdir %PREFIX%\\etc\\conda\\env_vars.d\n          - |-\n            echo {\"SE_MANAGER_PATH\":\"%PREFIX%\\\\Scripts\\\\selenium-manager.exe\"} > \"%PREFIX%\\etc\\conda\\env_vars.d\\${{ env_d_json }}\"\n      - if: osx\n        then:\n          - export RUSTFLAGS=\"-C link-args=-Wl,-rpath,${PREFIX}/lib\"\n      - if: linux\n        then:\n          - export RUSTFLAGS=\"-C link-arg=-Wl,-rpath-link,${PREFIX}/lib -L${PREFIX}/lib\"\n      - cd rust\n      - cargo auditable install --locked --no-track --root=${{ PREFIX }} --path=.\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      - cd \"${{ RECIPE_DIR }}\"\n      - if: win\n        then:\n          - md \"%SCRIPTS%\" || echo \"%SCRIPTS% already exists\"\n          - move \"%PREFIX%\\bin\\selenium-manager.exe\" \"%SCRIPTS%\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - pkg-config\n  host:\n    - zstd\n\ntests:\n  - package_contents:\n      strict: true\n      bin:\n        - selenium-manager\n      files:\n        - etc/conda/env_vars.d/${{ env_d_json }}\n  - script:\n      - selenium-manager --version\n      - selenium-manager --help\n      - if: unix\n        then: ls \"${SE_MANAGER_PATH}\"\n        else: dir \"%SE_MANAGER_PATH%\"\n\nabout:\n  homepage: https://github.com/SeleniumHQ/selenium\n  license: Apache-2.0\n  license_file:\n    - rust/THIRDPARTY.yml\n    - LICENSE\n    - NOTICE\n  summary: |-\n    Selenium Manager is a standalone tool that automatically manages the browser\n    infrastructure required by Selenium (i.e., browsers and drivers).\n\nextra:\n  recipe-maintainers:\n    - conda-forge/selenium\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -474,7 +638,9 @@
       "c_stdlib_stub",
       "cargo-auditable",
       "cargo-bundle-licenses",
-      "rust_compiler_stub"
+      "pkg-config",
+      "rust_compiler_stub",
+      "zstd"
     ]
   },
   "requirements": {
@@ -485,6 +651,7 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "pkg-config",
         "rust_compiler_stub"
       ]
     },
@@ -492,7 +659,8 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "c_stdlib_stub"
+        "c_stdlib_stub",
+        "zstd"
       ]
     },
     "run": {
@@ -516,12 +684,15 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "pkg-config",
         "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "zstd"
+      ]
     },
     "run": {
       "__set__": true,
@@ -532,8 +703,8 @@
       "elements": []
     }
   },
-  "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.51.0.tar.gz",
-  "version": "4.51.0",
+  "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.52.0.tar.gz",
+  "version": "4.52.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/selenium-manager.json"
   },
@@ -542,17 +713,27 @@
       "home": "https://github.com/SeleniumHQ/selenium",
       "license": "Apache-2.0",
       "license_family": "Apache-2.0",
-      "license_file": "THIRDPARTY.yml",
+      "license_file": "rust/THIRDPARTY.yml",
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
       "number": "0",
       "script": {
+        "content": [
+          "mkdir %PREFIX%\\etc\\conda\\env_vars.d",
+          "echo {\"SE_MANAGER_PATH\":\"%PREFIX%\\\\Scripts\\\\selenium-manager.exe\"} > \"%PREFIX%\\etc\\conda\\env_vars.d\\${{ env_d_json }}\"",
+          "cd rust",
+          "cargo auditable install --locked --no-track --root=${{ PREFIX }} --path=.",
+          "cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml",
+          "cd \"${{ RECIPE_DIR }}\"",
+          "md \"%SCRIPTS%\" || echo \"%SCRIPTS% already exists\"",
+          "move \"%PREFIX%\\bin\\selenium-manager.exe\" \"%SCRIPTS%\""
+        ],
         "env": {
           "CARGO_PROFILE_RELEASE_LTO": "fat",
-          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
-        },
-        "file": "build-selenium-manager"
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols",
+          "ZSTD_SYS_USE_PKG_CONFIG": "1"
+        }
       }
     },
     "extra": {
@@ -571,26 +752,40 @@
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "pkg-config"
           ],
-          "host": [],
+          "host": [
+            "zstd"
+          ],
           "run": []
         },
         "tests": [
           {
+            "package_contents": {
+              "bin": [
+                "selenium-manager"
+              ],
+              "files": [
+                "etc/conda/env_vars.d/selenium-manager.json"
+              ],
+              "strict": true
+            }
+          },
+          {
             "script": [
               "selenium-manager --version",
               "selenium-manager --help",
-              "ls \"${SE_MANAGER_PATH}\" || dir \"%SE_MANAGER_PATH%\""
+              "dir \"%SE_MANAGER_PATH%\""
             ]
           }
         ],
-        "version": "4.51.0"
+        "version": "4.52.0"
       }
     ],
     "package": {
       "name": "selenium-manager",
-      "version": "4.51.0"
+      "version": "4.52.0"
     },
     "requirements": {
       "build": [
@@ -598,13 +793,17 @@
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "pkg-config"
+      ],
+      "host": [
+        "zstd"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "738e34604a63ca57b3d2b5faa4ac2d4b904142c059ac8bc017201a186e8a595d",
-      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.51.0.tar.gz"
+      "sha256": "3282451cad462cd5b7c941fbb71b8db1ace6d6ab160d2c90eed7c984068f4b1a",
+      "url": "https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-4.52.0.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -615,12 +814,15 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "pkg-config",
         "rust_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "zstd"
+      ]
     },
     "run": {
       "__set__": true,
