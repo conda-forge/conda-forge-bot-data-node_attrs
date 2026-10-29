@@ -1,13 +1,8 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '13'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\ncdt_name:\n- cos7\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-cos7-x86_64\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_stdlib_version\n  - cdt_name\n",
-  "ci_support_migrations": {
-    "r-base44_and_m2w64-ucrt": {
-      "migration_number": 1,
-      "migrator_ts": 1718391654
-    }
-  },
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
+  "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
       "linux_aarch64": "linux_64",
@@ -24,12 +19,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "win_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "d8143cf06061e71b43b6242ada49b337e8831b1f",
-  "feedstock_hash_ts": 1777043566,
+  "feedstock_hash": "a0acf162b58b46d811062552c97d028da3d55dd6",
+  "feedstock_hash_ts": 1793243908,
   "feedstock_name": "xorg-xineramaproto",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -289,10 +285,12 @@
         "m2-autoconf",
         "m2-automake1.15",
         "m2-libtool",
+        "m2-pkg-config",
         "m2-base",
         "m2-make",
         "m2w64_c_compiler_stub",
-        "m2w64_c_stdlib_stub"
+        "m2w64_c_stdlib_stub",
+        "autotools_clang_conda"
       ],
       "host": [
         "xorg-util-macros"
@@ -475,15 +473,17 @@
     "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/xorg-xineramaproto.json"
   },
-  "raw_meta_yaml": "{% set xorg_name = \"xineramaproto\" %}\n{% set xorg_category = \"proto\" %}\n{% set name = \"xorg-\" ~ xorg_name %}\n{% set version = \"1.2.1\" %}\n{% set sha256 = \"977574bb3dc192ecd9c55f59f991ec1dff340be3e31392c95deff423da52485b\" %}\n{% set am_version = \"1.15\" %} # keep synchronized with build.sh\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  fn: {{ name }}-{{ version }}.tar.bz2\n  url: https://www.x.org/releases/individual/{{ xorg_category }}/{{ xorg_name }}-{{ version }}.tar.bz2\n  sha256: {{ sha256 }}\n  patches:\n    - aarch64_config.patch\n\nbuild:\n  number: 1002\n  detect_binary_files_with_prefix: true\n\nrequirements:\n  build:\n    - m2-autoconf  # [win]\n    - m2-automake{{ am_version }}  # [win]\n    - m2-libtool  # [win]\n    - pkg-config\n    - gnuconfig  # [unix]\n    - m2-base  # [win]\n    - make  # [unix]\n    - m2-make  # [win]\n    - {{ compiler('c') }}        # [unix]\n    - {{ stdlib(\"c\") }}          # [unix]\n    - {{ compiler('m2w64_c') }}  # [win]\n    - {{ stdlib(\"m2w64_c\") }}    # [win]\n  host:\n    - xorg-util-macros\n\ntest:\n  commands:\n    - test -e $PREFIX/include/X11/extensions/panoramiXproto.h  # [not win]\n\nabout:\n  home: https://www.x.org/\n  license: MIT\n  license_family: MIT\n  license_file: COPYING\n  summary: 'Print extension headers'\n\nextra:\n  recipe-maintainers:\n    - epruesse\n    - pkgw\n",
+  "raw_meta_yaml": "{% set xorg_name = \"xineramaproto\" %}\n{% set xorg_category = \"proto\" %}\n{% set name = \"xorg-\" ~ xorg_name %}\n{% set version = \"1.2.1\" %}\n{% set sha256 = \"977574bb3dc192ecd9c55f59f991ec1dff340be3e31392c95deff423da52485b\" %}\n{% set am_version = \"1.15\" %} # keep synchronized with build.sh\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  fn: {{ name }}-{{ version }}.tar.bz2\n  url: https://www.x.org/releases/individual/{{ xorg_category }}/{{ xorg_name }}-{{ version }}.tar.bz2\n  sha256: {{ sha256 }}\n  patches:\n    - aarch64_config.patch\n\nbuild:\n  number: 1002\n  detect_binary_files_with_prefix: true\n\nrequirements:\n  build:\n    - m2-autoconf  # [win and x86_64]\n    - m2-automake{{ am_version }}  # [win and x86_64]\n    - m2-libtool  # [win and x86_64]\n    - pkg-config  # [unix or (win and arm64)]\n    - m2-pkg-config  # [win]\n    - gnuconfig  # [unix]\n    - m2-base  # [win and x86_64]\n    - make  # [unix]\n    - m2-make  # [win and x86_64]\n    - {{ compiler('c') }}        # [unix or (win and arm64)]\n    - {{ stdlib(\"c\") }}          # [unix or (win and arm64)]\n    - {{ compiler('m2w64_c') }}  # [win and x86_64]\n    - {{ stdlib(\"m2w64_c\") }}    # [win and x86_64]\n    - autotools_clang_conda  # [win and arm64]\n  host:\n    - xorg-util-macros\n\ntest:\n  commands:\n    - test -e $PREFIX/include/X11/extensions/panoramiXproto.h  # [not win]\n\nabout:\n  home: https://www.x.org/\n  license: MIT\n  license_family: MIT\n  license_file: COPYING\n  summary: 'Print extension headers'\n\nextra:\n  recipe-maintainers:\n    - epruesse\n    - pkgw\n",
   "req": {
     "__set__": true,
     "elements": [
+      "autotools_clang_conda",
       "c_compiler_stub",
       "c_stdlib_stub",
       "gnuconfig",
@@ -492,6 +492,7 @@
       "m2-base",
       "m2-libtool",
       "m2-make",
+      "m2-pkg-config",
       "m2w64_c_compiler_stub",
       "m2w64_c_stdlib_stub",
       "make",
@@ -503,6 +504,7 @@
     "build": {
       "__set__": true,
       "elements": [
+        "autotools_clang_conda",
         "c_compiler_stub",
         "c_stdlib_stub",
         "gnuconfig",
@@ -511,6 +513,7 @@
         "m2-base",
         "m2-libtool",
         "m2-make",
+        "m2-pkg-config",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
         "make",
@@ -542,6 +545,7 @@
     "build": {
       "__set__": true,
       "elements": [
+        "autotools_clang_conda",
         "c_compiler_stub",
         "c_stdlib_stub",
         "gnuconfig",
@@ -550,6 +554,7 @@
         "m2-base",
         "m2-libtool",
         "m2-make",
+        "m2-pkg-config",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
         "make",
@@ -603,7 +608,7 @@
         "m2-autoconf",
         "m2-automake1.15",
         "m2-libtool",
-        "pkg-config",
+        "m2-pkg-config",
         "m2-base",
         "m2-make",
         "m2w64_c_compiler_stub",
@@ -635,8 +640,81 @@
         "m2-base",
         "m2-libtool",
         "m2-make",
+        "m2-pkg-config",
         "m2w64_c_compiler_stub",
-        "m2w64_c_stdlib_stub",
+        "m2w64_c_stdlib_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "xorg-util-macros"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "home": "https://www.x.org/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "COPYING",
+      "summary": "Print extension headers"
+    },
+    "build": {
+      "detect_binary_files_with_prefix": true,
+      "number": "1002"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "epruesse",
+        "pkgw"
+      ]
+    },
+    "package": {
+      "name": "xorg-xineramaproto",
+      "version": "1.2.1"
+    },
+    "requirements": {
+      "build": [
+        "pkg-config",
+        "m2-pkg-config",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "autotools_clang_conda"
+      ],
+      "host": [
+        "xorg-util-macros"
+      ]
+    },
+    "schema_version": 0,
+    "source": {
+      "fn": "xorg-xineramaproto-1.2.1.tar.bz2",
+      "patches": [
+        "aarch64_config.patch"
+      ],
+      "sha256": "977574bb3dc192ecd9c55f59f991ec1dff340be3e31392c95deff423da52485b",
+      "url": "https://www.x.org/releases/individual/proto/xineramaproto-1.2.1.tar.bz2"
+    },
+    "test": {
+      "commands": null
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "autotools_clang_conda",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "m2-pkg-config",
         "pkg-config"
       ]
     },
