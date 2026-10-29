@@ -1,15 +1,16 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nexpat:\n- '2'\nfontconfig:\n- '2'\nfreetype:\n- '2'\nglib:\n- '2'\nicu:\n- '78'\nlibpng:\n- '1.6'\nopenssl:\n- '3.5'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nexpat:\n- '2'\nfontconfig:\n- '2'\nfreetype:\n- '2'\nglib:\n- '2'\nicu:\n- '79'\nlibpng:\n- '1.6'\nopenssl:\n- '3.5'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_migrations": {
+    "icu79": {
+      "migration_number": 1,
+      "migrator_ts": 1792698974.6739285
+    }
+  },
   "conda-forge.yml": {
     "bot": {
       "automerge": true
-    },
-    "build_platform": {
-      "linux_aarch64": "linux_64",
-      "osx_arm64": "osx_64"
     },
     "conda_build": {
       "pkg_format": "2"
@@ -21,12 +22,14 @@
       "tooling_branch_name": "main"
     },
     "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default",
       "win": "azure"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "28741a280d7184a2ad9695fa57b1cd6063ead627",
-  "feedstock_hash_ts": 1792667249,
+  "feedstock_hash": "c63ee2c567b9b69adab0deb72926db4161c3d1b9",
+  "feedstock_hash_ts": 1793236131,
   "feedstock_name": "tectonic",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -40,7 +43,7 @@
       "summary": "A modernized, complete, standalone TeX/LaTeX engine."
     },
     "build": {
-      "number": "1"
+      "number": "2"
     },
     "extra": {
       "recipe-maintainers": [
@@ -198,7 +201,7 @@
       "summary": "A modernized, complete, standalone TeX/LaTeX engine."
     },
     "build": {
-      "number": "1"
+      "number": "2"
     },
     "extra": {
       "recipe-maintainers": [
@@ -362,7 +365,7 @@
       "summary": "A modernized, complete, standalone TeX/LaTeX engine."
     },
     "build": {
-      "number": "1"
+      "number": "2"
     },
     "extra": {
       "recipe-maintainers": [
@@ -681,7 +684,7 @@
       "summary": "A modernized, complete, standalone TeX/LaTeX engine."
     },
     "build": {
-      "number": "1"
+      "number": "2"
     },
     "extra": {
       "recipe-maintainers": [
@@ -836,7 +839,7 @@
       "summary": "A modernized, complete, standalone TeX/LaTeX engine."
     },
     "build": {
-      "number": "1"
+      "number": "2"
     },
     "extra": {
       "recipe-maintainers": [
@@ -997,7 +1000,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/tectonic.json"
   },
-  "raw_meta_yaml": "context:\n  name: tectonic\n  version: \"0.17.0\"\n  sha256: 30adda98f67dd5389844f6023adeeb54b5475c17a54b777900644468fbc9765d\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/tectonic-typesetting/${{ name }}/archive/refs/tags/${{ name }}@${{ version }}.tar.gz\n  sha256: ${{ sha256 }}\n\nbuild:\n  number: 1\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('rust') }}\n    - cargo-bundle-licenses\n    - if: win\n      then:\n        - m2w64-pkg-config\n      else:\n        - pkg-config\n    - if: build_platform != target_platform\n      then:\n        - glib\n        - harfbuzz\n  host:\n    - if: not osx\n      then:\n        - expat\n        - fontconfig\n    - freetype\n    - glib  # development files needed by harfbuzz\n    - graphite2\n    - harfbuzz\n    - icu\n    - libpng\n    - openssl\n    - zlib\n  run:\n    - if: not osx\n      then:\n        - fontconfig\n    - freetype\n    - graphite2\n    - harfbuzz\n    - icu\n    - libpng\n    - openssl\n    - zlib\n\ntests:\n  - files:\n      recipe:\n        - example.tex\n    script:\n      - tectonic --help\n      - if: win\n        then:\n          # Rattler's build isolation forces USERPROFILE to %SRC_DIR% which causes\n          # the SHGetFolderPath system call to fail, leading to the message\n          # \"error: App data directories not supported\". This also triggers some\n          # errors in bld.bat but they're not fatal.\n          - SET \"USERPROFILE=%HOMEDRIVE%%HOMEPATH%\" & tectonic example.tex\n        else: tectonic example.tex\n\nabout:\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  summary: A modernized, complete, standalone TeX/LaTeX engine.\n  homepage: https://tectonic-typesetting.github.io/\n  repository: https://github.com/tectonic-typesetting/tectonic/\n  documentation: https://tectonic-typesetting.github.io/book/latest/\n\nextra:\n  recipe-maintainers:\n    - pkgw\n    - anjos\n",
+  "raw_meta_yaml": "context:\n  name: tectonic\n  version: \"0.17.0\"\n  sha256: 30adda98f67dd5389844f6023adeeb54b5475c17a54b777900644468fbc9765d\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/tectonic-typesetting/${{ name }}/archive/refs/tags/${{ name }}@${{ version }}.tar.gz\n  sha256: ${{ sha256 }}\n\nbuild:\n  number: 2\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('rust') }}\n    - cargo-bundle-licenses\n    - if: win\n      then:\n        - m2w64-pkg-config\n      else:\n        - pkg-config\n    - if: build_platform != target_platform\n      then:\n        - glib\n        - harfbuzz\n  host:\n    - if: not osx\n      then:\n        - expat\n        - fontconfig\n    - freetype\n    - glib  # development files needed by harfbuzz\n    - graphite2\n    - harfbuzz\n    - icu\n    - libpng\n    - openssl\n    - zlib\n  run:\n    - if: not osx\n      then:\n        - fontconfig\n    - freetype\n    - graphite2\n    - harfbuzz\n    - icu\n    - libpng\n    - openssl\n    - zlib\n\ntests:\n  - files:\n      recipe:\n        - example.tex\n    script:\n      - tectonic --help\n      - if: win\n        then:\n          # Rattler's build isolation forces USERPROFILE to %SRC_DIR% which causes\n          # the SHGetFolderPath system call to fail, leading to the message\n          # \"error: App data directories not supported\". This also triggers some\n          # errors in bld.bat but they're not fatal.\n          - SET \"USERPROFILE=%HOMEDRIVE%%HOMEPATH%\" & tectonic example.tex\n        else: tectonic example.tex\n\nabout:\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  summary: A modernized, complete, standalone TeX/LaTeX engine.\n  homepage: https://tectonic-typesetting.github.io/\n  repository: https://github.com/tectonic-typesetting/tectonic/\n  documentation: https://tectonic-typesetting.github.io/book/latest/\n\nextra:\n  recipe-maintainers:\n    - pkgw\n    - anjos\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1139,7 +1142,7 @@
       "summary": "A modernized, complete, standalone TeX/LaTeX engine."
     },
     "build": {
-      "number": "1"
+      "number": "2"
     },
     "extra": {
       "recipe-maintainers": [
