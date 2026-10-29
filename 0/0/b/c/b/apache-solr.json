@@ -16,8 +16,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "30a18bf16bee0bd0af7589b7cad482e69a135f69",
-  "feedstock_hash_ts": 1793176455,
+  "feedstock_hash": "391c4853f1a86da2e307f92433da224dc17dba45",
+  "feedstock_hash_ts": 1793276881,
   "feedstock_name": "apache-solr",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -29,13 +29,14 @@
     },
     "build": {
       "noarch": "generic",
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
         "antarcticrainforest",
         "tropicrainforest",
-        "karion"
+        "karion",
+        "pb01ka"
       ]
     },
     "package": {
@@ -45,6 +46,7 @@
     "requirements": {
       "build": [
         "sed",
+        "zip",
         "openjdk =21",
         "nodejs 22.*"
       ],
@@ -62,7 +64,9 @@
     "test": {
       "commands": [
         "solr start -h",
-        "solr stop -h"
+        "solr stop -h",
+        "test -n \"$(find ${PREFIX}/libexec/apache-solr -name 'google-api-client-*.jar')\"",
+        "test -z \"$(find ${PREFIX}/libexec/apache-solr -name \"google-api-client-*.jar\" -exec jar tf {} \\; | grep -E \"com/google/api/client/googleapis/google\\.(p12|jks)\")\""
       ]
     }
   },
@@ -72,7 +76,8 @@
       "elements": [
         "nodejs",
         "openjdk",
-        "sed"
+        "sed",
+        "zip"
       ]
     },
     "host": {
@@ -99,13 +104,14 @@
     },
     "build": {
       "noarch": "generic",
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
         "antarcticrainforest",
         "tropicrainforest",
-        "karion"
+        "karion",
+        "pb01ka"
       ]
     },
     "package": {
@@ -115,6 +121,7 @@
     "requirements": {
       "build": [
         "sed",
+        "zip",
         "openjdk =21",
         "nodejs 22.*"
       ],
@@ -132,7 +139,9 @@
     "test": {
       "commands": [
         "solr start -h",
-        "solr stop -h"
+        "solr stop -h",
+        "test -n \"$(find ${PREFIX}/libexec/apache-solr -name 'google-api-client-*.jar')\"",
+        "test -z \"$(find ${PREFIX}/libexec/apache-solr -name \"google-api-client-*.jar\" -exec jar tf {} \\; | grep -E \"com/google/api/client/googleapis/google\\.(p12|jks)\")\""
       ]
     }
   },
@@ -150,13 +159,14 @@
   "pr_info": {
     "__lazy_json__": "pr_info/apache-solr.json"
   },
-  "raw_meta_yaml": "{% set version = \"10.1.0\" %}\npackage:\n  name: apache-solr\n  version: {{ version }}  # Use the specific version you want to package\n\nsource:\n  - url: https://github.com/apache/solr/archive/refs/tags/releases/solr/{{ version }}.tar.gz\n    sha256: 3172bf6cce65ed8cac5a928cb390239e8b8a9306d5aeeee2831753dd12c825e7\n\nbuild:\n  number: 0\n  noarch: generic\n\nrequirements:\n  build:\n    - sed\n    - openjdk =21\n    - nodejs 22.*\n\n  run:\n    - openjdk >=11  # Solr requires Java to run\n\ntest:\n  commands:\n    - solr start -h\n    - solr stop -h\n\nabout:\n  home: https://solr.apache.org/\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  summary: >\n    Solr is highly reliable, scalable and fault tolerant, providing distributed indexing, replication and load-balanced querying, automated failover and recovery, centralized configuration and more.\n\nextra:\n  recipe-maintainers:\n    - antarcticrainforest\n    - tropicrainforest\n    - karion\n",
+  "raw_meta_yaml": "{% set version = \"10.1.0\" %}\npackage:\n  name: apache-solr\n  version: {{ version }}  # Use the specific version you want to package\n\nsource:\n  - url: https://github.com/apache/solr/archive/refs/tags/releases/solr/{{ version }}.tar.gz\n    sha256: 3172bf6cce65ed8cac5a928cb390239e8b8a9306d5aeeee2831753dd12c825e7\n\nbuild:\n  number: 1\n  noarch: generic\n\nrequirements:\n  build:\n    - sed\n    - zip\n    - openjdk =21\n    - nodejs 22.*\n\n  run:\n    - openjdk >=11  # Solr requires Java to run\n\ntest:\n  commands:\n    - solr start -h\n    - solr stop -h\n    # Regression guard for the google-api-client vendored CA trust store stripped\n    # in build.sh: make sure it's actually gone, not silently still shipping.\n    - test -n \"$(find ${PREFIX}/libexec/apache-solr -name 'google-api-client-*.jar')\"\n    - 'test -z \"$(find ${PREFIX}/libexec/apache-solr -name \"google-api-client-*.jar\" -exec jar tf {} \\; | grep -E \"com/google/api/client/googleapis/google\\.(p12|jks)\")\"'\n\nabout:\n  home: https://solr.apache.org/\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  summary: >\n    Solr is highly reliable, scalable and fault tolerant, providing distributed indexing, replication and load-balanced querying, automated failover and recovery, centralized configuration and more.\n\nextra:\n  recipe-maintainers:\n    - antarcticrainforest\n    - tropicrainforest\n    - karion\n    - pb01ka\n",
   "req": {
     "__set__": true,
     "elements": [
       "nodejs",
       "openjdk",
-      "sed"
+      "sed",
+      "zip"
     ]
   },
   "requirements": {
@@ -165,7 +175,8 @@
       "elements": [
         "nodejs",
         "openjdk",
-        "sed"
+        "sed",
+        "zip"
       ]
     },
     "host": {
@@ -190,7 +201,8 @@
       "elements": [
         "nodejs 22.*",
         "openjdk =21",
-        "sed"
+        "sed",
+        "zip"
       ]
     },
     "host": {
