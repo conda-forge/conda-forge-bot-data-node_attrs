@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nlibblas:\n- 3.9.* *netlib\nlibboost_devel:\n- '1.90'\nlibcurl:\n- '8'\nlibffi:\n- '3.7'\nlibiconv:\n- '1'\nliblapack:\n- 3.9.* *netlib\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nlibblas:\n- 3.9.* *netlib\nlibboost_devel:\n- '1.90'\nlibcurl:\n- '8'\nlibffi:\n- '3.7'\nlibiconv:\n- '1'\nliblapack:\n- 3.9.* *netlib\nreadline:\n- '8'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\n",
   "ci_support_migrations": {
     "libboost190": {
       "migration_number": 1,
@@ -28,8 +28,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "dca8ddfa9ccdb15a5a95cd2cfbdd5f5070c7ee1e",
-  "feedstock_hash_ts": 1793392352,
+  "feedstock_hash": "9db09eafff7352307fe1ccd3af4e8749ebc4d241",
+  "feedstock_hash_ts": 1793480126,
   "feedstock_name": "openmodelica",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -41,7 +41,8 @@
       "summary": "The Open Source Modelica Suite"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": []
     },
     "extra": {
       "recipe-maintainers": [
@@ -49,6 +50,66 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "openmodelica-omc",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "fortran_compiler_stub",
+            "pkg-config",
+            "autoconf",
+            "automake",
+            "make"
+          ],
+          "host": [
+            "openjdk",
+            "libblas",
+            "liblapack",
+            "libcurl",
+            "libboost-devel",
+            "libffi",
+            "libiconv",
+            "readline",
+            "qt-webengine",
+            "openscenegraph",
+            "libgl-devel",
+            "libegl-devel"
+          ],
+          "run": [
+            "cmake",
+            "make",
+            "zip",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "OMCompiler/Examples/Circle.mo"
+              ]
+            },
+            "script": [
+              "omc --version",
+              "OMSimulator --help",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
+              "omc export.mos",
+              "ls Circle.fmu",
+              "OMSimulator Circle.fmu",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
+              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
+            ]
+          }
+        ],
+        "version": "1.27.2"
+      },
       {
         "build": null,
         "name": "openmodelica",
@@ -80,40 +141,22 @@
             "libegl-devel"
           ],
           "run": [
+            "openmodelica-omc",
             "openjdk",
-            "cmake",
-            "make",
-            "zip",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
+            "qt-webengine",
+            "openscenegraph"
           ]
         },
         "tests": [
           {
-            "files": {
-              "source": [
-                "OMCompiler/Examples/Circle.mo"
-              ]
-            },
-            "script": [
-              "omc --version",
-              "OMEdit --help",
-              "OMSimulator --help",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
-              "omc export.mos",
-              "ls Circle.fmu",
-              "OMSimulator Circle.fmu",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
-              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
-            ]
+            "script": "OMEdit --help"
           }
         ],
         "version": "1.27.2"
       }
     ],
     "package": {
-      "name": "openmodelica",
+      "name": "openmodelica-omc",
       "version": "1.27.2"
     },
     "requirements": {
@@ -144,7 +187,6 @@
         "libegl-devel"
       ],
       "run": [
-        "openjdk",
         "cmake",
         "make",
         "zip",
@@ -211,6 +253,9 @@
         "cxx_compiler_stub",
         "make",
         "openjdk",
+        "openmodelica-omc",
+        "openscenegraph",
+        "qt-webengine",
         "zip"
       ]
     },
@@ -228,7 +273,8 @@
       "summary": "The Open Source Modelica Suite"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": []
     },
     "extra": {
       "recipe-maintainers": [
@@ -236,6 +282,66 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "openmodelica-omc",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "fortran_compiler_stub",
+            "pkg-config",
+            "autoconf",
+            "automake",
+            "make"
+          ],
+          "host": [
+            "openjdk",
+            "libblas",
+            "liblapack",
+            "libcurl",
+            "libboost-devel",
+            "libffi",
+            "libiconv",
+            "readline",
+            "qt-webengine",
+            "openscenegraph",
+            "libgl-devel",
+            "libegl-devel"
+          ],
+          "run": [
+            "cmake",
+            "make",
+            "zip",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "OMCompiler/Examples/Circle.mo"
+              ]
+            },
+            "script": [
+              "omc --version",
+              "OMSimulator --help",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
+              "omc export.mos",
+              "ls Circle.fmu",
+              "OMSimulator Circle.fmu",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
+              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
+            ]
+          }
+        ],
+        "version": "1.27.2"
+      },
       {
         "build": null,
         "name": "openmodelica",
@@ -267,40 +373,22 @@
             "libegl-devel"
           ],
           "run": [
+            "openmodelica-omc",
             "openjdk",
-            "cmake",
-            "make",
-            "zip",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
+            "qt-webengine",
+            "openscenegraph"
           ]
         },
         "tests": [
           {
-            "files": {
-              "source": [
-                "OMCompiler/Examples/Circle.mo"
-              ]
-            },
-            "script": [
-              "omc --version",
-              "OMEdit --help",
-              "OMSimulator --help",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
-              "omc export.mos",
-              "ls Circle.fmu",
-              "OMSimulator Circle.fmu",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
-              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
-            ]
+            "script": "OMEdit --help"
           }
         ],
         "version": "1.27.2"
       }
     ],
     "package": {
-      "name": "openmodelica",
+      "name": "openmodelica-omc",
       "version": "1.27.2"
     },
     "requirements": {
@@ -331,7 +419,6 @@
         "libegl-devel"
       ],
       "run": [
-        "openjdk",
         "cmake",
         "make",
         "zip",
@@ -398,6 +485,9 @@
         "cxx_compiler_stub",
         "make",
         "openjdk",
+        "openmodelica-omc",
+        "openscenegraph",
+        "qt-webengine",
         "zip"
       ]
     },
@@ -415,7 +505,8 @@
       "summary": "The Open Source Modelica Suite"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": []
     },
     "extra": {
       "recipe-maintainers": [
@@ -425,6 +516,66 @@
     "outputs": [
       {
         "build": null,
+        "name": "openmodelica-omc",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "fortran_compiler_stub",
+            "pkg-config",
+            "autoconf",
+            "automake",
+            "make"
+          ],
+          "host": [
+            "openjdk",
+            "libblas",
+            "liblapack",
+            "libcurl",
+            "libboost-devel",
+            "libffi",
+            "libiconv",
+            "readline",
+            "qt-webengine",
+            "openscenegraph",
+            "libgl-devel",
+            "libegl-devel"
+          ],
+          "run": [
+            "cmake",
+            "make",
+            "zip",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "OMCompiler/Examples/Circle.mo"
+              ]
+            },
+            "script": [
+              "omc --version",
+              "OMSimulator --help",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
+              "omc export.mos",
+              "ls Circle.fmu",
+              "OMSimulator Circle.fmu",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
+              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
+            ]
+          }
+        ],
+        "version": "1.27.2"
+      },
+      {
+        "build": null,
         "name": "openmodelica",
         "requirements": {
           "build": [
@@ -454,7 +605,50 @@
             "libegl-devel"
           ],
           "run": [
+            "openmodelica-omc",
             "openjdk",
+            "qt-webengine",
+            "openscenegraph"
+          ]
+        },
+        "tests": [
+          {
+            "script": "OMEdit --help"
+          }
+        ],
+        "version": "1.27.2"
+      },
+      {
+        "build": null,
+        "name": "openmodelica-omc",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "fortran_compiler_stub",
+            "pkg-config",
+            "autoconf",
+            "automake",
+            "make"
+          ],
+          "host": [
+            "openjdk",
+            "libblas",
+            "liblapack",
+            "libcurl",
+            "libboost-devel",
+            "libffi",
+            "libiconv",
+            "readline",
+            "qt-webengine",
+            "openscenegraph",
+            "libgl-devel",
+            "libegl-devel"
+          ],
+          "run": [
             "cmake",
             "make",
             "zip",
@@ -472,7 +666,6 @@
             },
             "script": [
               "omc --version",
-              "OMEdit --help",
               "OMSimulator --help",
               "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
               "omc export.mos",
@@ -516,7 +709,49 @@
             "libegl-devel"
           ],
           "run": [
+            "openmodelica-omc",
             "openjdk",
+            "qt-webengine",
+            "openscenegraph"
+          ]
+        },
+        "tests": [
+          {
+            "script": "OMEdit --help"
+          }
+        ],
+        "version": "1.27.2"
+      },
+      {
+        "build": null,
+        "name": "openmodelica-omc",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "fortran_compiler_stub",
+            "pkg-config",
+            "autoconf",
+            "automake",
+            "make"
+          ],
+          "host": [
+            "openjdk",
+            "libblas",
+            "liblapack",
+            "libcurl",
+            "libboost-devel",
+            "libffi",
+            "libiconv",
+            "readline",
+            "qt-webengine",
+            "openscenegraph",
+            "libintl"
+          ],
+          "run": [
             "cmake",
             "make",
             "zip",
@@ -534,7 +769,6 @@
             },
             "script": [
               "omc --version",
-              "OMEdit --help",
               "OMSimulator --help",
               "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
               "omc export.mos",
@@ -573,10 +807,53 @@
             "libiconv",
             "readline",
             "qt-webengine",
-            "openscenegraph"
+            "openscenegraph",
+            "libintl"
           ],
           "run": [
+            "openmodelica-omc",
             "openjdk",
+            "qt-webengine",
+            "openscenegraph"
+          ]
+        },
+        "tests": [
+          {
+            "script": "OMEdit --help"
+          }
+        ],
+        "version": "1.27.2"
+      },
+      {
+        "build": null,
+        "name": "openmodelica-omc",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "fortran_compiler_stub",
+            "pkg-config",
+            "autoconf",
+            "automake",
+            "make"
+          ],
+          "host": [
+            "openjdk",
+            "libblas",
+            "liblapack",
+            "libcurl",
+            "libboost-devel",
+            "libffi",
+            "libiconv",
+            "readline",
+            "qt-webengine",
+            "openscenegraph",
+            "libintl"
+          ],
+          "run": [
             "cmake",
             "make",
             "zip",
@@ -594,7 +871,6 @@
             },
             "script": [
               "omc --version",
-              "OMEdit --help",
               "OMSimulator --help",
               "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
               "omc export.mos",
@@ -633,43 +909,26 @@
             "libiconv",
             "readline",
             "qt-webengine",
-            "openscenegraph"
+            "openscenegraph",
+            "libintl"
           ],
           "run": [
+            "openmodelica-omc",
             "openjdk",
-            "cmake",
-            "make",
-            "zip",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
+            "qt-webengine",
+            "openscenegraph"
           ]
         },
         "tests": [
           {
-            "files": {
-              "source": [
-                "OMCompiler/Examples/Circle.mo"
-              ]
-            },
-            "script": [
-              "omc --version",
-              "OMEdit --help",
-              "OMSimulator --help",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
-              "omc export.mos",
-              "ls Circle.fmu",
-              "OMSimulator Circle.fmu",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
-              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
-            ]
+            "script": "OMEdit --help"
           }
         ],
         "version": "1.27.2"
       }
     ],
     "package": {
-      "name": "openmodelica",
+      "name": "openmodelica-omc",
       "version": "1.27.2"
     },
     "requirements": {
@@ -697,10 +956,10 @@
         "qt-webengine",
         "openscenegraph",
         "libgl-devel",
-        "libegl-devel"
+        "libegl-devel",
+        "libintl"
       ],
       "run": [
-        "openjdk",
         "cmake",
         "make",
         "zip",
@@ -725,7 +984,7 @@
       "url": "https://github.com/OpenModelica/OpenModelica/releases/download/v1.27.2/OpenModelica-v1.27.2-src-with-submodules.zip"
     }
   },
-  "name": "openmodelica",
+  "name": "openmodelica-omc",
   "osx_64_meta_yaml": {
     "about": {
       "home": "https://openmodelica.org/",
@@ -735,7 +994,8 @@
       "summary": "The Open Source Modelica Suite"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": []
     },
     "extra": {
       "recipe-maintainers": [
@@ -743,6 +1003,65 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "openmodelica-omc",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "fortran_compiler_stub",
+            "pkg-config",
+            "autoconf",
+            "automake",
+            "make"
+          ],
+          "host": [
+            "openjdk",
+            "libblas",
+            "liblapack",
+            "libcurl",
+            "libboost-devel",
+            "libffi",
+            "libiconv",
+            "readline",
+            "qt-webengine",
+            "openscenegraph",
+            "libintl"
+          ],
+          "run": [
+            "cmake",
+            "make",
+            "zip",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "OMCompiler/Examples/Circle.mo"
+              ]
+            },
+            "script": [
+              "omc --version",
+              "OMSimulator --help",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
+              "omc export.mos",
+              "ls Circle.fmu",
+              "OMSimulator Circle.fmu",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
+              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
+            ]
+          }
+        ],
+        "version": "1.27.2"
+      },
       {
         "build": null,
         "name": "openmodelica",
@@ -769,43 +1088,26 @@
             "libiconv",
             "readline",
             "qt-webengine",
-            "openscenegraph"
+            "openscenegraph",
+            "libintl"
           ],
           "run": [
+            "openmodelica-omc",
             "openjdk",
-            "cmake",
-            "make",
-            "zip",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
+            "qt-webengine",
+            "openscenegraph"
           ]
         },
         "tests": [
           {
-            "files": {
-              "source": [
-                "OMCompiler/Examples/Circle.mo"
-              ]
-            },
-            "script": [
-              "omc --version",
-              "OMEdit --help",
-              "OMSimulator --help",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
-              "omc export.mos",
-              "ls Circle.fmu",
-              "OMSimulator Circle.fmu",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
-              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
-            ]
+            "script": "OMEdit --help"
           }
         ],
         "version": "1.27.2"
       }
     ],
     "package": {
-      "name": "openmodelica",
+      "name": "openmodelica-omc",
       "version": "1.27.2"
     },
     "requirements": {
@@ -831,10 +1133,10 @@
         "libiconv",
         "readline",
         "qt-webengine",
-        "openscenegraph"
+        "openscenegraph",
+        "libintl"
       ],
       "run": [
-        "openjdk",
         "cmake",
         "make",
         "zip",
@@ -883,6 +1185,7 @@
         "libcurl",
         "libffi",
         "libiconv",
+        "libintl",
         "liblapack",
         "openjdk",
         "openscenegraph",
@@ -899,6 +1202,9 @@
         "cxx_compiler_stub",
         "make",
         "openjdk",
+        "openmodelica-omc",
+        "openscenegraph",
+        "qt-webengine",
         "zip"
       ]
     },
@@ -916,7 +1222,8 @@
       "summary": "The Open Source Modelica Suite"
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": []
     },
     "extra": {
       "recipe-maintainers": [
@@ -924,6 +1231,65 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "openmodelica-omc",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "fortran_compiler_stub",
+            "pkg-config",
+            "autoconf",
+            "automake",
+            "make"
+          ],
+          "host": [
+            "openjdk",
+            "libblas",
+            "liblapack",
+            "libcurl",
+            "libboost-devel",
+            "libffi",
+            "libiconv",
+            "readline",
+            "qt-webengine",
+            "openscenegraph",
+            "libintl"
+          ],
+          "run": [
+            "cmake",
+            "make",
+            "zip",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ]
+        },
+        "tests": [
+          {
+            "files": {
+              "source": [
+                "OMCompiler/Examples/Circle.mo"
+              ]
+            },
+            "script": [
+              "omc --version",
+              "OMSimulator --help",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
+              "omc export.mos",
+              "ls Circle.fmu",
+              "OMSimulator Circle.fmu",
+              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
+              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
+            ]
+          }
+        ],
+        "version": "1.27.2"
+      },
       {
         "build": null,
         "name": "openmodelica",
@@ -950,43 +1316,26 @@
             "libiconv",
             "readline",
             "qt-webengine",
-            "openscenegraph"
+            "openscenegraph",
+            "libintl"
           ],
           "run": [
+            "openmodelica-omc",
             "openjdk",
-            "cmake",
-            "make",
-            "zip",
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "cxx_compiler_stub"
+            "qt-webengine",
+            "openscenegraph"
           ]
         },
         "tests": [
           {
-            "files": {
-              "source": [
-                "OMCompiler/Examples/Circle.mo"
-              ]
-            },
-            "script": [
-              "omc --version",
-              "OMEdit --help",
-              "OMSimulator --help",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos",
-              "omc export.mos",
-              "ls Circle.fmu",
-              "OMSimulator Circle.fmu",
-              "echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos",
-              "omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos"
-            ]
+            "script": "OMEdit --help"
           }
         ],
         "version": "1.27.2"
       }
     ],
     "package": {
-      "name": "openmodelica",
+      "name": "openmodelica-omc",
       "version": "1.27.2"
     },
     "requirements": {
@@ -1012,10 +1361,10 @@
         "libiconv",
         "readline",
         "qt-webengine",
-        "openscenegraph"
+        "openscenegraph",
+        "libintl"
       ],
       "run": [
-        "openjdk",
         "cmake",
         "make",
         "zip",
@@ -1064,6 +1413,7 @@
         "libcurl",
         "libffi",
         "libiconv",
+        "libintl",
         "liblapack",
         "openjdk",
         "openscenegraph",
@@ -1080,6 +1430,9 @@
         "cxx_compiler_stub",
         "make",
         "openjdk",
+        "openmodelica-omc",
+        "openscenegraph",
+        "qt-webengine",
         "zip"
       ]
     },
@@ -1091,7 +1444,8 @@
   "outputs_names": {
     "__set__": true,
     "elements": [
-      "openmodelica"
+      "openmodelica",
+      "openmodelica-omc"
     ]
   },
   "parsing_error": false,
@@ -1104,7 +1458,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/openmodelica.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"1.27.2\"\n\npackage:\n  name: openmodelica\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/OpenModelica/OpenModelica/releases/download/v${{ version }}/OpenModelica-v${{ version }}-src-with-submodules.zip\n  sha256: b724e7deba511d888c29f7e150abb2865522cdf9bb39d2ed84c653cbdffd20e6\n  patches:\n    # drop erroneous _GNU_SOURCE define (error seems specific to conda-forge)\n    - fmilib-gnusource.patch\n    # Add OM_USE_SYSTEM_ZLIB option to fix stdio.h:210:7: error: expected identifier or '(' (updated to zlib 1.3.2 upstream)\n    - zlib.patch\n    # add macos/aarch64 platforms (https://github.com/robbr48/fmi4c/pull/97)\n    - fmi4c.patch\n    # boost includes (https://github.com/OpenModelica/OpenModelica/pull/15982)\n    - boost.patch\n    # SyntaxError (https://github.com/OpenModelica/OpenModelica/pull/15983)\n    - syntaxerror.patch\n    # error: no member named 'random_shuffle' in namespace 'std' (https://github.com/OpenModelica/OMCompiler-3rdParty/pull/219)\n    - random_shuffle.patch\n    # ld: unknown option: --no-undefined (https://github.com/OpenModelica/OpenModelica/pull/15990)\n    - undefined.patch\n    # cc1: error: '-Werror=c23-extensions': no option '-Wc23-extensions (https://github.com/OpenModelica/OpenModelica/pull/16297)\n    - 0001-SimRT-C-Mismatching-clang-flags.patch\n\nbuild:\n  number: 0\n  skip:\n    - win\n\nrequirements:\n  build:\n    - cmake\n    - ninja\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('fortran') }}\n    - if: unix\n      then:\n        - pkg-config\n        - autoconf\n        - automake\n        - make\n  host:\n    - openjdk\n    - libblas\n    - liblapack\n    - libcurl\n    - libboost-devel\n    - libffi\n    - libiconv\n    - readline\n    - qt-webengine\n    - openscenegraph\n    - if: linux\n      then:\n        - libgl-devel\n        - libegl-devel\n  run:\n    - openjdk\n    - cmake\n    - make\n    - zip\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n  run_constraints:\n    - omcompiler <0\n\ntests:\n  - script:\n      - omc --version\n      - OMEdit --help\n      - OMSimulator --help\n      - echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos\n      - omc export.mos\n      - ls Circle.fmu\n      - OMSimulator Circle.fmu\n      - echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos\n      - omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos\n      - ls Circle.fmu\n      - OMSimulator Circle.fmu\n    files:\n      source:\n        - OMCompiler/Examples/Circle.mo\n\nabout:\n  homepage: https://openmodelica.org/\n  license: LicenseRef-OSMC-PL\n  license_family: GPL\n  license_file:\n    - OSMC-License.txt\n    - OMCompiler/3rdParty/antlr/3.2/libantlr3c-3.2/COPYING\n    - OMCompiler/3rdParty/Cdaskr/LICENSE\n    - OMCompiler/3rdParty/CMinpack/CopyrightMINPACK.txt\n    - OMCompiler/3rdParty/gc/README.md\n    - OMCompiler/3rdParty/FMIL/LICENSE.md\n    - OMCompiler/3rdParty/libffi/LICENSE\n    - OMCompiler/3rdParty/libzmq/COPYING.LESSER\n    - OMCompiler/3rdParty/lis-1.4.12/COPYING\n    - OMCompiler/3rdParty/metis-5.1.0/LICENSE.txt\n    - OMCompiler/3rdParty/moo-0.1.0/COPYING.LESSER\n    - OMCompiler/3rdParty/open62541/open62541.txt\n    - OMCompiler/3rdParty/primme-3.2.3/COPYING.txt\n    - OMCompiler/3rdParty/ryu/LICENSE-Apache2\n    - OMCompiler/3rdParty/SuiteSparse-5.8.1/LICENSE.txt\n    - OMCompiler/3rdParty/sundials-5.4.0/LICENSE\n    - OMCompiler/3rdParty/zlib/LICENSE\n  summary: The Open Source Modelica Suite\n\nextra:\n  recipe-maintainers:\n    - jschueller\n",
+  "raw_meta_yaml": "context:\n  version: \"1.27.2\"\n\nrecipe:\n  name: openmodelica\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/OpenModelica/OpenModelica/releases/download/v${{ version }}/OpenModelica-v${{ version }}-src-with-submodules.zip\n  sha256: b724e7deba511d888c29f7e150abb2865522cdf9bb39d2ed84c653cbdffd20e6\n  patches:\n    # drop erroneous _GNU_SOURCE define (error seems specific to conda-forge)\n    - fmilib-gnusource.patch\n    # Add OM_USE_SYSTEM_ZLIB option to fix stdio.h:210:7: error: expected identifier or '(' (updated to zlib 1.3.2 upstream)\n    - zlib.patch\n    # add macos/aarch64 platforms (https://github.com/robbr48/fmi4c/pull/97)\n    - fmi4c.patch\n    # boost includes (https://github.com/OpenModelica/OpenModelica/pull/15982)\n    - boost.patch\n    # SyntaxError (https://github.com/OpenModelica/OpenModelica/pull/15983)\n    - syntaxerror.patch\n    # error: no member named 'random_shuffle' in namespace 'std' (https://github.com/OpenModelica/OMCompiler-3rdParty/pull/219)\n    - random_shuffle.patch\n    # ld: unknown option: --no-undefined (https://github.com/OpenModelica/OpenModelica/pull/15990)\n    - undefined.patch\n    # cc1: error: '-Werror=c23-extensions': no option '-Wc23-extensions (https://github.com/OpenModelica/OpenModelica/pull/16297)\n    - 0001-SimRT-C-Mismatching-clang-flags.patch\n\nbuild:\n  number: 1\n  skip:\n    - win\n\noutputs:\n  # Build once here, then split the install tree into the packages below.\n  # This avoids building twice (https://github.com/conda-forge/openmodelica-feedstock/issues/23).\n  - staging:\n      name: openmodelica-build\n    requirements:\n      build:\n        - cmake\n        - ninja\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('fortran') }}\n        - if: unix\n          then:\n            - pkg-config\n            - autoconf\n            - automake\n            - make\n      host:\n        - openjdk\n        - libblas\n        - liblapack\n        - libcurl\n        - libboost-devel\n        - libffi\n        - libiconv\n        - readline\n        - qt-webengine\n        - openscenegraph\n        - if: linux\n          then:\n            - libgl-devel\n            - libegl-devel\n        - if: osx\n          then:\n            - libintl\n    build:\n      script:\n        file: build.sh\n\n  # Compiler-only install: omc, OMSimulator and the simulation runtimes,\n  # without the Qt GUI clients or java.\n  - package:\n      name: openmodelica-omc\n    inherit: openmodelica-build\n    build:\n      files:\n        include:\n          - bin/**\n          - doc/**\n          - etc/**\n          - include/**\n          - lib/**\n          - share/**\n        exclude:\n          # Qt GUI clients and their private libs/data (shipped in `openmodelica`)\n          - bin/OMEdit\n          - bin/OMNotebook\n          - bin/OMPlot\n          - bin/OMShell\n          - lib/omc/libOMPlotLib.so\n          - lib/omc/libomqwt.so*\n          - lib/omc/libomsensplugin.so\n          - share/omedit/**\n          - share/omnotebook/**\n          - share/omshell/**\n    requirements:\n      run:\n        - cmake\n        - make\n        - zip\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n      # run exports are inherited from staging; drop the pins that only the\n      # excluded GUI files above link against (verified with readelf: only\n      # OMEdit/OMNotebook/OMPlot/OMShell plus libOMPlotLib/libomqwt/\n      # libomsensplugin need Qt / OpenSceneGraph).\n      ignore_run_exports:\n        by_name:\n          - qt-webengine\n          - openscenegraph\n          - libgl\n          - libegl\n      run_constraints:\n        - omcompiler <0\n    tests:\n      - script:\n          - omc --version\n          - OMSimulator --help\n          - echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle); getErrorString();' > export.mos\n          - omc export.mos\n          - ls Circle.fmu\n          - OMSimulator Circle.fmu\n          - echo 'loadFile(\"OMCompiler/Examples/Circle.mo\"); getErrorString(); buildModelFMU(Circle, platforms={\"dynamic\"}); getErrorString();' > export.mos\n          - omc --fmuCMakeBuild=true --fmuRuntimeDepends=modelica export.mos\n          - ls Circle.fmu\n          - OMSimulator Circle.fmu\n        files:\n          source:\n            - OMCompiler/Examples/Circle.mo\n\n  # Full install: the Qt GUI clients on top of openmodelica-omc.\n  # `install openmodelica` resolves to the same files in the same prefix as before.\n  - package:\n      name: openmodelica\n    inherit: openmodelica-build\n    build:\n      files:\n        - bin/OMEdit\n        - bin/OMNotebook\n        - bin/OMPlot\n        - bin/OMShell\n        - lib/omc/libOMPlotLib.so\n        - lib/omc/libomqwt.so*\n        - lib/omc/libomsensplugin.so\n        - share/omedit/**\n        - share/omnotebook/**\n        - share/omshell/**\n    requirements:\n      run:\n        - ${{ pin_subpackage('openmodelica-omc', exact=True) }}\n        - openjdk\n        - qt-webengine\n        - openscenegraph\n      run_constraints:\n        - omcompiler <0\n    tests:\n      - script:\n          - OMEdit --help\n\nabout:\n  homepage: https://openmodelica.org/\n  license: LicenseRef-OSMC-PL\n  license_family: GPL\n  license_file:\n    - OSMC-License.txt\n    - OMCompiler/3rdParty/antlr/3.2/libantlr3c-3.2/COPYING\n    - OMCompiler/3rdParty/Cdaskr/LICENSE\n    - OMCompiler/3rdParty/CMinpack/CopyrightMINPACK.txt\n    - OMCompiler/3rdParty/gc/README.md\n    - OMCompiler/3rdParty/FMIL/LICENSE.md\n    - OMCompiler/3rdParty/libffi/LICENSE\n    - OMCompiler/3rdParty/libzmq/COPYING.LESSER\n    - OMCompiler/3rdParty/lis-1.4.12/COPYING\n    - OMCompiler/3rdParty/metis-5.1.0/LICENSE.txt\n    - OMCompiler/3rdParty/moo-0.1.0/COPYING.LESSER\n    - OMCompiler/3rdParty/open62541/open62541.txt\n    - OMCompiler/3rdParty/primme-3.2.3/COPYING.txt\n    - OMCompiler/3rdParty/ryu/LICENSE-Apache2\n    - OMCompiler/3rdParty/SuiteSparse-5.8.1/LICENSE.txt\n    - OMCompiler/3rdParty/sundials-5.4.0/LICENSE\n    - OMCompiler/3rdParty/zlib/LICENSE\n  summary: The Open Source Modelica Suite\n\nextra:\n  recipe-maintainers:\n    - jschueller\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1122,10 +1476,12 @@
       "libffi",
       "libgl-devel",
       "libiconv",
+      "libintl",
       "liblapack",
       "make",
       "ninja",
       "openjdk",
+      "openmodelica-omc",
       "openscenegraph",
       "pkg-config",
       "qt-webengine",
@@ -1163,6 +1519,7 @@
         "libffi",
         "libgl-devel",
         "libiconv",
+        "libintl",
         "liblapack",
         "openjdk",
         "openscenegraph",
@@ -1180,6 +1537,9 @@
         "fortran_compiler_stub",
         "make",
         "openjdk",
+        "openmodelica-omc",
+        "openscenegraph",
+        "qt-webengine",
         "zip"
       ]
     },
@@ -1215,6 +1575,7 @@
         "libffi",
         "libgl-devel",
         "libiconv",
+        "libintl",
         "liblapack",
         "openjdk",
         "openscenegraph",
@@ -1231,6 +1592,9 @@
         "cxx_compiler_stub",
         "make",
         "openjdk",
+        "openmodelica-omc",
+        "openscenegraph",
+        "qt-webengine",
         "zip"
       ]
     },
