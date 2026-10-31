@@ -14,8 +14,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "a400ea6b53364eb218db3e2adddee057f4fbc7f0",
-  "feedstock_hash_ts": 1792936219,
+  "feedstock_hash": "0934a8f86d164529ae56d96cc9406fa26256e075",
+  "feedstock_hash_ts": 1793418883,
   "feedstock_name": "klayout",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -30,7 +30,7 @@
       "summary": "KLayout layout viewer and editor with Python bindings"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "file": "build_klayout.sh",
         "interpreter": "bash"
@@ -38,7 +38,8 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "Xkhanh720"
+        "Xkhanh720",
+        "duyhieubui"
       ]
     },
     "outputs": [
@@ -350,7 +351,7 @@
       "summary": "KLayout layout viewer and editor with Python bindings"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "file": "build_klayout.sh",
         "interpreter": "bash"
@@ -358,7 +359,8 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "Xkhanh720"
+        "Xkhanh720",
+        "duyhieubui"
       ]
     },
     "outputs": [
@@ -634,7 +636,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/klayout.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.30.12\"\n\npackage:\n  name: klayout\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/KLayout/klayout/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: fa747d9a4c216d0645587e05df365d5c22f73609ab98b34471372c711d8c2b75\n\nbuild:\n  number: 0\n  skip:\n    # linux-only for now: build script only handles the unix qmake build\n    - win\n    - osx\n  script:\n    file: build_klayout.sh\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - make\n    - ${{ stdlib('c') }}\n  host:\n    - python\n    - qt6-main\n    - qt6-multimedia\n    - libgl-devel\n    - libopengl-devel\n    - libpng\n    - libcurl\n    - expat\n    - zlib\n    - libgit2\n  run:\n    - python\n\ntests:\n  - python:\n      imports:\n        - klayout\n        - klayout.db\n        - klayout.lay\n        - klayout.tl\n        - klayout.rdb\n        - klayout.pex\n        - klayout.lib\n        - klayout.pya\n  - script:\n      - export QT_QPA_PLATFORM=offscreen\n      - klayout -v\n      - python -c \"import klayout.db as db; assert db.__version__ == '${{ version }}', db.__version__; print('klayout.db version OK', db.__version__)\"\n      - python -c \"import klayout.db as db; ly = db.Layout(); ly.dbu = 0.001; top = ly.create_cell('TOP'); layer = ly.layer(1, 0); top.shapes(layer).insert(db.Box(0, 0, 1000, 2000)); ly.write('roundtrip.gds'); ly2 = db.Layout(); ly2.read('roundtrip.gds'); assert ly2.top_cell().name == 'TOP'; print('GDS roundtrip OK')\"\n      - strm2oas roundtrip.gds roundtrip.oas\n      - python -c \"import klayout.db as db; ly = db.Layout(); ly.read('roundtrip.oas'); assert ly.top_cell().name == 'TOP'; print('OASIS via strm2oas OK')\"\n      - echo \"import pya; p = pya.Application.instance().inst_path(); print(p); assert p.endswith('lib/klayout'), p\" > inst_path.py\n      - klayout -b -r inst_path.py\n\nabout:\n  homepage: https://www.klayout.de/\n  repository: https://github.com/KLayout/klayout\n  documentation: https://github.com/KLayout/klayout/wiki\n  summary: KLayout layout viewer and editor with Python bindings\n  description: |\n    KLayout is an open-source layout viewer and editor for semiconductor\n    designs. This package provides the full application and the Python\n    bindings built from the KLayout sources with Qt6:\n\n    - klayout: GUI application and command-line tool (batch mode -b)\n    - buddy tools: strm2gds, strm2oas, strm2txt, strmclip, strmxor, strmrun, ...\n    - Python module: klayout.db, klayout.lay, klayout.tl, klayout.rdb,\n      klayout.pex, klayout.lib, klayout.pya (with Qt bindings)\n\n    Use `klayout -b` for batch processing or `import klayout.db as db`\n    in Python scripts.\n  license: GPL-3.0-or-later\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - Xkhanh720\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.30.12\"\n\npackage:\n  name: klayout\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/KLayout/klayout/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: fa747d9a4c216d0645587e05df365d5c22f73609ab98b34471372c711d8c2b75\n\nbuild:\n  number: 1\n  skip:\n    # linux-only for now: build script only handles the unix qmake build\n    - win\n    - osx\n  script:\n    file: build_klayout.sh\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - make\n    - ${{ stdlib('c') }}\n  host:\n    - python\n    - qt6-main\n    - qt6-multimedia\n    - libgl-devel\n    - libopengl-devel\n    - libpng\n    - libcurl\n    - expat\n    - zlib\n    - libgit2\n  run:\n    - python\n\ntests:\n  - python:\n      imports:\n        - klayout\n        - klayout.db\n        - klayout.lay\n        - klayout.tl\n        - klayout.rdb\n        - klayout.pex\n        - klayout.lib\n        - klayout.pya\n  - script:\n      - export QT_QPA_PLATFORM=offscreen\n      - klayout -v\n      - python -c \"import klayout.db as db; assert db.__version__ == '${{ version }}', db.__version__; print('klayout.db version OK', db.__version__)\"\n      - python -c \"import klayout.db as db; ly = db.Layout(); ly.dbu = 0.001; top = ly.create_cell('TOP'); layer = ly.layer(1, 0); top.shapes(layer).insert(db.Box(0, 0, 1000, 2000)); ly.write('roundtrip.gds'); ly2 = db.Layout(); ly2.read('roundtrip.gds'); assert ly2.top_cell().name == 'TOP'; print('GDS roundtrip OK')\"\n      - strm2oas roundtrip.gds roundtrip.oas\n      - python -c \"import klayout.db as db; ly = db.Layout(); ly.read('roundtrip.oas'); assert ly.top_cell().name == 'TOP'; print('OASIS via strm2oas OK')\"\n      - echo \"import pya; p = pya.Application.instance().inst_path(); print(p); assert p.endswith('lib/klayout'), p\" > inst_path.py\n      - klayout -b -r inst_path.py\n\nabout:\n  homepage: https://www.klayout.de/\n  repository: https://github.com/KLayout/klayout\n  documentation: https://github.com/KLayout/klayout/wiki\n  summary: KLayout layout viewer and editor with Python bindings\n  description: |\n    KLayout is an open-source layout viewer and editor for semiconductor\n    designs. This package provides the full application and the Python\n    bindings built from the KLayout sources with Qt6:\n\n    - klayout: GUI application and command-line tool (batch mode -b)\n    - buddy tools: strm2gds, strm2oas, strm2txt, strmclip, strmxor, strmrun, ...\n    - Python module: klayout.db, klayout.lay, klayout.tl, klayout.rdb,\n      klayout.pex, klayout.lib, klayout.pya (with Qt bindings)\n\n    Use `klayout -b` for batch processing or `import klayout.db as db`\n    in Python scripts.\n  license: GPL-3.0-or-later\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - Xkhanh720\n    - duyhieubui\n",
   "req": {
     "__set__": true,
     "elements": [
