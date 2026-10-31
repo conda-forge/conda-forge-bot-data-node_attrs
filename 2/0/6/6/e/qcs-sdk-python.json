@@ -1,15 +1,17 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/aarch64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-aarch64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\n- 3.12.* *_cpython\n- 3.13.* *_cp313\n- 3.14.* *_cp314\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
       "automerge": true
     },
-    "conda_build": {
-      "error_overlinking": true
+    "build_platform": {
+      "linux_64": "linux_aarch64",
+      "osx_64": "osx_arm64"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
@@ -21,25 +23,33 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "ea9e22f6bfe005492daaf94ae7e9f2d3913cbd7c",
-  "feedstock_hash_ts": 1792091413,
+  "feedstock_hash": "6fbc6be47d16ea4203c97bc2c55d1be87e2b15ff",
+  "feedstock_hash_ts": 1793480369,
   "feedstock_name": "qcs-sdk-python",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "Defines the Python bindings to make use of the QCS Rust SDK.\n",
+      "description": "Defines the Python bindings to make use of the QCS Rust SDK.",
       "doc_url": "https://docs.rs/qcs/latest/qcs/",
       "home": "https://github.com/rigetti/qcs-sdk-rust",
       "license": "Apache-2.0",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml",
-        "manual_changes_thirdparty.txt"
-      ],
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
       "summary": "Defines the Python bindings to make use of the QCS Rust SDK."
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "export CARGO_TARGET_DIR=/tmp/qcs-sdk-cargo-target",
+          "${{ PYTHON }} -m pip install ./crates/lib -vv --no-deps --no-build-isolation",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "16",
+          "CARGO_PROFILE_RELEASE_LTO": "false"
+        }
+      }
     },
     "extra": {
       "feedstock-name": "qcs-sdk-python",
@@ -49,192 +59,240 @@
     },
     "outputs": [
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
       }
     ],
     "package": {
-      "name": "qcs-sdk-python-split",
+      "name": "qcs-sdk-python",
       "version": "0.31.1"
     },
     "requirements": {
@@ -246,11 +304,16 @@
         "cargo-bundle-licenses"
       ],
       "host": [
-        "maturin >=1.9.4,<2.0.0",
-        "python"
+        "python",
+        "pip",
+        "maturin >=1.9.4,<2.0.0"
+      ],
+      "run": [
+        "python",
+        "qcs-api-client-common >=0.26.0,<0.27.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "5e12269b94ddd1538c19111c8a986e460c979972d1e67d2fc1c728dd8778a544",
       "url": "https://github.com/rigetti/qcs-sdk-rust/archive/refs/tags/lib/v0.31.1.tar.gz"
@@ -272,8 +335,7 @@
       "elements": [
         "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
@@ -281,33 +343,39 @@
       "elements": [
         "python",
         "qcs-api-client-common",
-        "qcs-sdk-python",
-        "quil"
+        "qcs-sdk-python"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip",
-        "python"
+        "pip"
       ]
     }
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "description": "Defines the Python bindings to make use of the QCS Rust SDK.\n",
+      "description": "Defines the Python bindings to make use of the QCS Rust SDK.",
       "doc_url": "https://docs.rs/qcs/latest/qcs/",
       "home": "https://github.com/rigetti/qcs-sdk-rust",
       "license": "Apache-2.0",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml",
-        "manual_changes_thirdparty.txt"
-      ],
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
       "summary": "Defines the Python bindings to make use of the QCS Rust SDK."
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "export CARGO_TARGET_DIR=/tmp/qcs-sdk-cargo-target",
+          "${{ PYTHON }} -m pip install ./crates/lib -vv --no-deps --no-build-isolation",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "16",
+          "CARGO_PROFILE_RELEASE_LTO": "false"
+        }
+      }
     },
     "extra": {
       "feedstock-name": "qcs-sdk-python",
@@ -317,192 +385,272 @@
     },
     "outputs": [
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ],
+              "run": [
+                "pip"
+              ]
+            },
+            "script": [
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"",
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check"
+            ]
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ],
+              "run": [
+                "pip"
+              ]
+            },
+            "script": [
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"",
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check"
+            ]
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ],
+              "run": [
+                "pip"
+              ]
+            },
+            "script": [
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"",
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check"
+            ]
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ],
+              "run": [
+                "pip"
+              ]
+            },
+            "script": [
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"",
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check"
+            ]
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ]
+            },
+            "script": "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\""
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ]
+            },
+            "script": "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\""
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ]
+            },
+            "script": "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\""
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ]
+            },
+            "script": "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\""
+          }
+        ],
+        "version": "0.31.1"
       }
     ],
     "package": {
-      "name": "qcs-sdk-python-split",
+      "name": "qcs-sdk-python",
       "version": "0.31.1"
     },
     "requirements": {
@@ -511,14 +659,22 @@
         "cxx_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_linux-aarch64",
+        "maturin >=1.9.4,<2.0.0"
       ],
       "host": [
-        "maturin >=1.9.4,<2.0.0",
-        "python"
+        "python",
+        "pip",
+        "maturin >=1.9.4,<2.0.0"
+      ],
+      "run": [
+        "python",
+        "qcs-api-client-common >=0.26.0,<0.27.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "5e12269b94ddd1538c19111c8a986e460c979972d1e67d2fc1c728dd8778a544",
       "url": "https://github.com/rigetti/qcs-sdk-rust/archive/refs/tags/lib/v0.31.1.tar.gz"
@@ -531,7 +687,10 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
         "cxx_compiler_stub",
+        "maturin",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -540,8 +699,7 @@
       "elements": [
         "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
@@ -549,33 +707,43 @@
       "elements": [
         "python",
         "qcs-api-client-common",
-        "qcs-sdk-python",
-        "quil"
+        "qcs-sdk-python"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "pip",
-        "python"
+        "qemu-execve-aarch64",
+        "sysroot_linux-aarch64"
       ]
     }
   },
   "meta_yaml": {
     "about": {
-      "description": "Defines the Python bindings to make use of the QCS Rust SDK.\n",
+      "description": "Defines the Python bindings to make use of the QCS Rust SDK.",
       "doc_url": "https://docs.rs/qcs/latest/qcs/",
       "home": "https://github.com/rigetti/qcs-sdk-rust",
       "license": "Apache-2.0",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml",
-        "manual_changes_thirdparty.txt"
-      ],
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
       "summary": "Defines the Python bindings to make use of the QCS Rust SDK."
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "export CARGO_TARGET_DIR=/tmp/qcs-sdk-cargo-target",
+          "${{ PYTHON }} -m pip install ./crates/lib -vv --no-deps --no-build-isolation",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
+          "git config --system core.longpaths true",
+          "set \"CARGO_TARGET_DIR=%SystemDrive%\\qcs-sdk-cargo-target\""
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "16",
+          "CARGO_PROFILE_RELEASE_LTO": "false"
+        }
+      }
     },
     "extra": {
       "feedstock-name": "qcs-sdk-python",
@@ -585,928 +753,1236 @@
     },
     "outputs": [
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ],
+              "run": [
+                "pip"
+              ]
+            },
+            "script": [
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"",
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check"
+            ]
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ],
+              "run": [
+                "pip"
+              ]
+            },
+            "script": [
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"",
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check"
+            ]
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ],
+              "run": [
+                "pip"
+              ]
+            },
+            "script": [
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"",
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check"
+            ]
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ],
+              "run": [
+                "pip"
+              ]
+            },
+            "script": [
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"",
+              "${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check"
+            ]
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ]
+            },
+            "script": "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\""
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ]
+            },
+            "script": "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\""
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ]
+            },
+            "script": "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\""
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "requirements": {
+              "build": [
+                "qemu-execve-aarch64 >=11",
+                "sysroot_linux-aarch64"
+              ]
+            },
+            "script": "${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\""
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.bat",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.bat",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.bat",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.bat",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
       }
     ],
     "package": {
-      "name": "qcs-sdk-python-split",
+      "name": "qcs-sdk-python",
       "version": "0.31.1"
     },
     "requirements": {
@@ -1515,35 +1991,54 @@
         "cxx_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_linux-aarch64",
+        "maturin >=1.9.4,<2.0.0",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64"
       ],
       "host": [
-        "maturin >=1.9.4,<2.0.0",
-        "python"
+        "python",
+        "pip",
+        "maturin >=1.9.4,<2.0.0"
+      ],
+      "run": [
+        "python",
+        "qcs-api-client-common >=0.26.0,<0.27.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "5e12269b94ddd1538c19111c8a986e460c979972d1e67d2fc1c728dd8778a544",
       "url": "https://github.com/rigetti/qcs-sdk-rust/archive/refs/tags/lib/v0.31.1.tar.gz"
     }
   },
-  "name": "qcs-sdk-python-split",
+  "name": "qcs-sdk-python",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "Defines the Python bindings to make use of the QCS Rust SDK.\n",
+      "description": "Defines the Python bindings to make use of the QCS Rust SDK.",
       "doc_url": "https://docs.rs/qcs/latest/qcs/",
       "home": "https://github.com/rigetti/qcs-sdk-rust",
       "license": "Apache-2.0",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml",
-        "manual_changes_thirdparty.txt"
-      ],
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
       "summary": "Defines the Python bindings to make use of the QCS Rust SDK."
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "export CARGO_TARGET_DIR=/tmp/qcs-sdk-cargo-target",
+          "${{ PYTHON }} -m pip install ./crates/lib -vv --no-deps --no-build-isolation",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "16",
+          "CARGO_PROFILE_RELEASE_LTO": "false"
+        }
+      }
     },
     "extra": {
       "feedstock-name": "qcs-sdk-python",
@@ -1553,192 +2048,252 @@
     },
     "outputs": [
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
       }
     ],
     "package": {
-      "name": "qcs-sdk-python-split",
+      "name": "qcs-sdk-python",
       "version": "0.31.1"
     },
     "requirements": {
@@ -1747,14 +2302,22 @@
         "cxx_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_osx-64",
+        "maturin >=1.9.4,<2.0.0"
       ],
       "host": [
-        "maturin >=1.9.4,<2.0.0",
-        "python"
+        "python",
+        "pip",
+        "maturin >=1.9.4,<2.0.0"
+      ],
+      "run": [
+        "python",
+        "qcs-api-client-common >=0.26.0,<0.27.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "5e12269b94ddd1538c19111c8a986e460c979972d1e67d2fc1c728dd8778a544",
       "url": "https://github.com/rigetti/qcs-sdk-rust/archive/refs/tags/lib/v0.31.1.tar.gz"
@@ -1767,7 +2330,10 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "cross-python_osx-64",
         "cxx_compiler_stub",
+        "maturin",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -1776,8 +2342,7 @@
       "elements": [
         "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
@@ -1785,33 +2350,39 @@
       "elements": [
         "python",
         "qcs-api-client-common",
-        "qcs-sdk-python",
-        "quil"
+        "qcs-sdk-python"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip",
-        "python"
+        "pip"
       ]
     }
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "description": "Defines the Python bindings to make use of the QCS Rust SDK.\n",
+      "description": "Defines the Python bindings to make use of the QCS Rust SDK.",
       "doc_url": "https://docs.rs/qcs/latest/qcs/",
       "home": "https://github.com/rigetti/qcs-sdk-rust",
       "license": "Apache-2.0",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml",
-        "manual_changes_thirdparty.txt"
-      ],
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
       "summary": "Defines the Python bindings to make use of the QCS Rust SDK."
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "export CARGO_TARGET_DIR=/tmp/qcs-sdk-cargo-target",
+          "${{ PYTHON }} -m pip install ./crates/lib -vv --no-deps --no-build-isolation",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "16",
+          "CARGO_PROFILE_RELEASE_LTO": "false"
+        }
+      }
     },
     "extra": {
       "feedstock-name": "qcs-sdk-python",
@@ -1821,192 +2392,252 @@
     },
     "outputs": [
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.sh",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
       }
     ],
     "package": {
-      "name": "qcs-sdk-python-split",
+      "name": "qcs-sdk-python",
       "version": "0.31.1"
     },
     "requirements": {
@@ -2015,14 +2646,22 @@
         "cxx_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_osx-arm64",
+        "maturin >=1.9.4,<2.0.0"
       ],
       "host": [
-        "maturin >=1.9.4,<2.0.0",
-        "python"
+        "python",
+        "pip",
+        "maturin >=1.9.4,<2.0.0"
+      ],
+      "run": [
+        "python",
+        "qcs-api-client-common >=0.26.0,<0.27.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "5e12269b94ddd1538c19111c8a986e460c979972d1e67d2fc1c728dd8778a544",
       "url": "https://github.com/rigetti/qcs-sdk-rust/archive/refs/tags/lib/v0.31.1.tar.gz"
@@ -2035,7 +2674,10 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "cross-python_osx-arm64",
         "cxx_compiler_stub",
+        "maturin",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -2044,8 +2686,7 @@
       "elements": [
         "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
@@ -2053,15 +2694,13 @@
       "elements": [
         "python",
         "qcs-api-client-common",
-        "qcs-sdk-python",
-        "quil"
+        "qcs-sdk-python"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip",
-        "python"
+        "pip"
       ]
     }
   },
@@ -2083,22 +2722,24 @@
   "pr_info": {
     "__lazy_json__": "pr_info/qcs-sdk-python.json"
   },
-  "raw_meta_yaml": "{% set name = \"qcs-sdk-python\" %}\n{% set version = \"0.31.1\" %}\n\npackage:\n  name: qcs-sdk-python-split\n  version: {{ version }}\n\nsource:\n  url: https://github.com/rigetti/qcs-sdk-rust/archive/refs/tags/lib/v{{ version }}.tar.gz\n  sha256: 5e12269b94ddd1538c19111c8a986e460c979972d1e67d2fc1c728dd8778a544\n\nbuild:\n  number: 0\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n    - {{ compiler('rust') }}\n    - {{ stdlib('c') }}\n    - cargo-bundle-licenses\n    - cross-python_{{ target_platform }}  # [build_platform != target_platform]\n    - maturin >=1.9.4,<2.0.0  # [build_platform != target_platform]\n    - python  # [build_platform != target_platform]\n  host:\n    - maturin >=1.9.4,<2.0.0\n    - python\n\noutputs:\n  - name: qcs-sdk-python\n    script: install.sh  # [unix]\n    script: install.bat  # [win]\n    requirements:\n      build:\n        # Defines the runtime requirements for the package\n        - {{ compiler('c') }}\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n        - cross-python_{{ target_platform }}  # [build_platform != target_platform]\n        - python  # [build_platform != target_platform]\n      host:\n        - pip\n        - python\n        - setuptools\n      run:\n        - quil >=0.37.1,<0.38.0\n        - qcs-api-client-common >=0.26.0,<0.27.0\n        - python\n    test:\n      imports:\n        - qcs_sdk\n      requires:\n        - pip\n        - python\n      commands:\n        - pip check\n\n  # - Naming conversion\n  - name: qcs_sdk_python\n    requirements:\n      run:\n        - {{ pin_subpackage(\"qcs-sdk-python\", exact=True) }}\n    test:\n      imports:\n        - qcs_sdk\n\nabout:\n  home: https://github.com/rigetti/qcs-sdk-rust\n  summary: 'Defines the Python bindings to make use of the QCS Rust SDK.'\n  description: |\n    Defines the Python bindings to make use of the QCS Rust SDK.\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n    - manual_changes_thirdparty.txt\n  doc_url: https://docs.rs/qcs/latest/qcs/\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n  feedstock-name: qcs-sdk-python\n",
+  "raw_meta_yaml": "context:\n  name: qcs-sdk-python\n  version: \"0.31.1\"\n\nrecipe:\n  name: qcs-sdk-python-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/rigetti/qcs-sdk-rust/archive/refs/tags/lib/v${{ version }}.tar.gz\n  sha256: 5e12269b94ddd1538c19111c8a986e460c979972d1e67d2fc1c728dd8778a544\n\nbuild:\n  number: 1\n\noutputs:\n  - package:\n      name: qcs-sdk-python\n    build:\n      script:\n        env:\n          CARGO_PROFILE_RELEASE_LTO: \"false\"\n          CARGO_PROFILE_RELEASE_CODEGEN_UNITS: \"16\"\n        content:\n          - if: win\n            then: git config --system core.longpaths true\n          - if: unix\n            then: export CARGO_TARGET_DIR=/tmp/qcs-sdk-cargo-target\n            else: set \"CARGO_TARGET_DIR=%SystemDrive%\\qcs-sdk-cargo-target\"\n          - ${{ PYTHON }} -m pip install ./crates/lib -vv --no-deps --no-build-isolation\n          - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('rust') }}\n        - ${{ stdlib('c') }}\n        - cargo-bundle-licenses\n        - if: build_platform != target_platform\n          then:\n            - python\n            - cross-python_${{ target_platform }}\n            - maturin >=1.9.4,<2.0.0\n      host:\n        - python\n        - pip\n        - maturin >=1.9.4,<2.0.0\n      run:\n        - python\n        - qcs-api-client-common >=0.26.0,<0.27.0\n    tests:\n      - if: not (linux and build_platform != target_platform)\n        then:\n          - python:\n              imports:\n                - qcs_sdk\n                - qcs_sdk.client\n                - qcs_sdk.compiler.quilc\n                - qcs_sdk.qpu\n                - qcs_sdk.qvm\n              pip_check: true\n      # linux-64 is built on linux-aarch64; run the x86_64 python under qemu-execve\n      - if: linux and build_platform != target_platform\n        then:\n          - script:\n              - ${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk, qcs_sdk.client, qcs_sdk.compiler.quilc, qcs_sdk.qpu, qcs_sdk.qvm\"\n              - ${QEMU_EXECVE} ${PREFIX}/bin/python -m pip check\n            requirements:\n              build:\n                - qemu-execve-${{ target_platform | replace(\"linux-64\", \"x86_64\") | replace(\"linux-\", \"\") }} >=11\n                - sysroot_${{ target_platform }}\n              run:\n                - pip\n    about:\n      license_file:\n        - LICENSE\n        - THIRDPARTY.yml\n        - manual_changes_thirdparty.txt\n\n  - package:\n      name: qcs_sdk_python\n    requirements:\n      run:\n        - ${{ pin_subpackage(\"qcs-sdk-python\", exact=True) }}\n    tests:\n      - if: not (linux and build_platform != target_platform)\n        then:\n          - python:\n              imports:\n                - qcs_sdk\n              pip_check: false\n      - if: linux and build_platform != target_platform\n        then:\n          - script:\n              - ${QEMU_EXECVE} ${PREFIX}/bin/python -c \"import qcs_sdk\"\n            requirements:\n              build:\n                - qemu-execve-${{ target_platform | replace(\"linux-64\", \"x86_64\") | replace(\"linux-\", \"\") }} >=11\n                - sysroot_${{ target_platform }}\n\nabout:\n  homepage: https://github.com/rigetti/qcs-sdk-rust\n  summary: Defines the Python bindings to make use of the QCS Rust SDK.\n  description: |\n    Defines the Python bindings to make use of the QCS Rust SDK.\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n  documentation: https://docs.rs/qcs/latest/qcs/\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n  feedstock-name: qcs-sdk-python\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
       "c_stdlib_stub",
       "cargo-bundle-licenses",
+      "cross-python_linux-aarch64",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
+      "cross-python_win-64",
       "cxx_compiler_stub",
       "maturin",
       "pip",
       "python",
       "qcs-api-client-common",
       "qcs-sdk-python",
-      "quil",
-      "rust_compiler_stub",
-      "setuptools"
+      "rust_compiler_stub"
     ]
   },
   "requirements": {
@@ -2108,7 +2749,13 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
         "cxx_compiler_stub",
+        "maturin",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -2117,11 +2764,12 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "cxx_compiler_stub",
+        "linux-sysroot",
         "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
@@ -2129,18 +2777,20 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "cxx_compiler_stub",
+        "linux-sysroot",
         "python",
         "qcs-api-client-common",
-        "qcs-sdk-python",
-        "quil"
+        "qcs-sdk-python"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "pip",
-        "python"
+        "qemu-execve-aarch64",
+        "sysroot_linux-aarch64"
       ]
     }
   },
@@ -2152,7 +2802,13 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
         "cxx_compiler_stub",
+        "maturin >=1.9.4,<2.0.0",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -2161,8 +2817,7 @@
       "elements": [
         "maturin >=1.9.4,<2.0.0",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
@@ -2170,15 +2825,15 @@
       "elements": [
         "python",
         "qcs-api-client-common >=0.26.0,<0.27.0",
-        "qcs-sdk-python",
-        "quil >=0.37.1,<0.38.0"
+        "qcs-sdk-python"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "pip",
-        "python"
+        "qemu-execve-aarch64 >=11",
+        "sysroot_linux-aarch64"
       ]
     }
   },
@@ -2189,19 +2844,28 @@
   },
   "win_64_meta_yaml": {
     "about": {
-      "description": "Defines the Python bindings to make use of the QCS Rust SDK.\n",
+      "description": "Defines the Python bindings to make use of the QCS Rust SDK.",
       "doc_url": "https://docs.rs/qcs/latest/qcs/",
       "home": "https://github.com/rigetti/qcs-sdk-rust",
       "license": "Apache-2.0",
-      "license_file": [
-        "LICENSE",
-        "THIRDPARTY.yml",
-        "manual_changes_thirdparty.txt"
-      ],
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
       "summary": "Defines the Python bindings to make use of the QCS Rust SDK."
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": {
+        "content": [
+          "git config --system core.longpaths true",
+          "set \"CARGO_TARGET_DIR=%SystemDrive%\\qcs-sdk-cargo-target\"",
+          "${{ PYTHON }} -m pip install ./crates/lib -vv --no-deps --no-build-isolation",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "16",
+          "CARGO_PROFILE_RELEASE_LTO": "false"
+        }
+      }
     },
     "extra": {
       "feedstock-name": "qcs-sdk-python",
@@ -2211,192 +2875,252 @@
     },
     "outputs": [
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.bat",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.bat",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
-          ],
-          "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
-          ]
-        },
-        "script": "install.bat",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
             "pip",
-            "python"
-          ]
-        }
-      },
-      {
-        "name": "qcs_sdk_python",
-        "requirements": {
+            "maturin >=1.9.4,<2.0.0"
+          ],
           "run": [
-            "qcs-sdk-python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs-sdk-python",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "cxx_compiler_stub",
-            "c_stdlib_stub"
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "host": [
-            "pip",
             "python",
-            "setuptools"
+            "pip",
+            "maturin >=1.9.4,<2.0.0"
           ],
           "run": [
-            "quil >=0.37.1,<0.38.0",
-            "qcs-api-client-common >=0.26.0,<0.27.0",
-            "python"
+            "python",
+            "qcs-api-client-common >=0.26.0,<0.27.0"
           ]
         },
-        "script": "install.bat",
-        "test": {
-          "commands": [
-            "pip check"
-          ],
-          "imports": [
-            "qcs_sdk"
-          ],
-          "requires": [
-            "pip",
-            "python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk",
+                "qcs_sdk.client",
+                "qcs_sdk.compiler.quilc",
+                "qcs_sdk.qpu",
+                "qcs_sdk.qvm"
+              ]
+            }
+          }
+        ],
+        "version": "0.31.1"
       },
       {
+        "build": null,
         "name": "qcs_sdk_python",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "qcs-sdk-python"
           ]
         },
-        "test": {
-          "imports": [
-            "qcs_sdk"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
+      },
+      {
+        "build": null,
+        "name": "qcs_sdk_python",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "qcs-sdk-python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "qcs_sdk"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "0.31.1"
       }
     ],
     "package": {
-      "name": "qcs-sdk-python-split",
+      "name": "qcs-sdk-python",
       "version": "0.31.1"
     },
     "requirements": {
@@ -2405,14 +3129,22 @@
         "cxx_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_win-64",
+        "maturin >=1.9.4,<2.0.0"
       ],
       "host": [
-        "maturin >=1.9.4,<2.0.0",
-        "python"
+        "python",
+        "pip",
+        "maturin >=1.9.4,<2.0.0"
+      ],
+      "run": [
+        "python",
+        "qcs-api-client-common >=0.26.0,<0.27.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "5e12269b94ddd1538c19111c8a986e460c979972d1e67d2fc1c728dd8778a544",
       "url": "https://github.com/rigetti/qcs-sdk-rust/archive/refs/tags/lib/v0.31.1.tar.gz"
@@ -2425,7 +3157,10 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cargo-bundle-licenses",
+        "cross-python_win-64",
         "cxx_compiler_stub",
+        "maturin",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -2434,8 +3169,7 @@
       "elements": [
         "maturin",
         "pip",
-        "python",
-        "setuptools"
+        "python"
       ]
     },
     "run": {
@@ -2443,15 +3177,13 @@
       "elements": [
         "python",
         "qcs-api-client-common",
-        "qcs-sdk-python",
-        "quil"
+        "qcs-sdk-python"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
-        "pip",
-        "python"
+        "pip"
       ]
     }
   }
