@@ -1,75 +1,125 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "cdt_name:\n- cos6\nchannel_sources:\n- conda-forge,defaults\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-comp7\ngo_compiler:\n- go-nocgo\ntarget_platform:\n- linux-64\nzip_keys:\n- - cdt_name\n  - docker_image\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngo_compiler:\n- go-nocgo\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
       "automerge": true
     },
-    "conda_build": {
-      "pkg_format": "2"
-    },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default",
       "win": "azure"
     }
   },
-  "feedstock_hash": "6d923c82d3264ff51c0f8fc20b6821e72dec8623",
-  "feedstock_hash_ts": 1776948631,
+  "feedstock_hash": "16df83e26601bd574b9ea34a5071418e7010f5af",
+  "feedstock_hash_ts": 1793603329,
   "feedstock_name": "etcd",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/etcd-io/etcd",
       "doc_url": "https://etcd.io/docs",
-      "home": "https://etcd.io",
+      "home": "https://etcd.io/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
       "summary": "A distributed, reliable key-value store for the most critical data of a distributed system."
     },
     "build": {
       "number": "0",
-      "script": [
-        "go install -v .",
-        "go install -v ./etcdctl"
-      ]
+      "script": {
+        "content": [
+          "cd server",
+          "go build -v -trimpath -ldflags=\"-s -w\" -o \"$PREFIX/bin/etcd\" .",
+          "go-licenses save . --save_path=../license-files/server",
+          "cd ../etcdctl",
+          "go install -v -trimpath -ldflags=\"-s -w\" .",
+          "go-licenses save . --save_path=../license-files/etcdctl",
+          "cd ../etcdutl",
+          "go-licenses save . --save_path=../license-files/etcdutl"
+        ],
+        "env": {
+          "GOFLAGS": "-tags=grpcnotrace",
+          "GOTOOLCHAIN": "local"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
-        "sodre"
+        "sodre",
+        "wolfv"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      }
+    ],
     "package": {
       "name": "etcd",
-      "version": "3.4.16"
+      "version": "3.7.3"
     },
     "requirements": {
       "build": [
-        "go_compiler_stub 1.13"
+        "go_compiler_stub",
+        "go >=1.27.3",
+        "go-licenses"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "7dfb8597145ae5bc44b90a75765395271b8e33a57debcfef265a21a063417203",
-      "url": "https://github.com/etcd-io/etcd/archive/v3.4.16.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "etcd --version",
-        "etcdctl version"
-      ]
+      "sha256": "38455879fd3744d9aec12f45e890bede61df8b2323279e2c895bbb1bd484681f",
+      "url": "https://github.com/etcd-io/etcd/archive/v3.7.3.tar.gz"
     }
   },
   "linux_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "go",
+        "go-licenses",
         "go_compiler_stub"
       ]
     },
@@ -83,50 +133,362 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "python"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/etcd-io/etcd",
+      "doc_url": "https://etcd.io/docs",
+      "home": "https://etcd.io/",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "A distributed, reliable key-value store for the most critical data of a distributed system."
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "content": [
+          "cd server",
+          "go build -v -trimpath -ldflags=\"-s -w\" -o \"$PREFIX/bin/etcd\" .",
+          "go-licenses save . --save_path=../license-files/server",
+          "cd ../etcdctl",
+          "go install -v -trimpath -ldflags=\"-s -w\" .",
+          "go-licenses save . --save_path=../license-files/etcdctl",
+          "cd ../etcdutl",
+          "go-licenses save . --save_path=../license-files/etcdutl"
+        ],
+        "env": {
+          "GOFLAGS": "-tags=grpcnotrace",
+          "GOTOOLCHAIN": "local"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "sodre",
+        "wolfv"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      }
+    ],
+    "package": {
+      "name": "etcd",
+      "version": "3.7.3"
+    },
+    "requirements": {
+      "build": [
+        "go_compiler_stub",
+        "go >=1.27.3",
+        "go-licenses"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "38455879fd3744d9aec12f45e890bede61df8b2323279e2c895bbb1bd484681f",
+      "url": "https://github.com/etcd-io/etcd/archive/v3.7.3.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "go",
+        "go-licenses",
+        "go_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
       "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "python"
+      ]
     }
   },
   "meta_yaml": {
     "about": {
       "dev_url": "https://github.com/etcd-io/etcd",
       "doc_url": "https://etcd.io/docs",
-      "home": "https://etcd.io",
+      "home": "https://etcd.io/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
       "summary": "A distributed, reliable key-value store for the most critical data of a distributed system."
     },
     "build": {
       "number": "0",
-      "script": [
-        "go install -v .",
-        "go install -v ./etcdctl"
-      ]
+      "script": {
+        "content": [
+          "cd server",
+          "go build -v -trimpath -ldflags=\"-s -w\" -o \"$PREFIX/bin/etcd\" .",
+          "go-licenses save . --save_path=../license-files/server",
+          "cd ../etcdctl",
+          "go install -v -trimpath -ldflags=\"-s -w\" .",
+          "go-licenses save . --save_path=../license-files/etcdctl",
+          "cd ../etcdutl",
+          "go-licenses save . --save_path=../license-files/etcdutl",
+          "del client\\v3\\example*_test.go",
+          "copy tests\\integration\\clientv3\\examples\\example*_test.go client\\v3\\",
+          "del client\\v3\\concurrency\\example*_test.go",
+          "copy tests\\integration\\clientv3\\concurrency\\example*_test.go client\\v3\\concurrency\\",
+          "go build -v -trimpath -ldflags=\"-s -w\" -o \"%LIBRARY_PREFIX%\\bin\\etcd.exe\" ."
+        ],
+        "env": {
+          "GOFLAGS": "-tags=grpcnotrace",
+          "GOTOOLCHAIN": "local"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
-        "sodre"
+        "sodre",
+        "wolfv"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      },
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      },
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      },
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      },
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      }
+    ],
     "package": {
       "name": "etcd",
-      "version": "3.4.16"
+      "version": "3.7.3"
     },
     "requirements": {
       "build": [
-        "go_compiler_stub 1.13"
+        "go_compiler_stub",
+        "go >=1.27.3",
+        "go-licenses"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "7dfb8597145ae5bc44b90a75765395271b8e33a57debcfef265a21a063417203",
-      "url": "https://github.com/etcd-io/etcd/archive/v3.4.16.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "etcd --version",
-        "etcdctl version"
-      ]
+      "sha256": "38455879fd3744d9aec12f45e890bede61df8b2323279e2c895bbb1bd484681f",
+      "url": "https://github.com/etcd-io/etcd/archive/v3.7.3.tar.gz"
     }
   },
   "name": "etcd",
@@ -134,49 +496,98 @@
     "about": {
       "dev_url": "https://github.com/etcd-io/etcd",
       "doc_url": "https://etcd.io/docs",
-      "home": "https://etcd.io",
+      "home": "https://etcd.io/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
       "summary": "A distributed, reliable key-value store for the most critical data of a distributed system."
     },
     "build": {
       "number": "0",
-      "script": [
-        "go install -v .",
-        "go install -v ./etcdctl"
-      ]
+      "script": {
+        "content": [
+          "cd server",
+          "go build -v -trimpath -ldflags=\"-s -w\" -o \"$PREFIX/bin/etcd\" .",
+          "go-licenses save . --save_path=../license-files/server",
+          "cd ../etcdctl",
+          "go install -v -trimpath -ldflags=\"-s -w\" .",
+          "go-licenses save . --save_path=../license-files/etcdctl",
+          "cd ../etcdutl",
+          "go-licenses save . --save_path=../license-files/etcdutl"
+        ],
+        "env": {
+          "GOFLAGS": "-tags=grpcnotrace",
+          "GOTOOLCHAIN": "local"
+        }
+      }
     },
     "extra": {
       "recipe-maintainers": [
-        "sodre"
+        "sodre",
+        "wolfv"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      }
+    ],
     "package": {
       "name": "etcd",
-      "version": "3.4.16"
+      "version": "3.7.3"
     },
     "requirements": {
       "build": [
-        "go_compiler_stub 1.13"
+        "go_compiler_stub",
+        "go >=1.27.3",
+        "go-licenses"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "7dfb8597145ae5bc44b90a75765395271b8e33a57debcfef265a21a063417203",
-      "url": "https://github.com/etcd-io/etcd/archive/v3.4.16.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "etcd --version",
-        "etcdctl version"
-      ]
+      "sha256": "38455879fd3744d9aec12f45e890bede61df8b2323279e2c895bbb1bd484681f",
+      "url": "https://github.com/etcd-io/etcd/archive/v3.7.3.tar.gz"
     }
   },
   "osx_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "go",
+        "go-licenses",
         "go_compiler_stub"
       ]
     },
@@ -190,7 +601,123 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "python"
+      ]
+    }
+  },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/etcd-io/etcd",
+      "doc_url": "https://etcd.io/docs",
+      "home": "https://etcd.io/",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "A distributed, reliable key-value store for the most critical data of a distributed system."
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "content": [
+          "cd server",
+          "go build -v -trimpath -ldflags=\"-s -w\" -o \"$PREFIX/bin/etcd\" .",
+          "go-licenses save . --save_path=../license-files/server",
+          "cd ../etcdctl",
+          "go install -v -trimpath -ldflags=\"-s -w\" .",
+          "go-licenses save . --save_path=../license-files/etcdctl",
+          "cd ../etcdutl",
+          "go-licenses save . --save_path=../license-files/etcdutl"
+        ],
+        "env": {
+          "GOFLAGS": "-tags=grpcnotrace",
+          "GOTOOLCHAIN": "local"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "sodre",
+        "wolfv"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      }
+    ],
+    "package": {
+      "name": "etcd",
+      "version": "3.7.3"
+    },
+    "requirements": {
+      "build": [
+        "go_compiler_stub",
+        "go >=1.27.3",
+        "go-licenses"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "38455879fd3744d9aec12f45e890bede61df8b2323279e2c895bbb1bd484681f",
+      "url": "https://github.com/etcd-io/etcd/archive/v3.7.3.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "go",
+        "go-licenses",
+        "go_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
       "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "python"
+      ]
     }
   },
   "outputs_names": {
@@ -202,16 +729,20 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
+    "osx_arm64",
     "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/etcd.json"
   },
-  "raw_meta_yaml": "{% set name = \"etcd\" %}\n{% set version = \"3.4.16\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/etcd-io/{{ name }}/archive/v{{ version }}.tar.gz\n  sha256: 7dfb8597145ae5bc44b90a75765395271b8e33a57debcfef265a21a063417203\n\nbuild:\n  number: 0\n  script:\n    {% for path in [ \".\", \"./etcdctl\" ] %}\n    - go install -v {{ path }}\n    {% endfor %}\n\nrequirements:\n  build:\n    - {{ compiler('go') }} 1.13\n\ntest:\n  commands:\n    - etcd --version\n    - etcdctl version\n\nabout:\n  home: https://etcd.io\n  license: Apache-2.0\n  license_family: Apache\n  license_file: LICENSE\n  summary: A distributed, reliable key-value store for the most critical data of a distributed system.\n  doc_url: https://etcd.io/docs\n  dev_url: https://github.com/etcd-io/etcd\n\nextra:\n  recipe-maintainers:\n    - sodre\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: etcd\n  version: \"3.7.3\"\n\npackage:\n  name: etcd\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/etcd-io/${{ name }}/archive/v${{ version }}.tar.gz\n  sha256: 38455879fd3744d9aec12f45e890bede61df8b2323279e2c895bbb1bd484681f\n\nbuild:\n  number: 0\n  script:\n    env:\n      GOTOOLCHAIN: local\n      GOFLAGS: -tags=grpcnotrace\n    content:\n      # Materialize example-test symlinks that Windows cannot resolve while Go scans packages.\n      - if: win\n        then:\n          - del client\\v3\\example*_test.go\n          - copy tests\\integration\\clientv3\\examples\\example*_test.go client\\v3\\\n          - del client\\v3\\concurrency\\example*_test.go\n          - copy tests\\integration\\clientv3\\concurrency\\example*_test.go client\\v3\\concurrency\\\n      - cd server\n      - if: win\n        then: go build -v -trimpath -ldflags=\"-s -w\" -o \"%LIBRARY_PREFIX%\\bin\\etcd.exe\" .\n        else: go build -v -trimpath -ldflags=\"-s -w\" -o \"$PREFIX/bin/etcd\" .\n      - go-licenses save . --save_path=../license-files/server\n      - cd ../etcdctl\n      - go install -v -trimpath -ldflags=\"-s -w\" .\n      - go-licenses save . --save_path=../license-files/etcdctl\n      - cd ../etcdutl\n      - go install -v -trimpath -ldflags=\"-s -w\" .\n      - go-licenses save . --save_path=../license-files/etcdutl\n\nrequirements:\n  build:\n    - ${{ compiler('go') }}\n    - go >=1.27.3\n    - go-licenses\n\ntests:\n  - script:\n      - etcd --version\n      - etcdctl version\n      - etcdutl version\n  - requirements:\n      run:\n        - python\n    files:\n      recipe:\n        - run_test.py\n    script: python run_test.py\n\nabout:\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - license-files/\n  summary: A distributed, reliable key-value store for the most critical data of a distributed system.\n  homepage: https://etcd.io\n  repository: https://github.com/etcd-io/etcd\n  documentation: https://etcd.io/docs\n\nextra:\n  recipe-maintainers:\n    - sodre\n    - wolfv\n",
   "req": {
     "__set__": true,
     "elements": [
+      "go",
+      "go-licenses",
       "go_compiler_stub"
     ]
   },
@@ -219,20 +750,28 @@
     "build": {
       "__set__": true,
       "elements": [
+        "go",
+        "go-licenses",
         "go_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "go"
+      ]
     },
     "run": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "go"
+      ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "python"
+      ]
     }
   },
   "strong_exports": false,
@@ -240,74 +779,8 @@
     "build": {
       "__set__": true,
       "elements": [
-        "go_compiler_stub 1.13"
-      ]
-    },
-    "host": {
-      "__set__": true,
-      "elements": []
-    },
-    "run": {
-      "__set__": true,
-      "elements": []
-    },
-    "test": {
-      "__set__": true,
-      "elements": []
-    }
-  },
-  "url": "https://github.com/etcd-io/etcd/archive/v3.4.16.tar.gz",
-  "version": "3.4.16",
-  "version_pr_info": {
-    "__lazy_json__": "version_pr_info/etcd.json"
-  },
-  "win_64_meta_yaml": {
-    "about": {
-      "dev_url": "https://github.com/etcd-io/etcd",
-      "doc_url": "https://etcd.io/docs",
-      "home": "https://etcd.io",
-      "license": "Apache-2.0",
-      "license_family": "Apache",
-      "license_file": "LICENSE",
-      "summary": "A distributed, reliable key-value store for the most critical data of a distributed system."
-    },
-    "build": {
-      "number": "0",
-      "script": [
-        "go install -v .",
-        "go install -v ./etcdctl"
-      ]
-    },
-    "extra": {
-      "recipe-maintainers": [
-        "sodre"
-      ]
-    },
-    "package": {
-      "name": "etcd",
-      "version": "3.4.16"
-    },
-    "requirements": {
-      "build": [
-        "go_compiler_stub 1.13"
-      ]
-    },
-    "schema_version": 0,
-    "source": {
-      "sha256": "7dfb8597145ae5bc44b90a75765395271b8e33a57debcfef265a21a063417203",
-      "url": "https://github.com/etcd-io/etcd/archive/v3.4.16.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "etcd --version",
-        "etcdctl version"
-      ]
-    }
-  },
-  "win_64_requirements": {
-    "build": {
-      "__set__": true,
-      "elements": [
+        "go >=1.27.3",
+        "go-licenses",
         "go_compiler_stub"
       ]
     },
@@ -321,7 +794,132 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "python"
+      ]
+    }
+  },
+  "url": "https://github.com/etcd-io/etcd/archive/v3.7.3.tar.gz",
+  "version": "3.7.3",
+  "version_pr_info": {
+    "__lazy_json__": "version_pr_info/etcd.json"
+  },
+  "win_64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/etcd-io/etcd",
+      "doc_url": "https://etcd.io/docs",
+      "home": "https://etcd.io/",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "A distributed, reliable key-value store for the most critical data of a distributed system."
+    },
+    "build": {
+      "number": "0",
+      "script": {
+        "content": [
+          "del client\\v3\\example*_test.go",
+          "copy tests\\integration\\clientv3\\examples\\example*_test.go client\\v3\\",
+          "del client\\v3\\concurrency\\example*_test.go",
+          "copy tests\\integration\\clientv3\\concurrency\\example*_test.go client\\v3\\concurrency\\",
+          "cd server",
+          "go build -v -trimpath -ldflags=\"-s -w\" -o \"%LIBRARY_PREFIX%\\bin\\etcd.exe\" .",
+          "go-licenses save . --save_path=../license-files/server",
+          "cd ../etcdctl",
+          "go install -v -trimpath -ldflags=\"-s -w\" .",
+          "go-licenses save . --save_path=../license-files/etcdctl",
+          "cd ../etcdutl",
+          "go-licenses save . --save_path=../license-files/etcdutl"
+        ],
+        "env": {
+          "GOFLAGS": "-tags=grpcnotrace",
+          "GOTOOLCHAIN": "local"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "sodre",
+        "wolfv"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "etcd",
+        "requirements": {
+          "build": [
+            "go_compiler_stub",
+            "go >=1.27.3",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "etcd --version",
+              "etcdctl version",
+              "etcdutl version"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "run_test.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": "python run_test.py"
+          }
+        ],
+        "version": "3.7.3"
+      }
+    ],
+    "package": {
+      "name": "etcd",
+      "version": "3.7.3"
+    },
+    "requirements": {
+      "build": [
+        "go_compiler_stub",
+        "go >=1.27.3",
+        "go-licenses"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "38455879fd3744d9aec12f45e890bede61df8b2323279e2c895bbb1bd484681f",
+      "url": "https://github.com/etcd-io/etcd/archive/v3.7.3.tar.gz"
+    }
+  },
+  "win_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "go",
+        "go-licenses",
+        "go_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
       "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "python"
+      ]
     }
   }
 }
