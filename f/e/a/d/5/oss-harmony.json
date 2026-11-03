@@ -4,6 +4,13 @@
   "ci_support_linux_64_is_python_mintruepython3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- true\nis_python_min:\n- true\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "bot": {
+      "automerge": true,
+      "inspection": "update-grayskull"
+    },
+    "build_platform": {
+      "linux_riscv64": "linux_64"
+    },
     "conda_build": {
       "error_overlinking": true
     },
@@ -12,10 +19,14 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
+    },
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "f6997723ffce6bd70b984568167635d6bb421386",
-  "feedstock_hash_ts": 1793724964,
+  "feedstock_hash": "fd5eb48160d834e63b5f351f0b17e7bbe2e75e77",
+  "feedstock_hash_ts": 1793735588,
   "feedstock_name": "oss-harmony",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -101,6 +112,55 @@
           }
         ],
         "version": "0.0.11"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "oss-harmony",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "maturin >=1.8,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pydantic >=2.11.7"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "openai_harmony"
+              ],
+              "python_version": [
+                "3.14.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/openai_harmony/openai_harmony.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.0.11"
       }
     ],
     "package": {
@@ -140,6 +200,164 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "pydantic",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip"
+      ]
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/oss-harmony/harmony",
+      "home": "https://pypi.org/project/oss-harmony/",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "Response format library for the gpt-oss open-weight model series (fork of openai-harmony)"
+    },
+    "build": {
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "export CARGO=cargo-auditable-wrapper",
+          "python -m pip install . -vv --no-deps --no-build-isolation",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_NET_GIT_FETCH_WITH_CLI": "true",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "xhochy"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "oss-harmony",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.7,<2.0"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "maturin >=1.8,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pydantic >=2.11.7"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "openai_harmony"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/openai_harmony/openai_harmony.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.0.11"
+      }
+    ],
+    "package": {
+      "name": "oss-harmony",
+      "version": "0.0.11"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_linux-aarch64",
+        "maturin >=1.7,<2.0"
+      ],
+      "host": [
+        "python",
+        "python-abi3",
+        "maturin >=1.8,<2.0",
+        "pip"
+      ],
+      "run": [
+        "python",
+        "pydantic >=2.11.7"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "ccad467b71d61490df1f2204b7a064990833338615ac135536c5b3a8e2d03a15",
+      "url": "https://pypi.org/packages/source/o/oss-harmony/oss_harmony-0.0.11.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
+        "maturin",
+        "python",
         "rust_compiler_stub"
       ]
     },
@@ -266,9 +484,162 @@
             "c_stdlib_stub",
             "rust_compiler_stub",
             "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "maturin >=1.8,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pydantic >=2.11.7"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "openai_harmony"
+              ],
+              "python_version": [
+                "3.14.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/openai_harmony/openai_harmony.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.0.11"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "oss-harmony",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64",
+            "maturin >=1.7,<2.0"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "maturin >=1.8,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pydantic >=2.11.7"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "openai_harmony"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/openai_harmony/openai_harmony.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.0.11"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "oss-harmony",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
             "cargo-bundle-licenses",
             "python",
             "cross-python_osx-64",
+            "maturin >=1.7,<2.0"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "maturin >=1.8,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pydantic >=2.11.7"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "openai_harmony"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/openai_harmony/openai_harmony.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.0.11"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "oss-harmony",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
             "maturin >=1.7,<2.0"
           ],
           "host": [
@@ -370,8 +741,10 @@
         "cargo-auditable",
         "cargo-bundle-licenses",
         "python",
-        "cross-python_osx-64",
+        "cross-python_linux-aarch64",
         "maturin >=1.7,<2.0",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
         "cross-python_win-64"
       ],
       "host": [
@@ -550,6 +923,164 @@
       ]
     }
   },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/oss-harmony/harmony",
+      "home": "https://pypi.org/project/oss-harmony/",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "Response format library for the gpt-oss open-weight model series (fork of openai-harmony)"
+    },
+    "build": {
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "export CARGO=cargo-auditable-wrapper",
+          "python -m pip install . -vv --no-deps --no-build-isolation",
+          "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
+        ],
+        "env": {
+          "CARGO_NET_GIT_FETCH_WITH_CLI": "true",
+          "CARGO_PROFILE_RELEASE_LTO": "fat",
+          "CARGO_PROFILE_RELEASE_STRIP": "symbols"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "xhochy"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "oss-harmony",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "rust_compiler_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64",
+            "maturin >=1.7,<2.0"
+          ],
+          "host": [
+            "python",
+            "python-abi3",
+            "maturin >=1.8,<2.0",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pydantic >=2.11.7"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "openai_harmony"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": "abi3audit $SP_DIR/openai_harmony/openai_harmony.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+          }
+        ],
+        "version": "0.0.11"
+      }
+    ],
+    "package": {
+      "name": "oss-harmony",
+      "version": "0.0.11"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "rust_compiler_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_osx-arm64",
+        "maturin >=1.7,<2.0"
+      ],
+      "host": [
+        "python",
+        "python-abi3",
+        "maturin >=1.8,<2.0",
+        "pip"
+      ],
+      "run": [
+        "python",
+        "pydantic >=2.11.7"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "ccad467b71d61490df1f2204b7a064990833338615ac135536c5b3a8e2d03a15",
+      "url": "https://pypi.org/packages/source/o/oss-harmony/oss_harmony-0.0.11.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cargo-auditable",
+        "cargo-bundle-licenses",
+        "cross-python_osx-arm64",
+        "maturin",
+        "python",
+        "rust_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "maturin",
+        "pip",
+        "python",
+        "python-abi3"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "pydantic",
+        "python"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip"
+      ]
+    }
+  },
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -559,7 +1090,9 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
+    "osx_arm64",
     "win_64"
   ],
   "pr_info": {
@@ -573,7 +1106,9 @@
       "c_stdlib_stub",
       "cargo-auditable",
       "cargo-bundle-licenses",
+      "cross-python_linux-aarch64",
       "cross-python_osx-64",
+      "cross-python_osx-arm64",
       "cross-python_win-64",
       "maturin",
       "pip",
@@ -591,7 +1126,9 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
         "cross-python_osx-64",
+        "cross-python_osx-arm64",
         "cross-python_win-64",
         "maturin",
         "python",
@@ -637,7 +1174,9 @@
         "c_stdlib_stub",
         "cargo-auditable",
         "cargo-bundle-licenses",
+        "cross-python_linux-aarch64",
         "cross-python_osx-64",
+        "cross-python_osx-arm64",
         "cross-python_win-64",
         "maturin >=1.7,<2.0",
         "python",
