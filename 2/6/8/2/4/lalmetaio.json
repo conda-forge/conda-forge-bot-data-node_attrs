@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.10.* *_cpython\n- 3.11.* *_cpython\n- 3.12.* *_cpython\n- 3.13.* *_cp313\n- 3.14.* *_cp314\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\n- 3.12.* *_cpython\n- 3.13.* *_cp313\n- 3.14.* *_cp314\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {
     "python314": {
       "migration_number": 1,
@@ -10,13 +10,12 @@
   },
   "conda-forge.yml": {
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
@@ -24,28 +23,33 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "12026e3df3a907fc1232dd69b4b74ba1d1b5c364",
-  "feedstock_hash_ts": 1776814326,
+  "feedstock_hash": "d92019de497c479865ff4f9dc30d8fec277278ea",
+  "feedstock_hash_ts": 1793797010,
   "feedstock_name": "lalmetaio",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-      "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
+      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.",
+      "dev_url": "https://git.ligo.org/lscsoft/lalsuite/",
       "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
       "home": "https://wiki.ligo.org/Computing/LALSuite",
       "license": "GPL-2.0-or-later",
-      "license_family": "GPL",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "COPYING",
-      "summary": "LSC Algorithm MetaIO Library"
+      "summary": "LSC Algorithm MetaIO Library shared object libraries"
     },
     "build": {
-      "error_overlinking": true,
-      "number": "2"
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "liblalmetaio"
+        ]
+      },
+      "script": []
     },
     "extra": {
       "feedstock-name": "lalmetaio",
@@ -56,22 +60,12 @@
     },
     "outputs": [
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
         "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
         },
         "name": "liblalmetaio",
         "requirements": {
@@ -79,57 +73,50 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
             "liblal >=7.7.0",
             "libmetaio >=8.4.0"
           ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
+          "run": []
         },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -140,76 +127,373 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
-        "build": {
-          "error_overlinking": true
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
         "name": "lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
             "sed"
           ],
           "host": [
             "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
+            "numpy",
             "python"
           ],
           "run": [
-            "liblal >=7.7.0",
             "liblalmetaio",
-            "python",
-            "python-lalmetaio"
+            "python-lalmetaio",
+            "python"
           ]
         },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
       }
     ],
     "package": {
-      "name": "lalmetaio-split",
+      "name": "liblalmetaio",
       "version": "4.0.6"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "help2man >=1.37",
         "make",
         "pkg-config >=0.18.0",
+        "python >=3.6",
         "swig 4.4.1.*"
       ],
       "host": [
@@ -217,7 +501,7 @@
         "libmetaio >=8.4.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "9215fc4d0d05ae8d2dd38a3d5ee052dff22eb75793b179c783a0475ed507750b",
       "url": "https://software.igwn.org/sources/source/lalsuite/lalmetaio-4.0.6.tar.xz"
@@ -232,6 +516,7 @@
         "help2man",
         "make",
         "pkg-config",
+        "python",
         "sed",
         "swig"
       ]
@@ -249,9 +534,7 @@
     "run": {
       "__set__": true,
       "elements": [
-        "liblal",
         "liblalmetaio",
-        "libmetaio",
         "python",
         "python-lal",
         "python-lalmetaio"
@@ -260,6 +543,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "pip",
         "pkg-config",
         "pytest"
       ]
@@ -267,18 +551,23 @@
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-      "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
+      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.",
+      "dev_url": "https://git.ligo.org/lscsoft/lalsuite/",
       "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
       "home": "https://wiki.ligo.org/Computing/LALSuite",
       "license": "GPL-2.0-or-later",
-      "license_family": "GPL",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "COPYING",
-      "summary": "LSC Algorithm MetaIO Library"
+      "summary": "LSC Algorithm MetaIO Library shared object libraries"
     },
     "build": {
-      "error_overlinking": true,
-      "number": "2"
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "liblalmetaio"
+        ]
+      },
+      "script": []
     },
     "extra": {
       "feedstock-name": "lalmetaio",
@@ -289,22 +578,12 @@
     },
     "outputs": [
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
         "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
         },
         "name": "liblalmetaio",
         "requirements": {
@@ -312,57 +591,53 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
             "liblal >=7.7.0",
             "libmetaio >=8.4.0"
           ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
+          "run": []
         },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
-            "swig 4.4.1.*"
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -373,76 +648,394 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
-        "build": {
-          "error_overlinking": true
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
         "name": "lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
-            "sed"
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
           ],
           "host": [
             "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
+            "numpy",
             "python"
           ],
           "run": [
-            "liblal >=7.7.0",
             "liblalmetaio",
-            "python",
-            "python-lalmetaio"
+            "python-lalmetaio",
+            "python"
           ]
         },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
       }
     ],
     "package": {
-      "name": "lalmetaio-split",
+      "name": "liblalmetaio",
       "version": "4.0.6"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "help2man >=1.37",
         "make",
         "pkg-config >=0.18.0",
+        "python >=3.6",
         "swig 4.4.1.*"
       ],
       "host": [
@@ -450,7 +1043,7 @@
         "libmetaio >=8.4.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "9215fc4d0d05ae8d2dd38a3d5ee052dff22eb75793b179c783a0475ed507750b",
       "url": "https://software.igwn.org/sources/source/lalsuite/lalmetaio-4.0.6.tar.xz"
@@ -462,9 +1055,12 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python_linux-aarch64",
         "help2man",
         "make",
+        "numpy",
         "pkg-config",
+        "python",
         "sed",
         "swig"
       ]
@@ -482,9 +1078,7 @@
     "run": {
       "__set__": true,
       "elements": [
-        "liblal",
         "liblalmetaio",
-        "libmetaio",
         "python",
         "python-lal",
         "python-lalmetaio"
@@ -493,6 +1087,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "pip",
         "pkg-config",
         "pytest"
       ]
@@ -500,18 +1095,23 @@
   },
   "linux_ppc64le_meta_yaml": {
     "about": {
-      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-      "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
+      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.",
+      "dev_url": "https://git.ligo.org/lscsoft/lalsuite/",
       "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
       "home": "https://wiki.ligo.org/Computing/LALSuite",
       "license": "GPL-2.0-or-later",
-      "license_family": "GPL",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "COPYING",
-      "summary": "LSC Algorithm MetaIO Library"
+      "summary": "LSC Algorithm MetaIO Library shared object libraries"
     },
     "build": {
-      "error_overlinking": true,
-      "number": "2"
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "liblalmetaio"
+        ]
+      },
+      "script": []
     },
     "extra": {
       "feedstock-name": "lalmetaio",
@@ -522,22 +1122,12 @@
     },
     "outputs": [
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
         "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
         },
         "name": "liblalmetaio",
         "requirements": {
@@ -545,57 +1135,53 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
             "liblal >=7.7.0",
             "libmetaio >=8.4.0"
           ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
+          "run": []
         },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
-            "swig 4.4.1.*"
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -606,76 +1192,394 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
-        "build": {
-          "error_overlinking": true
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
         "name": "lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
-            "sed"
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
           ],
           "host": [
             "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
+            "numpy",
             "python"
           ],
           "run": [
-            "liblal >=7.7.0",
             "liblalmetaio",
-            "python",
-            "python-lalmetaio"
+            "python-lalmetaio",
+            "python"
           ]
         },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
       }
     ],
     "package": {
-      "name": "lalmetaio-split",
+      "name": "liblalmetaio",
       "version": "4.0.6"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "help2man >=1.37",
         "make",
         "pkg-config >=0.18.0",
+        "python >=3.6",
         "swig 4.4.1.*"
       ],
       "host": [
@@ -683,7 +1587,7 @@
         "libmetaio >=8.4.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "9215fc4d0d05ae8d2dd38a3d5ee052dff22eb75793b179c783a0475ed507750b",
       "url": "https://software.igwn.org/sources/source/lalsuite/lalmetaio-4.0.6.tar.xz"
@@ -695,9 +1599,12 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python_linux-ppc64le",
         "help2man",
         "make",
+        "numpy",
         "pkg-config",
+        "python",
         "sed",
         "swig"
       ]
@@ -715,9 +1622,7 @@
     "run": {
       "__set__": true,
       "elements": [
-        "liblal",
         "liblalmetaio",
-        "libmetaio",
         "python",
         "python-lal",
         "python-lalmetaio"
@@ -726,6 +1631,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "pip",
         "pkg-config",
         "pytest"
       ]
@@ -733,18 +1639,23 @@
   },
   "meta_yaml": {
     "about": {
-      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-      "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
+      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.",
+      "dev_url": "https://git.ligo.org/lscsoft/lalsuite/",
       "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
       "home": "https://wiki.ligo.org/Computing/LALSuite",
       "license": "GPL-2.0-or-later",
-      "license_family": "GPL",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "COPYING",
-      "summary": "LSC Algorithm MetaIO Library"
+      "summary": "LSC Algorithm MetaIO Library shared object libraries"
     },
     "build": {
-      "error_overlinking": true,
-      "number": "2"
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "liblalmetaio"
+        ]
+      },
+      "script": []
     },
     "extra": {
       "feedstock-name": "lalmetaio",
@@ -755,22 +1666,12 @@
     },
     "outputs": [
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
         "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
         },
         "name": "liblalmetaio",
         "requirements": {
@@ -778,57 +1679,50 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
             "liblal >=7.7.0",
             "libmetaio >=8.4.0"
           ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
+          "run": []
         },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -839,139 +1733,46 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
-        "name": "lalmetaio",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "help2man >=1.37",
-            "make",
-            "sed"
-          ],
-          "host": [
-            "liblal >=7.7.0",
-            "liblalmetaio",
-            "python"
-          ],
-          "run": [
-            "liblal >=7.7.0",
-            "liblalmetaio",
-            "python",
-            "python-lalmetaio"
-          ]
-        },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
-          ]
-        }
-      },
-      {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
-        "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
-        },
-        "name": "liblalmetaio",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "make",
-            "swig 4.4.1.*"
-          ],
-          "host": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
-        },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
-      },
-      {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -982,139 +1783,46 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
-        "name": "lalmetaio",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "help2man >=1.37",
-            "make",
-            "sed"
-          ],
-          "host": [
-            "liblal >=7.7.0",
-            "liblalmetaio",
-            "python"
-          ],
-          "run": [
-            "liblal >=7.7.0",
-            "liblalmetaio",
-            "python",
-            "python-lalmetaio"
-          ]
-        },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
-          ]
-        }
-      },
-      {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
-        "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
-        },
-        "name": "liblalmetaio",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "make",
-            "swig 4.4.1.*"
-          ],
-          "host": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
-        },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
-      },
-      {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -1125,139 +1833,46 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
-        "name": "lalmetaio",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "help2man >=1.37",
-            "make",
-            "sed"
-          ],
-          "host": [
-            "liblal >=7.7.0",
-            "liblalmetaio",
-            "python"
-          ],
-          "run": [
-            "liblal >=7.7.0",
-            "liblalmetaio",
-            "python",
-            "python-lalmetaio"
-          ]
-        },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
-          ]
-        }
-      },
-      {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
-        "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
-        },
-        "name": "liblalmetaio",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "make",
-            "swig 4.4.1.*"
-          ],
-          "host": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
-        },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
-      },
-      {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -1268,81 +1883,218 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
             "sed"
           ],
           "host": [
             "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
+            "numpy",
             "python"
           ],
           "run": [
-            "liblal >=7.7.0",
             "liblalmetaio",
-            "python",
-            "python-lalmetaio"
+            "python-lalmetaio",
+            "python"
           ]
         },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
-        "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
           ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
         },
         "name": "liblalmetaio",
         "requirements": {
@@ -1350,57 +2102,53 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
             "liblal >=7.7.0",
             "libmetaio >=8.4.0"
           ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
+          "run": []
         },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
-            "swig 4.4.1.*"
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -1411,76 +2159,1735 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
-        "build": {
-          "error_overlinking": true
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
         "name": "lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
-            "sed"
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
           ],
           "host": [
             "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
+            "numpy",
             "python"
           ],
           "run": [
-            "liblal >=7.7.0",
             "liblalmetaio",
-            "python",
-            "python-lalmetaio"
+            "python-lalmetaio",
+            "python"
           ]
         },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
+        },
+        "name": "liblalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
+        },
+        "name": "liblalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
+        },
+        "name": "liblalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
       }
     ],
     "package": {
-      "name": "lalmetaio-split",
+      "name": "liblalmetaio",
       "version": "4.0.6"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "help2man >=1.37",
         "make",
         "pkg-config >=0.18.0",
+        "python >=3.6",
         "swig 4.4.1.*"
       ],
       "host": [
@@ -1488,27 +3895,32 @@
         "libmetaio >=8.4.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "9215fc4d0d05ae8d2dd38a3d5ee052dff22eb75793b179c783a0475ed507750b",
       "url": "https://software.igwn.org/sources/source/lalsuite/lalmetaio-4.0.6.tar.xz"
     }
   },
-  "name": "lalmetaio-split",
+  "name": "liblalmetaio",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-      "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
+      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.",
+      "dev_url": "https://git.ligo.org/lscsoft/lalsuite/",
       "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
       "home": "https://wiki.ligo.org/Computing/LALSuite",
       "license": "GPL-2.0-or-later",
-      "license_family": "GPL",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "COPYING",
-      "summary": "LSC Algorithm MetaIO Library"
+      "summary": "LSC Algorithm MetaIO Library shared object libraries"
     },
     "build": {
-      "error_overlinking": true,
-      "number": "2"
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "liblalmetaio"
+        ]
+      },
+      "script": []
     },
     "extra": {
       "feedstock-name": "lalmetaio",
@@ -1519,22 +3931,12 @@
     },
     "outputs": [
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
         "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
         },
         "name": "liblalmetaio",
         "requirements": {
@@ -1542,57 +3944,53 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
             "liblal >=7.7.0",
             "libmetaio >=8.4.0"
           ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
+          "run": []
         },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
-            "swig 4.4.1.*"
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -1603,76 +4001,394 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
-        "build": {
-          "error_overlinking": true
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
         "name": "lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
-            "sed"
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
           ],
           "host": [
             "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
+            "numpy",
             "python"
           ],
           "run": [
-            "liblal >=7.7.0",
             "liblalmetaio",
-            "python",
-            "python-lalmetaio"
+            "python-lalmetaio",
+            "python"
           ]
         },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
       }
     ],
     "package": {
-      "name": "lalmetaio-split",
+      "name": "liblalmetaio",
       "version": "4.0.6"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "help2man >=1.37",
         "make",
         "pkg-config >=0.18.0",
+        "python >=3.6",
         "swig 4.4.1.*"
       ],
       "host": [
@@ -1680,7 +4396,7 @@
         "libmetaio >=8.4.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "9215fc4d0d05ae8d2dd38a3d5ee052dff22eb75793b179c783a0475ed507750b",
       "url": "https://software.igwn.org/sources/source/lalsuite/lalmetaio-4.0.6.tar.xz"
@@ -1692,9 +4408,12 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python_osx-64",
         "help2man",
         "make",
+        "numpy",
         "pkg-config",
+        "python",
         "sed",
         "swig"
       ]
@@ -1712,9 +4431,7 @@
     "run": {
       "__set__": true,
       "elements": [
-        "liblal",
         "liblalmetaio",
-        "libmetaio",
         "python",
         "python-lal",
         "python-lalmetaio"
@@ -1723,6 +4440,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "pip",
         "pkg-config",
         "pytest"
       ]
@@ -1730,18 +4448,23 @@
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-      "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
+      "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.",
+      "dev_url": "https://git.ligo.org/lscsoft/lalsuite/",
       "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
       "home": "https://wiki.ligo.org/Computing/LALSuite",
       "license": "GPL-2.0-or-later",
-      "license_family": "GPL",
+      "license_family": "GPL-2.0-or-later",
       "license_file": "COPYING",
-      "summary": "LSC Algorithm MetaIO Library"
+      "summary": "LSC Algorithm MetaIO Library shared object libraries"
     },
     "build": {
-      "error_overlinking": true,
-      "number": "2"
+      "number": "3",
+      "run_exports": {
+        "weak": [
+          "liblalmetaio"
+        ]
+      },
+      "script": []
     },
     "extra": {
       "feedstock-name": "lalmetaio",
@@ -1752,22 +4475,12 @@
     },
     "outputs": [
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the shared-object libraries needed to run\napplications that use the LAL MetaIO library.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library shared object libraries"
-        },
         "build": {
-          "error_overdepending": true,
-          "error_overlinking": true,
-          "run_exports": [
-            "liblalmetaio"
-          ]
+          "run_exports": {
+            "weak": [
+              "liblalmetaio"
+            ]
+          }
         },
         "name": "liblalmetaio",
         "requirements": {
@@ -1775,57 +4488,53 @@
             "c_compiler_stub",
             "c_stdlib_stub",
             "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
             "swig 4.4.1.*"
           ],
           "host": [
             "liblal >=7.7.0",
             "libmetaio >=8.4.0"
           ],
-          "run": [
-            "liblal >=7.7.0",
-            "libmetaio >=8.4.0"
-          ],
-          "run_constrained": [
-            "lalmetaio >=2.0.1",
-            "python-lalmetaio >=2.0.1"
-          ]
+          "run": []
         },
-        "script": "install-lib.sh",
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}",
-            "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
-          ],
-          "requires": [
-            "pkg-config"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "lib": [
+                "lalmetaio"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pkg-config"
+              ]
+            },
+            "script": "pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\nThis package contains the Python bindings of the LALMetaIO C libraries\nand additional Python modules.\n\nNote: this package only provides the importable Python libraries.\nAll command-line interfaces, scripts, and executables are\npart of the `lalmetaio` package.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
-        },
-        "build": {
-          "error_overlinking": true
-        },
+        "build": null,
         "name": "python-lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
             "pkg-config >=0.18.0",
-            "swig 4.4.1.*"
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
           ],
           "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
             "numpy",
             "python"
@@ -1836,76 +4545,394 @@
             "python-lal >=7.7.0"
           ]
         },
-        "script": "build-python.sh",
-        "test": {
-          "commands": [
-            "python -m pytest -ra -v test/python"
-          ],
-          "imports": [
-            "lalmetaio"
-          ],
-          "requires": [
-            "pytest >=4.0.0a0"
-          ],
-          "source_files": [
-            "test/python"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
       },
       {
-        "about": {
-          "description": "The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n",
-          "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
-          "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/",
-          "home": "https://wiki.ligo.org/Computing/LALSuite",
-          "license": "GPL-2.0-or-later",
-          "license_family": "GPL",
-          "license_file": "COPYING",
-          "summary": "LSC Algorithm MetaIO Library"
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
-        "build": {
-          "error_overlinking": true
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
         },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "python-lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python",
+            "python-lal >=7.7.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "test/python/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest >=4.0"
+              ]
+            },
+            "script": "python -m pytest -ra -v test/python"
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
         "name": "lalmetaio",
         "requirements": {
           "build": [
             "c_compiler_stub",
             "c_stdlib_stub",
-            "help2man >=1.37",
             "make",
-            "sed"
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
           ],
           "host": [
             "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
             "liblalmetaio",
+            "numpy",
             "python"
           ],
           "run": [
-            "liblal >=7.7.0",
             "liblalmetaio",
-            "python",
-            "python-lalmetaio"
+            "python-lalmetaio",
+            "python"
           ]
         },
-        "script": "install-bin.sh",
-        "test": {
-          "commands": [
-            "lalmetaio_version --verbose"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
+      },
+      {
+        "build": null,
+        "name": "lalmetaio",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make",
+            "pkg-config >=0.18.0",
+            "python >=3.6",
+            "swig 4.4.1.*",
+            "help2man >=1.37",
+            "sed",
+            "cross-python_osx-arm64",
+            "numpy",
+            "python"
+          ],
+          "host": [
+            "liblal >=7.7.0",
+            "libmetaio >=8.4.0",
+            "liblalmetaio",
+            "numpy",
+            "python"
+          ],
+          "run": [
+            "liblalmetaio",
+            "python-lalmetaio",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lalmetaio"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": [
+              "lalmetaio_version --verbose",
+              "bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'"
+            ]
+          }
+        ],
+        "version": "4.0.6"
       }
     ],
     "package": {
-      "name": "lalmetaio-split",
+      "name": "liblalmetaio",
       "version": "4.0.6"
     },
     "requirements": {
       "build": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "help2man >=1.37",
         "make",
         "pkg-config >=0.18.0",
+        "python >=3.6",
         "swig 4.4.1.*"
       ],
       "host": [
@@ -1913,7 +4940,7 @@
         "libmetaio >=8.4.0"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "9215fc4d0d05ae8d2dd38a3d5ee052dff22eb75793b179c783a0475ed507750b",
       "url": "https://software.igwn.org/sources/source/lalsuite/lalmetaio-4.0.6.tar.xz"
@@ -1925,9 +4952,12 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python_osx-arm64",
         "help2man",
         "make",
+        "numpy",
         "pkg-config",
+        "python",
         "sed",
         "swig"
       ]
@@ -1945,9 +4975,7 @@
     "run": {
       "__set__": true,
       "elements": [
-        "liblal",
         "liblalmetaio",
-        "libmetaio",
         "python",
         "python-lal",
         "python-lalmetaio"
@@ -1956,6 +4984,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "pip",
         "pkg-config",
         "pytest"
       ]
@@ -1980,12 +5009,16 @@
   "pr_info": {
     "__lazy_json__": "pr_info/lalmetaio.json"
   },
-  "raw_meta_yaml": "{% set name = \"lalmetaio\" %}\n{% set version = \"4.0.6\" %}\n\n# dependencies\n{% set lal_version = \"7.7.0\" %}\n{% set metaio_version = \"8.4.0\" %}\n{% set swig_version = \"4.4.1\" %}\n\npackage:\n  name: {{ name }}-split\n  version: {{ version }}\n\nsource:\n  url: https://software.igwn.org/sources/source/lalsuite/{{ name }}-{{ version }}.tar.xz\n  sha256: 9215fc4d0d05ae8d2dd38a3d5ee052dff22eb75793b179c783a0475ed507750b\n\nbuild:\n  error_overlinking: true\n  number: 2\n  skip: true  # [win]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - help2man >=1.37\n    - make\n    - pkg-config >=0.18.0\n    - swig {{ swig_version }}.*\n  host:\n    - liblal >={{ lal_version }}\n    - libmetaio >={{ metaio_version }}\n\noutputs:\n  - name: liblalmetaio\n    script: install-lib.sh\n    build:\n      error_overdepending: true\n      error_overlinking: true\n      run_exports:\n        - {{ pin_subpackage(\"liblalmetaio\", max_pin=\"x\") }}\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - make  # [not win]\n        - swig {{ swig_version }}.*\n      host:\n        - liblal >={{ lal_version }}\n        - libmetaio >={{ metaio_version }}\n      run:\n        - liblal >={{ lal_version }}\n        - libmetaio >={{ metaio_version }}\n      run_constrained:\n        - lalmetaio >=2.0.1\n        - python-lalmetaio >=2.0.1\n    test:\n      requires:\n        - pkg-config\n      commands:\n        # check library\n        - test -f ${PREFIX}/lib/liblalmetaio${SHLIB_EXT}  # [unix]\n        # check pkg-config\n        - pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio\n    about:\n      home: https://wiki.ligo.org/Computing/LALSuite\n      doc_url: https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/\n      dev_url: https://git.ligo.org/lscsoft/lalsuite.git\n      license: GPL-2.0-or-later\n      license_family: GPL\n      license_file: COPYING\n      summary: LSC Algorithm MetaIO Library shared object libraries\n      description: |\n        The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n        This package contains the shared-object libraries needed to run\n        applications that use the LAL MetaIO library.\n\n  - name: python-lalmetaio\n    script: build-python.sh\n    build:\n      error_overlinking: true\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - help2man >=1.37\n        - make\n        - pkg-config >=0.18.0\n        - swig {{ swig_version }}.*\n        # extras for cross-compiling with python:\n        - python                                 # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n        - numpy                                  # [build_platform != target_platform]\n      host:\n        - {{ pin_subpackage('liblalmetaio', exact=True) }}\n        - numpy\n        - python\n      run:\n        - {{ pin_subpackage('liblalmetaio', exact=True) }}\n        - python\n        - python-lal >={{ lal_version }}\n    test:\n      requires:\n        - pytest >=4.0.0a0\n      source_files:\n        - test/python\n      commands:\n        - python -m pytest -ra -v test/python\n      imports:\n        - lalmetaio\n    about:\n      home: https://wiki.ligo.org/Computing/LALSuite\n      doc_url: https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/\n      dev_url: https://git.ligo.org/lscsoft/lalsuite.git\n      license: GPL-2.0-or-later\n      license_family: GPL\n      license_file: COPYING\n      summary: LSC Algorithm MetaIO Library\n      description: |\n        The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n        This package contains the Python bindings of the LALMetaIO C libraries\n        and additional Python modules.\n\n        Note: this package only provides the importable Python libraries.\n        All command-line interfaces, scripts, and executables are\n        part of the `lalmetaio` package.\n\n  - name: lalmetaio\n    script: install-bin.sh\n    build:\n      error_overlinking: true\n    requirements:\n      build:\n        - {{ compiler('c') }}\n        - {{ stdlib(\"c\") }}\n        - help2man >=1.37\n        - make\n        - sed\n      host:\n        - liblal >={{ lal_version }}\n        - {{ pin_subpackage('liblalmetaio', exact=True) }}\n        - python\n      run:\n        - liblal >={{ lal_version }}\n        - {{ pin_subpackage('liblalmetaio', exact=True) }}\n        - python\n        - {{ pin_subpackage('python-lalmetaio', exact=True) }}\n    test:\n      commands:\n        - lalmetaio_version --verbose\n    about:\n      home: https://wiki.ligo.org/Computing/LALSuite\n      doc_url: https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/\n      dev_url: https://git.ligo.org/lscsoft/lalsuite.git\n      license: GPL-2.0-or-later\n      license_family: GPL\n      license_file: COPYING\n      summary: LSC Algorithm MetaIO Library\n      description: |\n        The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n\nabout:\n  home: https://wiki.ligo.org/Computing/LALSuite\n  doc_url: https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/\n  dev_url: https://git.ligo.org/lscsoft/lalsuite.git\n  license: GPL-2.0-or-later\n  license_family: GPL\n  license_file: COPYING\n  summary: LSC Algorithm MetaIO Library\n  description: |\n    The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n\nextra:\n  feedstock-name: lalmetaio\n  recipe-maintainers:\n    - duncanmmacleod\n    - skymoo\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"4.0.6\"\n  build_number: 3\n  # dependencies\n  lal_version: 7.7.0\n  metaio_version: 8.4.0\n  swig_version: 4.4.1\n\nrecipe:\n  name: lalmetaio-split\n  version: ${{ version }}\n\nsource:\n  - url: https://software.igwn.org/sources/source/lalsuite/lalmetaio-${{ version }}.tar.xz\n    sha256: 9215fc4d0d05ae8d2dd38a3d5ee052dff22eb75793b179c783a0475ed507750b\n\nbuild:\n  number: ${{ build_number }}\n  skip:\n    - win\n\noutputs:\n\n  # -- Staging -----------------------\n\n  - staging:\n      name: lalmetaio-c-build\n    build:\n      script: build\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - make\n        - pkg-config >=0.18.0\n        - python >=3.6\n        - swig ${{ swig_version }}.*\n      host:\n        - liblal >=${{ lal_version }}\n        - libmetaio >=${{ metaio_version }}\n\n  # -- Packages ----------------------\n\n  - package:\n      name: liblalmetaio\n    inherit: lalmetaio-c-build\n    build:\n      dynamic_linking:\n        overdepending_behavior: error\n      files:\n        - include/lal/\n        - lib/liblalmetaio*\n        - lib/pkgconfig/lalmetaio*.pc\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n      run_exports:\n        - ${{ pin_subpackage(\"liblalmetaio\", upper_bound=\"x\") }}\n      run_constraints:\n        - lalmetaio >=2.0.1\n        - python-lalmetaio >=2.0.1\n    tests:\n      - package_contents:\n          lib:\n            - lalmetaio\n      - requirements:\n          run:\n            - pkg-config\n        script:\n          - pkg-config --print-errors --exact-version \"${PKG_VERSION}\" lalmetaio\n    about:\n      summary: LSC Algorithm MetaIO Library shared object libraries\n      description: |\n        The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n        This package contains the shared-object libraries needed to run\n        applications that use the LAL MetaIO library.\n\n  - package:\n      name: python-lalmetaio\n    inherit:\n      from: lalmetaio-c-build\n      run_exports: false\n    build:\n      dynamic_linking:\n        overdepending_behavior: error\n      files:\n        - lib/python*/site-packages/\n      script: build-python\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - make\n        - pkg-config >=0.18.0\n        - swig ${{ swig_version }}.*\n        - if: build_platform != target_platform\n          then:\n            - cross-python_${{ target_platform }}\n            - numpy\n            - python\n      host:\n        - ${{ pin_subpackage(\"liblalmetaio\", exact=True) }}\n        - numpy\n        - python\n      run:\n        - ${{ pin_subpackage(\"liblalmetaio\", exact=True) }}\n        - python\n        - python-lal >=${{ lal_version }}\n    tests:\n      - python:\n          imports:\n            - lalmetaio\n          pip_check: false\n      - requirements:\n          run:\n            - pytest >=4.0\n        files:\n          source:\n            - test/python/\n        script:\n          - python -m pytest -ra -v test/python\n    about:\n      summary: LSC Algorithm MetaIO Library Python bindings\n      description: |\n        The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n        This package contains the Python bindings of the LALMetaIO C libraries\n        and additional Python modules.\n\n        Note: this package only provides the importable Python libraries.\n        All command-line interfaces, scripts, and executables are\n        part of the `lalmetaio` package.\n\n  - package:\n      name: lalmetaio\n    inherit:\n      from: lalmetaio-c-build\n      run_exports: false\n    build:\n      dynamic_linking:\n        overdepending_behavior: error\n      files:\n        - bin/\n        - etc/lalmetaio-user-env.*\n        - share/man/\n      script: build-bin\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - help2man >=1.37\n        - make\n        - pkg-config >=0.18.0\n        - sed\n        - swig ${{ swig_version }}.*\n        - if: build_platform != target_platform\n          then:\n            - cross-python_${{ target_platform }}\n            - numpy\n            - python\n      host:\n        - ${{ pin_subpackage(\"liblalmetaio\", exact=True) }}\n        - liblal >=${{ lal_version }}\n        # needed by ./configure\n        - numpy\n        - python\n      run:\n        - ${{ pin_subpackage(\"liblalmetaio\", exact=True) }}\n        - ${{ pin_subpackage(\"python-lalmetaio\", exact=True) }}\n        - python\n    tests:\n      - python:\n          imports:\n            - lalmetaio\n          pip_check: false\n      - script:\n          - lalmetaio_version --verbose\n          # the user environment script rewrites PATH, so check that it still works\n          - bash -c '. \"${PREFIX}/etc/lalmetaio-user-env.sh\" && lalmetaio_version'\n    about:\n      summary: LSC Algorithm MetaIO Library\n      description: |\n        The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n        This package contains the runtime tools.\n\nabout:\n  summary: LSC Algorithm MetaIO Library\n  description: |\n    The LSC Algorithm MetaIO Library for gravitational wave data analysis.\n  homepage: https://wiki.ligo.org/Computing/LALSuite\n  documentation: https://lscsoft.docs.ligo.org/lalsuite/lalmetaio/\n  repository: https://git.ligo.org/lscsoft/lalsuite/\n  license: GPL-2.0-or-later\n  license_file: COPYING\n\nextra:\n  feedstock-name: lalmetaio\n  recipe-maintainers:\n    - duncanmmacleod\n    - skymoo\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
       "c_stdlib_stub",
+      "cross-python_linux-aarch64",
+      "cross-python_linux-ppc64le",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
       "help2man",
       "liblal",
       "liblalmetaio",
@@ -2006,9 +5039,15 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
         "help2man",
         "make",
+        "numpy",
         "pkg-config",
+        "python",
         "sed",
         "swig"
       ]
@@ -2018,6 +5057,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "liblal",
         "liblalmetaio",
         "libmetaio",
@@ -2030,9 +5070,8 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "liblal",
+        "cross-python",
         "liblalmetaio",
-        "libmetaio",
         "python",
         "python-lal",
         "python-lalmetaio"
@@ -2041,6 +5080,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "pip",
         "pkg-config",
         "pytest"
       ]
@@ -2053,9 +5093,16 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
         "help2man >=1.37",
         "make",
+        "numpy",
         "pkg-config >=0.18.0",
+        "python",
+        "python >=3.6",
         "sed",
         "swig 4.4.1.*"
       ]
@@ -2073,9 +5120,7 @@
     "run": {
       "__set__": true,
       "elements": [
-        "liblal >=7.7.0",
         "liblalmetaio",
-        "libmetaio >=8.4.0",
         "python",
         "python-lal >=7.7.0",
         "python-lalmetaio"
@@ -2084,8 +5129,9 @@
     "test": {
       "__set__": true,
       "elements": [
+        "pip",
         "pkg-config",
-        "pytest >=4.0.0a0"
+        "pytest >=4.0"
       ]
     }
   },
