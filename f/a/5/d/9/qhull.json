@@ -1,10 +1,11 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\ncdt_name:\n- cos7\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '12'\ndocker_image:\n- quay.io/condaforge/linux-anvil-cos7-x86_64\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_stdlib_version\n  - cdt_name\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nqhull:\n- '2020.2'\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
+      "linux_riscv64": "linux_64",
       "osx_arm64": "osx_64"
     },
     "conda_build": {
@@ -17,12 +18,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "linux_riscv64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "d0874f699ed1673d78f8cfb2a8b9caeebec02018",
-  "feedstock_hash_ts": 1776890381,
+  "feedstock_hash": "b93f278e1eb30c76a49b359b2a9b2b0eef4defda",
+  "feedstock_hash_ts": 1793908161,
   "feedstock_name": "qhull",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -35,7 +37,7 @@
       "summary": "Qhull computes the convex hull"
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "run_exports": [
         "qhull"
       ]
@@ -47,6 +49,38 @@
       ]
     },
     "outputs": [
+      {
+        "name": "qhull"
+      },
+      {
+        "build": {
+          "always_include_files": [
+            "lib/cmake/Qhull/"
+          ]
+        },
+        "name": "qhull-static",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "make"
+          ],
+          "host": [],
+          "run": [
+            "qhull"
+          ]
+        },
+        "script": "build_static.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libqhullcpp.a",
+            "test -f $PREFIX/lib/libqhullstatic.a",
+            "test -f $PREFIX/lib/libqhullstatic_r.a"
+          ]
+        }
+      },
       {
         "name": "qhull"
       },
@@ -152,7 +186,7 @@
       "summary": "Qhull computes the convex hull"
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "run_exports": [
         "qhull"
       ]
@@ -269,7 +303,7 @@
       "summary": "Qhull computes the convex hull"
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "run_exports": [
         "qhull"
       ]
@@ -386,7 +420,7 @@
       "summary": "Qhull computes the convex hull"
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "run_exports": [
         "qhull"
       ]
@@ -398,6 +432,38 @@
       ]
     },
     "outputs": [
+      {
+        "name": "qhull"
+      },
+      {
+        "build": {
+          "always_include_files": [
+            "lib/cmake/Qhull/"
+          ]
+        },
+        "name": "qhull-static",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "make"
+          ],
+          "host": [],
+          "run": [
+            "qhull"
+          ]
+        },
+        "script": "build_static.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libqhullcpp.a",
+            "test -f $PREFIX/lib/libqhullstatic.a",
+            "test -f $PREFIX/lib/libqhullstatic_r.a"
+          ]
+        }
+      },
       {
         "name": "qhull"
       },
@@ -640,7 +706,7 @@
       "summary": "Qhull computes the convex hull"
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "run_exports": [
         "qhull"
       ]
@@ -757,7 +823,7 @@
       "summary": "Qhull computes the convex hull"
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "run_exports": [
         "qhull"
       ]
@@ -883,7 +949,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/qhull.json"
   },
-  "raw_meta_yaml": "{% set name = \"qhull\" %}\n{% set version = \"2020.2\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/qhull/{{ name }}/archive/{{ version }}.tar.gz\n  sha256: 59356b229b768e6e2b09a701448bfa222c37b797a84f87f864f97462d8dbc7c5\n  patches:\n    - fix-osx-rpath.patch\n    - windows.patch\n\nbuild:\n  number: 5\n  run_exports:\n    - {{ pin_subpackage('qhull', max_pin='x.x') }}\n\nrequirements:\n  build:\n    - {{ stdlib('c') }}\n    - {{ compiler('cxx') }}\n    - cmake\n    - ninja\n    - make  # [unix]\n  host:\n  run:\n\ntest:\n  commands:\n    # Check non-existence of static libs\n    {% set qhull_libs = [\"qhullcpp\", \"qhullstatic\", \"qhullstatic_r\"] %}\n    {% for each_qhull_lib in qhull_libs %}\n    - test ! -f $PREFIX/lib/lib{{ each_qhull_lib }}.a                         # [unix]\n    {% endfor %}\n    # Shared libs existence\n    {% set qhull_dynlibs = [\"qhull_r\"] %}\n    {% for each_qhull_lib in qhull_dynlibs %}\n    - test -f $PREFIX/lib/lib{{ each_qhull_lib }}${SHLIB_EXT}                 # [unix]\n    - if not exist %PREFIX%\\\\Library\\\\lib\\\\{{ each_qhull_lib }}.lib exit 1    # [win]\n    - if not exist %PREFIX%\\\\Library\\\\bin\\\\{{ each_qhull_lib }}.dll exit 1    # [win]\n    {% endfor %}\n    - rbox c P0 D2 | qvoronoi s o\n    - rbox c | qconvex FQ FV n | qhalf Fp\n    - rbox 1000 D3 | qhull C-1e-4 FO Ts\n\noutputs:\n  - name: qhull\n  - name: qhull-static\n    build:\n      skip: true  # [win]\n      always_include_files:\n        # Must overwrite the CMake metadata from shared libprotobuf\n        - lib/cmake/Qhull/           # [unix]\n        - Library/lib/cmake/Qhull/   # [win]\n    script: build_static.sh\n    requirements:\n      build:\n        - {{ stdlib('c') }}\n        - {{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - make  # [unix]\n      host:\n      run:\n        - {{ pin_subpackage('qhull', exact=True) }}\n    test:\n      commands:\n        # Static libs existence\n        {% set qhull_libs = [\"qhullcpp\", \"qhullstatic\", \"qhullstatic_r\"] %}\n        {% for each_qhull_lib in qhull_libs %}\n        - test -f $PREFIX/lib/lib{{ each_qhull_lib }}.a\n        {% endfor %}\n\nabout:\n  home: http://www.qhull.org/\n  license: LicenseRef-Qhull\n  license_file: COPYING.txt\n  summary: Qhull computes the convex hull\n  doc_url: http://www.qhull.org/html\n  dev_url: https://github.com/qhull/qhull\n\nextra:\n  recipe-maintainers:\n    - sirokujira\n    - xhochy\n",
+  "raw_meta_yaml": "{% set name = \"qhull\" %}\n{% set version = \"2020.2\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: \"{{ version }}\"\n\nsource:\n  url: https://github.com/qhull/{{ name }}/archive/{{ version }}.tar.gz\n  sha256: 59356b229b768e6e2b09a701448bfa222c37b797a84f87f864f97462d8dbc7c5\n  patches:\n    - fix-osx-rpath.patch\n    - windows.patch\n\nbuild:\n  number: 6\n  run_exports:\n    - {{ pin_subpackage('qhull', max_pin='x.x') }}\n\nrequirements:\n  build:\n    - {{ stdlib('c') }}\n    - {{ compiler('cxx') }}\n    - cmake\n    - ninja\n    - make  # [unix]\n  host:\n  run:\n\ntest:\n  commands:\n    # Check non-existence of static libs\n    {% set qhull_libs = [\"qhullcpp\", \"qhullstatic\", \"qhullstatic_r\"] %}\n    {% for each_qhull_lib in qhull_libs %}\n    - test ! -f $PREFIX/lib/lib{{ each_qhull_lib }}.a                         # [unix]\n    {% endfor %}\n    # Shared libs existence\n    {% set qhull_dynlibs = [\"qhull_r\"] %}\n    {% for each_qhull_lib in qhull_dynlibs %}\n    - test -f $PREFIX/lib/lib{{ each_qhull_lib }}${SHLIB_EXT}                 # [unix]\n    - if not exist %PREFIX%\\\\Library\\\\lib\\\\{{ each_qhull_lib }}.lib exit 1    # [win]\n    - if not exist %PREFIX%\\\\Library\\\\bin\\\\{{ each_qhull_lib }}.dll exit 1    # [win]\n    {% endfor %}\n    - rbox c P0 D2 | qvoronoi s o\n    - rbox c | qconvex FQ FV n | qhalf Fp\n    - rbox 1000 D3 | qhull C-1e-4 FO Ts\n\noutputs:\n  - name: qhull\n  - name: qhull-static\n    build:\n      skip: true  # [win]\n      always_include_files:\n        # Must overwrite the CMake metadata from shared libprotobuf\n        - lib/cmake/Qhull/           # [unix]\n        - Library/lib/cmake/Qhull/   # [win]\n    script: build_static.sh\n    requirements:\n      build:\n        - {{ stdlib('c') }}\n        - {{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - make  # [unix]\n      host:\n      run:\n        - {{ pin_subpackage('qhull', exact=True) }}\n    test:\n      commands:\n        # Static libs existence\n        {% set qhull_libs = [\"qhullcpp\", \"qhullstatic\", \"qhullstatic_r\"] %}\n        {% for each_qhull_lib in qhull_libs %}\n        - test -f $PREFIX/lib/lib{{ each_qhull_lib }}.a\n        {% endfor %}\n\nabout:\n  home: http://www.qhull.org/\n  license: LicenseRef-Qhull\n  license_file: COPYING.txt\n  summary: Qhull computes the convex hull\n  doc_url: http://www.qhull.org/html\n  dev_url: https://github.com/qhull/qhull\n\nextra:\n  recipe-maintainers:\n    - sirokujira\n    - xhochy\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -968,7 +1034,7 @@
       "summary": "Qhull computes the convex hull"
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "run_exports": [
         "qhull"
       ]
