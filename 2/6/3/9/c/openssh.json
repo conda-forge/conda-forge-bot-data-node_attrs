@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nkrb5:\n- '1.22'\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
+  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nkrb5:\n- '1.22'\nlibedit:\n- '3.1'\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
@@ -9,10 +9,9 @@
       "linux_ppc64le": "linux_64",
       "osx_arm64": "osx_64"
     },
-    "conda_build": {
-      "pkg_format": "2"
-    },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
@@ -23,16 +22,17 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "05335a90621c7f4ac5ce184ff3d206aac5620495",
-  "feedstock_hash_ts": 1786442080,
+  "feedstock_hash": "1ed6a25f19c9353b921943fbdbe6b3220078ec29",
+  "feedstock_hash_ts": 1793906774,
   "feedstock_name": "openssh",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.\n",
+      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.",
       "dev_url": "https://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/",
       "home": "https://www.openssh.com/",
       "license": "SSH-OpenSSH",
+      "license_family": "SSH-OpenSSH",
       "license_file": "LICENCE",
       "summary": "A suite of secure networking utilities based on the SSH protocol"
     },
@@ -45,15 +45,65 @@
         "nehaljwani"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "libxcrypt",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      }
+    ],
     "package": {
       "name": "openssh",
-      "version": "10.5p1"
+      "version": "10.6p2"
     },
     "requirements": {
       "build": [
         "autoconf",
         "automake",
-        "pkg-config",
+        "pkgconf",
         "coreutils",
         "gnuconfig",
         "c_compiler_stub",
@@ -69,26 +119,13 @@
         "openssl"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
         "0001-Set-strip-program-when-running-install.patch"
       ],
-      "sha256": "d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11",
-      "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords",
-        "type -f scp",
-        "type -f sftp",
-        "type -f ssh",
-        "type -f ssh-add",
-        "type -f ssh-agent",
-        "type -f sshd",
-        "type -f ssh-keygen",
-        "type -f ssh-keyscan"
-      ]
+      "sha256": "9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b",
+      "url": "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -102,7 +139,7 @@
         "coreutils",
         "gnuconfig",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -127,10 +164,11 @@
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.\n",
+      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.",
       "dev_url": "https://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/",
       "home": "https://www.openssh.com/",
       "license": "SSH-OpenSSH",
+      "license_family": "SSH-OpenSSH",
       "license_file": "LICENCE",
       "summary": "A suite of secure networking utilities based on the SSH protocol"
     },
@@ -143,15 +181,65 @@
         "nehaljwani"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "libxcrypt",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      }
+    ],
     "package": {
       "name": "openssh",
-      "version": "10.5p1"
+      "version": "10.6p2"
     },
     "requirements": {
       "build": [
         "autoconf",
         "automake",
-        "pkg-config",
+        "pkgconf",
         "coreutils",
         "gnuconfig",
         "c_compiler_stub",
@@ -167,26 +255,13 @@
         "openssl"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
         "0001-Set-strip-program-when-running-install.patch"
       ],
-      "sha256": "d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11",
-      "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords",
-        "type -f scp",
-        "type -f sftp",
-        "type -f ssh",
-        "type -f ssh-add",
-        "type -f ssh-agent",
-        "type -f sshd",
-        "type -f ssh-keygen",
-        "type -f ssh-keyscan"
-      ]
+      "sha256": "9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b",
+      "url": "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -200,7 +275,7 @@
         "coreutils",
         "gnuconfig",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -225,10 +300,11 @@
   },
   "linux_ppc64le_meta_yaml": {
     "about": {
-      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.\n",
+      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.",
       "dev_url": "https://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/",
       "home": "https://www.openssh.com/",
       "license": "SSH-OpenSSH",
+      "license_family": "SSH-OpenSSH",
       "license_file": "LICENCE",
       "summary": "A suite of secure networking utilities based on the SSH protocol"
     },
@@ -241,15 +317,65 @@
         "nehaljwani"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "libxcrypt",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      }
+    ],
     "package": {
       "name": "openssh",
-      "version": "10.5p1"
+      "version": "10.6p2"
     },
     "requirements": {
       "build": [
         "autoconf",
         "automake",
-        "pkg-config",
+        "pkgconf",
         "coreutils",
         "gnuconfig",
         "c_compiler_stub",
@@ -265,26 +391,13 @@
         "openssl"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "patches": [
         "0001-Set-strip-program-when-running-install.patch"
       ],
-      "sha256": "d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11",
-      "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords",
-        "type -f scp",
-        "type -f sftp",
-        "type -f ssh",
-        "type -f ssh-add",
-        "type -f ssh-agent",
-        "type -f sshd",
-        "type -f ssh-keygen",
-        "type -f ssh-keyscan"
-      ]
+      "sha256": "9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b",
+      "url": "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
@@ -298,7 +411,7 @@
         "coreutils",
         "gnuconfig",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -323,10 +436,11 @@
   },
   "meta_yaml": {
     "about": {
-      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.\n",
+      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.",
       "dev_url": "https://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/",
       "home": "https://www.openssh.com/",
       "license": "SSH-OpenSSH",
+      "license_family": "SSH-OpenSSH",
       "license_file": "LICENCE",
       "summary": "A suite of secure networking utilities based on the SSH protocol"
     },
@@ -339,15 +453,255 @@
         "nehaljwani"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "libxcrypt",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      },
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "libxcrypt",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      },
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "libxcrypt",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      },
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      },
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      }
+    ],
     "package": {
       "name": "openssh",
-      "version": "10.5p1"
+      "version": "10.6p2"
     },
     "requirements": {
       "build": [
         "autoconf",
         "automake",
-        "pkg-config",
+        "pkgconf",
         "coreutils",
         "gnuconfig",
         "c_compiler_stub",
@@ -363,33 +717,23 @@
         "openssl"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "patches": null,
-      "sha256": "d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11",
-      "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords",
-        "type -f scp",
-        "type -f sftp",
-        "type -f ssh",
-        "type -f ssh-add",
-        "type -f ssh-agent",
-        "type -f sshd",
-        "type -f ssh-keygen",
-        "type -f ssh-keyscan"
-      ]
+      "patches": [
+        "0001-Set-strip-program-when-running-install.patch"
+      ],
+      "sha256": "9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b",
+      "url": "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz"
     }
   },
   "name": "openssh",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.\n",
+      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.",
       "dev_url": "https://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/",
       "home": "https://www.openssh.com/",
       "license": "SSH-OpenSSH",
+      "license_family": "SSH-OpenSSH",
       "license_file": "LICENCE",
       "summary": "A suite of secure networking utilities based on the SSH protocol"
     },
@@ -402,15 +746,64 @@
         "nehaljwani"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      }
+    ],
     "package": {
       "name": "openssh",
-      "version": "10.5p1"
+      "version": "10.6p2"
     },
     "requirements": {
       "build": [
         "autoconf",
         "automake",
-        "pkg-config",
+        "pkgconf",
         "coreutils",
         "gnuconfig",
         "c_compiler_stub",
@@ -425,24 +818,10 @@
         "openssl"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "patches": null,
-      "sha256": "d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11",
-      "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords",
-        "type -f scp",
-        "type -f sftp",
-        "type -f ssh",
-        "type -f ssh-add",
-        "type -f ssh-agent",
-        "type -f sshd",
-        "type -f ssh-keygen",
-        "type -f ssh-keyscan"
-      ]
+      "sha256": "9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b",
+      "url": "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -456,7 +835,7 @@
         "coreutils",
         "gnuconfig",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -480,10 +859,11 @@
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.\n",
+      "description": "OpenSSH is the premier connectivity tool for remote login with the SSH\nprotocol. It encrypts all traffic to eliminate eavesdropping, connection\nhijacking, and other attacks. In addition, OpenSSH provides a large suite\nof secure tunneling capabilities, several authentication methods, and\nsophisticated configuration options.",
       "dev_url": "https://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/",
       "home": "https://www.openssh.com/",
       "license": "SSH-OpenSSH",
+      "license_family": "SSH-OpenSSH",
       "license_file": "LICENCE",
       "summary": "A suite of secure networking utilities based on the SSH protocol"
     },
@@ -496,15 +876,64 @@
         "nehaljwani"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "openssh",
+        "requirements": {
+          "build": [
+            "autoconf",
+            "automake",
+            "pkgconf",
+            "coreutils",
+            "gnuconfig",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "make"
+          ],
+          "host": [
+            "zlib",
+            "libedit",
+            "libfido2",
+            "krb5",
+            "openssl"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "bin": [
+                "scp",
+                "sftp",
+                "ssh",
+                "ssh-add",
+                "ssh-agent",
+                "sshd",
+                "ssh-keygen",
+                "ssh-keyscan"
+              ]
+            }
+          },
+          {
+            "script": [
+              "ssh -V",
+              "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords"
+            ]
+          }
+        ],
+        "version": "10.6p2"
+      }
+    ],
     "package": {
       "name": "openssh",
-      "version": "10.5p1"
+      "version": "10.6p2"
     },
     "requirements": {
       "build": [
         "autoconf",
         "automake",
-        "pkg-config",
+        "pkgconf",
         "coreutils",
         "gnuconfig",
         "c_compiler_stub",
@@ -519,24 +948,10 @@
         "openssl"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "patches": null,
-      "sha256": "d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11",
-      "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords",
-        "type -f scp",
-        "type -f sftp",
-        "type -f ssh",
-        "type -f ssh-add",
-        "type -f ssh-agent",
-        "type -f sshd",
-        "type -f ssh-keygen",
-        "type -f ssh-keyscan"
-      ]
+      "sha256": "9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b",
+      "url": "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -550,7 +965,7 @@
         "coreutils",
         "gnuconfig",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -589,7 +1004,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/openssh.json"
   },
-  "raw_meta_yaml": "{% set name = \"openssh\" %}\n{% set version = \"10.5p1\" %}\n\npackage:\n  name: {{ name }}\n  version: {{ version }}\n\nsource:\n  url: http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/{{ name }}-{{ version }}.tar.gz\n  sha256: d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11\n  patches:\n    - 0001-Set-strip-program-when-running-install.patch  # [linux]\n\nbuild:\n  number: 0\n  skip: true  # [win]\n\nrequirements:\n  build:\n    - autoconf\n    - automake\n    - pkg-config\n    - coreutils\n    - gnuconfig  # [unix]\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - make\n  host:\n    - zlib\n    - libedit\n    - libfido2\n    - libxcrypt  # [linux]\n    - krb5\n    - openssl\n\ntest:\n  commands:\n    - ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords\n    - type -f scp\n    - type -f sftp\n    - type -f ssh\n    - type -f ssh-add\n    - type -f ssh-agent\n    - type -f sshd\n    - type -f ssh-keygen\n    - type -f ssh-keyscan\n\nabout:\n  home: https://www.openssh.com/\n  license: SSH-OpenSSH\n  license_file: LICENCE\n  summary: A suite of secure networking utilities based on the SSH protocol\n  description: |\n    OpenSSH is the premier connectivity tool for remote login with the SSH\n    protocol. It encrypts all traffic to eliminate eavesdropping, connection\n    hijacking, and other attacks. In addition, OpenSSH provides a large suite\n    of secure tunneling capabilities, several authentication methods, and\n    sophisticated configuration options.\n  dev_url: https://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/\n\nextra:\n  recipe-maintainers:\n    - chrisburr\n    - nehaljwani\n",
+  "raw_meta_yaml": "context:\n  version: \"10.6p2\"\n\npackage:\n  name: openssh\n  version: ${{ version }}\n\nsource:\n  url: https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${{ version }}.tar.gz\n  sha256: 9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b\n  patches:\n    - if: linux\n      then: 0001-Set-strip-program-when-running-install.patch\n\nbuild:\n  number: 0\n  skip: win\n\nrequirements:\n  build:\n    - autoconf\n    - automake\n    - pkgconf\n    - coreutils\n    - if: unix\n      then: gnuconfig\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - make\n  host:\n    - zlib\n    - libedit\n    - libfido2\n    - if: linux\n      then: libxcrypt\n    - krb5\n    - openssl\n\ntests:\n  - package_contents:\n      bin:\n        - scp\n        - sftp\n        - ssh\n        - ssh-add\n        - ssh-agent\n        - sshd\n        - ssh-keygen\n        - ssh-keyscan\n  - script:\n      - ssh -V\n      - ssh-keygen -t rsa -b 4096 -f id_rsa -P do-not-pass-passwords\n\nabout:\n  homepage: https://www.openssh.com/\n  license: SSH-OpenSSH\n  license_file: LICENCE\n  summary: A suite of secure networking utilities based on the SSH protocol\n  description: |\n    OpenSSH is the premier connectivity tool for remote login with the SSH\n    protocol. It encrypts all traffic to eliminate eavesdropping, connection\n    hijacking, and other attacks. In addition, OpenSSH provides a large suite\n    of secure tunneling capabilities, several authentication methods, and\n    sophisticated configuration options.\n  repository: https://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/\n\nextra:\n  recipe-maintainers:\n    - chrisburr\n    - nehaljwani\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -605,7 +1020,7 @@
       "libxcrypt",
       "make",
       "openssl",
-      "pkg-config",
+      "pkgconf",
       "zlib"
     ]
   },
@@ -620,7 +1035,7 @@
         "coreutils",
         "gnuconfig",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -660,7 +1075,7 @@
         "coreutils",
         "gnuconfig",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -683,8 +1098,8 @@
       "elements": []
     }
   },
-  "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz",
-  "version": "10.5p1",
+  "url": "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz",
+  "version": "10.6p2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/openssh.json"
   }
