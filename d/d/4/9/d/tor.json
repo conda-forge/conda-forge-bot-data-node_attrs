@@ -1,13 +1,16 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibevent:\n- 2.1.12\nliblzma_devel:\n- '5'\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibevent:\n- 2.1.13\nliblzma_devel:\n- '5'\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
+  "ci_support_migrations": {
+    "libevent2113": {
+      "migration_number": 1,
+      "migrator_ts": 1794008355.9242003
+    }
+  },
   "conda-forge.yml": {
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "error_overlinking": true
@@ -19,10 +22,14 @@
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
+    },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "7a8dcfa20897ac878a784db55c5a45f98c705069",
-  "feedstock_hash_ts": 1793971831,
+  "feedstock_hash": "29b5de6a4604bdd07dfee0005c0a81c1dc85cd1c",
+  "feedstock_hash_ts": 1794039189,
   "feedstock_name": "tor",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -35,7 +42,7 @@
       "summary": "Anonymizing overlay network for TCP"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "export CPPFLAGS=\"${CPPFLAGS/-DNDEBUG/}\"",
         "./configure --prefix=\"$PREFIX\"${{ ' --disable-tool-name-check' if build_platform != target_platform else '' }}",
@@ -145,7 +152,7 @@
       "summary": "Anonymizing overlay network for TCP"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "export CPPFLAGS=\"${CPPFLAGS/-DNDEBUG/}\"",
         "./configure --prefix=\"$PREFIX\"${{ ' --disable-tool-name-check' if build_platform != target_platform else '' }}",
@@ -255,7 +262,7 @@
       "summary": "Anonymizing overlay network for TCP"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "export CPPFLAGS=\"${CPPFLAGS/-DNDEBUG/}\"",
         "./configure --prefix=\"$PREFIX\"${{ ' --disable-tool-name-check' if build_platform != target_platform else '' }}",
@@ -365,7 +372,7 @@
       "summary": "Anonymizing overlay network for TCP"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "export CPPFLAGS=\"${CPPFLAGS/-DNDEBUG/}\"",
         "./configure --prefix=\"$PREFIX\"${{ ' --disable-tool-name-check' if build_platform != target_platform else '' }}",
@@ -567,7 +574,7 @@
       "summary": "Anonymizing overlay network for TCP"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "autoreconf -fiv",
         "export CPPFLAGS=\"${CPPFLAGS/-DNDEBUG/}\"",
@@ -687,7 +694,7 @@
       "summary": "Anonymizing overlay network for TCP"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "autoreconf -fiv",
         "export CPPFLAGS=\"${CPPFLAGS/-DNDEBUG/}\"",
@@ -814,7 +821,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/tor.json"
   },
-  "raw_meta_yaml": "context:\n  name: tor\n  version: \"0.4.8.25\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://www.torproject.org/dist/${{ name }}-${{ version }}.tar.gz\n  sha256: 371cd22178fa4b35e64b03933403890795ce3e304c5850a5b59adcc68820a799\n\nbuild:\n  skip:\n    - win\n  number: 1\n  script:\n    - if: osx\n      then:\n        # config.sub is outdated so we need to regenerate it\n        - autoreconf -fiv\n    # https://gitlab.torproject.org/tpo/core/tor/-/blob/tor-0.4.8.16/src/lib/log/util_bug.h#L56\n    - export CPPFLAGS=\"${CPPFLAGS/-DNDEBUG/}\"\n    - ./configure --prefix=\"$PREFIX\"${{ ' --disable-tool-name-check' if build_platform != target_platform else '' }}\n    - make install\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - make\n    - pkgconf\n    - if: osx\n      then:\n        - autoconf\n        - libtool\n        - automake\n  host:\n    - libevent\n    - libscrypt\n    - openssl\n    - zlib\n    - liblzma-devel\n    - zstd\n\ntests:\n  - script:\n      - tor --version\nabout:\n  homepage: https://torproject.org\n  summary: Anonymizing overlay network for TCP\n  license: BSD-2-Clause AND BSD-3-Clause AND MIT AND NCSA\n  license_file: LICENSE\n  repository: https://gitlab.torproject.org/tpo/core/tor\n\nextra:\n  recipe-maintainers:\n    - pavelzw\n",
+  "raw_meta_yaml": "context:\n  name: tor\n  version: \"0.4.8.25\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://www.torproject.org/dist/${{ name }}-${{ version }}.tar.gz\n  sha256: 371cd22178fa4b35e64b03933403890795ce3e304c5850a5b59adcc68820a799\n\nbuild:\n  skip:\n    - win\n  number: 2\n  script:\n    - if: osx\n      then:\n        # config.sub is outdated so we need to regenerate it\n        - autoreconf -fiv\n    # https://gitlab.torproject.org/tpo/core/tor/-/blob/tor-0.4.8.16/src/lib/log/util_bug.h#L56\n    - export CPPFLAGS=\"${CPPFLAGS/-DNDEBUG/}\"\n    - ./configure --prefix=\"$PREFIX\"${{ ' --disable-tool-name-check' if build_platform != target_platform else '' }}\n    - make install\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - make\n    - pkgconf\n    - if: osx\n      then:\n        - autoconf\n        - libtool\n        - automake\n  host:\n    - libevent\n    - libscrypt\n    - openssl\n    - zlib\n    - liblzma-devel\n    - zstd\n\ntests:\n  - script:\n      - tor --version\nabout:\n  homepage: https://torproject.org\n  summary: Anonymizing overlay network for TCP\n  license: BSD-2-Clause AND BSD-3-Clause AND MIT AND NCSA\n  license_file: LICENSE\n  repository: https://gitlab.torproject.org/tpo/core/tor\n\nextra:\n  recipe-maintainers:\n    - pavelzw\n",
   "req": {
     "__set__": true,
     "elements": [
