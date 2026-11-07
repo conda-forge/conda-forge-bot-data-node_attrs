@@ -1,11 +1,15 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibboost_headers:\n- '1.90'\nlibevent:\n- 2.1.12\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibboost_headers:\n- '1.90'\nlibevent:\n- 2.1.13\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {
     "libboost190": {
       "migration_number": 1,
       "migrator_ts": 1776998221.848913
+    },
+    "libevent2113": {
+      "migration_number": 1,
+      "migrator_ts": 1794008355.9242003
     }
   },
   "conda-forge.yml": {
@@ -26,8 +30,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "7261412d7447dcc5629fb03fde042754eefec4ca",
-  "feedstock_hash_ts": 1793509093,
+  "feedstock_hash": "0841feb4e9f1143d030b35e2401df4606c204e4d",
+  "feedstock_hash_ts": 1794087109,
   "feedstock_name": "thrift-cpp",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -40,7 +44,7 @@
       "summary": "Compiler and C++ libraries and headers for the Apache Thrift RPC system"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libthrift"
@@ -294,7 +298,7 @@
       "summary": "Compiler and C++ libraries and headers for the Apache Thrift RPC system"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libthrift"
@@ -548,7 +552,7 @@
       "summary": "Compiler and C++ libraries and headers for the Apache Thrift RPC system"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libthrift"
@@ -802,7 +806,7 @@
       "summary": "Compiler and C++ libraries and headers for the Apache Thrift RPC system"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libthrift"
@@ -1907,7 +1911,7 @@
       "summary": "Compiler and C++ libraries and headers for the Apache Thrift RPC system"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libthrift"
@@ -2159,7 +2163,7 @@
       "summary": "Compiler and C++ libraries and headers for the Apache Thrift RPC system"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libthrift"
@@ -2422,7 +2426,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/thrift-cpp.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.25.0\"\n\nrecipe:\n  name: thrift-split\n  version: ${{ version }}\n\nsource:\n  url: https://archive.apache.org/dist/thrift/${{ version }}/thrift-${{ version }}.tar.gz\n  sha256: 66da4707214c54c94bac082103dc67adaf9e08925662700f269170a7b534b214\n  patches:\n    - if: win\n      then:\n        - patches/0001-windows-fixes.patch\n        - patches/0002-Add-boost-throw_exception-implementation.patch\n\nbuild:\n  number: 1\n\noutputs:\n  - staging:\n      name: thrift-build\n    build:\n      script:\n        file: build\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - pkg-config\n        - if: win\n          then: winflexbison\n          else:\n            - bison\n            - flex\n      host:\n        - libboost-headers\n        - libevent\n        - openssl\n        - zlib\n      ignore_run_exports:\n        from_package:\n          - winflexbison\n\n  - package:\n      name: libthrift\n    inherit: thrift-build\n    build:\n      script:\n        file: install\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libthrift', upper_bound='x.x.x') }}\n      build:\n        # for strong run-exports\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n      host:\n        - libboost-headers\n        - libevent\n        - openssl\n        - zlib\n    tests:\n      - package_contents:\n          include:\n            - thrift/Thrift.h\n          lib:\n            - if: unix\n              then:\n                - thrift\n                - thriftnb\n                - thriftz\n              else:\n                - thriftmd\n                - thriftnbmd\n                - thriftzmd\n          files:\n            # absence of static libraries & binaries\n            not_exists:\n              - if: unix\n                then:\n                  - lib/libthrift.a\n                  - lib/libthriftnb.a\n                  - lib/libthriftz.a\n                  - bin/thrift\n                else:\n                  - Library/bin/thrift.exe\n      - requirements:\n          run:\n            # cmake needs compiler to be able to run package detection, see\n            # https://discourse.cmake.org/t/questions-about-find-package-cli-msvc/6194\n            - ${{ compiler('cxx') }}\n            - cmake\n            - ninja\n            - pkg-config\n            # find_package(thrift) really wants to find zlib\n            - if: linux or win\n              then: zlib\n        files:\n          recipe:\n            - cmake_test/\n        script:\n          # pkg-config metadata (different naming than DSOs; uses hyphen, no \"lib\" prefix)\n          - pkg-config --print-errors --exact-version \"${{ version }}\" thrift\n          - pkg-config --print-errors --exact-version \"${{ version }}\" thrift-nb\n          - pkg-config --print-errors --exact-version \"${{ version }}\" thrift-z\n          # test CMake integration, i.e. find_package(thrift) and basic linkage\n          - cd cmake_test\n          - if: win\n            then: cmake -GNinja %CMAKE_ARGS% .\n            else: cmake -GNinja $CMAKE_ARGS .\n          - cmake --build .\n          - ctest --output-on-failure\n\n  - package:\n      name: thrift-compiler\n    inherit:\n      from: thrift-build\n      run_exports: false\n    build:\n      script:\n        file: install\n      files:\n        - ${{ 'Library/bin/thrift.exe' if win else 'bin/thrift' }}\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libthrift', upper_bound='x.x.x') }}\n      build:\n        # for strong run-exports\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n      host:\n        - ${{ pin_subpackage('libthrift', exact=true) }}\n      run:\n        - ${{ pin_subpackage('libthrift', exact=true) }}\n    tests:\n      - package_contents:\n          files:\n            - if: unix\n              then: bin/thrift\n              else: Library/bin/thrift.exe\n      - script:\n          - thrift --version\n\n  - package:\n      name: thrift-cpp\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libthrift', upper_bound='x.x.x') }}\n      host:\n        - ${{ pin_subpackage('libthrift', exact=true) }}\n        - ${{ pin_subpackage('thrift-compiler', exact=true) }}\n      run:\n        - ${{ pin_subpackage('libthrift', exact=true) }}\n        - ${{ pin_subpackage('thrift-compiler', exact=true) }}\n    tests:\n      - script: thrift --version\n\nabout:\n  homepage: https://thrift.apache.org\n  license: Apache-2.0\n  license_file: LICENSE\n  summary: Compiler and C++ libraries and headers for the Apache Thrift RPC system\n  repository: https://github.com/apache/thrift\n\nextra:\n  recipe-maintainers:\n    - wesm\n    - msarahan\n    - jakirkham\n    - xhochy\n    - h-vetinari\n    - wolfv\n  feedstock-name: thrift-cpp\n",
+  "raw_meta_yaml": "context:\n  version: \"0.25.0\"\n\nrecipe:\n  name: thrift-split\n  version: ${{ version }}\n\nsource:\n  url: https://archive.apache.org/dist/thrift/${{ version }}/thrift-${{ version }}.tar.gz\n  sha256: 66da4707214c54c94bac082103dc67adaf9e08925662700f269170a7b534b214\n  patches:\n    - if: win\n      then:\n        - patches/0001-windows-fixes.patch\n        - patches/0002-Add-boost-throw_exception-implementation.patch\n\nbuild:\n  number: 2\n\noutputs:\n  - staging:\n      name: thrift-build\n    build:\n      script:\n        file: build\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - pkg-config\n        - if: win\n          then: winflexbison\n          else:\n            - bison\n            - flex\n      host:\n        - libboost-headers\n        - libevent\n        - openssl\n        - zlib\n      ignore_run_exports:\n        from_package:\n          - winflexbison\n\n  - package:\n      name: libthrift\n    inherit: thrift-build\n    build:\n      script:\n        file: install\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libthrift', upper_bound='x.x.x') }}\n      build:\n        # for strong run-exports\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n      host:\n        - libboost-headers\n        - libevent\n        - openssl\n        - zlib\n    tests:\n      - package_contents:\n          include:\n            - thrift/Thrift.h\n          lib:\n            - if: unix\n              then:\n                - thrift\n                - thriftnb\n                - thriftz\n              else:\n                - thriftmd\n                - thriftnbmd\n                - thriftzmd\n          files:\n            # absence of static libraries & binaries\n            not_exists:\n              - if: unix\n                then:\n                  - lib/libthrift.a\n                  - lib/libthriftnb.a\n                  - lib/libthriftz.a\n                  - bin/thrift\n                else:\n                  - Library/bin/thrift.exe\n      - requirements:\n          run:\n            # cmake needs compiler to be able to run package detection, see\n            # https://discourse.cmake.org/t/questions-about-find-package-cli-msvc/6194\n            - ${{ compiler('cxx') }}\n            - cmake\n            - ninja\n            - pkg-config\n            # find_package(thrift) really wants to find zlib\n            - if: linux or win\n              then: zlib\n        files:\n          recipe:\n            - cmake_test/\n        script:\n          # pkg-config metadata (different naming than DSOs; uses hyphen, no \"lib\" prefix)\n          - pkg-config --print-errors --exact-version \"${{ version }}\" thrift\n          - pkg-config --print-errors --exact-version \"${{ version }}\" thrift-nb\n          - pkg-config --print-errors --exact-version \"${{ version }}\" thrift-z\n          # test CMake integration, i.e. find_package(thrift) and basic linkage\n          - cd cmake_test\n          - if: win\n            then: cmake -GNinja %CMAKE_ARGS% .\n            else: cmake -GNinja $CMAKE_ARGS .\n          - cmake --build .\n          - ctest --output-on-failure\n\n  - package:\n      name: thrift-compiler\n    inherit:\n      from: thrift-build\n      run_exports: false\n    build:\n      script:\n        file: install\n      files:\n        - ${{ 'Library/bin/thrift.exe' if win else 'bin/thrift' }}\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libthrift', upper_bound='x.x.x') }}\n      build:\n        # for strong run-exports\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n      host:\n        - ${{ pin_subpackage('libthrift', exact=true) }}\n      run:\n        - ${{ pin_subpackage('libthrift', exact=true) }}\n    tests:\n      - package_contents:\n          files:\n            - if: unix\n              then: bin/thrift\n              else: Library/bin/thrift.exe\n      - script:\n          - thrift --version\n\n  - package:\n      name: thrift-cpp\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libthrift', upper_bound='x.x.x') }}\n      host:\n        - ${{ pin_subpackage('libthrift', exact=true) }}\n        - ${{ pin_subpackage('thrift-compiler', exact=true) }}\n      run:\n        - ${{ pin_subpackage('libthrift', exact=true) }}\n        - ${{ pin_subpackage('thrift-compiler', exact=true) }}\n    tests:\n      - script: thrift --version\n\nabout:\n  homepage: https://thrift.apache.org\n  license: Apache-2.0\n  license_file: LICENSE\n  summary: Compiler and C++ libraries and headers for the Apache Thrift RPC system\n  repository: https://github.com/apache/thrift\n\nextra:\n  recipe-maintainers:\n    - wesm\n    - msarahan\n    - jakirkham\n    - xhochy\n    - h-vetinari\n    - wolfv\n  feedstock-name: thrift-cpp\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2553,7 +2557,7 @@
       "summary": "Compiler and C++ libraries and headers for the Apache Thrift RPC system"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libthrift"
@@ -2804,7 +2808,7 @@
       "summary": "Compiler and C++ libraries and headers for the Apache Thrift RPC system"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libthrift"
