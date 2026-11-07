@@ -1,8 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\nzlib:\n- '1'\n",
+  "ci_support_migrations": {
+    "pcre21049": {
+      "migration_number": 1,
+      "migrator_ts": 1794008090.9124582
+    }
+  },
   "conda-forge.yml": {
     "build_platform": {
       "linux_ppc64le": "linux_64"
@@ -23,8 +28,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "44dc15b0171676daff370602f162172d37361573",
-  "feedstock_hash_ts": 1781792756,
+  "feedstock_hash": "afe9500fbfbbefe5236d09acbb8a967b55a7fe03",
+  "feedstock_hash_ts": 1794054198,
   "feedstock_name": "file",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -37,7 +42,7 @@
       "summary": "Implementation of the file(1) command"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libmagic"
@@ -183,7 +188,7 @@
       "summary": "Implementation of the file(1) command"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libmagic"
@@ -329,7 +334,7 @@
       "summary": "Implementation of the file(1) command"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libmagic"
@@ -475,7 +480,7 @@
       "summary": "Implementation of the file(1) command"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libmagic"
@@ -957,7 +962,7 @@
       "summary": "Implementation of the file(1) command"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libmagic"
@@ -1103,7 +1108,7 @@
       "summary": "Implementation of the file(1) command"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libmagic"
@@ -1258,7 +1263,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/file.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"5.48\"\n\nrecipe:\n  name: file-split\n  version: ${{ version }}\n\nsource:\n  url: http://ftp.astron.com/pub/file/file-${{ version }}.tar.gz\n  sha256: ed14656883b23a364b4057c05595d93252da9bc473d30106519519d0da141283\n  patches:\n    # Patches for building with MSVC-compatible clang on Windows.\n    # 0001-0017 are taken from vcpkg:\n    # https://github.com/microsoft/vcpkg/tree/master/ports/libmagic\n    # 0018 adapts the regex dependency to pcre2-posix (libtre is not\n    # packaged on conda-forge).\n    - if: win\n      then:\n        - patches/0001-Use-libtre.patch\n        - patches/0002-Change-zlib-lib-name-to-match-CMake-output.patch\n        - patches/0003-Fix-WIN32-macro-checks.patch\n        - patches/0004-Typedef-POSIX-types-on-Windows.patch\n        - patches/0005-Include-dirent.h-for-S_ISREG-and-S_ISDIR.patch\n        - patches/0006-Remove-Wrap-POSIX-headers.patch\n        - patches/0007-Substitute-unistd-macros-for-MSVC.patch\n        - patches/0008-Add-FILENO-defines.patch\n        - patches/0010-Properly-check-for-the-presence-of-bitmasks.patch\n        - patches/0011-Remove-pipe-related-functions-in-funcs.c.patch\n        - patches/0012-Convert-MSYS2-paths-to-Windows-paths.patch\n        - patches/0013-Check-for-backslash-in-argv-0-on-Windows.patch\n        - patches/0015-MSYS2-Remove-ioctl-call.patch\n        - patches/0016-Fix-file_famagic-function.patch\n        - patches/0017-Change-bzlib-name-to-match-CMake-output.patch\n        - patches/0018-Use-pcre2-posix-for-regex-and-recognize-mingw64-host.patch\n        - patches/0019-Declare-getopt-globals-and-link-getopt-replacement-i.patch\n        - patches/0020-Fix-utime-usage-for-MSVC.patch\n        - patches/0021-Use-the-real-struct-timespec-with-the-UCRT.patch\n\nbuild:\n  number: 1\n\noutputs:\n  - staging:\n      name: file-build\n    requirements:\n      build:\n        - if: unix\n          then: gnuconfig\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - if: win\n          then: autotools_clang_conda\n          else: make\n      host:\n        - if: unix\n          then: zlib\n        - if: win\n          then:\n            - pcre2\n            - dirent\n    build:\n      script:\n        - if: win\n          then: build.bat\n          else: build.sh\n\n  - package:\n      name: libmagic\n    inherit: file-build\n    build:\n      files:\n        - if: win\n          then:\n            - Library/bin/magic.dll\n            - Library/bin/libmagic.dll\n            - Library/lib/magic.lib\n            - Library/include/magic.h\n            - Library/share/misc/magic.mgc\n            - Library/lib/pkgconfig/libmagic.pc\n          else:\n            - include/magic.h\n            - lib/libmagic.*\n            - share/misc/magic.mgc\n            - lib/pkgconfig/libmagic.pc\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libmagic', upper_bound='x') }}\n    tests:\n      - if: win\n        then:\n          - package_contents:\n              strict: true\n              files:\n                exists:\n                  - Library/bin/magic.dll\n                  - Library/bin/libmagic.dll\n                  - Library/lib/magic.lib\n                  - Library/include/magic.h\n                  - Library/share/misc/magic.mgc\n                  - Library/lib/pkgconfig/libmagic.pc\n        else:\n          - package_contents:\n              strict: true\n              lib:\n                - magic\n              include:\n                - magic.h\n              files:\n                exists:\n                  - share/misc/magic.mgc\n                  - lib/pkgconfig/libmagic.pc\n    about:\n      summary: Implementation of the file(1) command\n      license: BSD-2-Clause-Darwin\n      license_file: COPYING\n      repository: https://github.com/file/file\n\n  - package:\n      name: file\n    inherit: file-build\n    build:\n      files:\n        - if: win\n          then:\n            - Library/bin/file.exe\n            - Library/share/man/man*/file*\n            - Library/share/man/man*/magic*\n            - Library/share/man/man*/libmagic*\n          else:\n            - bin/file\n            - share/man/man*/file*\n            - share/man/man*/magic*\n            - share/man/man*/libmagic*\n    requirements:\n      run:\n        - ${{ pin_subpackage('libmagic', exact=True) }}\n    tests:\n      - script:\n          - file -v\n          - file --version\n          - file --help\n    about:\n      summary: Fine Free File Command\n      description: |\n        The file command is \"a file type guesser\", that is, a command-line tool\n        that tells you in words what kind of data a file contains. Unlike most GUI\n        systems, command-line UNIX systems - with this program leading the charge -\n        don't rely on filename extentions to tell you the type of a file, but look\n        at the file's actual contents. This is, of course, more reliable, but\n        requires a bit of I/O.\n      license: BSD-2-Clause-Darwin\n      license_file: COPYING\n      repository: https://github.com/file/file\n\nabout:\n  homepage: http://darwinsys.com/file\n  summary: Fine Free File Command\n  license: BSD-2-Clause-Darwin\n  license_file: COPYING\n  repository: https://github.com/file/file\n\nextra:\n  feedstock-name: file\n  recipe-maintainers:\n    - blmaier\n    - chrisburr\n    - mariusvniekerk\n    - mrakitin\n    - pavelzw\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"5.48\"\n\nrecipe:\n  name: file-split\n  version: ${{ version }}\n\nsource:\n  url: http://ftp.astron.com/pub/file/file-${{ version }}.tar.gz\n  sha256: ed14656883b23a364b4057c05595d93252da9bc473d30106519519d0da141283\n  patches:\n    # Patches for building with MSVC-compatible clang on Windows.\n    # 0001-0017 are taken from vcpkg:\n    # https://github.com/microsoft/vcpkg/tree/master/ports/libmagic\n    # 0018 adapts the regex dependency to pcre2-posix (libtre is not\n    # packaged on conda-forge).\n    - if: win\n      then:\n        - patches/0001-Use-libtre.patch\n        - patches/0002-Change-zlib-lib-name-to-match-CMake-output.patch\n        - patches/0003-Fix-WIN32-macro-checks.patch\n        - patches/0004-Typedef-POSIX-types-on-Windows.patch\n        - patches/0005-Include-dirent.h-for-S_ISREG-and-S_ISDIR.patch\n        - patches/0006-Remove-Wrap-POSIX-headers.patch\n        - patches/0007-Substitute-unistd-macros-for-MSVC.patch\n        - patches/0008-Add-FILENO-defines.patch\n        - patches/0010-Properly-check-for-the-presence-of-bitmasks.patch\n        - patches/0011-Remove-pipe-related-functions-in-funcs.c.patch\n        - patches/0012-Convert-MSYS2-paths-to-Windows-paths.patch\n        - patches/0013-Check-for-backslash-in-argv-0-on-Windows.patch\n        - patches/0015-MSYS2-Remove-ioctl-call.patch\n        - patches/0016-Fix-file_famagic-function.patch\n        - patches/0017-Change-bzlib-name-to-match-CMake-output.patch\n        - patches/0018-Use-pcre2-posix-for-regex-and-recognize-mingw64-host.patch\n        - patches/0019-Declare-getopt-globals-and-link-getopt-replacement-i.patch\n        - patches/0020-Fix-utime-usage-for-MSVC.patch\n        - patches/0021-Use-the-real-struct-timespec-with-the-UCRT.patch\n\nbuild:\n  number: 2\n\noutputs:\n  - staging:\n      name: file-build\n    requirements:\n      build:\n        - if: unix\n          then: gnuconfig\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - if: win\n          then: autotools_clang_conda\n          else: make\n      host:\n        - if: unix\n          then: zlib\n        - if: win\n          then:\n            - pcre2\n            - dirent\n    build:\n      script:\n        - if: win\n          then: build.bat\n          else: build.sh\n\n  - package:\n      name: libmagic\n    inherit: file-build\n    build:\n      files:\n        - if: win\n          then:\n            - Library/bin/magic.dll\n            - Library/bin/libmagic.dll\n            - Library/lib/magic.lib\n            - Library/include/magic.h\n            - Library/share/misc/magic.mgc\n            - Library/lib/pkgconfig/libmagic.pc\n          else:\n            - include/magic.h\n            - lib/libmagic.*\n            - share/misc/magic.mgc\n            - lib/pkgconfig/libmagic.pc\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('libmagic', upper_bound='x') }}\n    tests:\n      - if: win\n        then:\n          - package_contents:\n              strict: true\n              files:\n                exists:\n                  - Library/bin/magic.dll\n                  - Library/bin/libmagic.dll\n                  - Library/lib/magic.lib\n                  - Library/include/magic.h\n                  - Library/share/misc/magic.mgc\n                  - Library/lib/pkgconfig/libmagic.pc\n        else:\n          - package_contents:\n              strict: true\n              lib:\n                - magic\n              include:\n                - magic.h\n              files:\n                exists:\n                  - share/misc/magic.mgc\n                  - lib/pkgconfig/libmagic.pc\n    about:\n      summary: Implementation of the file(1) command\n      license: BSD-2-Clause-Darwin\n      license_file: COPYING\n      repository: https://github.com/file/file\n\n  - package:\n      name: file\n    inherit: file-build\n    build:\n      files:\n        - if: win\n          then:\n            - Library/bin/file.exe\n            - Library/share/man/man*/file*\n            - Library/share/man/man*/magic*\n            - Library/share/man/man*/libmagic*\n          else:\n            - bin/file\n            - share/man/man*/file*\n            - share/man/man*/magic*\n            - share/man/man*/libmagic*\n    requirements:\n      run:\n        - ${{ pin_subpackage('libmagic', exact=True) }}\n    tests:\n      - script:\n          - file -v\n          - file --version\n          - file --help\n    about:\n      summary: Fine Free File Command\n      description: |\n        The file command is \"a file type guesser\", that is, a command-line tool\n        that tells you in words what kind of data a file contains. Unlike most GUI\n        systems, command-line UNIX systems - with this program leading the charge -\n        don't rely on filename extentions to tell you the type of a file, but look\n        at the file's actual contents. This is, of course, more reliable, but\n        requires a bit of I/O.\n      license: BSD-2-Clause-Darwin\n      license_file: COPYING\n      repository: https://github.com/file/file\n\nabout:\n  homepage: http://darwinsys.com/file\n  summary: Fine Free File Command\n  license: BSD-2-Clause-Darwin\n  license_file: COPYING\n  repository: https://github.com/file/file\n\nextra:\n  feedstock-name: file\n  recipe-maintainers:\n    - blmaier\n    - chrisburr\n    - mariusvniekerk\n    - mrakitin\n    - pavelzw\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1353,7 +1358,7 @@
       "summary": "Implementation of the file(1) command"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "libmagic"
