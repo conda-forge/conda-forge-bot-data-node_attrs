@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibgz_common:\n- '7'\nlibgz_math:\n- '9'\nlibgz_plugin:\n- '4'\nlibgz_utils:\n- '4'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibgz_common:\n- '7'\nlibgz_math:\n- '9'\nlibgz_plugin:\n- '4'\nlibgz_utils:\n- '4'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -31,8 +31,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "0109183838cf4a31a06b9bb02a962d500312f132",
-  "feedstock_hash_ts": 1791504161,
+  "feedstock_hash": "a81b6b0118e6d6d1ff5bf85b22ccc6f70194dcc1",
+  "feedstock_hash_ts": 1794134539,
   "feedstock_name": "gz-rendering",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,7 +44,7 @@
       "summary": "C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libgz-rendering"
@@ -117,9 +117,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -127,9 +125,78 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libglu",
+            "libglx-devel",
+            "libopengl-devel",
+            "libegl-devel",
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -146,6 +213,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "conda-ogre-hint.patch"
+      ],
       "sha256": "06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015",
       "url": "https://github.com/gazebosim/gz-rendering/archive/gz-rendering10_10.1.0.tar.gz"
     }
@@ -181,6 +251,7 @@
       "__set__": true,
       "elements": [
         "libgz-rendering",
+        "libgz-rendering-ogre",
         "ogre"
       ]
     },
@@ -198,7 +269,7 @@
       "summary": "C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libgz-rendering"
@@ -271,9 +342,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -281,9 +350,78 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libglu",
+            "libglx-devel",
+            "libopengl-devel",
+            "libegl-devel",
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -300,6 +438,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "conda-ogre-hint.patch"
+      ],
       "sha256": "06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015",
       "url": "https://github.com/gazebosim/gz-rendering/archive/gz-rendering10_10.1.0.tar.gz"
     }
@@ -335,6 +476,7 @@
       "__set__": true,
       "elements": [
         "libgz-rendering",
+        "libgz-rendering-ogre",
         "ogre"
       ]
     },
@@ -352,7 +494,7 @@
       "summary": "C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libgz-rendering"
@@ -425,9 +567,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -435,9 +575,78 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libglu",
+            "libglx-devel",
+            "libopengl-devel",
+            "libegl-devel",
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -454,6 +663,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "conda-ogre-hint.patch"
+      ],
       "sha256": "06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015",
       "url": "https://github.com/gazebosim/gz-rendering/archive/gz-rendering10_10.1.0.tar.gz"
     }
@@ -489,6 +701,7 @@
       "__set__": true,
       "elements": [
         "libgz-rendering",
+        "libgz-rendering-ogre",
         "ogre"
       ]
     },
@@ -506,7 +719,7 @@
       "summary": "C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libgz-rendering"
@@ -579,9 +792,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -589,9 +800,78 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libglu",
+            "libglx-devel",
+            "libopengl-devel",
+            "libegl-devel",
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -653,9 +933,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -663,9 +941,78 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libglu",
+            "libglx-devel",
+            "libopengl-devel",
+            "libegl-devel",
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -727,9 +1074,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -737,9 +1082,78 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libglu",
+            "libglx-devel",
+            "libopengl-devel",
+            "libegl-devel",
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -797,9 +1211,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -807,9 +1219,74 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -867,9 +1344,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -877,9 +1352,74 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -939,9 +1479,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -950,9 +1488,74 @@
               "if not exist %PREFIX%\\\\Library\\\\lib\\\\${{ name }}.lib exit 1",
               "if not exist %PREFIX%\\\\Library\\\\bin\\\\${{ name }}.dll exit 1",
               "if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}\\\\${{ name }}-config.cmake exit 1",
-              "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1",
-              "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre2.dll exit 1"
+              "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre2.dll exit 1",
+              "if exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "dlfcn-win32",
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1",
+              "if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}-ogre\\\\${{ name }}-ogre-config.cmake exit 1"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1"
           }
         ],
         "version": "10.1.0"
@@ -969,6 +1572,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "conda-ogre-hint.patch"
+      ],
       "sha256": "06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015",
       "url": "https://github.com/gazebosim/gz-rendering/archive/gz-rendering10_10.1.0.tar.gz"
     }
@@ -983,7 +1589,7 @@
       "summary": "C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libgz-rendering"
@@ -1052,9 +1658,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -1062,9 +1666,74 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -1081,6 +1750,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "conda-ogre-hint.patch"
+      ],
       "sha256": "06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015",
       "url": "https://github.com/gazebosim/gz-rendering/archive/gz-rendering10_10.1.0.tar.gz"
     }
@@ -1112,6 +1784,7 @@
       "__set__": true,
       "elements": [
         "libgz-rendering",
+        "libgz-rendering-ogre",
         "ogre"
       ]
     },
@@ -1129,7 +1802,7 @@
       "summary": "C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libgz-rendering"
@@ -1198,9 +1871,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -1208,9 +1879,74 @@
               "test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh",
               "test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}",
               "test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
-              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}"
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}",
+              "test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test ! -d ${PREFIX}/lib/OGRE"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}",
+              "test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}"
           }
         ],
         "version": "10.1.0"
@@ -1227,6 +1963,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "conda-ogre-hint.patch"
+      ],
       "sha256": "06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015",
       "url": "https://github.com/gazebosim/gz-rendering/archive/gz-rendering10_10.1.0.tar.gz"
     }
@@ -1258,6 +1997,7 @@
       "__set__": true,
       "elements": [
         "libgz-rendering",
+        "libgz-rendering-ogre",
         "ogre"
       ]
     },
@@ -1270,10 +2010,12 @@
     "__set__": true,
     "elements": [
       "gz-rendering",
-      "libgz-rendering"
+      "gz-rendering-ogre",
+      "libgz-rendering",
+      "libgz-rendering-ogre"
     ]
   },
-  "parsing_error": "make_graph: 504",
+  "parsing_error": false,
   "platforms": [
     "linux_64",
     "linux_aarch64",
@@ -1285,7 +2027,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/gz-rendering.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  component_name: rendering\n  repo_name: ${{ \"gz-\" + component_name }}\n  version: \"10.1.0\"\n  major_version: \"10\"\n  name: ${{ repo_name }}\n  component_version: ${{ component_name + major_version }}\n  cxx_name: ${{ \"lib\" + name }}\n\nrecipe:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/gazebosim/${{ repo_name }}/archive/${{ repo_name }}${{ major_version }}_${{ version }}.tar.gz\n    sha256: 06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015\n\nbuild:\n  number: 0\n\noutputs:\n  - package:\n      name: ${{ cxx_name }}\n    build:\n      script:\n        - if: unix\n          then: build_cxx.sh\n        - if: win\n          then: bld_cxx.bat\n    requirements:\n      build:\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - ninja\n        - cmake\n        - pkg-config\n      host:\n        - if: linux\n          then:\n            - libglu\n            - libglx-devel\n            - libopengl-devel\n            - libegl-devel\n        - if: win\n          then:\n            - dlfcn-win32\n        - libgz-math\n        - libgz-common\n        - libgz-plugin\n        - libgz-utils\n        - ogre-next\n        - ogre 1.10.*\n      run:\n        - ${{ pin_compatible('ogre', upper_bound='x.x') }}\n      run_exports:\n        - ${{ pin_subpackage(cxx_name, upper_bound='x') }}\n    tests:\n      - script:\n          - if: not win\n            then:\n              - test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh\n              - test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}\n              - test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake\n              - test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}\n              - test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}\n            else:\n              - if not exist %PREFIX%\\\\Library\\\\include\\\\gz\\\\${{ component_version }}\\\\gz\\\\${{ component_name }}.hh exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\${{ name }}.lib exit 1\n              - if not exist %PREFIX%\\\\Library\\\\bin\\\\${{ name }}.dll exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}\\\\${{ name }}-config.cmake exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre2.dll exit 1\n  - package:\n      name: ${{ name }}\n    requirements:\n      run:\n        - ${{ pin_subpackage(cxx_name, exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage(cxx_name, upper_bound='x') }}\n    tests:\n      - script:\n          - if: not win\n            then:\n              - test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh\n              - test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake\n          - if: linux\n            then:\n              - test -f ${PREFIX}/lib/lib${{ name }}.so\n          - if: osx\n            then:\n              - test -f ${PREFIX}/lib/lib${{ name }}.dylib\n          - if: win\n            then:\n              - if not exist %PREFIX%\\\\Library\\\\include\\\\gz\\\\${{ component_version }}\\\\gz\\\\${{ component_name }}.hh exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\${{ name }}.lib exit 1\n              - if not exist %PREFIX%\\\\Library\\\\bin\\\\${{ name }}.dll exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}\\\\${{ name }}-config.cmake exit 1\n\nabout:\n  homepage: https://github.com/gazebosim/${{ repo_name }}\n  license: Apache-2.0\n  license_file: LICENSE\n  summary: C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications.\n\nextra:\n  feedstock-name: ${{ repo_name }}\n  recipe-maintainers:\n    - wolfv\n    - traversaro\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  component_name: rendering\n  repo_name: ${{ \"gz-\" + component_name }}\n  version: \"10.1.0\"\n  major_version: \"10\"\n  name: ${{ repo_name }}\n  component_version: ${{ component_name + major_version }}\n  cxx_name: ${{ \"lib\" + name }}\n\nrecipe:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/gazebosim/${{ repo_name }}/archive/${{ repo_name }}${{ major_version }}_${{ version }}.tar.gz\n    sha256: 06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015\n    patches:\n      # Tell users which conda package provides the ogre 1.x engine when it is missing\n      - conda-ogre-hint.patch\n\nbuild:\n  number: 1\n\noutputs:\n  # Build everything once; the package outputs below select their files from it.\n  - staging:\n      name: ${{ cxx_name }}-build\n    build:\n      script:\n        - if: unix\n          then: build_cxx.sh\n        - if: win\n          then: bld_cxx.bat\n    requirements:\n      build:\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - ninja\n        - cmake\n        - pkg-config\n      host:\n        - if: linux\n          then:\n            - libglu\n            - libglx-devel\n            - libopengl-devel\n            - libegl-devel\n        - if: win\n          then:\n            - dlfcn-win32\n        - libgz-math\n        - libgz-common\n        - libgz-plugin\n        - libgz-utils\n        - ogre-next\n        - ogre 1.10.*\n\n  # Core library and the ogre2 (ogre-next) engine, without the ogre 1.x engine.\n  - package:\n      name: ${{ cxx_name }}\n    inherit: ${{ cxx_name }}-build\n    build:\n      files:\n        exclude:\n          - \"**/engine-plugins/*gz-rendering-ogre.*\"\n          - \"lib/*gz-rendering-ogre.*\"\n          - \"Library/lib/gz-rendering-ogre.*\"\n          - \"Library/bin/gz-rendering-ogre.*\"\n          - \"**/cmake/gz-rendering-ogre/**\"\n          - \"**/gz/rendering/ogre/**\"\n          - \"**/gz/rendering/ogre.hh\"\n          - \"**/pkgconfig/gz-rendering-ogre.pc\"\n          - \"**/share/gz/gz-rendering/ogre/**\"\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage(cxx_name, upper_bound='x') }}\n      ignore_run_exports:\n        from_package:\n          - ogre\n    tests:\n      - script:\n          - if: not win\n            then:\n              - test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh\n              - test -f ${PREFIX}/lib/lib${{ name }}${SHLIB_EXT}\n              - test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake\n              - test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre2${SHLIB_EXT}\n              - test ! -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}\n              - test ! -d ${PREFIX}/lib/OGRE\n            else:\n              - if not exist %PREFIX%\\\\Library\\\\include\\\\gz\\\\${{ component_version }}\\\\gz\\\\${{ component_name }}.hh exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\${{ name }}.lib exit 1\n              - if not exist %PREFIX%\\\\Library\\\\bin\\\\${{ name }}.dll exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}\\\\${{ name }}-config.cmake exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre2.dll exit 1\n              - if exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1\n\n  # Optional ogre 1.x engine plugin; pulls in ogre 1.10.\n  - package:\n      name: ${{ cxx_name }}-ogre\n    inherit: ${{ cxx_name }}-build\n    build:\n      files:\n        include:\n          - \"**/engine-plugins/*gz-rendering-ogre.*\"\n          - \"lib/*gz-rendering-ogre.*\"\n          - \"Library/lib/gz-rendering-ogre.*\"\n          - \"Library/bin/gz-rendering-ogre.*\"\n          - \"**/cmake/gz-rendering-ogre/**\"\n          - \"**/gz/rendering/ogre/**\"\n          - \"**/gz/rendering/ogre.hh\"\n          - \"**/pkgconfig/gz-rendering-ogre.pc\"\n          - \"**/share/gz/gz-rendering/ogre/**\"\n    requirements:\n      host:\n        - ogre 1.10.*\n      run:\n        - ${{ pin_subpackage(cxx_name, exact=True) }}\n        - ${{ pin_compatible('ogre', upper_bound='x.x') }}\n      run_exports:\n        - ${{ pin_subpackage(cxx_name + '-ogre', upper_bound='x') }}\n    tests:\n      - script:\n          - if: not win\n            then:\n              - test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}\n              - test -f ${PREFIX}/lib/cmake/${{ name }}-ogre/${{ name }}-ogre-config.cmake\n            else:\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}-ogre\\\\${{ name }}-ogre-config.cmake exit 1\n\n  - package:\n      name: ${{ name }}-ogre\n    requirements:\n      run:\n        - ${{ pin_subpackage(cxx_name + '-ogre', exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage(cxx_name + '-ogre', upper_bound='x') }}\n    tests:\n      - script:\n          - if: not win\n            then:\n              - test -f ${PREFIX}/lib/gz-${{ component_name }}-${{ major_version }}/engine-plugins/lib${{ name }}-ogre${SHLIB_EXT}\n            else:\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1\n\n  - package:\n      name: ${{ name }}\n    requirements:\n      run:\n        - ${{ pin_subpackage(cxx_name, exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage(cxx_name, upper_bound='x') }}\n    tests:\n      - script:\n          - if: not win\n            then:\n              - test -f ${PREFIX}/include/gz/${{ component_version }}/gz/${{ component_name }}.hh\n              - test -f ${PREFIX}/lib/cmake/${{ name }}/${{ name }}-config.cmake\n          - if: linux\n            then:\n              - test -f ${PREFIX}/lib/lib${{ name }}.so\n          - if: osx\n            then:\n              - test -f ${PREFIX}/lib/lib${{ name }}.dylib\n          - if: win\n            then:\n              - if not exist %PREFIX%\\\\Library\\\\include\\\\gz\\\\${{ component_version }}\\\\gz\\\\${{ component_name }}.hh exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\${{ name }}.lib exit 1\n              - if not exist %PREFIX%\\\\Library\\\\bin\\\\${{ name }}.dll exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}\\\\${{ name }}-config.cmake exit 1\n\nabout:\n  homepage: https://github.com/gazebosim/${{ repo_name }}\n  license: Apache-2.0\n  license_file: LICENSE\n  summary: C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications.\n\nextra:\n  feedstock-name: ${{ repo_name }}\n  recipe-maintainers:\n    - wolfv\n    - traversaro\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1301,6 +2043,7 @@
       "libgz-math",
       "libgz-plugin",
       "libgz-rendering",
+      "libgz-rendering-ogre",
       "libgz-utils",
       "libopengl-devel",
       "ninja",
@@ -1347,6 +2090,7 @@
         "c_stdlib_stub",
         "cxx_compiler_stub",
         "libgz-rendering",
+        "libgz-rendering-ogre",
         "ogre"
       ]
     },
@@ -1388,6 +2132,7 @@
       "__set__": true,
       "elements": [
         "libgz-rendering",
+        "libgz-rendering-ogre",
         "ogre"
       ]
     },
@@ -1410,7 +2155,7 @@
       "summary": "C++ library designed to provide an abstraction for different rendering engines. It offers unified APIs for creating 3D graphics applications."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libgz-rendering"
@@ -1481,9 +2226,7 @@
             "ogre-next",
             "ogre 1.10.*"
           ],
-          "run": [
-            "ogre"
-          ]
+          "run": []
         },
         "tests": [
           {
@@ -1492,9 +2235,74 @@
               "if not exist %PREFIX%\\\\Library\\\\lib\\\\${{ name }}.lib exit 1",
               "if not exist %PREFIX%\\\\Library\\\\bin\\\\${{ name }}.dll exit 1",
               "if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}\\\\${{ name }}-config.cmake exit 1",
-              "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1",
-              "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre2.dll exit 1"
+              "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre2.dll exit 1",
+              "if exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1"
             ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "libgz-rendering-ogre",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "ninja",
+            "cmake",
+            "pkg-config"
+          ],
+          "host": [
+            "dlfcn-win32",
+            "libgz-math",
+            "libgz-common",
+            "libgz-plugin",
+            "libgz-utils",
+            "ogre-next",
+            "ogre 1.10.*"
+          ],
+          "run": [
+            "libgz-rendering",
+            "ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1",
+              "if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\${{ name }}-ogre\\\\${{ name }}-ogre-config.cmake exit 1"
+            ]
+          }
+        ],
+        "version": "10.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "libgz-rendering-ogre"
+            ]
+          }
+        },
+        "name": "gz-rendering-ogre",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "libgz-rendering-ogre"
+          ]
+        },
+        "tests": [
+          {
+            "script": "if not exist %PREFIX%\\\\Library\\\\lib\\\\gz-${{ component_name }}-${{ major_version }}\\\\engine-plugins\\\\${{ name }}-ogre.dll exit 1"
           }
         ],
         "version": "10.1.0"
@@ -1511,6 +2319,9 @@
     },
     "schema_version": 1,
     "source": {
+      "patches": [
+        "conda-ogre-hint.patch"
+      ],
       "sha256": "06025fa77f1306091e42eb96bb1f0657633f8875446d2338cd625d3b5b6e7015",
       "url": "https://github.com/gazebosim/gz-rendering/archive/gz-rendering10_10.1.0.tar.gz"
     }
@@ -1543,6 +2354,7 @@
       "__set__": true,
       "elements": [
         "libgz-rendering",
+        "libgz-rendering-ogre",
         "ogre"
       ]
     },
