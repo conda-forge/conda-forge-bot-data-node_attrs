@@ -1,8 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndbus:\n- '1'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibudev:\n- '257'\nlibunwind:\n- '1.8'\nliburing:\n- '2.14'\npulseaudio_client:\n- '17.0'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndbus:\n- '1'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibudev:\n- '257'\nlibunwind:\n- '1.8'\nliburing:\n- '2.15'\npulseaudio_client:\n- '17.0'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_migrations": {
+    "liburing215": {
+      "migration_number": 1,
+      "migrator_ts": 1794008561.7300484
+    }
+  },
   "conda-forge.yml": {
     "bot": {
       "abi_migration_branches": [
@@ -32,8 +37,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "b07cb42d181283b64e065857adb26cdcf7cedd31",
-  "feedstock_hash_ts": 1794062416,
+  "feedstock_hash": "cbab43b499309818190b6ea8dd8561ce9ecfc888",
+  "feedstock_hash_ts": 1794237106,
   "feedstock_name": "sdl",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -48,7 +53,7 @@
       "summary": "Low-level access to audio, keyboard, mouse, joystick, and graphics"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "sdl3"
@@ -233,7 +238,7 @@
       "summary": "Low-level access to audio, keyboard, mouse, joystick, and graphics"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "sdl3"
@@ -418,7 +423,7 @@
       "summary": "Low-level access to audio, keyboard, mouse, joystick, and graphics"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "sdl3"
@@ -603,7 +608,7 @@
       "summary": "Low-level access to audio, keyboard, mouse, joystick, and graphics"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "sdl3"
@@ -1056,7 +1061,7 @@
       "summary": "Low-level access to audio, keyboard, mouse, joystick, and graphics"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "sdl3"
@@ -1187,7 +1192,7 @@
       "summary": "Low-level access to audio, keyboard, mouse, joystick, and graphics"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "sdl3"
@@ -1325,7 +1330,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/sdl.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: sdl3\n  version: \"3.4.20\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/libsdl-org/SDL/releases/download/release-${{ version }}/SDL3-${{ version }}.tar.gz\n  sha256: f3bb06f55bed9557227a700af2ea62e49497ebdf58037732a731a5fb3ef8581f\n\nbuild:\n  number: 1\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - ninja\n    - pkgconf\n  host:\n    - libusb\n    - libvulkan-loader\n    - if: not win\n      then: dbus\n    - if: linux\n      then:\n        # 202505 - hmaarrfk \n        # jack seems like it was added as a holdover\n        # and we aren't sure if any users need it in\n        # their modern (2025) workflows\n        # https://github.com/conda-forge/sdl-feedstock/pull/33#issuecomment-2851145783\n        # It may also pull in AGPL code\n        # https://github.com/conda-forge/jack-feedstock/pull/27\n        # - jack\n        - pulseaudio-client\n        - wayland\n        - libdecor\n        - libdrm\n        - libudev\n        - liburing\n        - libunwind\n        - libxkbcommon\n        - libgl-devel\n        - libegl-devel\n        - xorg-libx11\n        - xorg-libxext\n        - xorg-libxfixes\n        - xorg-libxcursor\n        - xorg-inputproto\n        - xorg-libxi\n        - xorg-libxtst\n        - xorg-libxscrnsaver\n  run_constraints:\n    # libdecor draws window decorations on Wayland compositors without\n    # server-side decorations (GNOME, Weston). SDL dlopens it, so it is\n    # optional; this only keeps an installed one new enough.\n    - if: linux\n      then: libdecor >=0.2\n  run_exports:\n    - ${{ pin_subpackage(name|lower, upper_bound='x') }}\n\ntests:\n  - package_contents:\n      lib:\n        - SDL3\n      include:\n        - SDL3/SDL.h\n  - requirements:\n      run:\n        - pkgconf\n    script:\n      - pkg-config --modversion ${{ name }}\n\nabout:\n  summary: Low-level access to audio, keyboard, mouse, joystick, and graphics\n  description: |\n    Simple DirectMedia Layer (SDL for short) is a cross-platform library designed\n    to make it easy to write multi-media software, such as games and emulators.\n\n    On Linux, window decorations on Wayland compositors without server-side\n    decorations (such as GNOME) need libdecor: install the `libdecor` package,\n    or SDL uses the system's copy when there is one.\n  license: Zlib\n  license_file: LICENSE.txt\n  homepage: https://www.libsdl.org/\n  repository: https://github.com/libsdl-org/SDL\n  documentation: https://wiki.libsdl.org/SDL3/FrontPage\n\nextra:\n  recipe-maintainers:\n    - traversaro\n    - ymontmarin\n    - ManifoldFR\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: sdl3\n  version: \"3.4.20\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/libsdl-org/SDL/releases/download/release-${{ version }}/SDL3-${{ version }}.tar.gz\n  sha256: f3bb06f55bed9557227a700af2ea62e49497ebdf58037732a731a5fb3ef8581f\n\nbuild:\n  number: 2\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - ninja\n    - pkgconf\n  host:\n    - libusb\n    - libvulkan-loader\n    - if: not win\n      then: dbus\n    - if: linux\n      then:\n        # 202505 - hmaarrfk \n        # jack seems like it was added as a holdover\n        # and we aren't sure if any users need it in\n        # their modern (2025) workflows\n        # https://github.com/conda-forge/sdl-feedstock/pull/33#issuecomment-2851145783\n        # It may also pull in AGPL code\n        # https://github.com/conda-forge/jack-feedstock/pull/27\n        # - jack\n        - pulseaudio-client\n        - wayland\n        - libdecor\n        - libdrm\n        - libudev\n        - liburing\n        - libunwind\n        - libxkbcommon\n        - libgl-devel\n        - libegl-devel\n        - xorg-libx11\n        - xorg-libxext\n        - xorg-libxfixes\n        - xorg-libxcursor\n        - xorg-inputproto\n        - xorg-libxi\n        - xorg-libxtst\n        - xorg-libxscrnsaver\n  run_constraints:\n    # libdecor draws window decorations on Wayland compositors without\n    # server-side decorations (GNOME, Weston). SDL dlopens it, so it is\n    # optional; this only keeps an installed one new enough.\n    - if: linux\n      then: libdecor >=0.2\n  run_exports:\n    - ${{ pin_subpackage(name|lower, upper_bound='x') }}\n\ntests:\n  - package_contents:\n      lib:\n        - SDL3\n      include:\n        - SDL3/SDL.h\n  - requirements:\n      run:\n        - pkgconf\n    script:\n      - pkg-config --modversion ${{ name }}\n\nabout:\n  summary: Low-level access to audio, keyboard, mouse, joystick, and graphics\n  description: |\n    Simple DirectMedia Layer (SDL for short) is a cross-platform library designed\n    to make it easy to write multi-media software, such as games and emulators.\n\n    On Linux, window decorations on Wayland compositors without server-side\n    decorations (such as GNOME) need libdecor: install the `libdecor` package,\n    or SDL uses the system's copy when there is one.\n  license: Zlib\n  license_file: LICENSE.txt\n  homepage: https://www.libsdl.org/\n  repository: https://github.com/libsdl-org/SDL\n  documentation: https://wiki.libsdl.org/SDL3/FrontPage\n\nextra:\n  recipe-maintainers:\n    - traversaro\n    - ymontmarin\n    - ManifoldFR\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1481,7 +1486,7 @@
       "summary": "Low-level access to audio, keyboard, mouse, joystick, and graphics"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "sdl3"
@@ -1609,7 +1614,7 @@
       "summary": "Low-level access to audio, keyboard, mouse, joystick, and graphics"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "sdl3"
