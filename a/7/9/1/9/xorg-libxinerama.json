@@ -1,12 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
       "linux_aarch64": "linux_64",
       "linux_ppc64le": "linux_64",
+      "linux_riscv64": "linux_64",
       "osx_arm64": "osx_64"
     },
     "conda_build": {
@@ -23,8 +24,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "77646ca02e3fdf484c43760bfdebde56f56e2f6d",
-  "feedstock_hash_ts": 1777043480,
+  "feedstock_hash": "2a18409268df13cc4150f70d056987201bc68825",
+  "feedstock_hash_ts": 1794185055,
   "feedstock_name": "xorg-libxinerama",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -36,7 +37,7 @@
       "summary": "Client library for the Xinerama extension to the X11 protocol."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "xorg-libxinerama"
       ]
@@ -122,7 +123,7 @@
       "summary": "Client library for the Xinerama extension to the X11 protocol."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "xorg-libxinerama"
       ]
@@ -208,7 +209,7 @@
       "summary": "Client library for the Xinerama extension to the X11 protocol."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "xorg-libxinerama"
       ]
@@ -294,7 +295,7 @@
       "summary": "Client library for the Xinerama extension to the X11 protocol."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "xorg-libxinerama"
       ]
@@ -345,7 +346,8 @@
       "commands": [
         "test -f $PREFIX/lib/libXinerama${SHLIB_EXT}",
         "if not exist %PREFIX%/Library/lib/libXinerama.dll.a exit /b 1",
-        "if not exist %PREFIX%/Library/bin/msys-Xinerama-*.dll exit /b 1"
+        "if not exist %PREFIX%/Library/bin/msys-Xinerama-*.dll exit /b 1",
+        "if exist %PREFIX%/Library/lib/libXinerama.a exit /b 1"
       ]
     }
   },
@@ -359,7 +361,7 @@
       "summary": "Client library for the Xinerama extension to the X11 protocol."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "xorg-libxinerama"
       ]
@@ -445,7 +447,7 @@
       "summary": "Client library for the Xinerama extension to the X11 protocol."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "xorg-libxinerama"
       ]
@@ -540,7 +542,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/xorg-libxinerama.json"
   },
-  "raw_meta_yaml": "{% set version = \"1.1.6\" %}\n{% set xorg_category = \"lib\" %}\n{% set xorg_name = \"libXinerama\" %}\n{% set name = \"xorg-\" ~ xorg_name %}\n{% set am_version = \"1.16\" %} # keep synchronized with build.sh\n\npackage:\n  name: {{ name | lower }}\n  version: {{ version }}\n\nsource:\n  url: https://www.x.org/releases/individual/{{ xorg_category }}/{{ xorg_name }}-{{ version }}.tar.xz\n  sha256: d00fc1599c303dc5cbc122b8068bdc7405d6fcb19060f4597fc51bd3a8be51d7\n\nbuild:\n  number: 0\n  run_exports:\n    - {{ pin_subpackage('xorg-libxinerama', max_pin='x.x') }}\n\nrequirements:\n  build:\n    - m2-autoconf                  # [win]\n    - m2-automake{{ am_version }}  # [win]\n    - m2-libtool                   # [win]\n    - pkg-config                   # [unix]\n    - m2-pkg-config                # [win]\n    - gnuconfig                    # [unix]\n    - m2-base                      # [win]\n    - make                         # [unix]\n    - m2-make                      # [win]\n    - {{ compiler('c') }}          # [not win]\n    - {{ compiler('cxx') }}        # [not win]\n    - {{ stdlib('c') }}            # [not win]\n    - {{ compiler('m2w64_c') }}    # [win]\n    - {{ compiler('m2w64_cxx') }}  # [win]\n    - {{ stdlib('m2w64_c') }}      # [win]\n    - autoconf                     # [not win]\n    - automake {{ am_version }}    # [not win]\n    - libtool                      # [not win]\n  host:\n    - xorg-util-macros\n    - xorg-libx11\n    - xorg-libxext\n    - xorg-xorgproto\n\ntest:\n  commands:\n    {% set lib_idents = [ \"Xinerama\" ] %}\n    {% for lib_ident in lib_idents %}\n    - test -f $PREFIX/lib/lib{{ lib_ident }}${SHLIB_EXT}                      # [unix]\n    - if not exist %PREFIX%/Library/lib/lib{{ lib_ident }}.dll.a exit /b 1    # [win]\n    - if not exist %PREFIX%/Library/bin/msys-{{ lib_ident }}-*.dll exit /b 1  # [win]\n    {% endfor %}\n\nabout:\n  home: https://gitlab.freedesktop.org/xorg/lib/libxinerama\n  license: MIT\n  license_family: MIT\n  license_file: COPYING\n  summary: Client library for the Xinerama extension to the X11 protocol.\n\nextra:\n  recipe-maintainers:\n    - hmaarrfk\n",
+  "raw_meta_yaml": "{% set version = \"1.1.6\" %}\n{% set xorg_category = \"lib\" %}\n{% set xorg_name = \"libXinerama\" %}\n{% set name = \"xorg-\" ~ xorg_name %}\n{% set am_version = \"1.16\" %} # keep synchronized with build.sh\n\npackage:\n  name: {{ name | lower }}\n  version: {{ version }}\n\nsource:\n  url: https://www.x.org/releases/individual/{{ xorg_category }}/{{ xorg_name }}-{{ version }}.tar.xz\n  sha256: d00fc1599c303dc5cbc122b8068bdc7405d6fcb19060f4597fc51bd3a8be51d7\n\nbuild:\n  number: 1\n  run_exports:\n    - {{ pin_subpackage('xorg-libxinerama', max_pin='x.x') }}\n\nrequirements:\n  build:\n    - m2-autoconf                  # [win]\n    - m2-automake{{ am_version }}  # [win]\n    - m2-libtool                   # [win]\n    - pkg-config                   # [unix]\n    - m2-pkg-config                # [win]\n    - gnuconfig                    # [unix]\n    - m2-base                      # [win]\n    - make                         # [unix]\n    - m2-make                      # [win]\n    - {{ compiler('c') }}          # [not win]\n    - {{ compiler('cxx') }}        # [not win]\n    - {{ stdlib('c') }}            # [not win]\n    - {{ compiler('m2w64_c') }}    # [win]\n    - {{ compiler('m2w64_cxx') }}  # [win]\n    - {{ stdlib('m2w64_c') }}      # [win]\n    - autoconf                     # [not win]\n    - automake {{ am_version }}    # [not win]\n    - libtool                      # [not win]\n  host:\n    - xorg-util-macros\n    - xorg-libx11\n    - xorg-libxext\n    - xorg-xorgproto\n\ntest:\n  commands:\n    {% set lib_idents = [ \"Xinerama\" ] %}\n    {% for lib_ident in lib_idents %}\n    - test -f $PREFIX/lib/lib{{ lib_ident }}${SHLIB_EXT}                      # [unix]\n    - if not exist %PREFIX%/Library/lib/lib{{ lib_ident }}.dll.a exit /b 1    # [win]\n    - if not exist %PREFIX%/Library/bin/msys-{{ lib_ident }}-*.dll exit /b 1  # [win]\n    - if exist %PREFIX%/Library/lib/lib{{ lib_ident }}.a exit /b 1            # [win]\n    {% endfor %}\n\nabout:\n  home: https://gitlab.freedesktop.org/xorg/lib/libxinerama\n  license: MIT\n  license_family: MIT\n  license_file: COPYING\n  summary: Client library for the Xinerama extension to the X11 protocol.\n\nextra:\n  recipe-maintainers:\n    - hmaarrfk\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -674,7 +676,7 @@
       "summary": "Client library for the Xinerama extension to the X11 protocol."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "xorg-libxinerama"
       ]
@@ -715,7 +717,8 @@
     "test": {
       "commands": [
         "if not exist %PREFIX%/Library/lib/libXinerama.dll.a exit /b 1",
-        "if not exist %PREFIX%/Library/bin/msys-Xinerama-*.dll exit /b 1"
+        "if not exist %PREFIX%/Library/bin/msys-Xinerama-*.dll exit /b 1",
+        "if exist %PREFIX%/Library/lib/libXinerama.a exit /b 1"
       ]
     }
   },
