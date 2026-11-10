@@ -1,8 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.28'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nglib:\n- '2'\ngpgme:\n- '1.24'\nlibsqlite:\n- '3'\nlibsystemd:\n- '257'\ntarget_platform:\n- linux-64\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.28'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nglib:\n- '2'\ngpgme:\n- '2.2'\nlibsqlite:\n- '3'\nlibsystemd:\n- '257'\ntarget_platform:\n- linux-64\n",
+  "ci_support_migrations": {
+    "gpgme22": {
+      "migration_number": 1,
+      "migrator_ts": 1794008267.2607067
+    }
+  },
   "conda-forge.yml": {
     "bot": {
       "automerge": true
@@ -31,8 +36,8 @@
       "store_build_artifacts": true
     }
   },
-  "feedstock_hash": "f569ad12a44922108aa45eb10db44fdc0b83d925",
-  "feedstock_hash_ts": 1793463513,
+  "feedstock_hash": "b0783e27026f81e15aab4781257db5d6487ee827",
+  "feedstock_hash_ts": 1794349424,
   "feedstock_name": "podman",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -47,7 +52,7 @@
       "summary": "Podman: A tool for managing OCI containers and pods."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -213,7 +218,7 @@
       "summary": "Podman: A tool for managing OCI containers and pods."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -373,7 +378,7 @@
       "summary": "Podman: A tool for managing OCI containers and pods."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -533,7 +538,7 @@
       "summary": "Podman: A tool for managing OCI containers and pods."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -798,7 +803,7 @@
       "summary": "Podman: A tool for managing OCI containers and pods."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -903,7 +908,7 @@
       "summary": "Podman: A tool for managing OCI containers and pods."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1014,7 +1019,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/podman.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"5.8.9\"\n\npackage:\n  name: podman\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/containers/podman/archive/v${{ version }}.tar.gz\n  sha256: 16959c84bf0df1ebf15aa0e5d2b0f6bcaeb8d0852ed4d44c5c344e44831cc6e5\n  target_directory: src/github.com/containers/podman\n  patches:\n    # The Windows remote client does not use local container configuration.\n    - if: not win\n      then: 0002-relative-paths-for-system-config-and-binaries.patch\n\nbuild:\n  number: 0\n\nrequirements:\n  build:\n    - if: linux\n      then:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('go-cgo') }}\n        - pkg-config\n      else:\n        - ${{ compiler('go') }}\n    - go-licenses\n    - if: not win\n      then:\n        - go-md2man\n        - make\n    - if: osx\n      then: grep\n  host:\n    - if: not win\n      then: containers-common\n    - if: linux\n      then:\n        - btrfs-progs\n        # Header and pkg-config files for libglib are in glib.\n        - glib\n        - libglib\n        - gpgme\n        - libassuan\n        - libgpg-error\n        - libseccomp\n        - libsqlite\n        # Enables healthcheck timers and journald, gated on a running systemd.\n        # A user session is needed for healthchecks unless DISABLE_HC_SYSTEMD=true.\n        - libsystemd\n  run:\n    - if: not win\n      then: containers-common\n    - if: linux\n      then:\n        - conmon >=2.0.30\n        - cni-plugins\n        - runc\n        - netavark\n        - slirp4netns\n    # These packages are not yet available for the other Linux architectures.\n    - if: linux and x86_64\n      then:\n        - aardvark-dns\n        - passt\n\ntests:\n  - script:\n      - if: win\n        then: run_test.bat\n        else: run_test.sh\n    requirements:\n      run:\n        # Avoid adding system utilities to the runtime environment.\n        - if: linux\n          then: util-linux\n\nabout:\n  homepage: https://podman.io/\n  repository: https://github.com/containers/podman\n  documentation: https://docs.podman.io/en/latest/\n  license: Apache-2.0\n  license_file:\n    - src/github.com/containers/podman/LICENSE\n    - license-files/\n  summary: 'Podman: A tool for managing OCI containers and pods.'\n  description: >\n    Podman (the POD MANager) is a tool for managing containers and images, volumes mounted into those containers, and pods made from groups of containers. Podman is based on libpod, a library for container lifecycle management that is also contained in this repository. The libpod library provides APIs for managing containers,\n    pods, container images, and volumes.\n\nextra:\n  recipe-maintainers:\n    - mbargull\n    - dhirschfeld\n    - manics\n    - xhochy\n",
+  "raw_meta_yaml": "context:\n  version: \"5.8.9\"\n\npackage:\n  name: podman\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/containers/podman/archive/v${{ version }}.tar.gz\n  sha256: 16959c84bf0df1ebf15aa0e5d2b0f6bcaeb8d0852ed4d44c5c344e44831cc6e5\n  target_directory: src/github.com/containers/podman\n  patches:\n    # The Windows remote client does not use local container configuration.\n    - if: not win\n      then: 0002-relative-paths-for-system-config-and-binaries.patch\n\nbuild:\n  number: 1\n\nrequirements:\n  build:\n    - if: linux\n      then:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('go-cgo') }}\n        - pkg-config\n      else:\n        - ${{ compiler('go') }}\n    - go-licenses\n    - if: not win\n      then:\n        - go-md2man\n        - make\n    - if: osx\n      then: grep\n  host:\n    - if: not win\n      then: containers-common\n    - if: linux\n      then:\n        - btrfs-progs\n        # Header and pkg-config files for libglib are in glib.\n        - glib\n        - libglib\n        - gpgme\n        - libassuan\n        - libgpg-error\n        - libseccomp\n        - libsqlite\n        # Enables healthcheck timers and journald, gated on a running systemd.\n        # A user session is needed for healthchecks unless DISABLE_HC_SYSTEMD=true.\n        - libsystemd\n  run:\n    - if: not win\n      then: containers-common\n    - if: linux\n      then:\n        - conmon >=2.0.30\n        - cni-plugins\n        - runc\n        - netavark\n        - slirp4netns\n    # These packages are not yet available for the other Linux architectures.\n    - if: linux and x86_64\n      then:\n        - aardvark-dns\n        - passt\n\ntests:\n  - script:\n      - if: win\n        then: run_test.bat\n        else: run_test.sh\n    requirements:\n      run:\n        # Avoid adding system utilities to the runtime environment.\n        - if: linux\n          then: util-linux\n\nabout:\n  homepage: https://podman.io/\n  repository: https://github.com/containers/podman\n  documentation: https://docs.podman.io/en/latest/\n  license: Apache-2.0\n  license_file:\n    - src/github.com/containers/podman/LICENSE\n    - license-files/\n  summary: 'Podman: A tool for managing OCI containers and pods.'\n  description: >\n    Podman (the POD MANager) is a tool for managing containers and images, volumes mounted into those containers, and pods made from groups of containers. Podman is based on libpod, a library for container lifecycle management that is also contained in this repository. The libpod library provides APIs for managing containers,\n    pods, container images, and volumes.\n\nextra:\n  recipe-maintainers:\n    - mbargull\n    - dhirschfeld\n    - manics\n    - xhochy\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1168,7 +1173,7 @@
       "summary": "Podman: A tool for managing OCI containers and pods."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
