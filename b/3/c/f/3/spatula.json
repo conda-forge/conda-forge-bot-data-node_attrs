@@ -27,8 +27,8 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "47f368337bb59f5671df13355178a207b822d4fa",
-  "feedstock_hash_ts": 1794328475,
+  "feedstock_hash": "15ac009149a451f8ae5f5fc584316669271e1ef9",
+  "feedstock_hash_ts": 1794412798,
   "feedstock_name": "spatula",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -43,7 +43,7 @@
       "summary": "Python package for calculation of symmetry based order parameters in molecular simulation systems."
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "python": {
         "version_independent": true
       },
@@ -190,11 +190,11 @@
       "summary": "Python package for calculation of symmetry based order parameters in molecular simulation systems."
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "python": {
         "version_independent": true
       },
-      "script": []
+      "script": "${{ PYTHON }} -m pip install . --ignore-installed --no-cache-dir --no-deps -vv"
     },
     "extra": {
       "recipe-maintainers": [
@@ -352,7 +352,7 @@
       "summary": "Python package for calculation of symmetry based order parameters in molecular simulation systems."
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "python": {
         "version_independent": true
       },
@@ -693,7 +693,7 @@
       "summary": "Python package for calculation of symmetry based order parameters in molecular simulation systems."
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "python": {
         "version_independent": true
       },
@@ -858,7 +858,7 @@
       "summary": "Python package for calculation of symmetry based order parameters in molecular simulation systems."
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "python": {
         "version_independent": true
       },
@@ -1028,7 +1028,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/spatula.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.2.0\"\n  minimum_python: \"3.12\"\n\npackage:\n  name: spatula\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/glotzerlab/spatula/releases/download/v${{ version }}/spatula-${{ version }}.tar.gz\n  sha256: 33bcf9c2dff38ddd2b583d99ad93b77fc20f1c0060d06b8279cc43cb5b3463de\n\nbuild:\n  script:\n    - if: x86_64\n      then: ${{ PYTHON }} -m pip install . --ignore-installed --no-cache-dir --no-deps -vv --config-settings=\"cmake.define.ISPC_TARGET=avx2-i32x8\"\n    - if: arm64\n      then: ${{ PYTHON }} -m pip install . --ignore-installed --no-cache-dir --no-deps -vv --config-settings=\"cmake.define.ISPC_TARGET=neon-i32x4\"\n  number: 5\n  python:\n    version_independent: true\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - if: not (linux and target_platform == \"linux-aarch64\")\n      then:\n        - ispc\n    - if: build_platform != target_platform\n      then:\n        - python      ${{ minimum_python }}.*\n        - python-abi3 ${{ minimum_python }}.*\n        - cross-python_${{ target_platform }}\n        - nanobind >=2.0.0\n        - numpy\n        - scikit-build-core\n    - if: unix\n      then:\n        - make\n  host:\n    - python      ${{ minimum_python }}.*\n    - python-abi3 ${{ minimum_python }}.*\n    - pip\n    - scikit-build-core\n    - nanobind\n    - numpy\n  run:\n    - python\n    - scipy\n    - freud >=3.0.0,!=3.2.0\n\ntests:\n  - files:\n      source:\n        - tests/\n      recipe:\n        - run_pytest_windows.ps1\n    requirements:\n      run:\n        - pytest\n        - coxeter\n    script:\n      - if: unix and target_platform != \"linux-aarch64\" \n        then:\n          - python -m pytest tests/ -v --pg-first --skip-boosop\n      - if: win\n        then:\n          - powershell -NoProfile -ExecutionPolicy Bypass -File run_pytest_windows.ps1\n\nabout:\n  homepage: https://glotzerlab.engin.umich.edu\n  license: BSD-3-Clause AND MIT\n  license_file:\n    - LICENSE\n    - vendor-licenses/BS_thread_pool_LICENSE.txt\n  summary: Python package for calculation of symmetry based order parameters in molecular simulation systems.\n  description: |\n    SPATULA (Symmetry Pattern Analysis Toolkit for Understanding Local Arrangements) is a\n    Python package for computing the continuous symmetry ordering of the neighbors of a\n    point in space. In general, this is to compute the local ordering of particles (molecules)\n    in simulations or experiments over time. The package serves as an extension of \n    `freud <https://github.com/glotzerlab/freud>`__ with a new order parameters.\n  documentation: https://spatula.readthedocs.io/\n  repository: https://github.com/glotzerlab/spatula\n\nextra:\n  recipe-maintainers:\n    - DomFijan\n    - joaander\n    - janbridley\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.2.0\"\n  minimum_python: \"3.12\"\n\npackage:\n  name: spatula\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/glotzerlab/spatula/releases/download/v${{ version }}/spatula-${{ version }}.tar.gz\n  sha256: 33bcf9c2dff38ddd2b583d99ad93b77fc20f1c0060d06b8279cc43cb5b3463de\n\nbuild:\n  script:\n    - if: x86_64\n      then: ${{ PYTHON }} -m pip install . --ignore-installed --no-cache-dir --no-deps -vv --config-settings=\"cmake.define.ISPC_TARGET=avx2-i32x8\"\n      else:\n        - if: arm64\n          then: ${{ PYTHON }} -m pip install . --ignore-installed --no-cache-dir --no-deps -vv --config-settings=\"cmake.define.ISPC_TARGET=neon-i32x4\"\n          else: ${{ PYTHON }} -m pip install . --ignore-installed --no-cache-dir --no-deps -vv\n  number: 6\n  python:\n    version_independent: true\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n    - cmake\n    - if: not (linux and target_platform == \"linux-aarch64\")\n      then:\n        - ispc\n    - if: build_platform != target_platform\n      then:\n        - python      ${{ minimum_python }}.*\n        - python-abi3 ${{ minimum_python }}.*\n        - cross-python_${{ target_platform }}\n        - nanobind >=2.0.0\n        - numpy\n        - scikit-build-core\n    - if: unix\n      then:\n        - make\n  host:\n    - python      ${{ minimum_python }}.*\n    - python-abi3 ${{ minimum_python }}.*\n    - pip\n    - scikit-build-core\n    - nanobind\n    - numpy\n  run:\n    - python\n    - scipy\n    - freud >=3.0.0,!=3.2.0\n\ntests:\n  - files:\n      source:\n        - tests/\n      recipe:\n        - run_pytest_windows.ps1\n    requirements:\n      run:\n        - pytest\n        - coxeter\n    script:\n      - if: unix and target_platform != \"linux-aarch64\" \n        then:\n          - python -m pytest tests/ -v --pg-first --skip-boosop\n      - if: win\n        then:\n          - powershell -NoProfile -ExecutionPolicy Bypass -File run_pytest_windows.ps1\n\nabout:\n  homepage: https://glotzerlab.engin.umich.edu\n  license: BSD-3-Clause AND MIT\n  license_file:\n    - LICENSE\n    - vendor-licenses/BS_thread_pool_LICENSE.txt\n  summary: Python package for calculation of symmetry based order parameters in molecular simulation systems.\n  description: |\n    SPATULA (Symmetry Pattern Analysis Toolkit for Understanding Local Arrangements) is a\n    Python package for computing the continuous symmetry ordering of the neighbors of a\n    point in space. In general, this is to compute the local ordering of particles (molecules)\n    in simulations or experiments over time. The package serves as an extension of \n    `freud <https://github.com/glotzerlab/freud>`__ with a new order parameters.\n  documentation: https://spatula.readthedocs.io/\n  repository: https://github.com/glotzerlab/spatula\n\nextra:\n  recipe-maintainers:\n    - DomFijan\n    - joaander\n    - janbridley\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1169,7 +1169,7 @@
       "summary": "Python package for calculation of symmetry based order parameters in molecular simulation systems."
     },
     "build": {
-      "number": "5",
+      "number": "6",
       "python": {
         "version_independent": true
       },
