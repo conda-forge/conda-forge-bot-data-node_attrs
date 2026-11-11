@@ -14,8 +14,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "6dd84ec21adc54b27dc31b6d77110bd2218a59c1",
-  "feedstock_hash_ts": 1794341161,
+  "feedstock_hash": "64a70da760336f0f1973c8ee223dd64a7061eea8",
+  "feedstock_hash_ts": 1794422900,
   "feedstock_name": "frostwork",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -28,7 +28,7 @@
       "summary": "Treeless, one-pass HTML extraction — CSS/XPath selectors matched on a streaming scan, no DOM."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "entry_points": [
           "frostwork-audit = frostwork.audit:main"
@@ -65,6 +65,7 @@
             "cargo-bundle-licenses"
           ],
           "host": [
+            "python-abi3",
             "python",
             "maturin >=1.9,<2",
             "pip"
@@ -125,6 +126,7 @@
         "cargo-bundle-licenses"
       ],
       "host": [
+        "python-abi3",
         "python",
         "maturin >=1.9,<2",
         "pip"
@@ -154,7 +156,8 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
@@ -187,7 +190,7 @@
       "summary": "Treeless, one-pass HTML extraction — CSS/XPath selectors matched on a streaming scan, no DOM."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "entry_points": [
           "frostwork-audit = frostwork.audit:main"
@@ -224,6 +227,7 @@
             "cargo-bundle-licenses"
           ],
           "host": [
+            "python-abi3",
             "python",
             "maturin >=1.9,<2",
             "pip"
@@ -291,6 +295,7 @@
             "cargo-bundle-licenses"
           ],
           "host": [
+            "python-abi3",
             "python",
             "maturin >=1.9,<2",
             "pip"
@@ -358,6 +363,7 @@
             "cargo-bundle-licenses"
           ],
           "host": [
+            "python-abi3",
             "python",
             "maturin >=1.9,<2",
             "pip"
@@ -421,6 +427,7 @@
         "cross-python_win-64"
       ],
       "host": [
+        "python-abi3",
         "python",
         "maturin >=1.9,<2",
         "pip"
@@ -447,7 +454,7 @@
       "summary": "Treeless, one-pass HTML extraction — CSS/XPath selectors matched on a streaming scan, no DOM."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "entry_points": [
           "frostwork-audit = frostwork.audit:main"
@@ -486,6 +493,7 @@
             "cargo-bundle-licenses"
           ],
           "host": [
+            "python-abi3",
             "python",
             "maturin >=1.9,<2",
             "pip"
@@ -548,6 +556,7 @@
         "cargo-bundle-licenses"
       ],
       "host": [
+        "python-abi3",
         "python",
         "maturin >=1.9,<2",
         "pip"
@@ -579,7 +588,8 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
@@ -617,7 +627,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/frostwork.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.2.2\"\n\npackage:\n  name: frostwork\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/f/frostwork/frostwork-${{ version }}.tar.gz\n  sha256: da4ac35a703b68a6fd1ad92dba53abeed4d38bcfaa5125b6f7f50b4405de7066\n\nbuild:\n  number: 0\n  script:\n    - ${{ PYTHON }} -m pip install . -vv\n    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n  skip:\n    - is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n    entry_points:\n      - frostwork-audit = frostwork.audit:main\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n    - ${{ compiler('rust') }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-bundle-licenses\n  host:\n    - python\n    - maturin >=1.9,<2\n    - pip\n  run:\n    - python\n    - typing_extensions >=4.13\n\ntests:\n  - python:\n      imports:\n        - frostwork\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then: ${{ python_min }}.*\n        - \"*\"\n  - requirements:\n      run:\n        - python\n        - if: is_abi3\n          then: abi3audit\n        - pytest\n        - lxml\n        # tests are fragile to cssselect version\n        - cssselect ==1.5.0\n        - parsel\n    files:\n      source:\n        - tests/\n        - tools/\n    script:\n      - frostwork-audit --help\n      # skip all tests requiring web-poet, too many dependencies\n      - if: unix\n        then: echo \"import pytest; pytest.skip('requires web-poet', allow_module_level=True)\" > ${SP_DIR}/web_poet.py\n        else: echo import pytest; pytest.skip('requires web-poet', allow_module_level=True) > %SP_DIR%\\\\web_poet.py\n      # gate tests are partially broken, and require more dependencies\n      # make_gates and release tests are irrelevant to us\n      # tests/test_python.py::test_every_shipped_base_is_injectable requires andi\n      # tests/test_python.py::test_extract_releases_gil_for_parallel_scans fragile to timing\n      - python -m pytest -vv\n          --ignore=tests/test_gates.py\n          --ignore=tests/test_make_gates.py\n          --ignore=tests/test_release.py\n          --deselect=tests/test_python.py::test_every_shipped_base_is_injectable\n          --deselect=tests/test_python.py::test_extract_releases_gil_for_parallel_scans\n      - if: is_abi3\n        then:\n          - if: unix\n            then: abi3audit $SP_DIR/frostwork/_frostwork.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n            else: abi3audit %SP_DIR%/frostwork/_frostwork.pyd -s -v --assume-minimum-abi3 ${{ python_min }}\n\nabout:\n  summary: Treeless, one-pass HTML extraction — CSS/XPath selectors matched on a streaming scan, no DOM.\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://github.com/scrapy/frostwork\n  documentation: https://github.com/scrapy/frostwork/blob/main/docs/PYTHON.md\n\nextra:\n  recipe-maintainers:\n    - mgorny\n    - AdrianAtZyte\n    - wRAR\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.2.2\"\n\npackage:\n  name: frostwork\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/f/frostwork/frostwork-${{ version }}.tar.gz\n  sha256: da4ac35a703b68a6fd1ad92dba53abeed4d38bcfaa5125b6f7f50b4405de7066\n\nbuild:\n  number: 1\n  script:\n    - ${{ PYTHON }} -m pip install . -vv\n    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n  skip:\n    - is_abi3 and not is_python_min\n  python:\n    version_independent: ${{ is_abi3 }}\n    entry_points:\n      - frostwork-audit = frostwork.audit:main\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n    - ${{ compiler('rust') }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-bundle-licenses\n  host:\n    - if: is_abi3\n      then: python-abi3\n    - python\n    - maturin >=1.9,<2\n    - pip\n  run:\n    - python\n    - typing_extensions >=4.13\n\ntests:\n  - python:\n      imports:\n        - frostwork\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then: ${{ python_min }}.*\n        - \"*\"\n  - requirements:\n      run:\n        - python\n        - if: is_abi3\n          then: abi3audit\n        - pytest\n        - lxml\n        # tests are fragile to cssselect version\n        - cssselect ==1.5.0\n        - parsel\n    files:\n      source:\n        - tests/\n        - tools/\n    script:\n      - frostwork-audit --help\n      # skip all tests requiring web-poet, too many dependencies\n      - if: unix\n        then: echo \"import pytest; pytest.skip('requires web-poet', allow_module_level=True)\" > ${SP_DIR}/web_poet.py\n        else: echo import pytest; pytest.skip('requires web-poet', allow_module_level=True) > %SP_DIR%\\\\web_poet.py\n      # gate tests are partially broken, and require more dependencies\n      # make_gates and release tests are irrelevant to us\n      # tests/test_python.py::test_every_shipped_base_is_injectable requires andi\n      # tests/test_python.py::test_extract_releases_gil_for_parallel_scans fragile to timing\n      - python -m pytest -vv\n          --ignore=tests/test_gates.py\n          --ignore=tests/test_make_gates.py\n          --ignore=tests/test_release.py\n          --deselect=tests/test_python.py::test_every_shipped_base_is_injectable\n          --deselect=tests/test_python.py::test_extract_releases_gil_for_parallel_scans\n      - if: is_abi3\n        then:\n          - if: unix\n            then: abi3audit $SP_DIR/frostwork/_frostwork.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n            else: abi3audit %SP_DIR%/frostwork/_frostwork.pyd -s -v --assume-minimum-abi3 ${{ python_min }}\n\nabout:\n  summary: Treeless, one-pass HTML extraction — CSS/XPath selectors matched on a streaming scan, no DOM.\n  license: Apache-2.0\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://github.com/scrapy/frostwork\n  documentation: https://github.com/scrapy/frostwork/blob/main/docs/PYTHON.md\n\nextra:\n  recipe-maintainers:\n    - mgorny\n    - AdrianAtZyte\n    - wRAR\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -628,6 +638,7 @@
       "maturin",
       "pip",
       "python",
+      "python-abi3",
       "rust_compiler_stub",
       "typing_extensions"
     ]
@@ -651,7 +662,8 @@
         "cross-python",
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
@@ -694,7 +706,8 @@
       "elements": [
         "maturin >=1.9,<2",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
@@ -732,7 +745,7 @@
       "summary": "Treeless, one-pass HTML extraction — CSS/XPath selectors matched on a streaming scan, no DOM."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "python": {
         "entry_points": [
           "frostwork-audit = frostwork.audit:main"
@@ -771,6 +784,7 @@
             "cargo-bundle-licenses"
           ],
           "host": [
+            "python-abi3",
             "python",
             "maturin >=1.9,<2",
             "pip"
@@ -833,6 +847,7 @@
         "cargo-bundle-licenses"
       ],
       "host": [
+        "python-abi3",
         "python",
         "maturin >=1.9,<2",
         "pip"
@@ -864,7 +879,8 @@
       "elements": [
         "maturin",
         "pip",
-        "python"
+        "python",
+        "python-abi3"
       ]
     },
     "run": {
