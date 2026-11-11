@@ -1,29 +1,11 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_cuda_compiler_version12.9.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncurl:\n- '8'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nenable_cuda:\n- 'True'\nlibhwloc:\n- 2.12.2\nlibjpeg_turbo:\n- '3'\nlibxml2_devel:\n- '2.14'\nllvm_version:\n- 19.1.7\ntarget_platform:\n- linux-64\nzip_keys:\n- - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n",
-  "ci_support_migrations": {
-    "cuda129": {
-      "migration_number": 1,
-      "migrator_ts": 1738229377
-    },
-    "libhwloc2122": {
-      "migration_number": 1,
-      "migrator_ts": 1765109229.0265083
-    },
-    "libxml2214": {
-      "migration_number": 1,
-      "migrator_ts": 1743812129.3751788
-    }
-  },
+  "ci_support_linux_64_c_stdlib_version2.17cuda_compiler_version12.9cxx_compiler_version14.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncurl:\n- '8'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nenable_cuda:\n- 'True'\nlibhwloc:\n- 2.13.0\nlibjpeg_turbo:\n- '3'\nlibxml2_devel:\n- '2.15'\nllvm_version:\n- 19.1.7\ntarget_platform:\n- linux-64\nzip_keys:\n- - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n",
+  "ci_support_migrations": {},
   "conda-forge.yml": {
-    "azure": {
-      "free_disk_space": true
-    },
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "pkg_format": "2"
@@ -33,10 +15,17 @@
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
-    "test": "native"
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
+    },
+    "test": "native",
+    "workflow_settings": {
+      "free_disk_space": "quick"
+    }
   },
-  "feedstock_hash": "c33d91b0a31a7474b3b383fcb2c06e5ed5e7c71e",
-  "feedstock_hash_ts": 1776872445,
+  "feedstock_hash": "fbb66c81665f6c9b97ee1d20f8b934ce3349a51c",
+  "feedstock_hash_ts": 1794427518,
   "feedstock_name": "pocl",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -58,7 +47,7 @@
         "cuda-cudart-dev",
         "libxml2-devel"
       ],
-      "number": "2",
+      "number": "0",
       "script_env": [
         "LLVM_VERSION_MAJOR=19"
       ]
@@ -208,11 +197,147 @@
             "pyopencl"
           ]
         }
+      },
+      {
+        "name": "pocl-core"
+      },
+      {
+        "name": "pocl-cpu-minimal",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "name": "pocl-cpu",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "pocl-cpu-minimal",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core",
+            "pocl-cpu-minimal"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}",
+            "export OCL_ICD_DEBUG=15",
+            "export POCL_DEBUG=1",
+            "curl -O https://raw.githubusercontent.com/inducer/pyopencl/main/examples/demo.py",
+            "python demo.py"
+          ],
+          "requires": [
+            "pyopencl",
+            "curl",
+            "pocl-cpu"
+          ]
+        }
+      },
+      {
+        "build": null,
+        "name": "pocl-cuda",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ],
+          "run_constrained": [
+            "__cuda >=13"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "build": null,
+        "name": "pocl-remote",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-remote${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "name": "pocl",
+        "requirements": {
+          "host": [
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core",
+            "pocl-cpu",
+            "pocl-cpu-minimal",
+            "pocl-remote",
+            "pocl-cuda"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}",
+            "test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}",
+            "test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}"
+          ],
+          "downstreams": [
+            "pyopencl"
+          ]
+        }
       }
     ],
     "package": {
       "name": "pocl-core",
-      "version": "7.1"
+      "version": "7.2"
     },
     "requirements": {
       "build": [
@@ -236,27 +361,36 @@
         "cuda-version 12.*",
         "cuda-driver-dev",
         "cuda-cudart-dev",
-        "libjpeg-turbo"
+        "libjpeg-turbo",
+        "cuda-version 13.*"
       ],
       "run": [
         "llvm-spirv-19",
         "libhwloc"
       ],
       "run_constrained": [
-        "pocl 7.1.*"
+        "pocl 7.2.*"
       ]
     },
     "schema_version": 0,
     "source": [
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
+      },
+      {
+        "patches": [
+          "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
+          "patches/disable-cuda-test.patch",
+          "patches/unistd-win.diff"
+        ],
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       }
     ],
     "test": {
@@ -337,7 +471,7 @@
         "cuda-cudart-dev",
         "libxml2-devel"
       ],
-      "number": "2",
+      "number": "0",
       "script_env": [
         "LLVM_VERSION_MAJOR=19"
       ]
@@ -487,11 +621,147 @@
             "pyopencl"
           ]
         }
+      },
+      {
+        "name": "pocl-core"
+      },
+      {
+        "name": "pocl-cpu-minimal",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "name": "pocl-cpu",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "pocl-cpu-minimal",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core",
+            "pocl-cpu-minimal"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}",
+            "export OCL_ICD_DEBUG=15",
+            "export POCL_DEBUG=1",
+            "curl -O https://raw.githubusercontent.com/inducer/pyopencl/main/examples/demo.py",
+            "python demo.py"
+          ],
+          "requires": [
+            "pyopencl",
+            "curl",
+            "pocl-cpu"
+          ]
+        }
+      },
+      {
+        "build": null,
+        "name": "pocl-cuda",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ],
+          "run_constrained": [
+            "__cuda >=13"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "build": null,
+        "name": "pocl-remote",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-remote${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "name": "pocl",
+        "requirements": {
+          "host": [
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core",
+            "pocl-cpu",
+            "pocl-cpu-minimal",
+            "pocl-remote",
+            "pocl-cuda"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}",
+            "test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}",
+            "test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}"
+          ],
+          "downstreams": [
+            "pyopencl"
+          ]
+        }
       }
     ],
     "package": {
       "name": "pocl-core",
-      "version": "7.1"
+      "version": "7.2"
     },
     "requirements": {
       "build": [
@@ -515,27 +785,36 @@
         "cuda-version 12.*",
         "cuda-driver-dev",
         "cuda-cudart-dev",
-        "libjpeg-turbo"
+        "libjpeg-turbo",
+        "cuda-version 13.*"
       ],
       "run": [
         "llvm-spirv-19",
         "libhwloc"
       ],
       "run_constrained": [
-        "pocl 7.1.*"
+        "pocl 7.2.*"
       ]
     },
     "schema_version": 0,
     "source": [
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
+      },
+      {
+        "patches": [
+          "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
+          "patches/disable-cuda-test.patch",
+          "patches/unistd-win.diff"
+        ],
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       }
     ],
     "test": {
@@ -616,7 +895,7 @@
         "cuda-cudart-dev",
         "libxml2-devel"
       ],
-      "number": "2",
+      "number": "0",
       "script_env": [
         "LLVM_VERSION_MAJOR=19"
       ]
@@ -844,7 +1123,279 @@
             "pocl-core"
           ],
           "run_constrained": [
+            "__cuda >=13"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "build": null,
+        "name": "pocl-remote",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-remote${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "name": "pocl",
+        "requirements": {
+          "host": [
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core",
+            "pocl-cpu",
+            "pocl-cpu-minimal",
+            "pocl-remote",
+            "pocl-cuda"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}",
+            "test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}",
+            "test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}"
+          ],
+          "downstreams": [
+            "pyopencl"
+          ]
+        }
+      },
+      {
+        "name": "pocl-core"
+      },
+      {
+        "name": "pocl-cpu-minimal",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "name": "pocl-cpu",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "pocl-cpu-minimal",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core",
+            "pocl-cpu-minimal"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}",
+            "export OCL_ICD_DEBUG=15",
+            "export POCL_DEBUG=1",
+            "curl -O https://raw.githubusercontent.com/inducer/pyopencl/main/examples/demo.py",
+            "python demo.py"
+          ],
+          "requires": [
+            "pyopencl",
+            "curl",
+            "pocl-cpu"
+          ]
+        }
+      },
+      {
+        "build": null,
+        "name": "pocl-cuda",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ],
+          "run_constrained": [
             "__cuda >=12"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "build": null,
+        "name": "pocl-remote",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-remote${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "name": "pocl",
+        "requirements": {
+          "host": [
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core",
+            "pocl-cpu",
+            "pocl-cpu-minimal",
+            "pocl-remote",
+            "pocl-cuda"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}",
+            "test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}",
+            "test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}"
+          ],
+          "downstreams": [
+            "pyopencl"
+          ]
+        }
+      },
+      {
+        "name": "pocl-core"
+      },
+      {
+        "name": "pocl-cpu-minimal",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}"
+          ]
+        }
+      },
+      {
+        "name": "pocl-cpu",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "pocl-cpu-minimal",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core",
+            "pocl-cpu-minimal"
+          ]
+        },
+        "script": "install-pkg.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}",
+            "export OCL_ICD_DEBUG=15",
+            "export POCL_DEBUG=1",
+            "curl -O https://raw.githubusercontent.com/inducer/pyopencl/main/examples/demo.py",
+            "python demo.py"
+          ],
+          "requires": [
+            "pyopencl",
+            "curl",
+            "pocl-cpu"
+          ]
+        }
+      },
+      {
+        "build": null,
+        "name": "pocl-cuda",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_stdlib_stub"
+          ],
+          "host": [
+            "pocl-core",
+            "llvm 19.1.7.*",
+            "libhwloc"
+          ],
+          "run": [
+            "pocl-core"
+          ],
+          "run_constrained": [
+            "__cuda >=13"
           ]
         },
         "script": "install-pkg.sh",
@@ -1314,7 +1865,7 @@
     ],
     "package": {
       "name": "pocl-core",
-      "version": "7.1"
+      "version": "7.2"
     },
     "requirements": {
       "build": [
@@ -1341,6 +1892,7 @@
         "cuda-driver-dev",
         "cuda-cudart-dev",
         "libjpeg-turbo",
+        "cuda-version 13.*",
         "zlib",
         "ld64 >=530",
         "winpthreads-devel"
@@ -1351,63 +1903,74 @@
         "ld64 >=530"
       ],
       "run_constrained": [
-        "pocl 7.1.*"
+        "pocl 7.2.*"
       ]
     },
     "schema_version": 0,
     "source": [
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       },
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       },
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
-          "patches/ocl-icd-mac.diff",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       },
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
-          "patches/ocl-icd-mac.diff",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       },
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
-          "patches/ocl-icd-mac.diff",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
+      },
+      {
+        "patches": [
+          "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
+          "patches/disable-cuda-test.patch",
+          "patches/unistd-win.diff"
+        ],
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
+      },
+      {
+        "patches": [
+          "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
+          "patches/disable-cuda-test.patch",
+          "patches/unistd-win.diff",
+          "patches/runtime-dependency-host-bin.patch"
+        ],
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       }
     ],
     "test": {
@@ -1433,7 +1996,7 @@
       "ignore_run_exports_from": [
         "libxml2-devel"
       ],
-      "number": "2",
+      "number": "0",
       "script_env": [
         "LLVM_VERSION_MAJOR=19"
       ]
@@ -1587,7 +2150,7 @@
     ],
     "package": {
       "name": "pocl-core",
-      "version": "7.1"
+      "version": "7.2"
     },
     "requirements": {
       "build": [
@@ -1617,21 +2180,19 @@
         "libhwloc"
       ],
       "run_constrained": [
-        "pocl 7.1.*"
+        "pocl 7.2.*"
       ]
     },
     "schema_version": 0,
     "source": [
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
-          "patches/ocl-icd-mac.diff",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       }
     ],
     "test": {
@@ -1707,7 +2268,7 @@
       "ignore_run_exports_from": [
         "libxml2-devel"
       ],
-      "number": "2",
+      "number": "0",
       "script_env": [
         "LLVM_VERSION_MAJOR=19"
       ]
@@ -1861,7 +2422,7 @@
     ],
     "package": {
       "name": "pocl-core",
-      "version": "7.1"
+      "version": "7.2"
     },
     "requirements": {
       "build": [
@@ -1891,21 +2452,19 @@
         "libhwloc"
       ],
       "run_constrained": [
-        "pocl 7.1.*"
+        "pocl 7.2.*"
       ]
     },
     "schema_version": 0,
     "source": [
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
-          "patches/ocl-icd-mac.diff",
           "patches/unistd-win.diff"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       }
     ],
     "test": {
@@ -1988,7 +2547,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pocl.json"
   },
-  "raw_meta_yaml": "{% set version = \"7.1\" %}\n\n{% if llvm_version is not defined %}\n{% set llvm_version = \"0.0.0\" %}\n{% endif %}\n{% if cuda_compiler_version is not defined %}\n{% set cuda_compiler_version = \"0.0\" %}\n{% endif %}\n\n{% set cuda_major_version = cuda_compiler_version.split(\".\")[0] %}\n\npackage:\n  name: pocl-core\n  version: {{ version }}\n\nsource:\n  - url: https://github.com/pocl/pocl/archive/refs/tags/v{{ version.replace(\".rc\", \"-RC\") }}.tar.gz\n    sha256: 1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25\n    patches:\n      - patches/0002-pocld.patch\n      - patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch\n      # https://github.com/conda-forge/pocl-feedstock/pull/106#issuecomment-2467398973\n      - patches/disable-cuda-test.patch\n      - patches/ocl-icd-mac.diff   # [not linux]\n      - patches/unistd-win.diff\n\nbuild:\n  number: 2\n  skip: true  # [enable_cuda and (cuda_compiler_version == \"None\")]\n  skip: true  # [not enable_cuda and (cuda_compiler_version != \"None\")]\n  script_env:\n    - LLVM_VERSION_MAJOR={{ llvm_version.split(\".\")[0] }}\n  ignore_run_exports_from:\n    # we only need libcuda.so.1\n    - {{ compiler('cuda') }}   # [enable_cuda]\n    - cuda-version             # [enable_cuda]\n    - cuda-driver-dev          # [enable_cuda]\n    - cuda-cudart-dev          # [enable_cuda]\n    - libxml2-devel\n\nrequirements:\n  build:\n    - cmake\n    - ninja\n    - pkg-config\n    - {{ compiler('cxx') }}                                   # [not osx]\n    - clangxx_{{ target_platform }} {{ llvm_version }}.*      # [osx]\n    - {{ compiler('cuda') }}                                  # [enable_cuda]\n    - llvmdev {{ llvm_version }}.*       # [build_platform != target_platform]\n    - clangdev {{ llvm_version }}.*      # [build_platform != target_platform]\n    - {{ stdlib(\"c\") }}\n  host:\n    - libopencl-devel\n    - libhwloc\n    - clhpp\n    - libxml2-devel\n    - winpthreads-devel   # [win]\n    - llvmdev {{ llvm_version }}.*\n    - clangdev {{ llvm_version }}.*\n    - llvm {{ llvm_version }}.*\n    - libclang-cpp {{ llvm_version }}.*\n    - llvm-spirv-{{ llvm_version.split(\".\")[0] }}  # [unix]\n    - cuda-version {{ cuda_major_version }}.*  # [enable_cuda]\n    - cuda-driver-dev                    # [unix and enable_cuda]\n    - cuda-cudart-dev                    # [enable_cuda]\n    - zlib                               # [osx or win]\n    - ld64 >=530                         # [osx]\n    - libjpeg-turbo\n  run:\n    - llvm-spirv-{{ llvm_version.split(\".\")[0] }}   # [unix]\n    - ld64 >=530                         # [osx]\n    - {{ pin_compatible('libhwloc') }}\n  run_constrained:\n    - pocl {{ version }}.*\n\ntest:\n  commands:\n    - test -f $PREFIX/lib/libpocl${SHLIB_EXT}             # [unix]\n    - if not exist %LIBRARY_BIN%\\\\pocl.dll exit 1   # [win]\n\noutputs:\n  - name: pocl-core\n\n  - name: pocl-cpu-minimal\n    script: install-pkg.sh  # [unix]\n    script: install-pkg.bat  # [win]\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n      host:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - llvm {{ llvm_version }}.*\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n    test:\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}      # [unix]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-basic.dll exit 1     # [win]\n\n  - name: pocl-cpu\n    script: install-pkg.sh  # [unix]\n    script: install-pkg.bat  # [win]\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n      host:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-cpu-minimal\", exact=True) }}\n        - llvm {{ llvm_version }}.*\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-cpu-minimal\", exact=True) }}\n    test:\n      requires:\n        - pyopencl\n        - curl\n        - pocl-cpu\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}    # [unix]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-pthread.dll exit 1   # [win]\n        # Remove apple icd so that only pocl is found\n        - rm -f $PREFIX/etc/OpenCL/vendors/apple.icd     # [osx]\n        - export OCL_ICD_DEBUG=15                        # [linux]\n        - export POCL_DEBUG=1                            # [unix]\n        - set POCL_DEBUG=1                               # [win]\n        - curl -O https://raw.githubusercontent.com/inducer/pyopencl/main/examples/demo.py\n        - python demo.py\n\n  - name: pocl-cuda\n    build:\n      skip: true  # [not enable_cuda]\n    script: install-pkg.sh  # [unix]\n    script: install-pkg.bat  # [win]\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n      host:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - llvm {{ llvm_version }}.*\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n      run_constrained:\n        - __cuda >={{ cuda_major_version }}\n    test:\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}       # [unix]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-cuda.dll exit 1      # [win]\n\n  - name: pocl-remote\n    script: install-pkg.sh  # [unix]\n    script: install-pkg.bat  # [win]\n    build:\n      skip: true   # [win]\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n      host:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - llvm {{ llvm_version }}.*\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n    test:\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-remote${SHLIB_EXT}     # [unix]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-remote.dll exit 1    # [win]\n\n  - name: pocl\n    requirements:\n      host:\n        # Need hwloc here for the pocl meta-package to have two hashes\n        # Otherwise only one of them gets uploaded and the `exact=True`\n        # conditions below prevent installations\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-cpu\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-cpu-minimal\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-remote\", exact=True) }}       # [unix]\n        - {{ pin_subpackage(\"pocl-cuda\", exact=True) }}         # [enable_cuda]\n    test:\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}     # [unix]\n        - test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}       # [unix]\n        - test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}        # [unix and enable_cuda]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-pthread.dll exit 1    # [win]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-basic.dll exit 1      # [win]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-cuda.dll exit 1       # [win and enable_cuda]\n      downstreams:\n        - pyopencl\n\nabout:\n  home: http://portablecl.org/\n  license: MIT\n  license_file:\n    - LICENSE.with.3rdparty\n  summary: Portable Computing Language -- a portable open source implementation of the OpenCL standard\n  dev_url: https://github.com/pocl/pocl\n  doc_url: http://portablecl.org/docs/html/\n\nextra:\n  feedstock-name: pocl\n  recipe-maintainers:\n    - inducer\n    - mattwala\n    - isuruf\n    - matthiasdiener\n",
+  "raw_meta_yaml": "{% set version = \"7.2\" %}\n\n{% if llvm_version is not defined %}\n{% set llvm_version = \"0.0.0\" %}\n{% endif %}\n{% if cuda_compiler_version is not defined %}\n{% set cuda_compiler_version = \"0.0\" %}\n{% endif %}\n\n{% set cuda_major_version = cuda_compiler_version.split(\".\")[0] %}\n\npackage:\n  name: pocl-core\n  version: \"{{ version }}\"\n\nsource:\n  - url: https://github.com/pocl/pocl/archive/refs/tags/v{{ version.replace(\".rc\", \"-RC\") }}.tar.gz\n    sha256: 7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e\n    patches:\n      - patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch\n      # https://github.com/conda-forge/pocl-feedstock/pull/106#issuecomment-2467398973\n      - patches/disable-cuda-test.patch\n      - patches/unistd-win.diff\n      - patches/runtime-dependency-host-bin.patch  # [win]\n\nbuild:\n  number: 0\n  skip: true  # [enable_cuda and (cuda_compiler_version == \"None\")]\n  skip: true  # [not enable_cuda and (cuda_compiler_version != \"None\")]\n  script_env:\n    - LLVM_VERSION_MAJOR={{ llvm_version.split(\".\")[0] }}\n  ignore_run_exports_from:\n    # we only need libcuda.so.1\n    - {{ compiler('cuda') }}   # [enable_cuda]\n    - cuda-version             # [enable_cuda]\n    - cuda-driver-dev          # [enable_cuda]\n    - cuda-cudart-dev          # [enable_cuda]\n    - libxml2-devel\n\nrequirements:\n  build:\n    - cmake\n    - ninja\n    - pkg-config\n    - {{ compiler('cxx') }}                                   # [not osx]\n    - clangxx_{{ target_platform }} {{ llvm_version }}.*      # [osx]\n    - {{ compiler('cuda') }}                                  # [enable_cuda]\n    - llvmdev {{ llvm_version }}.*       # [build_platform != target_platform]\n    - clangdev {{ llvm_version }}.*      # [build_platform != target_platform]\n    - {{ stdlib(\"c\") }}\n  host:\n    - libopencl-devel\n    - libhwloc\n    - clhpp\n    - libxml2-devel\n    - winpthreads-devel   # [win]\n    - llvmdev {{ llvm_version }}.*\n    - clangdev {{ llvm_version }}.*\n    - llvm {{ llvm_version }}.*\n    - libclang-cpp {{ llvm_version }}.*\n    - llvm-spirv-{{ llvm_version.split(\".\")[0] }}  # [unix]\n    - cuda-version {{ cuda_major_version }}.*  # [enable_cuda]\n    - cuda-driver-dev                    # [unix and enable_cuda]\n    - cuda-cudart-dev                    # [enable_cuda]\n    - zlib                               # [osx or win]\n    - ld64 >=530                         # [osx]\n    - libjpeg-turbo\n  run:\n    - llvm-spirv-{{ llvm_version.split(\".\")[0] }}   # [unix]\n    - ld64 >=530                         # [osx]\n    - {{ pin_compatible('libhwloc') }}\n  run_constrained:\n    - pocl {{ version }}.*\n\ntest:\n  commands:\n    - test -f $PREFIX/lib/libpocl${SHLIB_EXT}             # [unix]\n    - if not exist %LIBRARY_BIN%\\\\pocl.dll exit 1   # [win]\n\noutputs:\n  - name: pocl-core\n\n  - name: pocl-cpu-minimal\n    script: install-pkg.sh  # [unix]\n    script: install-pkg.bat  # [win]\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n      host:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - llvm {{ llvm_version }}.*\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n    test:\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}      # [unix]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-basic.dll exit 1     # [win]\n\n  - name: pocl-cpu\n    script: install-pkg.sh  # [unix]\n    script: install-pkg.bat  # [win]\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n      host:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-cpu-minimal\", exact=True) }}\n        - llvm {{ llvm_version }}.*\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-cpu-minimal\", exact=True) }}\n    test:\n      requires:\n        - pyopencl\n        - curl\n        - pocl-cpu\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}    # [unix]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-pthread.dll exit 1   # [win]\n        # Remove apple icd so that only pocl is found\n        - rm -f $PREFIX/etc/OpenCL/vendors/apple.icd     # [osx]\n        - export OCL_ICD_DEBUG=15                        # [linux]\n        - export POCL_DEBUG=1                            # [unix]\n        - set POCL_DEBUG=1                               # [win]\n        - curl -O https://raw.githubusercontent.com/inducer/pyopencl/main/examples/demo.py\n        - python demo.py\n\n  - name: pocl-cuda\n    build:\n      skip: true  # [not enable_cuda]\n    script: install-pkg.sh  # [unix]\n    script: install-pkg.bat  # [win]\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n      host:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - llvm {{ llvm_version }}.*\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n      run_constrained:\n        - __cuda >={{ cuda_major_version }}\n    test:\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}       # [unix]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-cuda.dll exit 1      # [win]\n\n  - name: pocl-remote\n    script: install-pkg.sh  # [unix]\n    script: install-pkg.bat  # [win]\n    build:\n      skip: true  # [win]\n    requirements:\n      build:\n        - {{ compiler('cxx') }}\n        - {{ stdlib('c') }}\n      host:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - llvm {{ llvm_version }}.*\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n    test:\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-remote${SHLIB_EXT}     # [unix]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-remote.dll exit 1    # [win]\n\n  - name: pocl\n    requirements:\n      host:\n        # Need hwloc here for the pocl meta-package to have two hashes\n        # Otherwise only one of them gets uploaded and the `exact=True`\n        # conditions below prevent installations\n        - libhwloc\n      run:\n        - {{ pin_subpackage(\"pocl-core\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-cpu\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-cpu-minimal\", exact=True) }}\n        - {{ pin_subpackage(\"pocl-remote\", exact=True) }}       # [unix]\n        - {{ pin_subpackage(\"pocl-cuda\", exact=True) }}         # [enable_cuda]\n    test:\n      commands:\n        - test -f $PREFIX/lib/pocl/libpocl-devices-pthread${SHLIB_EXT}     # [unix]\n        - test -f $PREFIX/lib/pocl/libpocl-devices-basic${SHLIB_EXT}       # [unix]\n        - test -f $PREFIX/lib/pocl/libpocl-devices-cuda${SHLIB_EXT}        # [unix and enable_cuda]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-pthread.dll exit 1    # [win]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-basic.dll exit 1      # [win]\n        - if not exist %LIBRARY_BIN%\\\\pocl\\\\pocl-devices-cuda.dll exit 1       # [win and enable_cuda]\n      downstreams:\n        - pyopencl\n\nabout:\n  home: http://portablecl.org/\n  license: MIT\n  license_file:\n    - LICENSE.with.3rdparty\n  summary: Portable Computing Language -- a portable open source implementation of the OpenCL standard\n  dev_url: https://github.com/pocl/pocl\n  doc_url: http://portablecl.org/docs/html/\n\nextra:\n  feedstock-name: pocl\n  recipe-maintainers:\n    - inducer\n    - mattwala\n    - isuruf\n    - matthiasdiener\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2115,6 +2674,7 @@
         "cuda-cudart-dev",
         "cuda-driver-dev",
         "cuda-version 12.*",
+        "cuda-version 13.*",
         "ld64 >=530",
         "libclang-cpp 19.1.7.*",
         "libhwloc",
@@ -2152,8 +2712,8 @@
       ]
     }
   },
-  "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz",
-  "version": "7.1",
+  "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz",
+  "version": "7.2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/pocl.json"
   },
@@ -2172,7 +2732,7 @@
       "ignore_run_exports_from": [
         "libxml2-devel"
       ],
-      "number": "2",
+      "number": "0",
       "script_env": [
         "LLVM_VERSION_MAJOR=19"
       ]
@@ -2326,7 +2886,7 @@
     ],
     "package": {
       "name": "pocl-core",
-      "version": "7.1"
+      "version": "7.2"
     },
     "requirements": {
       "build": [
@@ -2353,21 +2913,20 @@
         "libhwloc"
       ],
       "run_constrained": [
-        "pocl 7.1.*"
+        "pocl 7.2.*"
       ]
     },
     "schema_version": 0,
     "source": [
       {
         "patches": [
-          "patches/0002-pocld.patch",
           "patches/0003-switch-to-newer-find_package-CUDAToolkit-for-CUDA-12.patch",
           "patches/disable-cuda-test.patch",
-          "patches/ocl-icd-mac.diff",
-          "patches/unistd-win.diff"
+          "patches/unistd-win.diff",
+          "patches/runtime-dependency-host-bin.patch"
         ],
-        "sha256": "1110057cb0736c74819ad65238655a03f7b93403a0ca60cdd8849082f515ca25",
-        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.1.tar.gz"
+        "sha256": "7ddc01a7afcd49d4ec7fa9bf94df20852db44fcda629a9763086a8c541e5da1e",
+        "url": "https://github.com/pocl/pocl/archive/refs/tags/v7.2.tar.gz"
       }
     ],
     "test": {
