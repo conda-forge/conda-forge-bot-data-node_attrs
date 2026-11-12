@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:cos7\nlibffi:\n- '3.7'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\nreadline:\n- '8'\ntarget_platform:\n- linux-64\ntk:\n- '8.6'\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:cos7\nlibboost_devel:\n- '1.90'\nlibffi:\n- '3.7'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\nreadline:\n- '8'\ntarget_platform:\n- linux-64\ntk:\n- '8.6'\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {
     "libboost190": {
       "migration_number": 1,
@@ -26,8 +26,8 @@
       "linux_64": "cos7"
     }
   },
-  "feedstock_hash": "9f09efcdb07b975cace6e481300460ecd8668263",
-  "feedstock_hash_ts": 1788957537,
+  "feedstock_hash": "7cd6949ed3ac08a57b75378e0f641ab013eb4e4c",
+  "feedstock_hash_ts": 1794503034,
   "feedstock_name": "yosys",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -35,8 +35,8 @@
       "description": "This is a framework for RTL synthesis tools. It currently has extensive Verilog-2005 support and provides a basic set of synthesis algorithms for various application domains.",
       "dev_url": "https://github.com/YosysHQ/yosys",
       "home": "https://github.com/YosysHQ/yosys",
-      "license": "ISC",
-      "license_family": "ISC",
+      "license": "ISC AND MIT AND BSD-2-Clause AND BSD-3-Clause AND Zlib AND bzip2-1.0.6 AND LicenseRef-ABC AND LicenseRef-Public-Domain",
+      "license_family": "ISC AND MIT AND BSD-2-Clause AND BSD-3-Clause AND Zlib AND bzip2-1.0.6 AND LicenseRef-ABC AND LicenseRef-Public-Domain",
       "license_file": "COPYING",
       "summary": "Yosys Open SYnthesis Suite"
     },
@@ -61,17 +61,22 @@
             "gcc",
             "gxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -79,18 +84,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -103,17 +119,22 @@
             "gcc",
             "gxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -121,18 +142,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -145,17 +177,22 @@
             "gcc",
             "gxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -163,18 +200,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -187,17 +235,22 @@
             "gcc",
             "gxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -205,23 +258,34 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       }
     ],
     "package": {
       "name": "yosys",
-      "version": "0.69"
+      "version": "0.70"
     },
     "requirements": {
       "build": [
@@ -231,17 +295,22 @@
         "gcc",
         "gxx",
         "bison",
-        "cmake",
+        "cmake >=3.28",
         "make",
         "pkg-config",
         "python"
       ],
       "host": [
         "flex",
+        "fmt >=12.2",
+        "libboost-devel",
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog ==12.0",
+        "mimalloc >=3.5",
         "tk",
+        "tomlplusplus >=3.4",
         "zlib"
       ],
       "run": [
@@ -249,13 +318,17 @@
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog",
         "tk"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6dad6412cae417f5a53e2c943c2aee160162cfc1bdd31669230da1b7e3522571",
-      "url": "https://github.com/YosysHQ/yosys/releases/download/v0.69/yosys.tar.gz"
+      "patches": [
+        "system-slang.patch"
+      ],
+      "sha256": "c6bd8b83aad633f6786fc861fe8f5dbc74c37bfae77f7bd0220e6f00f15f1d55",
+      "url": "https://github.com/YosysHQ/yosys/releases/download/v0.70/yosys.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -278,10 +351,15 @@
       "__set__": true,
       "elements": [
         "flex",
+        "fmt",
+        "libboost-devel",
         "libffi",
         "libzlib",
+        "mimalloc",
         "readline",
+        "slang-verilog",
         "tk",
+        "tomlplusplus",
         "zlib"
       ]
     },
@@ -292,6 +370,7 @@
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog",
         "tk"
       ]
     },
@@ -305,8 +384,8 @@
       "description": "This is a framework for RTL synthesis tools. It currently has extensive Verilog-2005 support and provides a basic set of synthesis algorithms for various application domains.",
       "dev_url": "https://github.com/YosysHQ/yosys",
       "home": "https://github.com/YosysHQ/yosys",
-      "license": "ISC",
-      "license_family": "ISC",
+      "license": "ISC AND MIT AND BSD-2-Clause AND BSD-3-Clause AND Zlib AND bzip2-1.0.6 AND LicenseRef-ABC AND LicenseRef-Public-Domain",
+      "license_family": "ISC AND MIT AND BSD-2-Clause AND BSD-3-Clause AND Zlib AND bzip2-1.0.6 AND LicenseRef-ABC AND LicenseRef-Public-Domain",
       "license_file": "COPYING",
       "summary": "Yosys Open SYnthesis Suite"
     },
@@ -331,17 +410,22 @@
             "gcc",
             "gxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -349,18 +433,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -373,17 +468,22 @@
             "gcc",
             "gxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -391,18 +491,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -415,17 +526,22 @@
             "gcc",
             "gxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -433,18 +549,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -457,17 +584,22 @@
             "gcc",
             "gxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -475,18 +607,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -499,17 +642,22 @@
             "clang",
             "clangxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -517,18 +665,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -541,17 +700,22 @@
             "clang",
             "clangxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -559,18 +723,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -583,17 +758,22 @@
             "clang",
             "clangxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -601,18 +781,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -625,17 +816,22 @@
             "clang",
             "clangxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -643,23 +839,34 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       }
     ],
     "package": {
       "name": "yosys",
-      "version": "0.69"
+      "version": "0.70"
     },
     "requirements": {
       "build": [
@@ -669,7 +876,7 @@
         "gcc",
         "gxx",
         "bison",
-        "cmake",
+        "cmake >=3.28",
         "make",
         "pkg-config",
         "python",
@@ -678,10 +885,15 @@
       ],
       "host": [
         "flex",
+        "fmt >=12.2",
+        "libboost-devel",
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog ==12.0",
+        "mimalloc >=3.5",
         "tk",
+        "tomlplusplus >=3.4",
         "zlib"
       ],
       "run": [
@@ -689,13 +901,17 @@
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog",
         "tk"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6dad6412cae417f5a53e2c943c2aee160162cfc1bdd31669230da1b7e3522571",
-      "url": "https://github.com/YosysHQ/yosys/releases/download/v0.69/yosys.tar.gz"
+      "patches": [
+        "system-slang.patch"
+      ],
+      "sha256": "c6bd8b83aad633f6786fc861fe8f5dbc74c37bfae77f7bd0220e6f00f15f1d55",
+      "url": "https://github.com/YosysHQ/yosys/releases/download/v0.70/yosys.tar.gz"
     }
   },
   "name": "yosys",
@@ -704,8 +920,8 @@
       "description": "This is a framework for RTL synthesis tools. It currently has extensive Verilog-2005 support and provides a basic set of synthesis algorithms for various application domains.",
       "dev_url": "https://github.com/YosysHQ/yosys",
       "home": "https://github.com/YosysHQ/yosys",
-      "license": "ISC",
-      "license_family": "ISC",
+      "license": "ISC AND MIT AND BSD-2-Clause AND BSD-3-Clause AND Zlib AND bzip2-1.0.6 AND LicenseRef-ABC AND LicenseRef-Public-Domain",
+      "license_family": "ISC AND MIT AND BSD-2-Clause AND BSD-3-Clause AND Zlib AND bzip2-1.0.6 AND LicenseRef-ABC AND LicenseRef-Public-Domain",
       "license_file": "COPYING",
       "summary": "Yosys Open SYnthesis Suite"
     },
@@ -730,17 +946,22 @@
             "clang",
             "clangxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -748,18 +969,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -772,17 +1004,22 @@
             "clang",
             "clangxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -790,18 +1027,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -814,17 +1062,22 @@
             "clang",
             "clangxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -832,18 +1085,29 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       },
       {
         "build": null,
@@ -856,17 +1120,22 @@
             "clang",
             "clangxx",
             "bison",
-            "cmake",
+            "cmake >=3.28",
             "make",
             "pkg-config",
             "python"
           ],
           "host": [
             "flex",
+            "fmt >=12.2",
+            "libboost-devel",
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog ==12.0",
+            "mimalloc >=3.5",
             "tk",
+            "tomlplusplus >=3.4",
             "zlib"
           ],
           "run": [
@@ -874,23 +1143,34 @@
             "libffi",
             "libzlib",
             "readline",
+            "slang-verilog",
             "tk"
           ]
         },
         "tests": [
           {
+            "files": {
+              "recipe": [
+                "smoke.v"
+              ]
+            },
             "script": [
               "yosys-config --prefix",
-              "yosys-config --ldflags"
+              "yosys-config --ldflags",
+              "yosys -V",
+              "yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'",
+              "yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'",
+              "sn -M smoke -o smoke.sn smoke.v",
+              "test -s smoke.sn"
             ]
           }
         ],
-        "version": "0.69"
+        "version": "0.70"
       }
     ],
     "package": {
       "name": "yosys",
-      "version": "0.69"
+      "version": "0.70"
     },
     "requirements": {
       "build": [
@@ -900,17 +1180,22 @@
         "clang",
         "clangxx",
         "bison",
-        "cmake",
+        "cmake >=3.28",
         "make",
         "pkg-config",
         "python"
       ],
       "host": [
         "flex",
+        "fmt >=12.2",
+        "libboost-devel",
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog ==12.0",
+        "mimalloc >=3.5",
         "tk",
+        "tomlplusplus >=3.4",
         "zlib"
       ],
       "run": [
@@ -918,13 +1203,17 @@
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog",
         "tk"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6dad6412cae417f5a53e2c943c2aee160162cfc1bdd31669230da1b7e3522571",
-      "url": "https://github.com/YosysHQ/yosys/releases/download/v0.69/yosys.tar.gz"
+      "patches": [
+        "system-slang.patch"
+      ],
+      "sha256": "c6bd8b83aad633f6786fc861fe8f5dbc74c37bfae77f7bd0220e6f00f15f1d55",
+      "url": "https://github.com/YosysHQ/yosys/releases/download/v0.70/yosys.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -947,10 +1236,15 @@
       "__set__": true,
       "elements": [
         "flex",
+        "fmt",
+        "libboost-devel",
         "libffi",
         "libzlib",
+        "mimalloc",
         "readline",
+        "slang-verilog",
         "tk",
+        "tomlplusplus",
         "zlib"
       ]
     },
@@ -961,6 +1255,7 @@
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog",
         "tk"
       ]
     },
@@ -983,7 +1278,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/yosys.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: yosys\n  version: \"0.69\"\n  sha256: 6dad6412cae417f5a53e2c943c2aee160162cfc1bdd31669230da1b7e3522571\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/YosysHQ/${{ name }}/releases/download/v${{ version }}/yosys.tar.gz\n  sha256: ${{ sha256 }}\n\nbuild:\n  number: 0\n  skip: win\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    - if: linux\n      then:\n        - gcc\n        - gxx\n    - if: osx\n      then:\n        - clang\n        - clangxx\n    - bison\n    - cmake\n    - make\n    - pkg-config\n    - python\n  host:\n    - flex\n    - libffi\n    - libzlib\n    - readline\n    - tk\n    - zlib\n  run:\n    - graphviz\n    - libffi\n    - libzlib\n    - readline\n    - tk\n\ntests:\n  - script:\n      - yosys-config --prefix\n      - yosys-config --ldflags\n\nabout:\n  license: ISC\n  license_file: COPYING\n  summary: Yosys Open SYnthesis Suite\n  description: |\n    This is a framework for RTL synthesis tools. It currently has extensive Verilog-2005 support and provides a basic set of synthesis algorithms for various application domains.\n  homepage: https://github.com/YosysHQ/yosys\n  repository: https://github.com/YosysHQ/yosys\n\nextra:\n  recipe-maintainers:\n    - whitequark\n    - timkpaine\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: yosys\n  version: \"0.70\"\n  sha256: c6bd8b83aad633f6786fc861fe8f5dbc74c37bfae77f7bd0220e6f00f15f1d55\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/YosysHQ/${{ name }}/releases/download/v${{ version }}/yosys.tar.gz\n  sha256: ${{ sha256 }}\n  patches:\n    # Import the conda Slang library for the SystemVerilog frontend and ABC's sn tool.\n    - system-slang.patch\n\nbuild:\n  number: 0\n  skip: win\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    - if: linux\n      then:\n        - gcc\n        - gxx\n    - if: osx\n      then:\n        - clang\n        - clangxx\n    - bison\n    - cmake >=3.28\n    - make\n    - pkg-config\n    - python\n  host:\n    - flex\n    - fmt >=12.2\n    - libboost-devel\n    - libffi\n    - libzlib\n    - readline\n    - slang-verilog ==12.0\n    - mimalloc >=3.5\n    - tk\n    - tomlplusplus >=3.4\n    - zlib\n  run:\n    - graphviz\n    - libffi\n    - libzlib\n    - readline\n    - ${{ pin_compatible('slang-verilog', upper_bound='x') }}\n    - tk\n  ignore_run_exports:\n    by_name:\n      # Boost supplies headers; mimalloc is a dependency of slang-verilog.\n      - libboost\n      - libboost-headers\n      - libboost-devel\n      - mimalloc\n\ntests:\n  - script:\n      - yosys-config --prefix\n      - yosys-config --ldflags\n      - yosys -V\n      - yosys -p 'read_verilog smoke.v; synth -top smoke -noabc; abc -g AND,XOR; check -assert; select -assert-none t:$and t:$xor; select -assert-count 1 t:$_AND_; select -assert-count 1 t:$_XOR_'\n      - yosys -p 'read_slang smoke.v; prep -top smoke; check -assert; select -assert-count 1 t:$and; select -assert-count 1 t:$xor'\n      - sn -M smoke -o smoke.sn smoke.v\n      - test -s smoke.sn\n    files:\n      recipe:\n        - smoke.v\n\nabout:\n  license: ISC AND MIT AND BSD-2-Clause AND BSD-3-Clause AND Zlib AND bzip2-1.0.6 AND LicenseRef-ABC AND LicenseRef-Public-Domain\n  license_file:\n    - COPYING\n    - frontends/slang/lib/LICENSE\n    - libs/bigint/COPYING.txt\n    - libs/cxxopts/LICENSE\n    - libs/fst/LICENSE.txt\n    - libs/json11/LICENSE.txt\n    - libs/minisat/LICENSE\n    - libs/sha1/COPYING.txt\n    - libs/symfpu/LICENSE\n    - libs/symfpu/LICENSE-BSD\n    - abc/copyright.txt\n    - abc/tools/sn/copyright.txt\n    - abc/src/bdd/cudd/license\n    - abc/src/misc/btor/LICENSE.txt\n    - abc/src/misc/bzlib/LICENSE\n    - abc/src/misc/zlib/license\n    - abc/src/sat/bsat/license\n    - abc/src/sat/bsat2/LICENSE\n    - abc/src/sat/cadical/LICENSE\n    - abc/src/sat/glucose/license\n    - abc/src/sat/glucose2/license\n    - abc/src/sat/kissat/LICENSE\n    - abc/src/sat/satoko/LICENSE\n    - abc/src/sat/xsat/license\n  summary: Yosys Open SYnthesis Suite\n  description: |\n    This is a framework for RTL synthesis tools. It currently has extensive Verilog-2005 support and provides a basic set of synthesis algorithms for various application domains.\n  homepage: https://github.com/YosysHQ/yosys\n  repository: https://github.com/YosysHQ/yosys\n\nextra:\n  recipe-maintainers:\n    - whitequark\n    - timkpaine\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -995,16 +1290,21 @@
       "cmake",
       "cxx_compiler_stub",
       "flex",
+      "fmt",
       "gcc",
       "graphviz",
       "gxx",
+      "libboost-devel",
       "libffi",
       "libzlib",
       "make",
+      "mimalloc",
       "pkg-config",
       "python",
       "readline",
+      "slang-verilog",
       "tk",
+      "tomlplusplus",
       "zlib"
     ]
   },
@@ -1034,10 +1334,15 @@
         "ctng-compilers",
         "cxx_compiler_stub",
         "flex",
+        "fmt",
+        "libboost-devel",
         "libffi",
         "libzlib",
+        "mimalloc",
         "readline",
+        "slang-verilog",
         "tk",
+        "tomlplusplus",
         "zlib"
       ]
     },
@@ -1052,6 +1357,7 @@
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog",
         "tk"
       ]
     },
@@ -1070,7 +1376,7 @@
         "c_stdlib_stub",
         "clang",
         "clangxx",
-        "cmake",
+        "cmake >=3.28",
         "cxx_compiler_stub",
         "gcc",
         "gxx",
@@ -1083,10 +1389,15 @@
       "__set__": true,
       "elements": [
         "flex",
+        "fmt >=12.2",
+        "libboost-devel",
         "libffi",
         "libzlib",
+        "mimalloc >=3.5",
         "readline",
+        "slang-verilog ==12.0",
         "tk",
+        "tomlplusplus >=3.4",
         "zlib"
       ]
     },
@@ -1097,6 +1408,7 @@
         "libffi",
         "libzlib",
         "readline",
+        "slang-verilog",
         "tk"
       ]
     },
@@ -1105,8 +1417,8 @@
       "elements": []
     }
   },
-  "url": "https://github.com/YosysHQ/yosys/releases/download/v0.69/yosys.tar.gz",
-  "version": "0.69",
+  "url": "https://github.com/YosysHQ/yosys/releases/download/v0.70/yosys.tar.gz",
+  "version": "0.70",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/yosys.json"
   }
