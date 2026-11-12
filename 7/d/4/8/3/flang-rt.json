@@ -1,13 +1,15 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibxml2_devel:\n- '2.15'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibxml2_devel:\n- '2.15'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
       "error_overlinking": true
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
@@ -21,20 +23,22 @@
       "win_arm64": "default"
     }
   },
-  "feedstock_hash": "08ef056c2e1e856f335d73b0eb514dc7ef4121cc",
-  "feedstock_hash_ts": 1792746269,
+  "feedstock_hash": "65fb9d1b9f13af5029c2abee7a94a8a259d92564",
+  "feedstock_hash_ts": 1794464727,
   "feedstock_name": "flang-rt",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/llvm/llvm-project",
-      "home": "https://flang.llvm.org",
+      "home": "https://flang.llvm.org/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "flang/LICENSE.TXT",
       "summary": "Flang is a Fortran compiler targeting LLVM."
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": []
     },
     "extra": {
       "feedstock-name": "flang-rt",
@@ -46,88 +50,99 @@
     "outputs": [
       {
         "build": null,
-        "files": [
-          "lib/libflang_rt.runtime.so"
-        ],
         "name": "libflang-rt",
         "requirements": {
           "build": [
-            "c_stdlib_stub"
-          ],
-          "run_constrained": [
-            "libflang <0.0a0"
-          ]
-        },
-        "test": {
-          "commands": [
-            "test -f $PREFIX/lib/libflang_rt.runtime.so"
-          ]
-        }
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "files": [
-          "lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.a",
-          "lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.so"
-        ],
-        "name": "flang-rt_linux-64",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub"
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
           ],
           "host": [
             "clangdev ==23.1.4",
             "compiler-rt ==23.1.4",
             "llvmdev ==23.1.4",
-            "mlir ==23.1.4"
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libflang_rt.runtime.so"
+              ]
+            }
+          }
+        ],
+        "version": "23.1.4"
+      },
+      {
+        "build": {
+          "noarch": "generic"
+        },
+        "name": "flang-rt_linux-64",
+        "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
+          "host": [
+            "clangdev ==23.1.4",
+            "compiler-rt ==23.1.4",
+            "llvmdev ==23.1.4",
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd"
           ],
           "run": [
             "clangdev ==23.1.4",
             "flang ==23.1.4"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f $PREFIX/lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.a",
-            "test -f $PREFIX/lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.so"
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": {
-            "strong": [
-              "llvm-openmp >=23.1.4"
-            ]
-          },
-          "skip": true
-        },
-        "files": [
-          "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc"
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "lib/clang/23/finclude/flang/x86_64-unknown-linux-gnu/__fortran_type_info.mod",
+                  "lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.a",
+                  "lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.so"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-unknown-linux-gnu/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/x86_64-unknown-linux-gnu/omp_lib_kinds.mod"
+                ]
+              },
+              "include": [
+                "flang-rt/runtime/buffer.h"
+              ]
+            }
+          }
         ],
-        "name": "llvm-openmp-fortran",
-        "requirements": {
-          "host": [
-            "llvm-openmp 23.1.4",
-            "flang-rt_linux-64"
-          ],
-          "run": [
-            "llvm-openmp 23.1.4",
-            "flang-rt_linux-64"
-          ]
-        },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\x86_64-pc-windows-msvc\\omp_lib.mod exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\x86_64-pc-windows-msvc\\omp_lib_kinds.mod exit 1"
-          ]
-        }
+        "version": "23.1.4"
       }
     ],
     "package": {
-      "name": "flang-rt-split",
+      "name": "libflang-rt",
       "version": "23.1.4"
     },
     "requirements": {
@@ -153,7 +168,7 @@
         "zstd"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db",
       "url": "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-23.1.4.tar.gz"
@@ -180,9 +195,7 @@
       "elements": [
         "clangdev",
         "compiler-rt",
-        "flang-rt_linux-64",
         "libxml2-devel",
-        "llvm-openmp",
         "llvmdev",
         "mlir",
         "zlib",
@@ -193,9 +206,7 @@
       "__set__": true,
       "elements": [
         "clangdev",
-        "flang",
-        "flang-rt_linux-64",
-        "llvm-openmp"
+        "flang"
       ]
     },
     "test": {
@@ -206,13 +217,15 @@
   "meta_yaml": {
     "about": {
       "dev_url": "https://github.com/llvm/llvm-project",
-      "home": "https://flang.llvm.org",
+      "home": "https://flang.llvm.org/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "flang/LICENSE.TXT",
       "summary": "Flang is a Fortran compiler targeting LLVM."
     },
     "build": {
-      "number": "0"
+      "number": "1",
+      "script": []
     },
     "extra": {
       "feedstock-name": "flang-rt",
@@ -224,135 +237,151 @@
     "outputs": [
       {
         "build": null,
-        "files": [
-          "lib/libflang_rt.runtime.so"
-        ],
         "name": "libflang-rt",
         "requirements": {
           "build": [
-            "c_stdlib_stub"
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
           ],
-          "run_constrained": [
-            "libflang <0.0a0"
-          ]
+          "host": [
+            "clangdev ==23.1.4",
+            "compiler-rt ==23.1.4",
+            "llvmdev ==23.1.4",
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd"
+          ],
+          "run": []
         },
-        "test": {
-          "commands": [
-            "test -f $PREFIX/lib/libflang_rt.runtime.so"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libflang_rt.runtime.so"
+              ]
+            }
+          }
+        ],
+        "version": "23.1.4"
       },
       {
         "build": {
           "noarch": "generic"
         },
-        "files": [
-          "lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.a",
-          "lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.so"
-        ],
         "name": "flang-rt_linux-64",
         "requirements": {
           "build": [
-            "c_stdlib_stub"
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
           ],
           "host": [
             "clangdev ==23.1.4",
             "compiler-rt ==23.1.4",
             "llvmdev ==23.1.4",
-            "mlir ==23.1.4"
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd"
           ],
           "run": [
             "clangdev ==23.1.4",
             "flang ==23.1.4"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f $PREFIX/lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.a",
-            "test -f $PREFIX/lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.so"
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": {
-            "strong": [
-              "llvm-openmp >=23.1.4"
-            ]
-          },
-          "skip": true
-        },
-        "files": [
-          "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc"
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "lib/clang/23/finclude/flang/x86_64-unknown-linux-gnu/__fortran_type_info.mod",
+                  "lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.a",
+                  "lib/clang/23/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.so"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-unknown-linux-gnu/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/x86_64-unknown-linux-gnu/omp_lib_kinds.mod"
+                ]
+              },
+              "include": [
+                "flang-rt/runtime/buffer.h"
+              ]
+            }
+          }
         ],
-        "name": "llvm-openmp-fortran",
-        "requirements": {
-          "host": [
-            "llvm-openmp 23.1.4",
-            "flang-rt_linux-64"
-          ],
-          "run": [
-            "llvm-openmp 23.1.4",
-            "flang-rt_linux-64"
-          ]
-        },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\x86_64-pc-windows-msvc\\omp_lib.mod exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\x86_64-pc-windows-msvc\\omp_lib_kinds.mod exit 1"
-          ]
-        }
-      },
-      {
-        "build": {
-          "skip": true
-        },
-        "files": null,
-        "name": "libflang-rt",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub"
-          ],
-          "run_constrained": [
-            "libflang <0.0a0"
-          ]
-        },
-        "test": {
-          "commands": null
-        }
+        "version": "23.1.4"
       },
       {
         "build": {
           "noarch": "generic"
         },
-        "files": [
-          "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.static.lib",
-          "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.dynamic.lib",
-          "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.static_dbg.lib",
-          "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.dynamic_dbg.lib"
-        ],
         "name": "flang-rt_win-64",
         "requirements": {
-          "build": [],
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
           "host": [
             "clangdev ==23.1.4",
             "compiler-rt ==23.1.4",
             "llvmdev ==23.1.4",
-            "mlir ==23.1.4"
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd"
           ],
           "run": [
             "clangdev ==23.1.4",
             "flang ==23.1.4"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\x86_64-pc-windows-msvc\\flang_rt.runtime.static.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\x86_64-pc-windows-msvc\\flang_rt.runtime.dynamic.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\x86_64-pc-windows-msvc\\flang_rt.runtime.static_dbg.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\x86_64-pc-windows-msvc\\flang_rt.runtime.dynamic_dbg.lib exit 1"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/__fortran_type_info.mod",
+                  "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.static.lib",
+                  "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.dynamic.lib",
+                  "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.static_dbg.lib",
+                  "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.dynamic_dbg.lib"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/omp_lib_kinds.mod"
+                ]
+              },
+              "include": [
+                "flang-rt/runtime/buffer.h"
+              ]
+            }
+          }
+        ],
+        "version": "23.1.4"
       },
       {
         "build": {
@@ -362,77 +391,108 @@
             ]
           }
         },
-        "files": [
-          "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc"
-        ],
         "name": "llvm-openmp-fortran",
         "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
           "host": [
-            "llvm-openmp 23.1.4",
+            "clangdev ==23.1.4",
+            "compiler-rt ==23.1.4",
+            "llvmdev ==23.1.4",
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd",
+            "llvm-openmp ==23.1.4",
             "flang-rt_win-64"
           ],
           "run": [
-            "llvm-openmp 23.1.4",
+            "llvm-openmp ==23.1.4",
             "flang-rt_win-64"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\x86_64-pc-windows-msvc\\omp_lib.mod exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\x86_64-pc-windows-msvc\\omp_lib_kinds.mod exit 1"
-          ]
-        }
-      },
-      {
-        "build": {
-          "skip": true
-        },
-        "files": null,
-        "name": "libflang-rt",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub"
-          ],
-          "run_constrained": [
-            "libflang <0.0a0"
-          ]
-        },
-        "test": {
-          "commands": null
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/omp_lib_kinds.mod"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/__fortran_type_info.mod"
+                ]
+              }
+            }
+          }
+        ],
+        "version": "23.1.4"
       },
       {
         "build": {
           "noarch": "generic"
         },
-        "files": [
-          "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.static.lib",
-          "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.dynamic.lib",
-          "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.static_dbg.lib",
-          "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.dynamic_dbg.lib"
-        ],
         "name": "flang-rt_win-arm64",
         "requirements": {
-          "build": [],
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
           "host": [
             "clangdev ==23.1.4",
             "compiler-rt ==23.1.4",
             "llvmdev ==23.1.4",
-            "mlir ==23.1.4"
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd"
           ],
           "run": [
             "clangdev ==23.1.4",
             "flang ==23.1.4"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\aarch64-pc-windows-msvc\\flang_rt.runtime.static.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\aarch64-pc-windows-msvc\\flang_rt.runtime.dynamic.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\aarch64-pc-windows-msvc\\flang_rt.runtime.static_dbg.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\aarch64-pc-windows-msvc\\flang_rt.runtime.dynamic_dbg.lib exit 1"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/__fortran_type_info.mod",
+                  "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.static.lib",
+                  "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.dynamic.lib",
+                  "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.static_dbg.lib",
+                  "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.dynamic_dbg.lib"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/omp_lib_kinds.mod"
+                ]
+              },
+              "include": [
+                "flang-rt/runtime/buffer.h"
+              ]
+            }
+          }
+        ],
+        "version": "23.1.4"
       },
       {
         "build": {
@@ -442,30 +502,56 @@
             ]
           }
         },
-        "files": [
-          "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc"
-        ],
         "name": "llvm-openmp-fortran",
         "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
           "host": [
-            "llvm-openmp 23.1.4",
+            "clangdev ==23.1.4",
+            "compiler-rt ==23.1.4",
+            "llvmdev ==23.1.4",
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd",
+            "llvm-openmp ==23.1.4",
             "flang-rt_win-arm64"
           ],
           "run": [
-            "llvm-openmp 23.1.4",
+            "llvm-openmp ==23.1.4",
             "flang-rt_win-arm64"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\aarch64-pc-windows-msvc\\omp_lib.mod exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\aarch64-pc-windows-msvc\\omp_lib_kinds.mod exit 1"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/omp_lib_kinds.mod"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/__fortran_type_info.mod"
+                ]
+              }
+            }
+          }
+        ],
+        "version": "23.1.4"
       }
     ],
     "package": {
-      "name": "flang-rt-split",
+      "name": "flang-rt_win-arm64",
       "version": "23.1.4"
     },
     "requirements": {
@@ -489,15 +575,19 @@
         "libxml2-devel",
         "zlib",
         "zstd"
+      ],
+      "run": [
+        "clangdev ==23.1.4",
+        "flang ==23.1.4"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db",
       "url": "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-23.1.4.tar.gz"
     }
   },
-  "name": "flang-rt-split",
+  "name": "flang-rt_win-arm64",
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -517,7 +607,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/flang-rt.json"
   },
-  "raw_meta_yaml": "{% set version = \"23.1.4\" %}\n{% set major = version.split(\".\")[0] %}\n{% set win_target_triple = \"aarch64-pc-windows-msvc\" if target_platform == \"win-arm64\" else \"x86_64-pc-windows-msvc\" %}\n\npackage:\n  name: flang-rt-split\n  version: {{ version }}\n\nsource:\n  url: https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-{{ version.replace(\".rc\", \"-rc\") }}.tar.gz\n  sha256: 3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db\n\nbuild:\n  number: 0\n  # intentionally only windows (main target) & linux (debuggability)\n  skip: true  # [osx]\n\nrequirements:\n  build:\n    - cmake\n    - ninja\n    - python *\n    - {{ stdlib('c') }}\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n    - flang =={{ version }}\n    # only to avoid pulling in newer rc's which have a different SONAME\n    - libllvm{{ major }} =={{ version }}\n    # flang looks for libmlir relative to its binary; since we're only\n    # doing native compilation here, accept this inaccuracy\n    - mlir =={{ version }}\n    - lit\n  host:\n    - clangdev =={{ version }}\n    - compiler-rt =={{ version }}\n    - llvmdev =={{ version }}\n    - mlir =={{ version }}\n    - libxml2-devel\n    - zlib\n    - zstd\n\noutputs:\n  - name: libflang-rt\n    build:\n      # not supported on windows yet, see\n      # https://github.com/llvm/llvm-project/issues/134186\n      skip: true  # [win]\n    files:\n      - lib/libflang_rt.runtime.so  # [linux]\n    requirements:\n      build:\n        # for strong run-exports\n        - {{ stdlib('c') }}\n      run_constrained:\n        # avoid old flang runtime\n        - libflang <0.0a0\n    test:\n      commands:\n        # shared library; copied from target-specific location\n        - test -f $PREFIX/lib/libflang_rt.runtime.so    # [linux]\n\n  - name: flang-rt_{{ target_platform }}\n    build:\n      noarch: generic\n    files:\n      - lib/clang/{{ major }}/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.a                # [linux]\n      - lib/clang/{{ major }}/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.so               # [linux]\n      # corresponding to different flavours of the MSVC runtime, i.e. `/MD`, `/MDd`, `/MT`, `/MTd`\n      - Library/lib/clang/{{ major }}/lib/{{ win_target_triple }}/flang_rt.runtime.static.lib    # [win]\n      - Library/lib/clang/{{ major }}/lib/{{ win_target_triple }}/flang_rt.runtime.dynamic.lib   # [win]\n      - Library/lib/clang/{{ major }}/lib/{{ win_target_triple }}/flang_rt.runtime.static_dbg.lib    # [win]\n      - Library/lib/clang/{{ major }}/lib/{{ win_target_triple }}/flang_rt.runtime.dynamic_dbg.lib   # [win]\n    requirements:\n      build:\n        # for strong run-exports\n        - {{ stdlib('c') }}     # [linux]\n      host:\n        - clangdev =={{ version }}\n        - compiler-rt =={{ version }}\n        - llvmdev =={{ version }}\n        - mlir =={{ version }}\n      run:\n        - clangdev =={{ version }}\n        - flang =={{ version }}\n    test:\n      commands:\n        # target-specific runtime library location (default for flang)\n        - test -f $PREFIX/lib/clang/{{ major }}/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.a                      # [linux]\n        - test -f $PREFIX/lib/clang/{{ major }}/lib/x86_64-unknown-linux-gnu/libflang_rt.runtime.so                     # [linux]\n        - if not exist %LIBRARY_LIB%\\clang\\{{ major }}\\lib\\{{ win_target_triple }}\\flang_rt.runtime.static.lib exit 1    # [win]\n        - if not exist %LIBRARY_LIB%\\clang\\{{ major }}\\lib\\{{ win_target_triple }}\\flang_rt.runtime.dynamic.lib exit 1   # [win]\n        - if not exist %LIBRARY_LIB%\\clang\\{{ major }}\\lib\\{{ win_target_triple }}\\flang_rt.runtime.static_dbg.lib exit 1    # [win]\n        - if not exist %LIBRARY_LIB%\\clang\\{{ major }}\\lib\\{{ win_target_triple }}\\flang_rt.runtime.dynamic_dbg.lib exit 1   # [win]\n\n  - name: llvm-openmp-fortran\n    build:\n      # restricted to Windows for now\n      skip: true  # [not win]\n      run_exports:\n        strong:\n          - llvm-openmp >={{ version }}\n    files:\n      - Library/lib/clang/{{ major }}/finclude/flang/{{ win_target_triple }}\n    requirements:\n      host:\n        - llvm-openmp {{ version }}\n        - {{ pin_subpackage(\"flang-rt_\" ~ target_platform, exact=True) }}\n      run:\n        - llvm-openmp {{ version }}\n        - {{ pin_subpackage(\"flang-rt_\" ~ target_platform, exact=True) }}\n    test:\n      commands:\n        - if not exist %LIBRARY_LIB%\\clang\\{{ major }}\\finclude\\flang\\{{ win_target_triple }}\\omp_lib.mod exit 1\n        - if not exist %LIBRARY_LIB%\\clang\\{{ major }}\\finclude\\flang\\{{ win_target_triple }}\\omp_lib_kinds.mod exit 1\n\nabout:\n  home: https://flang.llvm.org\n  license: Apache-2.0\n  license_file: flang/LICENSE.TXT\n  summary: Flang is a Fortran compiler targeting LLVM.\n  dev_url: https://github.com/llvm/llvm-project\n\nextra:\n  recipe-maintainers:\n    - conda-forge/flang\n    - h-vetinari\n  feedstock-name: flang-rt\n",
+  "raw_meta_yaml": "context:\n  version: \"23.1.4\"\n  major: ${{ (version | split(\".\") | list)[0] | int }}\n  triple_arch: ${{ \"x86_64\" if x86_64 else \"aarch64\" }}\n  triple_os: ${{ \"pc-windows-msvc\" if win else \"unknown-linux-gnu\" }}\n  target_triple: ${{ triple_arch ~ \"-\" ~ triple_os }}\n\nrecipe:\n  name: flang-rt-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${{ version|replace(\".rc\", \"-rc\") }}.tar.gz\n  sha256: 3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db\n\nbuild:\n  number: 1\n  # intentionally only windows (main target) & linux (debuggability)\n  skip: osx\n\noutputs:\n  - staging:\n      name: flang-rt-stage\n    build:\n      script:\n        file: build\n        # this is a work-around for something rattler-build should be doing,\n        # see https://github.com/prefix-dev/rattler-build/issues/2587\n        env:\n          PKG_VERSION: ${{ version }}\n    requirements:\n      build:\n        - cmake\n        - ninja\n        - python *\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - flang               ==${{ version }}\n        # only to avoid pulling in newer rc's which have a different SONAME\n        - libllvm${{ major }} ==${{ version }}\n        # flang looks for libmlir relative to its binary; since we're only\n        # doing native compilation here, accept this inaccuracy\n        - mlir                ==${{ version }}\n        - lit\n      host:\n        - clangdev      ==${{ version }}\n        - compiler-rt   ==${{ version }}\n        - llvmdev       ==${{ version }}\n        - mlir          ==${{ version }}\n        - libxml2-devel\n        - zlib\n        - zstd\n\n  - package:\n      name: libflang-rt\n    inherit: flang-rt-stage\n    build:\n      # not supported on windows yet, see\n      # https://github.com/llvm/llvm-project/issues/134186\n      skip: win\n      files:\n        - lib/libflang_rt.runtime.so\n    requirements:\n      build:\n        # for strong run-exports\n        - ${{ stdlib('c') }}\n      run_constraints:\n        # avoid old flang runtime\n        - libflang <0.0a0\n    tests:\n      - package_contents:\n          files:\n            # shared library; copied from target-specific location\n            - lib/libflang_rt.runtime.so\n\n  - package:\n      name: flang-rt_${{ target_platform }}\n    inherit: flang-rt-stage\n    build:\n      noarch: generic\n      files:\n        include:\n          - if: unix\n            then:\n              - include/flang-rt/runtime/\n              - lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/*.mod\n              - lib/clang/${{ major }}/lib/${{ target_triple }}/libflang_rt.runtime.a\n              - lib/clang/${{ major }}/lib/${{ target_triple }}/libflang_rt.runtime.so\n            else:\n              - Library/include/flang-rt/runtime/\n              - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/*.mod\n              # corresponding to different flavours of the MSVC runtime, i.e. `/MD`, `/MDd`, `/MT`, `/MTd`\n              - Library/lib/clang/${{ major }}/lib/${{ target_triple }}/flang_rt.runtime.static.lib\n              - Library/lib/clang/${{ major }}/lib/${{ target_triple }}/flang_rt.runtime.dynamic.lib\n              - Library/lib/clang/${{ major }}/lib/${{ target_triple }}/flang_rt.runtime.static_dbg.lib\n              - Library/lib/clang/${{ major }}/lib/${{ target_triple }}/flang_rt.runtime.dynamic_dbg.lib\n        exclude:\n          # only relevant for windows for now\n          - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/omp*.mod\n    requirements:\n      build:\n        # for strong run-exports\n        - ${{ stdlib('c') }}\n      host:\n        - clangdev      ==${{ version }}\n        - compiler-rt   ==${{ version }}\n        - llvmdev       ==${{ version }}\n        - mlir          ==${{ version }}\n      run:\n        - clangdev      ==${{ version }}\n        - flang         ==${{ version }}\n    tests:\n      - package_contents:\n          include:\n            # sample\n            - flang-rt/runtime/buffer.h\n          files:\n            exists:\n              - if: unix\n                then:\n                  - lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/__fortran_type_info.mod\n                  - lib/clang/${{ major }}/lib/${{ target_triple }}/libflang_rt.runtime.a\n                  - lib/clang/${{ major }}/lib/${{ target_triple }}/libflang_rt.runtime.so\n                else:\n                  # see https://github.com/conda-forge/flang-feedstock/issues/147\n                  - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/__fortran_type_info.mod\n                  # corresponding to different flavours of the MSVC runtime, i.e. `/MD`, `/MDd`, `/MT`, `/MTd`\n                  - Library/lib/clang/${{ major }}/lib/${{ target_triple }}/flang_rt.runtime.static.lib\n                  - Library/lib/clang/${{ major }}/lib/${{ target_triple }}/flang_rt.runtime.dynamic.lib\n                  - Library/lib/clang/${{ major }}/lib/${{ target_triple }}/flang_rt.runtime.static_dbg.lib\n                  - Library/lib/clang/${{ major }}/lib/${{ target_triple }}/flang_rt.runtime.dynamic_dbg.lib\n            not_exists:\n              # only relevant for windows for now\n              - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/omp_lib.mod\n              - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/omp_lib_kinds.mod\n\n  - package:\n      name: llvm-openmp-fortran\n    inherit: flang-rt-stage\n    build:\n      # restricted to Windows for now\n      skip: not win\n      files:\n        - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/\n    requirements:\n      host:\n        - llvm-openmp ==${{ version }}\n        - ${{ pin_subpackage(\"flang-rt_\" ~ target_platform, exact=True) }}\n      run:\n        - llvm-openmp ==${{ version }}\n        - ${{ pin_subpackage(\"flang-rt_\" ~ target_platform, exact=True) }}\n      run_exports:\n        strong:\n          - llvm-openmp >=${{ version }}\n    tests:\n      - package_contents:\n          files:\n            exists:\n              - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/omp_lib.mod\n              - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/omp_lib_kinds.mod\n            not_exists:\n              - Library/lib/clang/${{ major }}/finclude/flang/${{ target_triple }}/__fortran_type_info.mod\n\nabout:\n  homepage: https://flang.llvm.org\n  license: Apache-2.0\n  license_file: flang/LICENSE.TXT\n  summary: Flang is a Fortran compiler targeting LLVM.\n  repository: https://github.com/llvm/llvm-project\n\nextra:\n  recipe-maintainers:\n    - conda-forge/flang\n    - h-vetinari\n  feedstock-name: flang-rt\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -528,7 +618,6 @@
       "compiler-rt",
       "cxx_compiler_stub",
       "flang",
-      "flang-rt_linux-64",
       "flang-rt_win-64",
       "flang-rt_win-arm64",
       "libllvm23",
@@ -568,7 +657,6 @@
         "compiler-rt",
         "cxx_compiler_stub",
         "flang-rt",
-        "flang-rt_linux-64",
         "flang-rt_win-64",
         "flang-rt_win-arm64",
         "libxml2-devel",
@@ -589,7 +677,6 @@
         "cxx_compiler_stub",
         "flang",
         "flang-rt",
-        "flang-rt_linux-64",
         "flang-rt_win-64",
         "flang-rt_win-arm64",
         "llvm-openmp",
@@ -623,11 +710,10 @@
       "elements": [
         "clangdev ==23.1.4",
         "compiler-rt ==23.1.4",
-        "flang-rt_linux-64",
         "flang-rt_win-64",
         "flang-rt_win-arm64",
         "libxml2-devel",
-        "llvm-openmp 23.1.4",
+        "llvm-openmp ==23.1.4",
         "llvmdev ==23.1.4",
         "mlir ==23.1.4",
         "zlib",
@@ -639,10 +725,9 @@
       "elements": [
         "clangdev ==23.1.4",
         "flang ==23.1.4",
-        "flang-rt_linux-64",
         "flang-rt_win-64",
         "flang-rt_win-arm64",
-        "llvm-openmp 23.1.4"
+        "llvm-openmp ==23.1.4"
       ]
     },
     "test": {
@@ -658,13 +743,16 @@
   "win_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/llvm/llvm-project",
-      "home": "https://flang.llvm.org",
+      "home": "https://flang.llvm.org/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "flang/LICENSE.TXT",
       "summary": "Flang is a Fortran compiler targeting LLVM."
     },
     "build": {
-      "number": "0"
+      "noarch": "generic",
+      "number": "1",
+      "script": []
     },
     "extra": {
       "feedstock-name": "flang-rt",
@@ -676,54 +764,59 @@
     "outputs": [
       {
         "build": {
-          "skip": true
-        },
-        "files": null,
-        "name": "libflang-rt",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub"
-          ],
-          "run_constrained": [
-            "libflang <0.0a0"
-          ]
-        },
-        "test": {
-          "commands": null
-        }
-      },
-      {
-        "build": {
           "noarch": "generic"
         },
-        "files": [
-          "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.static.lib",
-          "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.dynamic.lib",
-          "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.static_dbg.lib",
-          "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.dynamic_dbg.lib"
-        ],
         "name": "flang-rt_win-64",
         "requirements": {
-          "build": [],
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
           "host": [
             "clangdev ==23.1.4",
             "compiler-rt ==23.1.4",
             "llvmdev ==23.1.4",
-            "mlir ==23.1.4"
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd"
           ],
           "run": [
             "clangdev ==23.1.4",
             "flang ==23.1.4"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\x86_64-pc-windows-msvc\\flang_rt.runtime.static.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\x86_64-pc-windows-msvc\\flang_rt.runtime.dynamic.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\x86_64-pc-windows-msvc\\flang_rt.runtime.static_dbg.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\x86_64-pc-windows-msvc\\flang_rt.runtime.dynamic_dbg.lib exit 1"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/__fortran_type_info.mod",
+                  "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.static.lib",
+                  "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.dynamic.lib",
+                  "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.static_dbg.lib",
+                  "Library/lib/clang/23/lib/x86_64-pc-windows-msvc/flang_rt.runtime.dynamic_dbg.lib"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/omp_lib_kinds.mod"
+                ]
+              },
+              "include": [
+                "flang-rt/runtime/buffer.h"
+              ]
+            }
+          }
+        ],
+        "version": "23.1.4"
       },
       {
         "build": {
@@ -733,30 +826,56 @@
             ]
           }
         },
-        "files": [
-          "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc"
-        ],
         "name": "llvm-openmp-fortran",
         "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
           "host": [
-            "llvm-openmp 23.1.4",
+            "clangdev ==23.1.4",
+            "compiler-rt ==23.1.4",
+            "llvmdev ==23.1.4",
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd",
+            "llvm-openmp ==23.1.4",
             "flang-rt_win-64"
           ],
           "run": [
-            "llvm-openmp 23.1.4",
+            "llvm-openmp ==23.1.4",
             "flang-rt_win-64"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\x86_64-pc-windows-msvc\\omp_lib.mod exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\x86_64-pc-windows-msvc\\omp_lib_kinds.mod exit 1"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/omp_lib_kinds.mod"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/x86_64-pc-windows-msvc/__fortran_type_info.mod"
+                ]
+              }
+            }
+          }
+        ],
+        "version": "23.1.4"
       }
     ],
     "package": {
-      "name": "flang-rt-split",
+      "name": "flang-rt_win-64",
       "version": "23.1.4"
     },
     "requirements": {
@@ -780,9 +899,13 @@
         "libxml2-devel",
         "zlib",
         "zstd"
+      ],
+      "run": [
+        "clangdev ==23.1.4",
+        "flang ==23.1.4"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db",
       "url": "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-23.1.4.tar.gz"
@@ -835,13 +958,16 @@
   "win_arm64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/llvm/llvm-project",
-      "home": "https://flang.llvm.org",
+      "home": "https://flang.llvm.org/",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "flang/LICENSE.TXT",
       "summary": "Flang is a Fortran compiler targeting LLVM."
     },
     "build": {
-      "number": "0"
+      "noarch": "generic",
+      "number": "1",
+      "script": []
     },
     "extra": {
       "feedstock-name": "flang-rt",
@@ -853,54 +979,59 @@
     "outputs": [
       {
         "build": {
-          "skip": true
-        },
-        "files": null,
-        "name": "libflang-rt",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub"
-          ],
-          "run_constrained": [
-            "libflang <0.0a0"
-          ]
-        },
-        "test": {
-          "commands": null
-        }
-      },
-      {
-        "build": {
           "noarch": "generic"
         },
-        "files": [
-          "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.static.lib",
-          "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.dynamic.lib",
-          "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.static_dbg.lib",
-          "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.dynamic_dbg.lib"
-        ],
         "name": "flang-rt_win-arm64",
         "requirements": {
-          "build": [],
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
           "host": [
             "clangdev ==23.1.4",
             "compiler-rt ==23.1.4",
             "llvmdev ==23.1.4",
-            "mlir ==23.1.4"
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd"
           ],
           "run": [
             "clangdev ==23.1.4",
             "flang ==23.1.4"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\aarch64-pc-windows-msvc\\flang_rt.runtime.static.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\aarch64-pc-windows-msvc\\flang_rt.runtime.dynamic.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\aarch64-pc-windows-msvc\\flang_rt.runtime.static_dbg.lib exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\lib\\aarch64-pc-windows-msvc\\flang_rt.runtime.dynamic_dbg.lib exit 1"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/__fortran_type_info.mod",
+                  "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.static.lib",
+                  "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.dynamic.lib",
+                  "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.static_dbg.lib",
+                  "Library/lib/clang/23/lib/aarch64-pc-windows-msvc/flang_rt.runtime.dynamic_dbg.lib"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/omp_lib_kinds.mod"
+                ]
+              },
+              "include": [
+                "flang-rt/runtime/buffer.h"
+              ]
+            }
+          }
+        ],
+        "version": "23.1.4"
       },
       {
         "build": {
@@ -910,30 +1041,56 @@
             ]
           }
         },
-        "files": [
-          "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc"
-        ],
         "name": "llvm-openmp-fortran",
         "requirements": {
+          "build": [
+            "cmake",
+            "ninja",
+            "python *",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "flang ==23.1.4",
+            "libllvm23 ==23.1.4",
+            "mlir ==23.1.4",
+            "lit"
+          ],
           "host": [
-            "llvm-openmp 23.1.4",
+            "clangdev ==23.1.4",
+            "compiler-rt ==23.1.4",
+            "llvmdev ==23.1.4",
+            "mlir ==23.1.4",
+            "libxml2-devel",
+            "zlib",
+            "zstd",
+            "llvm-openmp ==23.1.4",
             "flang-rt_win-arm64"
           ],
           "run": [
-            "llvm-openmp 23.1.4",
+            "llvm-openmp ==23.1.4",
             "flang-rt_win-arm64"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\aarch64-pc-windows-msvc\\omp_lib.mod exit 1",
-            "if not exist %LIBRARY_LIB%\\clang\\23\\finclude\\flang\\aarch64-pc-windows-msvc\\omp_lib_kinds.mod exit 1"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": {
+                "exists": [
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/omp_lib.mod",
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/omp_lib_kinds.mod"
+                ],
+                "not_exists": [
+                  "Library/lib/clang/23/finclude/flang/aarch64-pc-windows-msvc/__fortran_type_info.mod"
+                ]
+              }
+            }
+          }
+        ],
+        "version": "23.1.4"
       }
     ],
     "package": {
-      "name": "flang-rt-split",
+      "name": "flang-rt_win-arm64",
       "version": "23.1.4"
     },
     "requirements": {
@@ -957,9 +1114,13 @@
         "libxml2-devel",
         "zlib",
         "zstd"
+      ],
+      "run": [
+        "clangdev ==23.1.4",
+        "flang ==23.1.4"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
       "sha256": "3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db",
       "url": "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-23.1.4.tar.gz"
