@@ -1,23 +1,33 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngo_compiler:\n- go-nocgo\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
       "automerge": true
     },
+    "build_platform": {
+      "linux_riscv64": "linux_64"
+    },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
-    }
+    },
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default"
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "ba77e452f90b05410fb067783cadad68ef9e0da6",
-  "feedstock_hash_ts": 1793915629,
+  "feedstock_hash": "cb336d760b03bfea420ecc16d35999158e0872b9",
+  "feedstock_hash_ts": 1794516065,
   "feedstock_name": "oauth2-proxy",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -26,15 +36,17 @@
       "doc_url": "https://oauth2-proxy.github.io/oauth2-proxy/",
       "home": "https://github.com/oauth2-proxy/oauth2-proxy",
       "license": "MIT",
-      "license_file": "src/github.com/oauth2-proxy/oauth2-proxy/LICENSE",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
       "summary": "A reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": [
-        "pushd src/github.com/oauth2-proxy/oauth2-proxy",
-        "GOBIN=$(go env GOBIN)",
-        "go build -v -o $GOBIN/oauth2-proxy ."
+        "cd src",
+        "go-licenses save . --ignore github.com/bsm/redislock --save_path ../library_licenses",
+        "find $SRC_DIR/gopath/pkg/mod/github.com/bsm -maxdepth 2 -path \"*redislock*/LICENSE\" -exec mkdir -p ../library_licenses/github.com/bsm/redislock \\; -exec cp {} ../library_licenses/github.com/bsm/redislock/LICENSE \\; -quit",
+        "go build -v -o $PREFIX/bin/oauth2-proxy -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\""
       ]
     },
     "extra": {
@@ -44,38 +56,181 @@
         "rluria14",
         "ndmaxar",
         "oblute",
-        "RyanHackney"
+        "RyanHackney",
+        "xhochy"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      },
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      }
+    ],
     "package": {
       "name": "oauth2-proxy",
       "version": "7.15.6"
     },
     "requirements": {
       "build": [
-        "go_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "go-licenses"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "folder": "src/github.com/oauth2-proxy/oauth2-proxy",
-        "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
-        "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "oauth2-proxy --version"
-      ],
-      "requires": null
+    "schema_version": 1,
+    "source": {
+      "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
+      "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
     }
   },
   "linux_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
-        "go_compiler_stub"
+        "go-licenses",
+        "go-nocgo_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/oauth2-proxy/oauth2-proxy",
+      "doc_url": "https://oauth2-proxy.github.io/oauth2-proxy/",
+      "home": "https://github.com/oauth2-proxy/oauth2-proxy",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
+      "summary": "A reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group."
+    },
+    "build": {
+      "number": "1",
+      "script": [
+        "cd src",
+        "go-licenses save . --ignore github.com/bsm/redislock --save_path ../library_licenses",
+        "find $SRC_DIR/gopath/pkg/mod/github.com/bsm -maxdepth 2 -path \"*redislock*/LICENSE\" -exec mkdir -p ../library_licenses/github.com/bsm/redislock \\; -exec cp {} ../library_licenses/github.com/bsm/redislock/LICENSE \\; -quit",
+        "go build -v -o $PREFIX/bin/oauth2-proxy -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\""
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "asford",
+        "mxr-conda",
+        "rluria14",
+        "ndmaxar",
+        "oblute",
+        "RyanHackney",
+        "xhochy"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      }
+    ],
+    "package": {
+      "name": "oauth2-proxy",
+      "version": "7.15.6"
+    },
+    "requirements": {
+      "build": [
+        "go-nocgo_compiler_stub",
+        "go-licenses"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
+      "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "go-licenses",
+        "go-nocgo_compiler_stub"
       ]
     },
     "host": {
@@ -97,17 +252,19 @@
       "doc_url": "https://oauth2-proxy.github.io/oauth2-proxy/",
       "home": "https://github.com/oauth2-proxy/oauth2-proxy",
       "license": "MIT",
-      "license_file": "src/github.com/oauth2-proxy/oauth2-proxy/LICENSE",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
       "summary": "A reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": [
-        "pushd src/github.com/oauth2-proxy/oauth2-proxy",
-        "GOBIN=$(go env GOBIN)",
-        "go build -v -o $GOBIN/oauth2-proxy .",
-        "FOR /F \"delims=\" %%i IN ('go env GOBIN') DO set \"GOBIN=%%i\"",
-        "go build -v -o %GOBIN%\\oauth2-proxy.exe ."
+        "cd src",
+        "go-licenses save . --ignore github.com/bsm/redislock --save_path ../library_licenses",
+        "find $SRC_DIR/gopath/pkg/mod/github.com/bsm -maxdepth 2 -path \"*redislock*/LICENSE\" -exec mkdir -p ../library_licenses/github.com/bsm/redislock \\; -exec cp {} ../library_licenses/github.com/bsm/redislock/LICENSE \\; -quit",
+        "go build -v -o $PREFIX/bin/oauth2-proxy -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\"",
+        "for /d %%d in (gopath\\pkg\\mod\\github.com\\bsm\\redislock*) do mkdir ..\\library_licenses\\github.com\\bsm\\redislock & copy \"%%d\\LICENSE\" ..\\library_licenses\\github.com\\bsm\\redislock\\LICENSE",
+        "go build -v -o %LIBRARY_BIN%\\oauth2-proxy.exe -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\""
       ]
     },
     "extra": {
@@ -117,44 +274,182 @@
         "rluria14",
         "ndmaxar",
         "oblute",
-        "RyanHackney"
+        "RyanHackney",
+        "xhochy"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      },
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      },
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      },
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      },
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      },
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      }
+    ],
     "package": {
       "name": "oauth2-proxy",
       "version": "7.15.6"
     },
     "requirements": {
       "build": [
-        "go_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "go-licenses"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "folder": "src/github.com/oauth2-proxy/oauth2-proxy",
-        "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
-        "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
-      },
-      {
-        "folder": "src/github.com/oauth2-proxy/oauth2-proxy",
-        "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
-        "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
-      },
-      {
-        "folder": "src/github.com/oauth2-proxy/oauth2-proxy",
-        "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
-        "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "oauth2-proxy --version"
-      ],
-      "requires": [
-        "m2-bash",
-        "m2-coreutils"
-      ]
+    "schema_version": 1,
+    "source": {
+      "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
+      "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
     }
   },
   "name": "oauth2-proxy",
@@ -164,15 +459,17 @@
       "doc_url": "https://oauth2-proxy.github.io/oauth2-proxy/",
       "home": "https://github.com/oauth2-proxy/oauth2-proxy",
       "license": "MIT",
-      "license_file": "src/github.com/oauth2-proxy/oauth2-proxy/LICENSE",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
       "summary": "A reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": [
-        "pushd src/github.com/oauth2-proxy/oauth2-proxy",
-        "GOBIN=$(go env GOBIN)",
-        "go build -v -o $GOBIN/oauth2-proxy ."
+        "cd src",
+        "go-licenses save . --ignore github.com/bsm/redislock --save_path ../library_licenses",
+        "find $SRC_DIR/gopath/pkg/mod/github.com/bsm -maxdepth 2 -path \"*redislock*/LICENSE\" -exec mkdir -p ../library_licenses/github.com/bsm/redislock \\; -exec cp {} ../library_licenses/github.com/bsm/redislock/LICENSE \\; -quit",
+        "go build -v -o $PREFIX/bin/oauth2-proxy -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\""
       ]
     },
     "extra": {
@@ -182,38 +479,155 @@
         "rluria14",
         "ndmaxar",
         "oblute",
-        "RyanHackney"
+        "RyanHackney",
+        "xhochy"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      }
+    ],
     "package": {
       "name": "oauth2-proxy",
       "version": "7.15.6"
     },
     "requirements": {
       "build": [
-        "go_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "go-licenses"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "folder": "src/github.com/oauth2-proxy/oauth2-proxy",
-        "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
-        "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "oauth2-proxy --version"
-      ],
-      "requires": null
+    "schema_version": 1,
+    "source": {
+      "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
+      "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
     }
   },
   "osx_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
-        "go_compiler_stub"
+        "go-licenses",
+        "go-nocgo_compiler_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/oauth2-proxy/oauth2-proxy",
+      "doc_url": "https://oauth2-proxy.github.io/oauth2-proxy/",
+      "home": "https://github.com/oauth2-proxy/oauth2-proxy",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
+      "summary": "A reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group."
+    },
+    "build": {
+      "number": "1",
+      "script": [
+        "cd src",
+        "go-licenses save . --ignore github.com/bsm/redislock --save_path ../library_licenses",
+        "find $SRC_DIR/gopath/pkg/mod/github.com/bsm -maxdepth 2 -path \"*redislock*/LICENSE\" -exec mkdir -p ../library_licenses/github.com/bsm/redislock \\; -exec cp {} ../library_licenses/github.com/bsm/redislock/LICENSE \\; -quit",
+        "go build -v -o $PREFIX/bin/oauth2-proxy -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\""
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "asford",
+        "mxr-conda",
+        "rluria14",
+        "ndmaxar",
+        "oblute",
+        "RyanHackney",
+        "xhochy"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      }
+    ],
+    "package": {
+      "name": "oauth2-proxy",
+      "version": "7.15.6"
+    },
+    "requirements": {
+      "build": [
+        "go-nocgo_compiler_stub",
+        "go-licenses"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
+      "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "go-licenses",
+        "go-nocgo_compiler_stub"
       ]
     },
     "host": {
@@ -238,24 +652,28 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64",
+    "osx_arm64",
     "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/oauth2-proxy.json"
   },
-  "raw_meta_yaml": "{% set provider = \"oauth2-proxy\" %}\n{% set goname = \"github.com/oauth2-proxy/\"+provider.lower() %}\n{% set version = \"7.15.6\" %}\n\n{% set name = goname.split('/')[-1] %}\n{% set pkg_src = ('src/'+goname).replace(\"/\",os.sep) %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  - folder: {{ pkg_src }}\n    url: https://{{ goname }}/archive/v{{ version }}.tar.gz\n    sha256: 7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9\n\nbuild:\n  number: 0\n  script:\n    - pushd {{ pkg_src }}\n    - GOBIN=$(go env GOBIN)  # [not win]\n    - FOR /F \"delims=\" %%i IN ('go env GOBIN') DO set \"GOBIN=%%i\"  # [win]\n    - go build -v -o $GOBIN/{{ name }} .       # [unix]\n    - go build -v -o %GOBIN%\\{{ name }}.exe .  # [win]\n\nrequirements:\n  build:\n    - {{ compiler('go') }}\n\ntest:\n  requires:\n    - m2-bash       # [win]\n    - m2-coreutils  # [win]\n\n  commands:\n    - oauth2-proxy --version\n\nabout:\n  home: https://github.com/oauth2-proxy/{{ name }}\n  license: MIT\n  license_file: {{ pkg_src }}/LICENSE\n  summary: A reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group.\n  doc_url: https://oauth2-proxy.github.io/oauth2-proxy/\n  dev_url: https://github.com/oauth2-proxy/{{ name }}\n\nextra:\n  recipe-maintainers:\n    - asford\n    - mxr-conda\n    - rluria14\n    - ndmaxar\n    - oblute\n    - RyanHackney\n",
+  "raw_meta_yaml": "context:\n  version: \"7.15.6\"\n\npackage:\n  name: oauth2-proxy\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/oauth2-proxy/oauth2-proxy/archive/v${{ version }}.tar.gz\n  sha256: 7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9\n  target_directory: src\n\nbuild:\n  number: 1\n  script:\n    - cd src\n    # go-licenses cannot detect the Apache-2.0 license of redislock, so it is\n    # ignored here and copied over manually below\n    - go-licenses save . --ignore github.com/bsm/redislock --save_path ../library_licenses\n    - if: unix\n      then:\n        - find $SRC_DIR/gopath/pkg/mod/github.com/bsm -maxdepth 2 -path \"*redislock*/LICENSE\" -exec mkdir -p ../library_licenses/github.com/bsm/redislock \\; -exec cp {} ../library_licenses/github.com/bsm/redislock/LICENSE \\; -quit\n        - go build -v -o $PREFIX/bin/oauth2-proxy -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\"\n      else:\n        - for /d %%d in (gopath\\pkg\\mod\\github.com\\bsm\\redislock*) do mkdir ..\\library_licenses\\github.com\\bsm\\redislock & copy \"%%d\\LICENSE\" ..\\library_licenses\\github.com\\bsm\\redislock\\LICENSE\n        - go build -v -o %LIBRARY_BIN%\\oauth2-proxy.exe -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"go-nocgo\") }}\n    - go-licenses\n\ntests:\n  - script:\n      - oauth2-proxy --version\n  - package_contents:\n      bin:\n        - oauth2-proxy\n      strict: true\n\nabout:\n  homepage: https://github.com/oauth2-proxy/oauth2-proxy\n  summary: A reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group.\n  license: MIT\n  license_file:\n    - src/LICENSE\n    - library_licenses/\n  documentation: https://oauth2-proxy.github.io/oauth2-proxy/\n  repository: https://github.com/oauth2-proxy/oauth2-proxy\n\nextra:\n  recipe-maintainers:\n    - asford\n    - mxr-conda\n    - rluria14\n    - ndmaxar\n    - oblute\n    - RyanHackney\n    - xhochy\n",
   "req": {
     "__set__": true,
     "elements": [
-      "go_compiler_stub"
+      "go-licenses",
+      "go-nocgo_compiler_stub"
     ]
   },
   "requirements": {
     "build": {
       "__set__": true,
       "elements": [
-        "go_compiler_stub"
+        "go-licenses",
+        "go-nocgo_compiler_stub"
       ]
     },
     "host": {
@@ -268,10 +686,7 @@
     },
     "test": {
       "__set__": true,
-      "elements": [
-        "m2-bash",
-        "m2-coreutils"
-      ]
+      "elements": []
     }
   },
   "strong_exports": false,
@@ -279,7 +694,8 @@
     "build": {
       "__set__": true,
       "elements": [
-        "go_compiler_stub"
+        "go-licenses",
+        "go-nocgo_compiler_stub"
       ]
     },
     "host": {
@@ -292,10 +708,7 @@
     },
     "test": {
       "__set__": true,
-      "elements": [
-        "m2-bash",
-        "m2-coreutils"
-      ]
+      "elements": []
     }
   },
   "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz",
@@ -309,15 +722,17 @@
       "doc_url": "https://oauth2-proxy.github.io/oauth2-proxy/",
       "home": "https://github.com/oauth2-proxy/oauth2-proxy",
       "license": "MIT",
-      "license_file": "src/github.com/oauth2-proxy/oauth2-proxy/LICENSE",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
       "summary": "A reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": [
-        "pushd src/github.com/oauth2-proxy/oauth2-proxy",
-        "FOR /F \"delims=\" %%i IN ('go env GOBIN') DO set \"GOBIN=%%i\"",
-        "go build -v -o %GOBIN%\\oauth2-proxy.exe ."
+        "cd src",
+        "go-licenses save . --ignore github.com/bsm/redislock --save_path ../library_licenses",
+        "for /d %%d in (gopath\\pkg\\mod\\github.com\\bsm\\redislock*) do mkdir ..\\library_licenses\\github.com\\bsm\\redislock & copy \"%%d\\LICENSE\" ..\\library_licenses\\github.com\\bsm\\redislock\\LICENSE",
+        "go build -v -o %LIBRARY_BIN%\\oauth2-proxy.exe -ldflags=\"-s -w -X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=v${{ version }}\""
       ]
     },
     "extra": {
@@ -327,41 +742,60 @@
         "rluria14",
         "ndmaxar",
         "oblute",
-        "RyanHackney"
+        "RyanHackney",
+        "xhochy"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "oauth2-proxy",
+        "requirements": {
+          "build": [
+            "go-nocgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": "oauth2-proxy --version"
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "oauth2-proxy"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "7.15.6"
+      }
+    ],
     "package": {
       "name": "oauth2-proxy",
       "version": "7.15.6"
     },
     "requirements": {
       "build": [
-        "go_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "go-licenses"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "folder": "src/github.com/oauth2-proxy/oauth2-proxy",
-        "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
-        "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "oauth2-proxy --version"
-      ],
-      "requires": [
-        "m2-bash",
-        "m2-coreutils"
-      ]
+    "schema_version": 1,
+    "source": {
+      "sha256": "7a24bf731e10d5db9149d7186576bc1286c5d084d3a9536ebece2e53b341b8a9",
+      "url": "https://github.com/oauth2-proxy/oauth2-proxy/archive/v7.15.6.tar.gz"
     }
   },
   "win_64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
-        "go_compiler_stub"
+        "go-licenses",
+        "go-nocgo_compiler_stub"
       ]
     },
     "host": {
@@ -374,10 +808,7 @@
     },
     "test": {
       "__set__": true,
-      "elements": [
-        "m2-bash",
-        "m2-coreutils"
-      ]
+      "elements": []
     }
   }
 }
