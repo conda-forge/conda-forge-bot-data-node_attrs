@@ -28,8 +28,8 @@
       "store_build_artifacts": true
     }
   },
-  "feedstock_hash": "b529b9b781fa5acae19b5a68fabe8b0fa20e405b",
-  "feedstock_hash_ts": 1791092428,
+  "feedstock_hash": "c60998b1b65cc1ad7af0b587b6d30c50ebd0aff2",
+  "feedstock_hash_ts": 1794562693,
   "feedstock_name": "kalign",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -58,6 +58,7 @@
     "extra": {
       "feedstock-name": "kalign",
       "recipe-maintainers": [
+        "TimoLassmann",
         "sdvillal",
         "Emrys-Merlin"
       ]
@@ -623,6 +624,7 @@
     "extra": {
       "feedstock-name": "kalign",
       "recipe-maintainers": [
+        "TimoLassmann",
         "sdvillal",
         "Emrys-Merlin"
       ]
@@ -1188,6 +1190,7 @@
     "extra": {
       "feedstock-name": "kalign",
       "recipe-maintainers": [
+        "TimoLassmann",
         "sdvillal",
         "Emrys-Merlin"
       ]
@@ -3140,6 +3143,7 @@
     "extra": {
       "feedstock-name": "kalign",
       "recipe-maintainers": [
+        "TimoLassmann",
         "sdvillal",
         "Emrys-Merlin"
       ]
@@ -3705,6 +3709,7 @@
     "extra": {
       "feedstock-name": "kalign",
       "recipe-maintainers": [
+        "TimoLassmann",
         "sdvillal",
         "Emrys-Merlin"
       ]
@@ -4262,7 +4267,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/kalign.json"
   },
-  "raw_meta_yaml": "#\n# kalign conda-forge recipe\n# big kudos to the original bioconda recipe:\n#   https://bioconda.github.io/recipes/kalign3/README.html\n# this one:\n#   - moves to the new recipe format and rattler-build\n#   - updates to newer version\n#   - consolidates name to kalign\n#   - reports new Apache license\n#   - adds an output for kalign-python\n#\n\ncontext:\n  version: \"3.6.0\"\n\nrecipe:\n  name: kalign-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/TimoLassmann/kalign/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 4af0af2764509c3e83d501c6d8260b8c69bd8fd02456ed41c18583a23f4781d7\n\nbuild:\n  number: 1\n  skip:\n    - win\n    - match(python, \"<3.11\")\n\noutputs:\n\n  # kalign binary\n  - package:\n      name: kalign\n      version: ${{ version }}\n\n    build:\n      script:\n        - mkdir build\n        - cd build\n        - cmake -DCMAKE_INSTALL_PREFIX=${PREFIX} ..\n        - make -j ${CPU_COUNT}\n        - make install\n\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - make\n        - cmake\n      run_exports:\n        - ${{ pin_subpackage('kalign', upper_bound='x') }}\n\n    tests:\n      - script:\n          - kalign -v\n\n  # kalign3 synonym to avoid breaking existing users of the bioconda package\n  - package:\n      name: kalign3\n\n    requirements:\n      run:\n        - kalign >=3,<4\n\n    tests:\n      - script:\n          - kalign -v\n\n  # python bindings\n  - package:\n      name: kalign-python\n      version: ${{ version }}\n\n    build:\n      script:\n        - ${PYTHON} -m pip install . -vv --no-deps --no-build-isolation\n\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - make\n        - cmake\n      host:\n        - python\n        - pip\n        - scikit-build-core\n        - pybind11\n        - numpy >= 1.19.0\n\n    tests:\n      - files:\n          source:\n            - tests/\n        requirements:\n          run:\n            - pytest\n            - pytest-cov\n            - pytest-benchmark\n            - scikit-bio\n            - biopython\n        script:\n          - pytest tests/python -vv\n      - python:\n          imports:\n            - kalign\n          pip_check: true\n      - script:\n          - kalign-py -h\n\nabout:\n  homepage: https://github.com/TimoLassmann/kalign\n  summary: Kalign is a fast and accurate multiple sequence alignment algorithm.\n  license: Apache-2.0\n  license_file: COPYING\n  # https://doi.org/10.1093/bioinformatics/btz795\n\nextra:\n  feedstock-name: kalign\n  recipe-maintainers:\n    - sdvillal\n    - Emrys-Merlin\n",
+  "raw_meta_yaml": "#\n# kalign conda-forge recipe\n# big kudos to the original bioconda recipe:\n#   https://bioconda.github.io/recipes/kalign3/README.html\n# this one:\n#   - moves to the new recipe format and rattler-build\n#   - updates to newer version\n#   - consolidates name to kalign\n#   - reports new Apache license\n#   - adds an output for kalign-python\n#\n\ncontext:\n  version: \"3.6.0\"\n\nrecipe:\n  name: kalign-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/TimoLassmann/kalign/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 4af0af2764509c3e83d501c6d8260b8c69bd8fd02456ed41c18583a23f4781d7\n\nbuild:\n  number: 1\n  skip:\n    - win\n    - match(python, \"<3.11\")\n\noutputs:\n\n  # kalign binary\n  - package:\n      name: kalign\n      version: ${{ version }}\n\n    build:\n      script:\n        - mkdir build\n        - cd build\n        - cmake -DCMAKE_INSTALL_PREFIX=${PREFIX} ..\n        - make -j ${CPU_COUNT}\n        - make install\n\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - make\n        - cmake\n      run_exports:\n        - ${{ pin_subpackage('kalign', upper_bound='x') }}\n\n    tests:\n      - script:\n          - kalign -v\n\n  # kalign3 synonym to avoid breaking existing users of the bioconda package\n  - package:\n      name: kalign3\n\n    requirements:\n      run:\n        - kalign >=3,<4\n\n    tests:\n      - script:\n          - kalign -v\n\n  # python bindings\n  - package:\n      name: kalign-python\n      version: ${{ version }}\n\n    build:\n      script:\n        - ${PYTHON} -m pip install . -vv --no-deps --no-build-isolation\n\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - make\n        - cmake\n      host:\n        - python\n        - pip\n        - scikit-build-core\n        - pybind11\n        - numpy >= 1.19.0\n\n    tests:\n      - files:\n          source:\n            - tests/\n        requirements:\n          run:\n            - pytest\n            - pytest-cov\n            - pytest-benchmark\n            - scikit-bio\n            - biopython\n        script:\n          - pytest tests/python -vv\n      - python:\n          imports:\n            - kalign\n          pip_check: true\n      - script:\n          - kalign-py -h\n\nabout:\n  homepage: https://github.com/TimoLassmann/kalign\n  summary: Kalign is a fast and accurate multiple sequence alignment algorithm.\n  license: Apache-2.0\n  license_file: COPYING\n  # https://doi.org/10.1093/bioinformatics/btz795\n\nextra:\n  feedstock-name: kalign\n  recipe-maintainers:\n    - TimoLassmann\n    - sdvillal\n    - Emrys-Merlin\n",
   "req": {
     "__set__": true,
     "elements": [
