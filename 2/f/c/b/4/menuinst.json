@@ -37,8 +37,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "1ebcf8a3944927bad280ddc059304e12b2b4d6be",
-  "feedstock_hash_ts": 1793820766,
+  "feedstock_hash": "39ccd8b498eb729ddcdbe9e44cef9ac2ca9b5d72",
+  "feedstock_hash_ts": 1794578812,
   "feedstock_name": "menuinst",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -68,7 +68,6 @@
     "extra": {
       "recipe-maintainers": [
         "marcoesters",
-        "goanpeca",
         "jakirkham",
         "carlodri",
         "isuruf",
@@ -216,7 +215,6 @@
     "extra": {
       "recipe-maintainers": [
         "marcoesters",
-        "goanpeca",
         "jakirkham",
         "carlodri",
         "isuruf",
@@ -668,7 +666,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/menuinst.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"2.5.2\"\n\npackage:\n  name: menuinst\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/conda/menuinst/archive/${{ version }}.tar.gz\n  sha256: 079ea48b73530907881526240d0bda1cc012659baee344a61b62090d52465109\n\nbuild:\n  number: 4\n  noarch: ${{ \"python\" if not win }}\n  skip:\n    # The noarch package only needs to be built once; Windows needs a real\n    # compiled build for menuinst.platforms.win_utils.winshortcut.\n    - not win and build_platform != \"linux-64\"\n  script:\n    env:\n      SETUPTOOLS_SCM_PRETEND_VERSION: ${{ version }}\n    content:\n      - if: win\n        then:\n          # Apparently these files make the post-build linkage analysis crash\n          # and we should not need them on Windows\n          - del /q \"${{ SRC_DIR }}\\\\menuinst\\\\data\\\\osx_launcher_*\"\n          - del /q \"${{ SRC_DIR }}\\\\menuinst\\\\data\\\\appkit_launcher_*\"\n      - ${{ PYTHON }} -m pip install . -vv\n      - if: win\n        # menuinst v1 expects cwp.py in PREFIX; backwards compat fix\n        then: copy \"%SP_DIR%\\\\menuinst\\\\_legacy\\cwp.py\" \"%PREFIX%\\\\\"\n  python:\n    entry_points:\n      - menuinst = menuinst.cli:main\n    skip_pyc_compilation:\n      - if: win\n        then: cwp.py\n\nrequirements:\n  build:\n    - if: win\n      then:\n        - if: build_platform != target_platform\n          then:\n            - python\n            - cross-python_${{ target_platform }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n  host:\n    - if: win\n      then: python\n      else: python ${{ python_min }}.*\n    - pip\n    - setuptools\n    - setuptools_scm\n  run:\n    - if: win\n      then:\n        - python\n        - if: match(python, \"<3.11\")\n          then: tomli\n      else:\n        # noarch has no python variant to match against, so tomli is always\n        # declared; it is unused on 3.11+, where tomllib is in the stdlib.\n        - python >=${{ python_min }}\n        - tomli\n    - tomli-w\n\ntests:\n  - if: win\n    then:\n      - python:\n          imports:\n            - menuinst\n            - menuinst.api\n            - menuinst._legacy\n            - menuinst.platforms.win_utils.winshortcut\n          pip_check: false\n      - script:\n          - menuinst --help\n    else:\n      - python:\n          imports:\n            - menuinst\n            - menuinst.api\n          python_version: ${{ python_min }}.*\n          pip_check: false\n      - script:\n          - menuinst --help\n          - test -f \"${SP_DIR}/menuinst/data/appkit_launcher_arm64\"\n          - test -f \"${SP_DIR}/menuinst/data/appkit_launcher_x86_64\"\n          - test -f \"${SP_DIR}/menuinst/data/osx_launcher_arm64\"\n          - test -f \"${SP_DIR}/menuinst/data/osx_launcher_x86_64\"\n        requirements:\n          run:\n            - python ${{ python_min }}.*\n\nabout:\n  license: BSD-3-Clause AND MIT\n  license_file:\n    - LICENSE.txt\n    - menuinst/_vendor/apipkg/LICENSE\n  summary: cross platform install of menu items\n  homepage: https://github.com/conda/menuinst/\n  documentation: https://conda.github.io/menuinst/\n\nextra:\n  recipe-maintainers:\n    - marcoesters\n    - goanpeca\n    - jakirkham\n    - carlodri\n    - isuruf\n    - jaimergp\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"2.5.2\"\n\npackage:\n  name: menuinst\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/conda/menuinst/archive/${{ version }}.tar.gz\n  sha256: 079ea48b73530907881526240d0bda1cc012659baee344a61b62090d52465109\n\nbuild:\n  number: 4\n  noarch: ${{ \"python\" if not win }}\n  skip:\n    # The noarch package only needs to be built once; Windows needs a real\n    # compiled build for menuinst.platforms.win_utils.winshortcut.\n    - not win and build_platform != \"linux-64\"\n  script:\n    env:\n      SETUPTOOLS_SCM_PRETEND_VERSION: ${{ version }}\n    content:\n      - if: win\n        then:\n          # Apparently these files make the post-build linkage analysis crash\n          # and we should not need them on Windows\n          - del /q \"${{ SRC_DIR }}\\\\menuinst\\\\data\\\\osx_launcher_*\"\n          - del /q \"${{ SRC_DIR }}\\\\menuinst\\\\data\\\\appkit_launcher_*\"\n      - ${{ PYTHON }} -m pip install . -vv\n      - if: win\n        # menuinst v1 expects cwp.py in PREFIX; backwards compat fix\n        then: copy \"%SP_DIR%\\\\menuinst\\\\_legacy\\cwp.py\" \"%PREFIX%\\\\\"\n  python:\n    entry_points:\n      - menuinst = menuinst.cli:main\n    skip_pyc_compilation:\n      - if: win\n        then: cwp.py\n\nrequirements:\n  build:\n    - if: win\n      then:\n        - if: build_platform != target_platform\n          then:\n            - python\n            - cross-python_${{ target_platform }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n  host:\n    - if: win\n      then: python\n      else: python ${{ python_min }}.*\n    - pip\n    - setuptools\n    - setuptools_scm\n  run:\n    - if: win\n      then:\n        - python\n        - if: match(python, \"<3.11\")\n          then: tomli\n      else:\n        # noarch has no python variant to match against, so tomli is always\n        # declared; it is unused on 3.11+, where tomllib is in the stdlib.\n        - python >=${{ python_min }}\n        - tomli\n    - tomli-w\n\ntests:\n  - if: win\n    then:\n      - python:\n          imports:\n            - menuinst\n            - menuinst.api\n            - menuinst._legacy\n            - menuinst.platforms.win_utils.winshortcut\n          pip_check: false\n      - script:\n          - menuinst --help\n    else:\n      - python:\n          imports:\n            - menuinst\n            - menuinst.api\n          python_version: ${{ python_min }}.*\n          pip_check: false\n      - script:\n          - menuinst --help\n          - test -f \"${SP_DIR}/menuinst/data/appkit_launcher_arm64\"\n          - test -f \"${SP_DIR}/menuinst/data/appkit_launcher_x86_64\"\n          - test -f \"${SP_DIR}/menuinst/data/osx_launcher_arm64\"\n          - test -f \"${SP_DIR}/menuinst/data/osx_launcher_x86_64\"\n        requirements:\n          run:\n            - python ${{ python_min }}.*\n\nabout:\n  license: BSD-3-Clause AND MIT\n  license_file:\n    - LICENSE.txt\n    - menuinst/_vendor/apipkg/LICENSE\n  summary: cross platform install of menu items\n  homepage: https://github.com/conda/menuinst/\n  documentation: https://conda.github.io/menuinst/\n\nextra:\n  recipe-maintainers:\n    - marcoesters\n    - jakirkham\n    - carlodri\n    - isuruf\n    - jaimergp\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -807,7 +805,6 @@
     "extra": {
       "recipe-maintainers": [
         "marcoesters",
-        "goanpeca",
         "jakirkham",
         "carlodri",
         "isuruf",
@@ -1158,7 +1155,6 @@
     "extra": {
       "recipe-maintainers": [
         "marcoesters",
-        "goanpeca",
         "jakirkham",
         "carlodri",
         "isuruf",
