@@ -33,8 +33,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "bf659b4f5c5d0bea57df951a42cce36239a46912",
-  "feedstock_hash_ts": 1793896597,
+  "feedstock_hash": "46487cb5dee9bbb8bb203e00f3163cb6dc6d4d1b",
+  "feedstock_hash_ts": 1794578835,
   "feedstock_name": "tensorstore",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -51,7 +51,6 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "goanpeca",
         "jaimergp",
         "traversaro"
       ]
@@ -531,7 +530,6 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "goanpeca",
         "jaimergp",
         "traversaro"
       ]
@@ -1060,7 +1058,6 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "goanpeca",
         "jaimergp",
         "traversaro"
       ]
@@ -3086,7 +3083,6 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "goanpeca",
         "jaimergp",
         "traversaro"
       ]
@@ -3624,7 +3620,6 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "goanpeca",
         "jaimergp",
         "traversaro"
       ]
@@ -4166,7 +4161,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/tensorstore.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: tensorstore\n  version: \"0.1.85\"\n  # Bazel version is specified upstream, file .bazelversion\n  # https://github.com/google/tensorstore/blob/master/.bazelversion\n  bazel_version: 8.*\n  python_min: \"3.11\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/tensorstore-${{ version }}.tar.gz\n  sha256: 26698bded0278e98e0988eb8f7d76ad248762afc5f55a38b9122ffd1474e505f\n  patches:\n    # MacOS needs an extra linker flag so pybind11 finds the python symbols in _tensorstore.so :shrug:\n    - if: osx\n      then: patches/pybind11-linkopts.patch\n    - if: target_platform == \"osx-arm64\" or target_platform == \"linux-aarch64\"\n      then: patches/0001-Explicitly-select-blake3-for-arm64.patch\n    - patches/0003-use-system-libs.patch\n    - patches/0004-use-system-numpy.patch\n    - patches/0005-aws-c-common-avx2.patch\n    - patches/0007-aws-c-common-cpuid-fallback.patch\n    - patches/0012-python315-weakrefs.patch\n    - if: osx\n      then:\n        - patches/0008-protobuf-upb-no-werror.patch\n        - patches/0009-c-ares-darwin-no-msg_nosignal.patch\n    # Windows only. rules_cc 0.2.19 (tensorstore's normal pin) can't build\n    # here: it defers to rules_cc's own Starlark cc_library/cc_binary/\n    # cc_toolchain, which need cc_common/cc_internal methods, this Bazel\n    # build doesn't have, whenever native.bazel_version is unset (true on\n    # the win-64 conda Bazel). rules_cc 0.2.3 + a small patch fixes this by\n    # picking Bazel's native rules instead in that case.\n    - if: win\n      then:\n    # tensorstore's WORKSPACE registers an LLVM toolchain (via\n    # toolchains_llvm) purely to extract C++ API docs -- not needed to build\n    # the Python extension. toolchains_llvm has no prebuilt LLVM distribution\n    # for Windows, and Bazel resolves every registered toolchain repository\n    # up front regardless of which target is requested, so if left in place it\n    # fails the whole WORKSPACE evaluation on this platform.\n        - patches/0010-rules_cc-pin-0.2.3-for-windows.patch\n        - patches/0011-windows-skip-llvm-docs-toolchain.patch\nbuild:\n  number: 3\n  skip: match(python, \"<3.11\")\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    # Keep bazel listed twice here to help the migrators track dependencies\n    - bazel\n    - bazel ${{ bazel_version }}\n    # On every other platform, bazel-toolchain's --crosstool_top flag makes\n    # Bazel use its legacy CROSSTOOL-based C++ toolchain resolution, which\n    # doesn't touch rules_cc's newer, more version-sensitive Starlark code.\n    # Windows has no such flag (see below) and so goes through the modern\n    # platforms-based toolchain resolution instead, which only works with\n    # the exact Bazel release tensorstore's vendored rules_cc (0.2.19) was\n    # tested against upstream (see .bazelversion) -- newer 8.x releases can\n    # (and did) drop/rename `cc_internal` builtins that release expects.\n    - if: win\n      then: bazel ==8.5.1\n    # bazel-toolchain only knows how to generate GCC/Clang crosstool configs,\n    # so it isn't built for win-64 at all; Bazel's native MSVC autodetection\n    # is used there instead (see build.bat).\n      else: bazel-toolchain\n    - if: osx\n      then: bazel-toolchain <0.3\n    # Bazel requires a real Bash interpreter on Windows even when compiling\n    # with MSVC (used by genrules and some third-party repo rules).\n    - if: win\n      then: m2-bash\n    - if: target_platform != build_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - numpy\n        - pybind11\n        - pybind11-abi\n        - zlib\n  host:\n    - pip\n    - python\n    - wheel\n    - setuptools\n    - setuptools-scm\n    - numpy\n    # we use openssl instead of boringssl\n    - openssl\n    - bzip2\n    - blosc\n    - libcurl\n    - libjpeg-turbo\n    - libpng\n    - libwebp\n    - lz4\n    - liblzma-devel\n    - zlib\n    - libprotobuf\n    # unvendored\n    - pybind11\n    - pybind11-abi\n    # Use the one from https://github.com/google/tensorstore/blob/master/third_party/com_github_nlohmann_json/workspace.bzl\n    - nlohmann_json 3.10.5.*\n    - libavif\n    # needs to be built with bazel\n    # https://github.com/abseil/abseil-cpp/blob/ee0ebda/FAQ.md#what-is-abi-and-why-dont-you-recommend-using-a-pre-compiled-version-of-abseil\n    # - abseil-cpp\n  run:\n    - ml_dtypes\n    - python\n\ntests:\n  - python:\n      imports:\n        - tensorstore\n      pip_check: true\n  - requirements:\n      run:\n        - pip\n    script:\n      - pip list\n\nabout:\n  summary: Read and write large, multi-dimensional arrays\n  license: Apache-2.0 AND MIT AND BSD-3-Clause AND BSD-2-Clause\n  license_file:\n    - LICENSE\n    - licenses/abseil-cpp.txt\n    - licenses/re2.txt\n    - licenses/riegeli.txt\n    - licenses/net_sourceforge_half.txt\n  homepage: https://pypi.org/project/tensorstore/\n  repository: https://github.com/google/tensorstore\n\nextra:\n  recipe-maintainers:\n    - goanpeca\n    - jaimergp\n    - traversaro\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: tensorstore\n  version: \"0.1.85\"\n  # Bazel version is specified upstream, file .bazelversion\n  # https://github.com/google/tensorstore/blob/master/.bazelversion\n  bazel_version: 8.*\n  python_min: \"3.11\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/tensorstore-${{ version }}.tar.gz\n  sha256: 26698bded0278e98e0988eb8f7d76ad248762afc5f55a38b9122ffd1474e505f\n  patches:\n    # MacOS needs an extra linker flag so pybind11 finds the python symbols in _tensorstore.so :shrug:\n    - if: osx\n      then: patches/pybind11-linkopts.patch\n    - if: target_platform == \"osx-arm64\" or target_platform == \"linux-aarch64\"\n      then: patches/0001-Explicitly-select-blake3-for-arm64.patch\n    - patches/0003-use-system-libs.patch\n    - patches/0004-use-system-numpy.patch\n    - patches/0005-aws-c-common-avx2.patch\n    - patches/0007-aws-c-common-cpuid-fallback.patch\n    - patches/0012-python315-weakrefs.patch\n    - if: osx\n      then:\n        - patches/0008-protobuf-upb-no-werror.patch\n        - patches/0009-c-ares-darwin-no-msg_nosignal.patch\n    # Windows only. rules_cc 0.2.19 (tensorstore's normal pin) can't build\n    # here: it defers to rules_cc's own Starlark cc_library/cc_binary/\n    # cc_toolchain, which need cc_common/cc_internal methods, this Bazel\n    # build doesn't have, whenever native.bazel_version is unset (true on\n    # the win-64 conda Bazel). rules_cc 0.2.3 + a small patch fixes this by\n    # picking Bazel's native rules instead in that case.\n    - if: win\n      then:\n    # tensorstore's WORKSPACE registers an LLVM toolchain (via\n    # toolchains_llvm) purely to extract C++ API docs -- not needed to build\n    # the Python extension. toolchains_llvm has no prebuilt LLVM distribution\n    # for Windows, and Bazel resolves every registered toolchain repository\n    # up front regardless of which target is requested, so if left in place it\n    # fails the whole WORKSPACE evaluation on this platform.\n        - patches/0010-rules_cc-pin-0.2.3-for-windows.patch\n        - patches/0011-windows-skip-llvm-docs-toolchain.patch\nbuild:\n  number: 3\n  skip: match(python, \"<3.11\")\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    # Keep bazel listed twice here to help the migrators track dependencies\n    - bazel\n    - bazel ${{ bazel_version }}\n    # On every other platform, bazel-toolchain's --crosstool_top flag makes\n    # Bazel use its legacy CROSSTOOL-based C++ toolchain resolution, which\n    # doesn't touch rules_cc's newer, more version-sensitive Starlark code.\n    # Windows has no such flag (see below) and so goes through the modern\n    # platforms-based toolchain resolution instead, which only works with\n    # the exact Bazel release tensorstore's vendored rules_cc (0.2.19) was\n    # tested against upstream (see .bazelversion) -- newer 8.x releases can\n    # (and did) drop/rename `cc_internal` builtins that release expects.\n    - if: win\n      then: bazel ==8.5.1\n    # bazel-toolchain only knows how to generate GCC/Clang crosstool configs,\n    # so it isn't built for win-64 at all; Bazel's native MSVC autodetection\n    # is used there instead (see build.bat).\n      else: bazel-toolchain\n    - if: osx\n      then: bazel-toolchain <0.3\n    # Bazel requires a real Bash interpreter on Windows even when compiling\n    # with MSVC (used by genrules and some third-party repo rules).\n    - if: win\n      then: m2-bash\n    - if: target_platform != build_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - numpy\n        - pybind11\n        - pybind11-abi\n        - zlib\n  host:\n    - pip\n    - python\n    - wheel\n    - setuptools\n    - setuptools-scm\n    - numpy\n    # we use openssl instead of boringssl\n    - openssl\n    - bzip2\n    - blosc\n    - libcurl\n    - libjpeg-turbo\n    - libpng\n    - libwebp\n    - lz4\n    - liblzma-devel\n    - zlib\n    - libprotobuf\n    # unvendored\n    - pybind11\n    - pybind11-abi\n    # Use the one from https://github.com/google/tensorstore/blob/master/third_party/com_github_nlohmann_json/workspace.bzl\n    - nlohmann_json 3.10.5.*\n    - libavif\n    # needs to be built with bazel\n    # https://github.com/abseil/abseil-cpp/blob/ee0ebda/FAQ.md#what-is-abi-and-why-dont-you-recommend-using-a-pre-compiled-version-of-abseil\n    # - abseil-cpp\n  run:\n    - ml_dtypes\n    - python\n\ntests:\n  - python:\n      imports:\n        - tensorstore\n      pip_check: true\n  - requirements:\n      run:\n        - pip\n    script:\n      - pip list\n\nabout:\n  summary: Read and write large, multi-dimensional arrays\n  license: Apache-2.0 AND MIT AND BSD-3-Clause AND BSD-2-Clause\n  license_file:\n    - LICENSE\n    - licenses/abseil-cpp.txt\n    - licenses/re2.txt\n    - licenses/riegeli.txt\n    - licenses/net_sourceforge_half.txt\n  homepage: https://pypi.org/project/tensorstore/\n  repository: https://github.com/google/tensorstore\n\nextra:\n  recipe-maintainers:\n    - jaimergp\n    - traversaro\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -4357,7 +4352,6 @@
     },
     "extra": {
       "recipe-maintainers": [
-        "goanpeca",
         "jaimergp",
         "traversaro"
       ]
