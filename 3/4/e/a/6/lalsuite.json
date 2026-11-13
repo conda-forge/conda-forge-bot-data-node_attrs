@@ -1,37 +1,38 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "cdt_name:\n- conda\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.9'\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
-    "conda_build": {
-      "pkg_format": "2"
-    },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "a0d11b684c9fc3c41c6c70ca923f44251eea4285",
-  "feedstock_hash_ts": 1776814341,
+  "feedstock_hash": "307132bbc5fd9d9a3d6cd2bfc35c36d9d9f5a122",
+  "feedstock_hash_ts": 1794579673,
   "feedstock_name": "lalsuite",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "The LSC Algorithm Library Applications for gravitational wave data\nanalysis.  This package contains applications that are built on tools\nin the LSC Algorithm Library.\n",
+      "description": "The LSC Algorithm Library Applications for gravitational wave data\nanalysis.  This package contains applications that are built on tools\nin the LSC Algorithm Library.",
       "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
       "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/",
       "home": "https://wiki.ligo.org/Computing/LALSuite",
       "license": "GPL-3.0-or-later",
-      "license_family": "GPL",
+      "license_family": "GPL-3.0-or-later",
       "license_file": "COPYING",
       "summary": "LSC Algorithm Library Suite"
     },
     "build": {
       "noarch": "python",
       "number": "0",
-      "script": "PYTHON -m pip install -vv ."
+      "script": [
+        "cd ${{ RECIPE_DIR }}",
+        "${{ PYTHON }} -m pip install -vv ."
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -39,59 +40,99 @@
         "skymoo"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "lalsuite",
+        "requirements": {
+          "build": [],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=38.3.0",
+            "wheel"
+          ],
+          "run": [
+            "python >=3.11",
+            "lal 8.0.1.*",
+            "lalframe 3.1.1.*",
+            "lalmetaio 4.1.1.*",
+            "lalsimulation 7.0.1.*",
+            "lalburst 3.0.1.*",
+            "lalinspiral 5.1.1.*",
+            "lalpulsar 8.0.1.*",
+            "lalinference 5.0.1.*",
+            "lalapps 11.0.0.*"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lal",
+                "lalframe",
+                "lalmetaio",
+                "lalsimulation",
+                "lalburst",
+                "lalinspiral",
+                "lalpulsar",
+                "lalinference",
+                "lalapps"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "setup.cfg",
+                "test_component_versions.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": "pytest test_component_versions.py -v -ra -k 'not lalapps'"
+          }
+        ],
+        "version": "8.0.2"
+      }
+    ],
     "package": {
       "name": "lalsuite",
-      "version": "7.26"
+      "version": "8.0.2"
     },
     "requirements": {
       "host": [
         "pip",
-        "python 3.10",
+        "python 3.11.*",
         "setuptools >=38.3.0",
         "wheel"
       ],
       "run": [
-        "python >=3.10",
-        "lal 7.7.0.*",
-        "lalframe 3.0.7.*",
-        "lalmetaio 4.0.6.*",
-        "lalsimulation 6.2.0.*",
-        "lalburst 2.0.7.*",
-        "lalinspiral 5.0.3.*",
-        "lalpulsar 7.1.1.*",
-        "lalinference 4.1.9.*",
-        "lalapps 10.1.0.*"
+        "python >=3.11",
+        "lal 8.0.1.*",
+        "lalframe 3.1.1.*",
+        "lalmetaio 4.1.1.*",
+        "lalsimulation 7.0.1.*",
+        "lalburst 3.0.1.*",
+        "lalinspiral 5.1.1.*",
+        "lalpulsar 8.0.1.*",
+        "lalinference 5.0.1.*",
+        "lalapps 11.0.0.*"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "1b01b78309e59dba6497d7eafe4bee59b28b7654781f02b27c3629245fca3544",
-      "url": "https://software.igwn.org/sources/source/lalsuite/lalsuite-7.26.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "python -m pip check",
-        "python -m pip show lalsuite"
-      ],
-      "imports": [
-        "lal",
-        "lalframe",
-        "lalmetaio",
-        "lalsimulation",
-        "lalburst",
-        "lalinspiral",
-        "lalpulsar",
-        "lalinference",
-        "lalapps"
-      ],
-      "requires": [
-        "pip",
-        "python 3.10",
-        "pytest"
-      ],
-      "source_files": [
-        "setup.cfg"
-      ]
+      "sha256": "fbf411922746fffa84c1e7a93b1a7a1ca1b68f48f12779655d41ce6dd2d35cca",
+      "url": "https://software.igwn.org/sources/source/lalsuite/lalsuite-metapackage-8.0.2.tar.xz"
     }
   },
   "linux_64_requirements": {
@@ -127,26 +168,28 @@
       "__set__": true,
       "elements": [
         "pip",
-        "pytest",
-        "python"
+        "pytest"
       ]
     }
   },
   "meta_yaml": {
     "about": {
-      "description": "The LSC Algorithm Library Applications for gravitational wave data\nanalysis.  This package contains applications that are built on tools\nin the LSC Algorithm Library.\n",
+      "description": "The LSC Algorithm Library Applications for gravitational wave data\nanalysis.  This package contains applications that are built on tools\nin the LSC Algorithm Library.",
       "dev_url": "https://git.ligo.org/lscsoft/lalsuite.git",
       "doc_url": "https://lscsoft.docs.ligo.org/lalsuite/",
       "home": "https://wiki.ligo.org/Computing/LALSuite",
       "license": "GPL-3.0-or-later",
-      "license_family": "GPL",
+      "license_family": "GPL-3.0-or-later",
       "license_file": "COPYING",
       "summary": "LSC Algorithm Library Suite"
     },
     "build": {
       "noarch": "python",
       "number": "0",
-      "script": "PYTHON -m pip install -vv ."
+      "script": [
+        "cd ${{ RECIPE_DIR }}",
+        "${{ PYTHON }} -m pip install -vv ."
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -154,59 +197,99 @@
         "skymoo"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python"
+        },
+        "name": "lalsuite",
+        "requirements": {
+          "build": [],
+          "host": [
+            "pip",
+            "python 3.11.*",
+            "setuptools >=38.3.0",
+            "wheel"
+          ],
+          "run": [
+            "python >=3.11",
+            "lal 8.0.1.*",
+            "lalframe 3.1.1.*",
+            "lalmetaio 4.1.1.*",
+            "lalsimulation 7.0.1.*",
+            "lalburst 3.0.1.*",
+            "lalinspiral 5.1.1.*",
+            "lalpulsar 8.0.1.*",
+            "lalinference 5.0.1.*",
+            "lalapps 11.0.0.*"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "lal",
+                "lalframe",
+                "lalmetaio",
+                "lalsimulation",
+                "lalburst",
+                "lalinspiral",
+                "lalpulsar",
+                "lalinference",
+                "lalapps"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "setup.cfg",
+                "test_component_versions.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "pytest"
+              ]
+            },
+            "script": "pytest test_component_versions.py -v -ra -k 'not lalapps'"
+          }
+        ],
+        "version": "8.0.2"
+      }
+    ],
     "package": {
       "name": "lalsuite",
-      "version": "7.26"
+      "version": "8.0.2"
     },
     "requirements": {
       "host": [
         "pip",
-        "python 3.10",
+        "python 3.11.*",
         "setuptools >=38.3.0",
         "wheel"
       ],
       "run": [
-        "python >=3.10",
-        "lal 7.7.0.*",
-        "lalframe 3.0.7.*",
-        "lalmetaio 4.0.6.*",
-        "lalsimulation 6.2.0.*",
-        "lalburst 2.0.7.*",
-        "lalinspiral 5.0.3.*",
-        "lalpulsar 7.1.1.*",
-        "lalinference 4.1.9.*",
-        "lalapps 10.1.0.*"
+        "python >=3.11",
+        "lal 8.0.1.*",
+        "lalframe 3.1.1.*",
+        "lalmetaio 4.1.1.*",
+        "lalsimulation 7.0.1.*",
+        "lalburst 3.0.1.*",
+        "lalinspiral 5.1.1.*",
+        "lalpulsar 8.0.1.*",
+        "lalinference 5.0.1.*",
+        "lalapps 11.0.0.*"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
-      "sha256": "1b01b78309e59dba6497d7eafe4bee59b28b7654781f02b27c3629245fca3544",
-      "url": "https://software.igwn.org/sources/source/lalsuite/lalsuite-7.26.tar.gz"
-    },
-    "test": {
-      "commands": [
-        "python -m pip check",
-        "python -m pip show lalsuite"
-      ],
-      "imports": [
-        "lal",
-        "lalframe",
-        "lalmetaio",
-        "lalsimulation",
-        "lalburst",
-        "lalinspiral",
-        "lalpulsar",
-        "lalinference",
-        "lalapps"
-      ],
-      "requires": [
-        "pip",
-        "python 3.10",
-        "pytest"
-      ],
-      "source_files": [
-        "setup.cfg"
-      ]
+      "sha256": "fbf411922746fffa84c1e7a93b1a7a1ca1b68f48f12779655d41ce6dd2d35cca",
+      "url": "https://software.igwn.org/sources/source/lalsuite/lalsuite-metapackage-8.0.2.tar.xz"
     }
   },
   "name": "lalsuite",
@@ -216,14 +299,14 @@
       "lalsuite"
     ]
   },
-  "parsing_error": "feedstock parsing error: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error UnboundLocalError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 781, in load_feedstock_local\n    return populate_feedstock_attributes(\n        name,\n    ...<6 lines>...\n        use_container=False,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 425, in populate_feedstock_attributes\n    parse_recipe_yaml(\n    ~~~~~~~~~~~~~~~~~^\n        recipe_yaml,\n        ^^^^^^^^^^^^\n    ...<2 lines>...\n        use_container=use_container,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ),\n    ^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 379, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n        text,\n    ...<2 lines>...\n        cbc_path=cbc_path,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 556, in parse_recipe_yaml_local\n    parsed_recipes = _parse_recipes(rendered_recipes)  # type: ignore[arg-type]\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 845, in _parse_recipes\n    \"source\": source_data,\n              ^^^^^^^^^^^\nUnboundLocalError: cannot access local variable 'source_data' where it is not associated with a value\n\nTraceback (most recent call last):\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/make_graph.py\", line 140, in try_load_feedstock\n    data = load_feedstock(name, attrs.data, mark_not_archived=mark_not_archived)\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 902, in load_feedstock\n    return load_feedstock_containerized(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 854, in load_feedstock_containerized\n    data = run_container_operation(\n        args,\n    ...<2 lines>...\n        extra_container_args=get_container_env_command_args(),\n    )\n  File \"/home/runner/micromamba/envs/conda-forge-bot/lib/python3.14/site-packages/conda_forge_feedstock_ops/container_utils.py\", line 218, in run_container_operation\n    raise ContainerRuntimeError(\n    ...<6 lines>...\n    )\nconda_forge_feedstock_ops.container_utils.ContainerRuntimeError: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error UnboundLocalError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 781, in load_feedstock_local\n    return populate_feedstock_attributes(\n        name,\n    ...<6 lines>...\n        use_container=False,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 425, in populate_feedstock_attributes\n    parse_recipe_yaml(\n    ~~~~~~~~~~~~~~~~~^\n        recipe_yaml,\n        ^^^^^^^^^^^^\n    ...<2 lines>...\n        use_container=use_container,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ),\n    ^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 379, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n        text,\n    ...<2 lines>...\n        cbc_path=cbc_path,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 556, in parse_recipe_yaml_local\n    parsed_recipes = _parse_recipes(rendered_recipes)  # type: ignore[arg-type]\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 845, in _parse_recipes\n    \"source\": source_data,\n              ^^^^^^^^^^^\nUnboundLocalError: cannot access local variable 'source_data' where it is not associated with a value\n\n",
+  "parsing_error": false,
   "platforms": [
     "linux_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/lalsuite.json"
   },
-  "raw_meta_yaml": "{% set name = \"lalsuite\" %}\n{% set version = \"7.26\" %}\n\n{% set python_min = \"3.10\" %}\n\n# sub-package versions\n{% set lal_version = \"7.7.0\" %}\n{% set lalframe_version = \"3.0.7\" %}\n{% set lalmetaio_version = \"4.0.6\" %}\n{% set lalsimulation_version = \"6.2.0\" %}\n{% set lalburst_version = \"2.0.7\" %}\n{% set lalinspiral_version = \"5.0.3\" %}\n{% set lalinference_version = \"4.1.9\" %}\n{% set lalpulsar_version = \"7.1.1\" %}\n{% set lalapps_version = \"10.1.0\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://software.igwn.org/sources/source/lalsuite/{{ name }}-{{ version }}.tar.gz\n  sha256: 1b01b78309e59dba6497d7eafe4bee59b28b7654781f02b27c3629245fca3544\n\nbuild:\n  noarch: python\n  number: 0\n  script: {{ PYTHON }} -m pip install -vv .\n\nrequirements:\n  host:\n    - pip\n    - python {{ python_min }}\n    - setuptools >=38.3.0\n    - wheel\n  run:\n    - python >={{ python_min }}\n    - lal {{ lal_version }}.*\n    - lalframe {{ lalframe_version }}.*\n    - lalmetaio {{ lalmetaio_version }}.*\n    - lalsimulation {{ lalsimulation_version }}.*\n    - lalburst {{ lalburst_version }}.*\n    - lalinspiral {{ lalinspiral_version }}.*\n    - lalpulsar {{ lalpulsar_version }}.*\n    - lalinference {{ lalinference_version }}.*\n    - lalapps {{ lalapps_version }}.*\n\ntest:\n  imports:\n    - lal\n    - lalframe\n    - lalmetaio\n    - lalsimulation\n    - lalburst\n    - lalinspiral\n    - lalpulsar\n    - lalinference\n    - lalapps\n  requires:\n    - pip\n    - python {{ python_min }}\n    # needed for run_test.py\n    - pytest\n  source_files:\n    # needed for run_test.py\n    - setup.cfg\n  commands:\n    # run_test.py checks that the versions are up-to-date\n    # check requirements\n    - python -m pip check\n    # show metadata\n    - python -m pip show lalsuite\n\nabout:\n  home: https://wiki.ligo.org/Computing/LALSuite\n  doc_url: https://lscsoft.docs.ligo.org/lalsuite/\n  dev_url: https://git.ligo.org/lscsoft/lalsuite.git\n  license: GPL-3.0-or-later\n  license_family: GPL\n  license_file: COPYING\n  summary: LSC Algorithm Library Suite\n  description: |\n    The LSC Algorithm Library Applications for gravitational wave data\n    analysis.  This package contains applications that are built on tools\n    in the LSC Algorithm Library.\n\nextra:\n  recipe-maintainers:\n    - duncanmmacleod\n    - skymoo\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"8.0.2\"\n\n  # Component versions\n  lal_version: \"8.0.1\"\n  lalframe_version: \"3.1.1\"\n  lalmetaio_version: \"4.1.1\"\n  lalsimulation_version: \"7.0.1\"\n  lalburst_version: \"3.0.1\"\n  lalinspiral_version: \"5.1.1\"\n  lalinference_version: \"5.0.1\"\n  lalpulsar_version: \"8.0.1\"\n  lalapps_version: \"11.0.0\"\n\npackage:\n  name: lalsuite\n  version: ${{ version }}\n\nsource:\n  url: https://software.igwn.org/sources/source/lalsuite/lalsuite-metapackage-${{ version }}.tar.xz\n  sha256: fbf411922746fffa84c1e7a93b1a7a1ca1b68f48f12779655d41ce6dd2d35cca\n\nbuild:\n  noarch: python\n  number: 0\n  script:\n    - cd ${{ RECIPE_DIR }}\n    - ${{ PYTHON }} -m pip install -vv .\n\nrequirements:\n  host:\n    - pip\n    - python ${{ python_min }}.*\n    - setuptools >=38.3.0\n    - wheel\n  run:\n    - python >=${{ python_min }}\n    - lal ${{ lal_version }}.*\n    - lalframe ${{ lalframe_version }}.*\n    - lalmetaio ${{ lalmetaio_version }}.*\n    - lalsimulation ${{ lalsimulation_version }}.*\n    - lalburst ${{ lalburst_version }}.*\n    - lalinspiral ${{ lalinspiral_version }}.*\n    - lalpulsar ${{ lalpulsar_version }}.*\n    - lalinference ${{ lalinference_version }}.*\n    - lalapps ${{ lalapps_version }}.*\n\ntests:\n  - python:\n      imports:\n        - lal\n        - lalframe\n        - lalmetaio\n        - lalsimulation\n        - lalburst\n        - lalinspiral\n        - lalpulsar\n        - lalinference\n        - lalapps\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - files:\n      recipe:\n        - setup.cfg\n        - test_component_versions.py\n    requirements:\n      run:\n        - pytest\n    script:\n      - pytest test_component_versions.py -v -ra -k 'not lalapps'\n\nabout:\n  summary: LSC Algorithm Library Suite\n  description: |\n    The LSC Algorithm Library Applications for gravitational wave data\n    analysis.  This package contains applications that are built on tools\n    in the LSC Algorithm Library.\n  homepage: https://wiki.ligo.org/Computing/LALSuite\n  repository: https://git.ligo.org/lscsoft/lalsuite.git\n  documentation: https://lscsoft.docs.ligo.org/lalsuite/\n  license: GPL-3.0-or-later\n  license_file: COPYING\n\nextra:\n  recipe-maintainers:\n    - duncanmmacleod\n    - skymoo\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -275,8 +358,7 @@
       "__set__": true,
       "elements": [
         "pip",
-        "pytest",
-        "python"
+        "pytest"
       ]
     }
   },
@@ -291,7 +373,7 @@
       "__set__": true,
       "elements": [
         "pip",
-        "python 3.10",
+        "python 3.11.*",
         "setuptools >=38.3.0",
         "wheel"
       ]
@@ -299,29 +381,28 @@
     "run": {
       "__set__": true,
       "elements": [
-        "lal 7.7.0.*",
-        "lalapps 10.1.0.*",
-        "lalburst 2.0.7.*",
-        "lalframe 3.0.7.*",
-        "lalinference 4.1.9.*",
-        "lalinspiral 5.0.3.*",
-        "lalmetaio 4.0.6.*",
-        "lalpulsar 7.1.1.*",
-        "lalsimulation 6.2.0.*",
-        "python >=3.10"
+        "lal 8.0.1.*",
+        "lalapps 11.0.0.*",
+        "lalburst 3.0.1.*",
+        "lalframe 3.1.1.*",
+        "lalinference 5.0.1.*",
+        "lalinspiral 5.1.1.*",
+        "lalmetaio 4.1.1.*",
+        "lalpulsar 8.0.1.*",
+        "lalsimulation 7.0.1.*",
+        "python >=3.11"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
         "pip",
-        "pytest",
-        "python 3.10"
+        "pytest"
       ]
     }
   },
-  "url": "https://software.igwn.org/sources/source/lalsuite/lalsuite-7.26.tar.gz",
-  "version": "7.26",
+  "url": "https://software.igwn.org/sources/source/lalsuite/lalsuite-metapackage-8.0.2.tar.xz",
+  "version": "8.0.2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/lalsuite.json"
   }
