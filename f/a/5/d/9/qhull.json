@@ -19,12 +19,13 @@
     "provider": {
       "linux_aarch64": "default",
       "linux_ppc64le": "default",
-      "linux_riscv64": "default"
+      "linux_riscv64": "default",
+      "win_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "b93f278e1eb30c76a49b359b2a9b2b0eef4defda",
-  "feedstock_hash_ts": 1793908161,
+  "feedstock_hash": "932673488837ae44336d71cca145def2d5d62d23",
+  "feedstock_hash_ts": 1794563756,
   "feedstock_name": "qhull",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -655,6 +656,38 @@
             "test -f $PREFIX/lib/libqhullstatic_r.a"
           ]
         }
+      },
+      {
+        "name": "qhull"
+      },
+      {
+        "build": {
+          "always_include_files": [
+            "Library/lib/cmake/Qhull/"
+          ],
+          "skip": true
+        },
+        "name": "qhull-static",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": [
+            "qhull"
+          ]
+        },
+        "script": "build_static.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libqhullcpp.a",
+            "test -f $PREFIX/lib/libqhullstatic.a",
+            "test -f $PREFIX/lib/libqhullstatic_r.a"
+          ]
+        }
       }
     ],
     "package": {
@@ -944,7 +977,8 @@
     "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/qhull.json"
@@ -1113,6 +1147,119 @@
     }
   },
   "win_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "qhull"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/qhull/qhull",
+      "doc_url": "http://www.qhull.org/html",
+      "home": "http://www.qhull.org/",
+      "license": "LicenseRef-Qhull",
+      "license_file": "COPYING.txt",
+      "summary": "Qhull computes the convex hull"
+    },
+    "build": {
+      "number": "6",
+      "run_exports": [
+        "qhull"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "sirokujira",
+        "xhochy"
+      ]
+    },
+    "outputs": [
+      {
+        "name": "qhull"
+      },
+      {
+        "build": {
+          "always_include_files": [
+            "Library/lib/cmake/Qhull/"
+          ],
+          "skip": true
+        },
+        "name": "qhull-static",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [],
+          "run": [
+            "qhull"
+          ]
+        },
+        "script": "build_static.sh",
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libqhullcpp.a",
+            "test -f $PREFIX/lib/libqhullstatic.a",
+            "test -f $PREFIX/lib/libqhullstatic_r.a"
+          ]
+        }
+      }
+    ],
+    "package": {
+      "name": "qhull",
+      "version": "2020.2"
+    },
+    "requirements": {
+      "build": [
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "cmake",
+        "ninja"
+      ],
+      "host": [],
+      "run": []
+    },
+    "schema_version": 0,
+    "source": {
+      "patches": [
+        "fix-osx-rpath.patch",
+        "windows.patch"
+      ],
+      "sha256": "59356b229b768e6e2b09a701448bfa222c37b797a84f87f864f97462d8dbc7c5",
+      "url": "https://github.com/qhull/qhull/archive/2020.2.tar.gz"
+    },
+    "test": {
+      "commands": [
+        "if not exist %PREFIX%\\\\Library\\\\lib\\\\qhull_r.lib exit 1",
+        "if not exist %PREFIX%\\\\Library\\\\bin\\\\qhull_r.dll exit 1",
+        "rbox c P0 D2 | qvoronoi s o",
+        "rbox c | qconvex FQ FV n | qhalf Fp",
+        "rbox 1000 D3 | qhull C-1e-4 FO Ts"
+      ]
+    }
+  },
+  "win_arm64_requirements": {
     "build": {
       "__set__": true,
       "elements": [
