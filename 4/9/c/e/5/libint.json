@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nlibboost_headers:\n- '1.90'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\n",
+  "ci_support_linux_64_am_typefull.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nam_type:\n- full\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nlibboost_headers:\n- '1.90'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\n",
   "ci_support_migrations": {
     "libboost190": {
       "migration_number": 1,
@@ -47,8 +47,8 @@
       ]
     }
   },
-  "feedstock_hash": "79705e96e8a776aa4967d962a4ac555b11869834",
-  "feedstock_hash_ts": 1793503990,
+  "feedstock_hash": "7ca11498cc34b5e377bbc4e4dd3f1ace0756f3e2",
+  "feedstock_hash_ts": 1794635414,
   "feedstock_name": "libint",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -66,7 +66,10 @@
       "summary": "Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions"
     },
     "build": {
-      "number": "2",
+      "force_use_keys": [
+        "am_type"
+      ],
+      "number": "0",
       "script_env": [
         "ENABLE_FORTRAN=ON"
       ]
@@ -81,15 +84,10 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/libint2.h*",
-          "include/libint2",
           "lib/libint2.so*",
-          "lib/cmake/libint2",
           "share/libint"
         ],
         "name": "libint",
@@ -109,20 +107,81 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -f $PREFIX/include/libint2.h",
             "test -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
             "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
-            "test ! -f $PREFIX/include/libint_f.mod",
-            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "cd tests/hartree-fock",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
             "cmake --build build",
+            "set -o pipefail",
             "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
           ],
           "files": [
@@ -132,9 +191,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -146,14 +203,12 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/*.mod"
+          "lib/libint2_f.so*"
         ],
-        "name": "libint-fortran-devel",
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -172,6 +227,216 @@
         "test": {
           "commands": [
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -e $PREFIX/include/libint_f.mod",
+            "test -f $PREFIX/include/libint2.h"
+          ]
+        }
+      },
+      {
+        "build": {
+          "string": "lite_h1234567_0"
+        },
+        "files": [
+          "lib/libint2.so*",
+          "share/libint"
+        ],
+        "name": "libint",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "libboost-headers",
+            "eigen",
+            "llvm-openmp"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "lite_h1234567_0"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.h",
+            "test -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "lite_h1234567_0"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "cd tests/hartree-fock",
+            "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
+            "cmake --build build",
+            "set -o pipefail",
+            "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
+          ],
+          "files": [
+            "tests/hartree-fock/CMakeLists.txt"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "python 3.12"
+          ],
+          "source_files": [
+            "features",
+            "tests/hartree-fock/h2o_rotated.xyz",
+            "tests/hartree-fock/hartree-fock++.cc",
+            "tests/hartree-fock/hartree-fock++-validate.py"
+          ]
+        }
+      },
+      {
+        "build": {
+          "string": "lite_h1234567_0"
+        },
+        "files": [
+          "lib/libint2_f.so*"
+        ],
+        "name": "libint-fortran",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "fortran_compiler_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "libint"
+          ],
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "lite_h1234567_0"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -e $PREFIX/include/libint_f.mod",
             "test -f $PREFIX/include/libint2.h"
           ]
@@ -180,7 +445,7 @@
     ],
     "package": {
       "name": "libint-split",
-      "version": "2.13.1"
+      "version": "2.14.1"
     },
     "requirements": {
       "build": [
@@ -199,8 +464,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "48393150c824ef0ccd9823dceca859f4a5b2eb12c4c50c0506a0a9cb71bf8a11",
-      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-4-7-7-6_mm10f12ob2_0.tgz"
+      "sha256": "44c8ab8c062e6e8e19ed005f68c2369a8d0c30a6c307635a25651a8833767766",
+      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-4-4-5-5_mm10f12ob2_0.tgz"
     }
   },
   "linux_64_requirements": {
@@ -227,7 +492,11 @@
     "run": {
       "__set__": true,
       "elements": [
-        "libint"
+        "eigen",
+        "libboost-headers",
+        "libint",
+        "libint-devel",
+        "libint-fortran"
       ]
     },
     "test": {
@@ -235,8 +504,6 @@
       "elements": [
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-headers",
         "ninja",
         "python"
       ]
@@ -257,7 +524,10 @@
       "summary": "Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions"
     },
     "build": {
-      "number": "2",
+      "force_use_keys": [
+        "am_type"
+      ],
+      "number": "100",
       "script_env": [
         "ENABLE_FORTRAN=ON"
       ]
@@ -272,15 +542,10 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/libint2.h*",
-          "include/libint2",
           "lib/libint2.so*",
-          "lib/cmake/libint2",
           "share/libint"
         ],
         "name": "libint",
@@ -300,20 +565,81 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -f $PREFIX/include/libint2.h",
             "test -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
             "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
-            "test ! -f $PREFIX/include/libint_f.mod",
-            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "cd tests/hartree-fock",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
             "cmake --build build",
+            "set -o pipefail",
             "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
           ],
           "files": [
@@ -323,9 +649,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -337,14 +661,12 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/*.mod"
+          "lib/libint2_f.so*"
         ],
-        "name": "libint-fortran-devel",
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -363,6 +685,36 @@
         "test": {
           "commands": [
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -e $PREFIX/include/libint_f.mod",
             "test -f $PREFIX/include/libint2.h"
           ]
@@ -371,7 +723,7 @@
     ],
     "package": {
       "name": "libint-split",
-      "version": "2.13.1"
+      "version": "2.14.1"
     },
     "requirements": {
       "build": [
@@ -390,8 +742,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "48393150c824ef0ccd9823dceca859f4a5b2eb12c4c50c0506a0a9cb71bf8a11",
-      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-4-7-7-6_mm10f12ob2_0.tgz"
+      "sha256": "e2ebd1359a9ac3b4a04f4249e356c7688d1e2e5b46a3ad07ac8601b1c030aaa4",
+      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-4-7-7-6_mm10f12ob2_0.tgz"
     }
   },
   "linux_aarch64_requirements": {
@@ -418,7 +770,11 @@
     "run": {
       "__set__": true,
       "elements": [
-        "libint"
+        "eigen",
+        "libboost-headers",
+        "libint",
+        "libint-devel",
+        "libint-fortran"
       ]
     },
     "test": {
@@ -426,8 +782,6 @@
       "elements": [
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-headers",
         "ninja",
         "python"
       ]
@@ -448,7 +802,10 @@
       "summary": "Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions"
     },
     "build": {
-      "number": "2",
+      "force_use_keys": [
+        "am_type"
+      ],
+      "number": "100",
       "script_env": [
         "ENABLE_FORTRAN=ON"
       ]
@@ -463,15 +820,10 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/libint2.h*",
-          "include/libint2",
           "lib/libint2.so*",
-          "lib/cmake/libint2",
           "share/libint"
         ],
         "name": "libint",
@@ -491,20 +843,81 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -f $PREFIX/include/libint2.h",
             "test -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
             "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
-            "test ! -f $PREFIX/include/libint_f.mod",
-            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "cd tests/hartree-fock",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
             "cmake --build build",
+            "set -o pipefail",
             "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
           ],
           "files": [
@@ -514,9 +927,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -528,14 +939,12 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/*.mod"
+          "lib/libint2_f.so*"
         ],
-        "name": "libint-fortran-devel",
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -554,6 +963,36 @@
         "test": {
           "commands": [
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -e $PREFIX/include/libint_f.mod",
             "test -f $PREFIX/include/libint2.h"
           ]
@@ -562,7 +1001,7 @@
     ],
     "package": {
       "name": "libint-split",
-      "version": "2.13.1"
+      "version": "2.14.1"
     },
     "requirements": {
       "build": [
@@ -581,8 +1020,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "48393150c824ef0ccd9823dceca859f4a5b2eb12c4c50c0506a0a9cb71bf8a11",
-      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-4-7-7-6_mm10f12ob2_0.tgz"
+      "sha256": "a2e00da4daedb616f8d97f44504ae2b44658705c261e7635cdc10dbbe5fac939",
+      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-7-7_mm10f12ob2_0.tgz"
     }
   },
   "linux_ppc64le_requirements": {
@@ -609,7 +1048,11 @@
     "run": {
       "__set__": true,
       "elements": [
-        "libint"
+        "eigen",
+        "libboost-headers",
+        "libint",
+        "libint-devel",
+        "libint-fortran"
       ]
     },
     "test": {
@@ -617,8 +1060,6 @@
       "elements": [
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-headers",
         "ninja",
         "python"
       ]
@@ -639,7 +1080,10 @@
       "summary": "Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions"
     },
     "build": {
-      "number": "2",
+      "force_use_keys": [
+        "am_type"
+      ],
+      "number": "100",
       "script_env": [
         "ENABLE_FORTRAN=ON",
         "ENABLE_FORTRAN=OFF"
@@ -655,15 +1099,10 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/libint2.h*",
-          "include/libint2",
           "lib/libint2.so*",
-          "lib/cmake/libint2",
           "share/libint"
         ],
         "name": "libint",
@@ -683,20 +1122,81 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -f $PREFIX/include/libint2.h",
             "test -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
             "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
-            "test ! -f $PREFIX/include/libint_f.mod",
-            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "cd tests/hartree-fock",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
             "cmake --build build",
+            "set -o pipefail",
             "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
           ],
           "files": [
@@ -706,9 +1206,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -720,14 +1218,12 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/*.mod"
+          "lib/libint2_f.so*"
         ],
-        "name": "libint-fortran-devel",
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -746,6 +1242,36 @@
         "test": {
           "commands": [
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -e $PREFIX/include/libint_f.mod",
             "test -f $PREFIX/include/libint2.h"
           ]
@@ -753,15 +1279,10 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "lite_h1234567_0"
         },
         "files": [
-          "include/libint2.h*",
-          "include/libint2",
           "lib/libint2.so*",
-          "lib/cmake/libint2",
           "share/libint"
         ],
         "name": "libint",
@@ -781,20 +1302,81 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "lite_h1234567_0"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -f $PREFIX/include/libint2.h",
             "test -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
             "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
-            "test ! -f $PREFIX/include/libint_f.mod",
-            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "lite_h1234567_0"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "cd tests/hartree-fock",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
             "cmake --build build",
+            "set -o pipefail",
             "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
           ],
           "files": [
@@ -804,9 +1386,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -818,14 +1398,12 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
+          "string": "lite_h1234567_0"
         },
         "files": [
-          "include/*.mod"
+          "lib/libint2_f.so*"
         ],
-        "name": "libint-fortran-devel",
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -844,6 +1422,36 @@
         "test": {
           "commands": [
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "lite_h1234567_0"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -e $PREFIX/include/libint_f.mod",
             "test -f $PREFIX/include/libint2.h"
           ]
@@ -851,15 +1459,10 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/libint2.h*",
-          "include/libint2",
           "lib/libint2.so*",
-          "lib/cmake/libint2",
           "share/libint"
         ],
         "name": "libint",
@@ -879,71 +1482,16 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
-            "test -f $PREFIX/include/libint2.h",
-            "test -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
-            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "test ! -f $PREFIX/include/libint_f.mod",
-            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT",
-            "cd tests/hartree-fock",
-            "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
-            "cmake --build build",
-            "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
-          ],
-          "files": [
-            "tests/hartree-fock/CMakeLists.txt"
-          ],
-          "requires": [
-            "cxx_compiler_stub",
-            "cmake",
-            "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
-          ],
-          "source_files": [
-            "features",
-            "tests/hartree-fock/h2o_rotated.xyz",
-            "tests/hartree-fock/hartree-fock++.cc",
-            "tests/hartree-fock/hartree-fock++-validate.py"
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
-        },
-        "files": [
-          "include/*.mod"
-        ],
-        "name": "libint-fortran-devel",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "fortran_compiler_stub",
-            "cmake",
-            "ninja"
-          ],
-          "host": [
-            "libint"
-          ],
-          "run": [
-            "libint"
-          ]
-        },
-        "test": {
-          "commands": [
-            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
-            "test -e $PREFIX/include/libint_f.mod",
-            "test -f $PREFIX/include/libint2.h"
+            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT"
           ]
         }
       },
@@ -951,13 +1499,150 @@
         "build": {
           "run_exports": [
             "libint"
-          ]
+          ],
+          "string": "full_h1234567_100"
         },
         "files": [
           "include/libint2.h*",
-          "include/libint2",
-          "lib/libint2.*dylib",
-          "lib/cmake/libint2",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.h",
+            "test -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "cd tests/hartree-fock",
+            "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
+            "cmake --build build",
+            "set -o pipefail",
+            "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
+          ],
+          "files": [
+            "tests/hartree-fock/CMakeLists.txt"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "python 3.12"
+          ],
+          "source_files": [
+            "features",
+            "tests/hartree-fock/h2o_rotated.xyz",
+            "tests/hartree-fock/hartree-fock++.cc",
+            "tests/hartree-fock/hartree-fock++-validate.py"
+          ]
+        }
+      },
+      {
+        "build": {
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "lib/libint2_f.so*"
+        ],
+        "name": "libint-fortran",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "fortran_compiler_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "libint"
+          ],
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -e $PREFIX/include/libint_f.mod",
+            "test -f $PREFIX/include/libint2.h"
+          ]
+        }
+      },
+      {
+        "build": {
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "lib/libint2.so*",
           "share/libint"
         ],
         "name": "libint",
@@ -977,71 +1662,16 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
-            "test -f $PREFIX/include/libint2.h",
-            "test -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
-            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "test ! -f $PREFIX/include/libint_f.mod",
-            "otool -L $PREFIX/lib/libint2$SHLIB_EXT",
-            "cd tests/hartree-fock",
-            "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
-            "cmake --build build",
-            "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
-          ],
-          "files": [
-            "tests/hartree-fock/CMakeLists.txt"
-          ],
-          "requires": [
-            "cxx_compiler_stub",
-            "cmake",
-            "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
-          ],
-          "source_files": [
-            "features",
-            "tests/hartree-fock/h2o_rotated.xyz",
-            "tests/hartree-fock/hartree-fock++.cc",
-            "tests/hartree-fock/hartree-fock++-validate.py"
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
-        },
-        "files": [
-          "include/*.mod"
-        ],
-        "name": "libint-fortran-devel",
-        "requirements": {
-          "build": [
-            "c_stdlib_stub",
-            "c_compiler_stub",
-            "fortran_compiler_stub",
-            "cmake",
-            "ninja"
-          ],
-          "host": [
-            "libint"
-          ],
-          "run": [
-            "libint"
-          ]
-        },
-        "test": {
-          "commands": [
-            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
-            "test -e $PREFIX/include/libint_f.mod",
-            "test -f $PREFIX/include/libint2.h"
+            "ldd -v $PREFIX/lib/libint2$SHLIB_EXT"
           ]
         }
       },
@@ -1049,13 +1679,151 @@
         "build": {
           "run_exports": [
             "libint"
-          ]
+          ],
+          "string": "full_h1234567_100"
         },
         "files": [
           "include/libint2.h*",
-          "include/libint2",
-          "lib/libint2.*dylib",
-          "lib/cmake/libint2",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.h",
+            "test -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "cd tests/hartree-fock",
+            "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
+            "cmake --build build",
+            "set -o pipefail",
+            "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
+          ],
+          "files": [
+            "tests/hartree-fock/CMakeLists.txt"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "python 3.12"
+          ],
+          "source_files": [
+            "features",
+            "tests/hartree-fock/h2o_rotated.xyz",
+            "tests/hartree-fock/hartree-fock++.cc",
+            "tests/hartree-fock/hartree-fock++-validate.py"
+          ]
+        }
+      },
+      {
+        "build": {
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "lib/libint2_f.so*"
+        ],
+        "name": "libint-fortran",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "fortran_compiler_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "libint"
+          ],
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -e $PREFIX/include/libint_f.mod",
+            "test -f $PREFIX/include/libint2.h"
+          ]
+        }
+      },
+      {
+        "build": {
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "lib/libint2.dylib",
+          "lib/libint2.3.dylib",
           "share/libint"
         ],
         "name": "libint",
@@ -1075,20 +1843,81 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "otool -L $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -f $PREFIX/include/libint2.h",
             "test -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
             "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
-            "test ! -f $PREFIX/include/libint_f.mod",
-            "otool -L $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "cd tests/hartree-fock",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
             "cmake --build build",
+            "set -o pipefail",
             "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
           ],
           "files": [
@@ -1098,9 +1927,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -1112,14 +1939,12 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/*.mod"
+          "lib/libint2_f*.dylib"
         ],
-        "name": "libint-fortran-devel",
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -1138,6 +1963,36 @@
         "test": {
           "commands": [
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "otool -L $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -e $PREFIX/include/libint_f.mod",
             "test -f $PREFIX/include/libint2.h"
           ]
@@ -1145,16 +2000,192 @@
       },
       {
         "build": {
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "lib/libint2.dylib",
+          "lib/libint2.3.dylib",
+          "share/libint"
+        ],
+        "name": "libint",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "libboost-headers",
+            "eigen",
+            "llvm-openmp"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "otool -L $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
           "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
             "libint"
           ]
         },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.h",
+            "test -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "cd tests/hartree-fock",
+            "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
+            "cmake --build build",
+            "set -o pipefail",
+            "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
+          ],
+          "files": [
+            "tests/hartree-fock/CMakeLists.txt"
+          ],
+          "requires": [
+            "cxx_compiler_stub",
+            "cmake",
+            "ninja",
+            "python 3.12"
+          ],
+          "source_files": [
+            "features",
+            "tests/hartree-fock/h2o_rotated.xyz",
+            "tests/hartree-fock/hartree-fock++.cc",
+            "tests/hartree-fock/hartree-fock++-validate.py"
+          ]
+        }
+      },
+      {
+        "build": {
+          "string": "full_h1234567_100"
+        },
         "files": [
-          "Library/include/libint2.h*",
-          "Library/include/libint2",
+          "lib/libint2_f*.dylib"
+        ],
+        "name": "libint-fortran",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "fortran_compiler_stub",
+            "cmake",
+            "ninja"
+          ],
+          "host": [
+            "libint"
+          ],
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "otool -L $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -e $PREFIX/include/libint_f.mod",
+            "test -f $PREFIX/include/libint2.h"
+          ]
+        }
+      },
+      {
+        "build": {
+          "string": "full_h1234567_100"
+        },
+        "files": [
           "Library/bin/int2*",
           "Library/lib/int2*",
-          "Library/lib/cmake/libint2",
           "Library/share/libint"
         ],
         "name": "libint",
@@ -1173,16 +2204,67 @@
         },
         "test": {
           "commands": [
-            "dir %PREFIX%\\\\Library",
-            "dir %PREFIX%\\\\Library\\\\include",
             "if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1",
             "if exist %PREFIX%\\\\Library\\\\bin\\\\int2.dll exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\engine.h exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\boost\\\\preprocessor.hpp exit 1",
+            "if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\2.14.1\\\\basis\\\\sto-6g.g94 exit 1",
+            "if exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "Library/include/libint2.h*",
+          "Library/include/libint2",
+          "Library/lib/cmake/libint2"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1",
             "if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1",
             "if not exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\engine.h exit 1",
             "if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\boost\\\\preprocessor.hpp exit 1",
-            "if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\2.13.1\\\\basis\\\\sto-6g.g94 exit 1",
+            "if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\2.14.1\\\\basis\\\\sto-6g.g94 exit 1",
             "if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1",
-            "if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1",
+            "if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.hpp exit 1",
+            "if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1",
             "cd tests/hartree-fock",
             "set \"LDFLAGS=%LDFLAGS:/link =%\"",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"%LIBRARY_PREFIX%\" -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release",
@@ -1196,9 +2278,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -1210,15 +2290,11 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ],
-          "skip": true
+          "skip": true,
+          "string": "full_h1234567_100"
         },
-        "files": [
-          "Library/include/*mod"
-        ],
-        "name": "libint-fortran-devel",
+        "files": null,
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -1235,17 +2311,33 @@
           ]
         },
         "test": {
-          "commands": [
-            "if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1",
-            "if not exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1",
-            "if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1"
+          "commands": null
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "skip": true,
+          "string": "full_h1234567_100"
+        },
+        "files": null,
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
           ]
+        },
+        "test": {
+          "commands": null
         }
       }
     ],
     "package": {
       "name": "libint-split",
-      "version": "2.13.1"
+      "version": "2.14.1"
     },
     "requirements": {
       "build": [
@@ -1264,8 +2356,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "41896991a89e04dbfe207f3f27238e99d3d19ddcb2a0d4fce46c83c8f1f21467",
-      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-7-7_mm10f12ob2_0.tgz"
+      "sha256": "a2e00da4daedb616f8d97f44504ae2b44658705c261e7635cdc10dbbe5fac939",
+      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-7-7_mm10f12ob2_0.tgz"
     }
   },
   "name": "libint-split",
@@ -1284,7 +2376,10 @@
       "summary": "Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions"
     },
     "build": {
-      "number": "2",
+      "force_use_keys": [
+        "am_type"
+      ],
+      "number": "100",
       "script_env": [
         "ENABLE_FORTRAN=ON"
       ]
@@ -1299,15 +2394,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/libint2.h*",
-          "include/libint2",
-          "lib/libint2.*dylib",
-          "lib/cmake/libint2",
+          "lib/libint2.dylib",
+          "lib/libint2.3.dylib",
           "share/libint"
         ],
         "name": "libint",
@@ -1327,20 +2418,81 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "otool -L $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -f $PREFIX/include/libint2.h",
             "test -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
             "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
-            "test ! -f $PREFIX/include/libint_f.mod",
-            "otool -L $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "cd tests/hartree-fock",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
             "cmake --build build",
+            "set -o pipefail",
             "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
           ],
           "files": [
@@ -1350,9 +2502,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -1364,14 +2514,12 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/*.mod"
+          "lib/libint2_f*.dylib"
         ],
-        "name": "libint-fortran-devel",
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -1390,6 +2538,36 @@
         "test": {
           "commands": [
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "otool -L $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -e $PREFIX/include/libint_f.mod",
             "test -f $PREFIX/include/libint2.h"
           ]
@@ -1398,7 +2576,7 @@
     ],
     "package": {
       "name": "libint-split",
-      "version": "2.13.1"
+      "version": "2.14.1"
     },
     "requirements": {
       "build": [
@@ -1417,8 +2595,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "48393150c824ef0ccd9823dceca859f4a5b2eb12c4c50c0506a0a9cb71bf8a11",
-      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-4-7-7-6_mm10f12ob2_0.tgz"
+      "sha256": "e2ebd1359a9ac3b4a04f4249e356c7688d1e2e5b46a3ad07ac8601b1c030aaa4",
+      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-4-7-7-6_mm10f12ob2_0.tgz"
     }
   },
   "osx_64_requirements": {
@@ -1445,7 +2623,11 @@
     "run": {
       "__set__": true,
       "elements": [
-        "libint"
+        "eigen",
+        "libboost-headers",
+        "libint",
+        "libint-devel",
+        "libint-fortran"
       ]
     },
     "test": {
@@ -1453,8 +2635,6 @@
       "elements": [
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-headers",
         "ninja",
         "python"
       ]
@@ -1475,7 +2655,10 @@
       "summary": "Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions"
     },
     "build": {
-      "number": "2",
+      "force_use_keys": [
+        "am_type"
+      ],
+      "number": "100",
       "script_env": [
         "ENABLE_FORTRAN=ON"
       ]
@@ -1490,15 +2673,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/libint2.h*",
-          "include/libint2",
-          "lib/libint2.*dylib",
-          "lib/cmake/libint2",
+          "lib/libint2.dylib",
+          "lib/libint2.3.dylib",
           "share/libint"
         ],
         "name": "libint",
@@ -1518,20 +2697,81 @@
         },
         "test": {
           "commands": [
-            "ls -l $PREFIX/lib",
-            "ls -l $PREFIX/lib/cmake/libint2",
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
             "test ! -f $PREFIX/lib/libint2.a",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint2.h",
+            "test ! -f $PREFIX/include/libint2/engine.h",
+            "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
+            "test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
+            "test ! -f $PREFIX/include/libint_f.mod",
+            "otool -L $PREFIX/lib/libint2$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/libint2.h*",
+          "include/libint2/*.h*",
+          "include/libint2/util/*.h*",
+          "include/libint2/util/generated/*.h*",
+          "include/libint2/lcao/*.h*",
+          "include/libint2/chemistry/*.h*",
+          "lib/cmake/libint2/Find*",
+          "lib/cmake/libint2/libint2-config*",
+          "lib/cmake/libint2/libint2-targets-C*"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -f $PREFIX/include/libint2.h",
             "test -f $PREFIX/include/libint2/engine.h",
             "test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp",
-            "test -f $PREFIX/share/libint/2.13.1/basis/sto-6g.g94",
+            "test -f $PREFIX/share/libint/2.14.1/basis/sto-6g.g94",
             "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
-            "test ! -f $PREFIX/include/libint_f.mod",
-            "otool -L $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/include/libint_f.mod"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test -f $PREFIX/include/libint2.hpp",
+            "test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake",
             "cd tests/hartree-fock",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"",
             "cmake --build build",
+            "set -o pipefail",
             "./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features"
           ],
           "files": [
@@ -1541,9 +2781,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -1555,14 +2793,12 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "include/*.mod"
+          "lib/libint2_f*.dylib"
         ],
-        "name": "libint-fortran-devel",
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -1581,6 +2817,36 @@
         "test": {
           "commands": [
             "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
+            "test ! -e $PREFIX/include/libint_f.mod",
+            "test ! -f $PREFIX/include/libint2.h",
+            "otool -L $PREFIX/lib/libint2_f$SHLIB_EXT"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "include/*.mod",
+          "include/libint2/fortran/*",
+          "lib/cmake/libint2/libint2-targets-Fortran*"
+        ],
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
+          ]
+        },
+        "test": {
+          "commands": [
+            "test -f $PREFIX/lib/libint2$SHLIB_EXT",
+            "test -f $PREFIX/lib/libint2_f$SHLIB_EXT",
             "test -e $PREFIX/include/libint_f.mod",
             "test -f $PREFIX/include/libint2.h"
           ]
@@ -1589,7 +2855,7 @@
     ],
     "package": {
       "name": "libint-split",
-      "version": "2.13.1"
+      "version": "2.14.1"
     },
     "requirements": {
       "build": [
@@ -1608,8 +2874,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "48393150c824ef0ccd9823dceca859f4a5b2eb12c4c50c0506a0a9cb71bf8a11",
-      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-4-7-7-6_mm10f12ob2_0.tgz"
+      "sha256": "e2ebd1359a9ac3b4a04f4249e356c7688d1e2e5b46a3ad07ac8601b1c030aaa4",
+      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-4-7-7-6_mm10f12ob2_0.tgz"
     }
   },
   "osx_arm64_requirements": {
@@ -1636,7 +2902,11 @@
     "run": {
       "__set__": true,
       "elements": [
-        "libint"
+        "eigen",
+        "libboost-headers",
+        "libint",
+        "libint-devel",
+        "libint-fortran"
       ]
     },
     "test": {
@@ -1644,8 +2914,6 @@
       "elements": [
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-headers",
         "ninja",
         "python"
       ]
@@ -1655,6 +2923,9 @@
     "__set__": true,
     "elements": [
       "libint",
+      "libint-cxx-devel",
+      "libint-devel",
+      "libint-fortran",
       "libint-fortran-devel"
     ]
   },
@@ -1670,7 +2941,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/libint.json"
   },
-  "raw_meta_yaml": "{% set name = \"libint\" %}\n{% set version = \"2.13.1\" %}\n{% set version_src = \"2.13.1\" %}\n\n# toy-sized source tarball for recipe testing\n{% set url_toy = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-2-2-3-2_0.tgz\" %}\n{% set sha256_toy = \"9f870d3a73701c5c69ba6f5c25ca6ce5f14303988f121bfd635511f6543ce76f\" %}\n\n# production source tarball: L/M build w/i 3h but W hangs\n{% set url_bells = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-4-7-7-6_mm10f12ob2_0.tgz\" %}\n{% set sha256_bells = \"48393150c824ef0ccd9823dceca859f4a5b2eb12c4c50c0506a0a9cb71bf8a11\" %}\n\n# production source tarball: no Hessian ERIs but works for W\n{% set url_basic = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-7-7_mm10f12ob2_0.tgz\" %}\n{% set sha256_basic = \"41896991a89e04dbfe207f3f27238e99d3d19ddcb2a0d4fce46c83c8f1f21467\" %}\n\n# production source tarball: w/Hessian but lighter E/G that works on the other L arch (could try big one again once non-emulated)\n{% set url_littlebells = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-5-5-3-6-6-4_mm10f12ob2_0.tgz\" %}\n{% set sha256_littlebells = \"8d2ee07a8178cfbca354750ef9445cfe37ecaab0d4ab95222b457587588ce9e7\" %}\n\n# source tarball pattern for upstream\n# {% set url = \"https://github.com/evaleev/{{ name }}/releases/download/v{{ version }}/{{ name }}-{{ version }}.tgz\" %}\n\npackage:\n  name: {{ name|lower }}-split\n  version: {{ version }}\n\n# NOTE TO ANYONE ITERATING BUILD CHANGES: This recipe takes many hours.\n#   But if you toggle the url and sha for all arch to url_toy and sha256_toy, it'll\n#   take <30m and all recipe tests will still pass. This is highly recommended for sanity.\n\nsource:\n  # url: {{ url_toy }}\n  url: {{ url_bells }}        # [unix and not (aarch64 or ppc64le)]\n  url: {{ url_basic }}        # [win]\n  url: {{ url_bells }}        # [aarch64 or ppc64le]\n  # sha256: {{ sha256_toy }}\n  sha256: {{ sha256_bells }}  # [unix and not (aarch64 or ppc64le)]\n  sha256: {{ sha256_basic }}  # [win]\n  sha256: {{ sha256_bells }}  # [aarch64 or ppc64le]\n  # note: source/url above is a tarball of generated library source code.\n  # * the upstream generator project is: https://github.com/evaleev/libint\n  # * tarballs aren't upstream release artifacts but have been generated with\n  #   different configuration from upstream release tag. See NOTES file.\n  # * W times out and linux-aarch64 abandons at ~5h, so these use smaller src\n\nbuild:\n  number: 2\n  script_env:\n    - ENABLE_FORTRAN=ON                   # [unix]\n    - ENABLE_FORTRAN=OFF                  # [win]\n\nrequirements:\n  build:\n    - {{ stdlib(\"c\") }}\n    - {{ compiler(\"c\") }}\n    - {{ compiler(\"cxx\") }}\n    - {{ compiler(\"fortran\") }}           # [unix]\n    - cmake\n    - ninja\n  host:\n    # note: alternately, could withhold boost here so that a vendored subset of boost headers gets installed\n    #   at include/libint2/boost/ . Then downstream builds against libint2 don't need a Boost dependency.\n    # * OpenMP only present in one L2 file\n    - libboost-headers\n    - eigen\n    - llvm-openmp                         # [unix]\n\noutputs:\n  - name: libint\n    build:\n      run_exports:\n        - {{ pin_subpackage('libint', max_pin='x') }}\n    requirements:\n      build:\n        - {{ stdlib(\"c\") }}\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - cmake\n        - ninja\n      host:\n        - libboost-headers\n        - eigen\n        - llvm-openmp                     # [unix]\n    files:\n      - include/libint2.h*                # [unix]\n      - include/libint2                   # [unix]\n      - lib/libint2{{ SHLIB_EXT }}*       # [linux]\n      - lib/libint2.*dylib                # [osx]\n      - lib/cmake/libint2                 # [unix]\n      - share/libint                      # [unix]\n      - Library/include/libint2.h*        # [win]\n      - Library/include/libint2           # [win]\n      - Library/bin/int2*                 # [win]\n      - Library/lib/int2*                 # [win]\n      - Library/lib/cmake/libint2         # [win]\n      - Library/share/libint              # [win]\n    test:\n      requires:\n        - {{ compiler(\"cxx\") }}\n        - cmake\n        - ninja\n        - python 3.12  # only for running a validation script, so suppress all but one Py version. update as necessary.\n        - eigen\n        - libboost-headers\n      files:\n        - tests/hartree-fock/CMakeLists.txt\n      source_files:\n        - features\n        - tests/hartree-fock/h2o_rotated.xyz\n        - tests/hartree-fock/hartree-fock++.cc\n        - tests/hartree-fock/hartree-fock++-validate.py\n      commands:\n        - ls -l $PREFIX/lib                                                  # [unix]\n        - ls -l $PREFIX/lib/cmake/libint2                                    # [unix]\n        - dir %PREFIX%\\\\Library                                              # [win]\n        - dir %PREFIX%\\\\Library\\\\include                                     # [win]\n        # Verify library\n        - test -f $PREFIX/lib/libint2$SHLIB_EXT                              # [unix]\n        - test ! -f $PREFIX/lib/libint2.a                                    # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1               # [win]\n        - if exist %PREFIX%\\\\Library\\\\bin\\\\int2.dll exit 1                   # [win]\n        # Verify accessories\n        - test -f $PREFIX/include/libint2.h                                  # [unix]\n        - test -f $PREFIX/include/libint2/engine.h                           # [unix]\n        - test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp           # [unix]\n        - test -f $PREFIX/share/libint/{{ version_src }}/basis/sto-6g.g94    # [unix]\n        - test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake             # [unix]\n        - test ! -f $PREFIX/include/libint_f.mod                             # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1          # [win]\n        - if not exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\engine.h exit 1  # [win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\boost\\\\preprocessor.hpp exit 1  # [win]\n        - if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\{{ version_src }}\\\\basis\\\\sto-6g.g94 exit 1  # [win]\n        - if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1  # [win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1           # [win]\n        # Inspect linkage\n        - ldd -v $PREFIX/lib/libint2$SHLIB_EXT                               # [linux and build_platform == target_platform]\n        - otool -L $PREFIX/lib/libint2$SHLIB_EXT                             # [osx]\n        # Actually test\n        - cd tests/hartree-fock\n        - set \"LDFLAGS=%LDFLAGS:/link =%\"                                    # [win]\n        - cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"          # [unix]\n        - cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"%LIBRARY_PREFIX%\" -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release  # [win]\n        - cmake --build build\n        - ./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features  # [unix]\n        - build\\\\hf++.exe h2o_rotated.xyz | python hartree-fock++-validate.py ..\\\\..\\\\features  # [win]\n\n  - name: libint-fortran-devel\n    build:\n      skip: true                          # [win]\n      run_exports:\n          # runtime needs libint, not libint-fortran-devel, but I think this is how to get *exact* libint\n        - {{ pin_subpackage('libint-fortran-devel', max_pin='x') }}\n    requirements:\n      build:\n        - {{ stdlib(\"c\") }}\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"fortran\") }}\n        - cmake\n        - ninja\n      host:\n        - {{ pin_subpackage('libint', exact=True) }}\n      run:\n        - {{ pin_subpackage('libint', exact=True) }}\n    files:\n      - include/*.mod                                                        # [unix]\n      - Library/include/*mod                                                 # [win]\n    test:\n      commands:\n        # Verify library (no F library but check C)\n        - test -f $PREFIX/lib/libint2$SHLIB_EXT                              # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1               # [win]\n        # Verify accessories\n        - test -e $PREFIX/include/libint_f.mod                               # [unix]\n        - test -f $PREFIX/include/libint2.h                                  # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1       # [win]\n        - if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1          # [win]\n        # Inspect linkage (no F library)\n\nabout:\n  home: https://github.com/evaleev/libint\n  dev_url: https://github.com/evaleev/libint\n  doc_url: https://github.com/evaleev/libint/wiki\n  license: LGPL-3.0-only\n  license_url: https://opensource.org/license/lgpl-3-0/\n  license_file:\n    - LICENSE\n    - COPYING.LESSER\n  license_family: LGPL\n  summary: \"Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions\"\n\nextra:\n  feedstock-name: libint\n  recipe-maintainers:\n    - felipeZ\n    - loriab\n\n# HISTORY\n# * pc files: output: libint, first two: files, second two: test/commands\n      # - lib/pkgconfig/libint2.pc          # [unix]\n      # - Library/lib/pkgconfig/libint2.pc  # [win]\n        # - test -f $PREFIX/lib/pkgconfig/libint2.pc                           # [unix]\n        # - if not exist %PREFIX%\\\\Library\\\\lib\\\\pkgconfig\\\\libint2.pc exit 1  # [win]\n",
+  "raw_meta_yaml": "{% set name = \"libint\" %}\n{% set version = \"2.14.1\" %}\n{% set version_src = \"2.14.1\" %}\n{% set build = 0 %}\n\n# toy-sized source tarball for recipe testing (L2 tests halting)\n{% set url_toy = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-2-2-3-2_0.tgz\" %}\n{% set sha256_toy = \"67bca412250f25470307e2f7bf7500053d2832700acd7a6e7860948b1894370a\" %}\n\n# production source tarball: L/M build w/i 3h but W can't get through it w/i 6h\n{% set url_bells = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-4-7-7-6_mm10f12ob2_0.tgz\" %}\n{% set sha256_bells = \"e2ebd1359a9ac3b4a04f4249e356c7688d1e2e5b46a3ad07ac8601b1c030aaa4\" %}\n\n# production source tarball: no Hessian ERIs but works for W. ppc64le now too\n{% set url_basic = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-7-7_mm10f12ob2_0.tgz\" %}\n{% set sha256_basic = \"a2e00da4daedb616f8d97f44504ae2b44658705c261e7635cdc10dbbe5fac939\" %}\n\n# production source tarball: [Nov 2026] Now UNUSED w/Hessian but lighter E/G that works on the other L arch (could try big one again once non-emulated)\n{% set url_littlebells = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-5-5-3-6-6-4_mm10f12ob2_0.tgz\" %}\n{% set sha256_littlebells = \"8d2ee07a8178cfbca354750ef9445cfe37ecaab0d4ab95222b457587588ce9e7\" %}\n\n# production source tarball:\n{% set url_lite = \"https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-4-4-5-5_mm10f12ob2_0.tgz\" %}\n{% set sha256_lite = \"44c8ab8c062e6e8e19ed005f68c2369a8d0c30a6c307635a25651a8833767766\" %}\n\n# source tarball pattern for upstream\n# {% set url = \"https://github.com/evaleev/{{ name }}/releases/download/v{{ version }}/{{ name }}-{{ version }}.tgz\" %}\n\npackage:\n  name: {{ name|lower }}-split\n  version: {{ version }}\n\n# NOTE TO ANYONE ITERATING BUILD CHANGES: This recipe takes many hours.\n#   But if you toggle the url and sha for all arch to url_toy and sha256_toy, it'll\n#   take <30m and all recipe tests will still pass. This is highly recommended for sanity.\n\nsource:\n  # url: {{ url_toy }}\n  url: {{ url_bells }}        # [(am_type == \"full\") and unix and not ppc64le]\n  url: {{ url_basic }}        # [(am_type == \"full\") and (win or ppc64le)]\n  url: {{ url_lite }}         # [am_type == \"lite\"]\n  # sha256: {{ sha256_toy }}\n  sha256: {{ sha256_bells }}  # [(am_type == \"full\") and unix and not ppc64le]\n  sha256: {{ sha256_basic }}  # [(am_type == \"full\") and (win or ppc64le)]\n  sha256: {{ sha256_lite }}   # [am_type == \"lite\"]\n  # note: source/url above is a tarball of generated library source code.\n  # * the upstream generator project is: https://github.com/evaleev/libint\n  # * tarballs aren't upstream release artifacts but have been generated with\n  #   different configuration from upstream release tag. See NOTES file.\n  # * W times out and linux-aarch64 abandons at ~5h, so these use smaller src\n\n{% if am_type == \"full\" %}\n{% set build = build + 100 %}\n{% endif %}\nbuild:\n  force_use_keys:\n    - am_type\n  number: {{ build }}\n  script_env:\n    - ENABLE_FORTRAN=ON                   # [unix]\n    - ENABLE_FORTRAN=OFF                  # [win]\n\nrequirements:\n  build:\n    - {{ stdlib(\"c\") }}\n    - {{ compiler(\"c\") }}\n    - {{ compiler(\"cxx\") }}\n    - {{ compiler(\"fortran\") }}           # [unix]\n    - cmake\n    - ninja\n  host:\n    # note: alternately, could withhold boost here so that a vendored subset of boost headers gets installed\n    #   at include/libint2/boost/ . Then downstream builds against libint2 don't need a Boost dependency.\n    # * OpenMP only present in one L2 file\n    - libboost-headers\n    - eigen\n    - llvm-openmp                         # [unix]\n\noutputs:\n  - name: libint\n    build:\n      string: {{ am_type }}_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}\n    requirements:\n      build:\n        - {{ stdlib(\"c\") }}\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n        - cmake\n        - ninja\n      host:\n        - libboost-headers\n        - eigen\n        - llvm-openmp                     # [unix]\n    files:\n      - lib/libint2{{ SHLIB_EXT }}*       # [linux]\n      - lib/libint2{{ SHLIB_EXT }}        # [osx]\n      - lib/libint2.3{{ SHLIB_EXT }}      # [osx]\n      - share/libint                      # [unix]\n      - Library/bin/int2*                 # [win]\n      - Library/lib/int2*                 # [win]\n      - Library/share/libint              # [win]\n    test:\n      commands:\n        # - ls -l $PREFIX/lib                                                # [unix]\n        # - dir %PREFIX%\\\\Library                                            # [win]\n        # Verify library\n        # * Note that W dll preferred but not useable at last attempt https://github.com/evaleev/libint/issues/237\n        - test -f $PREFIX/lib/libint2$SHLIB_EXT                              # [unix]\n        - test ! -f $PREFIX/lib/libint2.a                                    # [unix]\n        - test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT                          # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1               # [win]\n        - if exist %PREFIX%\\\\Library\\\\bin\\\\int2.dll exit 1                   # [win]\n        # Verify (almost no) accessories\n        - test ! -f $PREFIX/include/libint2.h                                # [unix]\n        - test ! -f $PREFIX/include/libint2/engine.h                         # [unix]\n        - test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp           # [unix]\n        - test -f $PREFIX/share/libint/{{ version_src }}/basis/sto-6g.g94    # [unix]\n        - test ! -f $PREFIX/lib/cmake/libint2/libint2-config.cmake           # [unix]\n        - test ! -f $PREFIX/include/libint_f.mod                             # [unix]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1              # [win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\engine.h exit 1      # [win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\boost\\\\preprocessor.hpp exit 1  # [win]\n        - if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\{{ version_src }}\\\\basis\\\\sto-6g.g94 exit 1  # [win]\n        - if exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1  # [win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1           # [win]\n        # Inspect linkage\n        - ldd -v $PREFIX/lib/libint2$SHLIB_EXT                               # [linux and build_platform == target_platform]\n        - otool -L $PREFIX/lib/libint2$SHLIB_EXT                             # [osx]\n\n  - name: libint-devel\n    build:\n      string: {{ am_type }}_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}\n      run_exports:\n        # libraries aren't hot-swappable (even by a *more* capable lib) and there's differences in config.h btwn full/lite\n        - {{ pin_subpackage('libint', exact=True) }}\n    requirements:\n      run:\n        - {{ pin_subpackage('libint', exact=True) }}\n    files:\n      - include/libint2.h*                    # [unix]\n      - include/libint2/*.h*                  # [unix]\n      - include/libint2/util/*.h*             # [unix]\n      - include/libint2/util/generated/*.h*   # [unix]\n      - include/libint2/lcao/*.h*             # [unix]\n      - include/libint2/chemistry/*.h*        # [unix]\n      - lib/cmake/libint2/Find*               # [unix]\n      - lib/cmake/libint2/libint2-config*     # [unix]\n      - lib/cmake/libint2/libint2-targets-C*  # [unix]\n      - Library/include/libint2.h*            # [win]\n      - Library/include/libint2               # [win]\n      - Library/lib/cmake/libint2             # [win]\n    test:\n      commands:\n        # - ls -l $PREFIX/lib                                                # [unix]\n        # - ls -l $PREFIX/lib/cmake/libint2                                  # [unix]\n        # - dir %PREFIX%\\\\Library                                            # [win]\n        # - dir %PREFIX%\\\\Library\\\\include                                   # [win]\n        # Verify library\n        - test -f $PREFIX/lib/libint2$SHLIB_EXT                              # [unix]\n        - test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT                          # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1               # [win]\n        # Verify accessories\n        - test -f $PREFIX/include/libint2.h                                  # [unix]\n        - test -f $PREFIX/include/libint2/engine.h                           # [unix]\n        - test ! -f $PREFIX/include/libint2/boost/preprocessor.hpp           # [unix]\n        - test -f $PREFIX/share/libint/{{ version_src }}/basis/sto-6g.g94    # [unix]\n        - test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake             # [unix]\n        - test ! -f $PREFIX/include/libint_f.mod                             # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1          # [win]\n        - if not exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\engine.h exit 1  # [win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\boost\\\\preprocessor.hpp exit 1  # [win]\n        - if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\{{ version_src }}\\\\basis\\\\sto-6g.g94 exit 1  # [win]\n        - if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1  # [win]\n        - if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1           # [win]\n\n  - name: libint-cxx-devel\n    build:\n      string: {{ am_type }}_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}\n      run_exports:\n        - {{ pin_subpackage('libint', exact=True) }}\n    requirements:\n      run:\n        - {{ pin_subpackage('libint-devel', exact=True) }}\n        - eigen\n        - libboost-headers\n    test:\n      requires:\n        - {{ compiler(\"cxx\") }}\n        - cmake\n        - ninja\n        - python 3.12  # only for running a validation script, so suppress all but one Py version. update as necessary.\n      files:\n        - tests/hartree-fock/CMakeLists.txt\n      source_files:\n        - features\n        - tests/hartree-fock/h2o_rotated.xyz\n        - tests/hartree-fock/hartree-fock++.cc\n        - tests/hartree-fock/hartree-fock++-validate.py\n      commands:\n        # Verify library\n        - test -f $PREFIX/lib/libint2$SHLIB_EXT                              # [unix]\n        - test ! -f $PREFIX/lib/libint2_f$SHLIB_EXT                          # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1               # [win]\n        # Verify accessories\n        - test -f $PREFIX/include/libint2.hpp                                # [unix]\n        - test -f $PREFIX/lib/cmake/libint2/libint2-config.cmake             # [unix]\n        - if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.hpp exit 1        # [win]\n        - if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1  # [win]\n        # Actually test\n        - cd tests/hartree-fock\n        - set \"LDFLAGS=%LDFLAGS:/link =%\"                                    # [win]\n        - cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"${PREFIX}\"          # [unix]\n        - cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"%LIBRARY_PREFIX%\" -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release  # [win]\n        - cmake --build build\n        - set -o pipefail                                                    # [unix]\n        - ./build/hf++ h2o_rotated.xyz | python hartree-fock++-validate.py ../../features  # [unix]\n        - build\\\\hf++.exe h2o_rotated.xyz | python hartree-fock++-validate.py ..\\\\..\\\\features  # [win]\n\n  - name: libint-fortran\n    build:\n      skip: true                                                             # [win]\n      string: {{ am_type }}_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}\n    requirements:\n      build:\n        - {{ stdlib(\"c\") }}\n        - {{ compiler(\"c\") }}\n        - {{ compiler(\"fortran\") }}\n        - cmake\n        - ninja\n      host:\n        - {{ pin_subpackage('libint', exact=True) }}\n      run:\n        - {{ pin_subpackage('libint', exact=True) }}\n    files:\n      - lib/libint2_f{{ SHLIB_EXT }}*                                        # [linux]\n      - lib/libint2_f*{{ SHLIB_EXT }}                                        # [osx]\n    test:\n      commands:\n        # Verify library\n        - test -f $PREFIX/lib/libint2$SHLIB_EXT                              # [unix]\n        - test -f $PREFIX/lib/libint2_f$SHLIB_EXT                            # [unix]\n        # Verify (no) accessories\n        - test ! -e $PREFIX/include/libint_f.mod                             # [unix]\n        - test ! -f $PREFIX/include/libint2.h                                # [unix]\n        # Inspect linkage\n        - ldd -v $PREFIX/lib/libint2_f$SHLIB_EXT                             # [linux and build_platform == target_platform]\n        - otool -L $PREFIX/lib/libint2_f$SHLIB_EXT                           # [osx]\n\n  - name: libint-fortran-devel\n    build:\n      skip: true                                                             # [win]\n      string: {{ am_type }}_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}\n      run_exports:\n        - {{ pin_subpackage('libint-fortran', exact=True) }}\n    requirements:\n      run:\n        - {{ pin_subpackage('libint-fortran', exact=True) }}\n        - {{ pin_subpackage('libint-devel', exact=True) }}\n    files:\n      - include/*.mod                                                        # [unix]\n      - include/libint2/fortran/*                                            # [unix]\n      - lib/cmake/libint2/libint2-targets-Fortran*                           # [unix]\n    test:\n      commands:\n        # Verify library\n        - test -f $PREFIX/lib/libint2$SHLIB_EXT                              # [unix]\n        - test -f $PREFIX/lib/libint2_f$SHLIB_EXT                            # [unix]\n        # Verify accessories\n        - test -e $PREFIX/include/libint_f.mod                               # [unix]\n        - test -f $PREFIX/include/libint2.h                                  # [unix]\n\nabout:\n  home: https://github.com/evaleev/libint\n  dev_url: https://github.com/evaleev/libint\n  doc_url: https://github.com/evaleev/libint/wiki\n  license: LGPL-3.0-only\n  license_url: https://opensource.org/license/lgpl-3-0/\n  license_file:\n    - LICENSE\n    - COPYING.LESSER\n  license_family: LGPL\n  summary: \"Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions\"\n\nextra:\n  feedstock-name: libint\n  recipe-maintainers:\n    - felipeZ\n    - loriab\n\n# HISTORY\n# * pc files: output: libint, first two: files, second two: test/commands\n      # - lib/pkgconfig/libint2.pc          # [unix]\n      # - Library/lib/pkgconfig/libint2.pc  # [win]\n        # - test -f $PREFIX/lib/pkgconfig/libint2.pc                           # [unix]\n        # - if not exist %PREFIX%\\\\Library\\\\lib\\\\pkgconfig\\\\libint2.pc exit 1  # [win]\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1682,6 +2953,8 @@
       "fortran_compiler_stub",
       "libboost-headers",
       "libint",
+      "libint-devel",
+      "libint-fortran",
       "llvm-openmp",
       "ninja"
     ]
@@ -1718,8 +2991,12 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cxx_compiler_stub",
+        "eigen",
         "fortran_compiler_stub",
+        "libboost-headers",
         "libint",
+        "libint-devel",
+        "libint-fortran",
         "openmp"
       ]
     },
@@ -1728,8 +3005,6 @@
       "elements": [
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-headers",
         "ninja",
         "python"
       ]
@@ -1760,7 +3035,11 @@
     "run": {
       "__set__": true,
       "elements": [
-        "libint"
+        "eigen",
+        "libboost-headers",
+        "libint",
+        "libint-devel",
+        "libint-fortran"
       ]
     },
     "test": {
@@ -1768,15 +3047,13 @@
       "elements": [
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-headers",
         "ninja",
         "python 3.12"
       ]
     }
   },
-  "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-7-7_mm10f12ob2_0.tgz",
-  "version": "2.13.1",
+  "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-7-7_mm10f12ob2_0.tgz",
+  "version": "2.14.1",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/libint.json"
   },
@@ -1795,7 +3072,10 @@
       "summary": "Libint is E. Valeev's library for the evaluation of molecular integrals of many-body operators over Gaussian functions"
     },
     "build": {
-      "number": "2",
+      "force_use_keys": [
+        "am_type"
+      ],
+      "number": "100",
       "script_env": [
         "ENABLE_FORTRAN=OFF"
       ]
@@ -1810,16 +3090,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "libint"
-          ]
+          "string": "full_h1234567_100"
         },
         "files": [
-          "Library/include/libint2.h*",
-          "Library/include/libint2",
           "Library/bin/int2*",
           "Library/lib/int2*",
-          "Library/lib/cmake/libint2",
           "Library/share/libint"
         ],
         "name": "libint",
@@ -1838,16 +3113,67 @@
         },
         "test": {
           "commands": [
-            "dir %PREFIX%\\\\Library",
-            "dir %PREFIX%\\\\Library\\\\include",
             "if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1",
             "if exist %PREFIX%\\\\Library\\\\bin\\\\int2.dll exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\engine.h exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\boost\\\\preprocessor.hpp exit 1",
+            "if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\2.14.1\\\\basis\\\\sto-6g.g94 exit 1",
+            "if exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "files": [
+          "Library/include/libint2.h*",
+          "Library/include/libint2",
+          "Library/lib/cmake/libint2"
+        ],
+        "name": "libint-devel",
+        "requirements": {
+          "run": [
+            "libint"
+          ]
+        },
+        "test": {
+          "commands": [
+            "if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1",
             "if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1",
             "if not exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\engine.h exit 1",
             "if exist %PREFIX%\\\\Library\\\\include\\\\libint2\\\\boost\\\\preprocessor.hpp exit 1",
-            "if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\2.13.1\\\\basis\\\\sto-6g.g94 exit 1",
+            "if not exist %PREFIX%\\\\Library\\\\share\\\\libint\\\\2.14.1\\\\basis\\\\sto-6g.g94 exit 1",
             "if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1",
-            "if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1",
+            "if exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1"
+          ]
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint"
+          ],
+          "string": "full_h1234567_100"
+        },
+        "name": "libint-cxx-devel",
+        "requirements": {
+          "run": [
+            "libint-devel",
+            "eigen",
+            "libboost-headers"
+          ]
+        },
+        "test": {
+          "commands": [
+            "if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1",
+            "if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.hpp exit 1",
+            "if not exist %PREFIX%\\\\Library\\\\lib\\\\cmake\\\\libint2\\\\libint2-config.cmake exit 1",
             "cd tests/hartree-fock",
             "set \"LDFLAGS=%LDFLAGS:/link =%\"",
             "cmake -S. -Bbuild -GNinja -DCMAKE_PREFIX_PATH=\"%LIBRARY_PREFIX%\" -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release",
@@ -1861,9 +3187,7 @@
             "cxx_compiler_stub",
             "cmake",
             "ninja",
-            "python 3.12",
-            "eigen",
-            "libboost-headers"
+            "python 3.12"
           ],
           "source_files": [
             "features",
@@ -1875,15 +3199,11 @@
       },
       {
         "build": {
-          "run_exports": [
-            "libint-fortran-devel"
-          ],
-          "skip": true
+          "skip": true,
+          "string": "full_h1234567_100"
         },
-        "files": [
-          "Library/include/*mod"
-        ],
-        "name": "libint-fortran-devel",
+        "files": null,
+        "name": "libint-fortran",
         "requirements": {
           "build": [
             "c_stdlib_stub",
@@ -1900,17 +3220,33 @@
           ]
         },
         "test": {
-          "commands": [
-            "if not exist %PREFIX%\\\\Library\\\\lib\\\\int2.lib exit 1",
-            "if not exist %PREFIX%\\\\Library\\\\include\\\\libint_f.mod exit 1",
-            "if not exist %PREFIX%\\\\Library\\\\include\\\\libint2.h exit 1"
+          "commands": null
+        }
+      },
+      {
+        "build": {
+          "run_exports": [
+            "libint-fortran"
+          ],
+          "skip": true,
+          "string": "full_h1234567_100"
+        },
+        "files": null,
+        "name": "libint-fortran-devel",
+        "requirements": {
+          "run": [
+            "libint-fortran",
+            "libint-devel"
           ]
+        },
+        "test": {
+          "commands": null
         }
       }
     ],
     "package": {
       "name": "libint-split",
-      "version": "2.13.1"
+      "version": "2.14.1"
     },
     "requirements": {
       "build": [
@@ -1927,8 +3263,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "41896991a89e04dbfe207f3f27238e99d3d19ddcb2a0d4fce46c83c8f1f21467",
-      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.13.1-7-6-7-7_mm10f12ob2_0.tgz"
+      "sha256": "a2e00da4daedb616f8d97f44504ae2b44658705c261e7635cdc10dbbe5fac939",
+      "url": "https://github.com/loriab/libint/releases/download/v0.1/libint-2.14.1-7-6-7-7_mm10f12ob2_0.tgz"
     }
   },
   "win_64_requirements": {
@@ -1954,7 +3290,11 @@
     "run": {
       "__set__": true,
       "elements": [
-        "libint"
+        "eigen",
+        "libboost-headers",
+        "libint",
+        "libint-devel",
+        "libint-fortran"
       ]
     },
     "test": {
@@ -1962,8 +3302,6 @@
       "elements": [
         "cmake",
         "cxx_compiler_stub",
-        "eigen",
-        "libboost-headers",
         "ninja",
         "python"
       ]
