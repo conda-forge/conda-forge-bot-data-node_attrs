@@ -30,8 +30,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "660423b07f99a444f034329d56a6b4865521c698",
-  "feedstock_hash_ts": 1794753463,
+  "feedstock_hash": "a97e6b0763921c604dfbc7a12f3c0e43509ad3f0",
+  "feedstock_hash_ts": 1794757243,
   "feedstock_name": "freefem",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -46,13 +46,13 @@
       "summary": "FreeFem : A high level multiphysics finite element software"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "freefem >=4.15,<4.16.0a0 mpi_mpich_*",
         "freefem >=4.15,<4.16.0a0 nompi_*",
         "freefem >=4.15,<4.16.0a0 mpi_openmpi_*"
       ],
-      "string": "mpi_openmpi_h1234567_1"
+      "string": "mpi_openmpi_h1234567_2"
     },
     "extra": {
       "recipe-maintainers": [
@@ -123,7 +123,8 @@
         "Makefile.am_src_bin-win32_conda.patch",
         "ff-NLopt_nlopt-2.9.patch",
         "iovtk_fix_n_name_param_MeshS.patch",
-        "ax_lib_hdf5_cmake-lists.patch"
+        "ax_lib_hdf5_cmake-lists.patch",
+        "configure.ac_conda-layout.patch"
       ],
       "sha256": "a47af5a7c7006ae8c648845e55d732ea403837af869493000a008b2013c698e3",
       "url": "https://github.com/FreeFem/FreeFem-sources/archive/refs/tags/v4.15.tar.gz"
@@ -216,13 +217,13 @@
       "summary": "FreeFem : A high level multiphysics finite element software"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "freefem >=4.15,<4.16.0a0 mpi_mpich_*",
         "freefem >=4.15,<4.16.0a0 nompi_*",
         "freefem >=4.15,<4.16.0a0 mpi_openmpi_*"
       ],
-      "string": "mpi_openmpi_h1234567_1"
+      "string": "mpi_openmpi_h1234567_2"
     },
     "extra": {
       "recipe-maintainers": [
@@ -293,7 +294,8 @@
         "Makefile.am_src_bin-win32_conda.patch",
         "ff-NLopt_nlopt-2.9.patch",
         "iovtk_fix_n_name_param_MeshS.patch",
-        "ax_lib_hdf5_cmake-lists.patch"
+        "ax_lib_hdf5_cmake-lists.patch",
+        "configure.ac_conda-layout.patch"
       ],
       "sha256": "a47af5a7c7006ae8c648845e55d732ea403837af869493000a008b2013c698e3",
       "url": "https://github.com/FreeFem/FreeFem-sources/archive/refs/tags/v4.15.tar.gz"
@@ -324,7 +326,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/freefem.json"
   },
-  "raw_meta_yaml": "{% set name = \"FreeFem\" %}\n{% set version = \"4.15\" %}\n{% set build = 1 %}\n\n# ensure mpi is defined (needed for conda-smithy recipe-lint)\n{% set mpi = mpi or 'nompi' %}\n\n{% if mpi == 'nompi' %}\n# prioritize nompi variant via build number\n{% set build = build + 100 %}\n{% endif %}\n\npackage:\n  name: {{ name|lower }}\n  version: \"{{ version }}\"\n\nsource:\n  url: https://github.com/{{ name }}/{{ name }}-sources/archive/refs/tags/v{{ version }}.tar.gz\n  sha256: a47af5a7c7006ae8c648845e55d732ea403837af869493000a008b2013c698e3\n  patches:\n    - Makefile.am_conda.patch\n    - Makefile.am_src_bin-win32_conda.patch\n    - ff-NLopt_nlopt-2.9.patch  # NLopt>=2.9 removed LD_LBFGS_NOCEDAL\n    - iovtk_fix_n_name_param_MeshS.patch  # upstream a1ec184e6, fixes testvtk.edp segfault\n    - ax_lib_hdf5_cmake-lists.patch  # HDF5>=2 h5cc -showconfig lists libs ';'-separated\n\nbuild:\n  number: {{ build }}\n  skip: true  # [osx or win or py2ks]\n  # Per https://conda-forge.org/docs/maintainer/knowledge_base.html#preferring-a-provider-usually-nompi\n  # add build string so packages can depend on\n  # mpi or nompi variants explicitly:\n  # `pkg * mpi_mpich_*` for mpich\n  # `pkg * mpi_*` for any mpi\n  # `pkg * nompi_*` for no mpi\n\n  {% if mpi != 'nompi' %}\n  {% set mpi_prefix = \"mpi_\" + mpi %}\n  {% else %}\n  {% set mpi_prefix = \"nompi\" %}\n  {% endif %}\n  string: \"{{ mpi_prefix }}_h{{ PKG_HASH }}_{{ build }}\"\n  run_exports:\n    # equivalent to pin_subpackage('freefem', max_pin='x.x') plus a build-string glob, written out\n    # by hand because conda-smithy's R-027 lint misreads `pin_subpackage(...) <build glob>`\n    - freefem >={{ version }},<{{ version.split('.')[0] }}.{{ version.split('.')[1]|int + 1 }}.0a0 {{ mpi_prefix }}_*\n\nrequirements:\n  build:\n    - {{ compiler('c') }}  # [unix]\n    - {{ stdlib(\"c\") }}    # [unix]\n    - {{ compiler('cxx') }}  # [unix]\n    - {{ compiler('fortran') }}  # [unix]\n    - {{ compiler('m2w64_c') }}  # [win]\n    - {{ stdlib(\"c\") }}          # [win]\n    - {{ compiler('m2w64_cxx') }}  # [win]\n    - {{ compiler('m2w64_fortran') }}  # [win]    \n    - autoconf  # [unix]\n    - m2-autoconf  # [win]\n    - m2-automake-wrapper  # [win]\n    - automake  # [unix]\n    - bison  # [unix]\n    - m2-bison  # [win]\n    - flex  # [unix]\n    - m2-flex  # [win]\n    - m4  # [unix]\n    - m2-m4  # [win]\n    - make  # [unix]\n    # HDF5>=2 h5cc is a pkg-config wrapper\n    - pkg-config  # [unix]\n    - m2w64-make  # [win]    \n    - patch  # [unix]\n    - m2-patch  # [win]\n    - m2-base  # [win]    \n    - unzip  # [unix]\n    - m2-unzip  # [win]\n  host:\n    - arpack\n    - fftw\n    - gmm  # [unix]\n    - gsl\n    - freeglut  # [linux]\n    # ipopt needs mumps-seq, which can't coexist with petsc's mumps-mpi since MUMPS 5.8\n    # (conda-forge/mumps-feedstock#144) -> Ipopt plugin only in the nompi variant for now\n    - ipopt  # [mpi == 'nompi']\n    - nlopt\n    - metis\n    - mumps-seq  # [not osx and mpi == 'nompi']\n    - mumps-mpi  # [mpi != 'nompi']\n    - petsc  # [mpi != 'nompi']\n    - slepc  # [mpi != 'nompi']\n    # parmetis/scalapack only exist as MPI builds (they pull in openmpi) and FreeFEM only\n    # uses them in plugin/mpi -> MPI variants only, so the nompi package stays MPI-free\n    - parmetis  # [mpi != 'nompi']\n    - mmgsuite\n    - scalapack  # [mpi != 'nompi']\n    - scotch\n    - hdf5\n    - libblas\n    - libcblas\n    - liblapack\n    - suitesparse\n    - superlu  # [unix]\n    - tetgen\n    - zlib\n    - zstd\n    - {{ mpi }}  # [mpi != 'nompi']\n  run:\n    - {{ mpi }}  # [mpi != 'nompi']\n    - {{ pin_compatible('hdf5', max_pin='x.x') }}\n\ntest:\n  commands:\n    - test -f $PREFIX/bin/FreeFem++  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\FreeFem++ exit 1  # [win]    \n    - test -f $PREFIX/bin/FreeFem++-nw  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\FreeFem++-nw exit 1  # [win] \n    - test -f $PREFIX/bin/ff-c++  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\ff-c++ exit 1  # [win] \n    - test -f $PREFIX/bin/ff-get-dep  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\ff-get-dep exit 1  # [win]\n    - test -f $PREFIX/bin/ff-pkg-download  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\ff-pkg-download exit 1  # [win]\n    - FreeFem++ -nw $PREFIX/share/FreeFEM/${PKG_VERSION}/examples/tutorial/beam.edp  # [linux]\n    - FreeFem++ -nw $PREFIX/share/FreeFEM/${PKG_VERSION}/examples/3dSurf/buildMeshSfromMesh3.edp  # [linux]\n\nabout:\n  home: https://freefem.org/\n  license: LGPL-3.0-only\n  license_family: LGPL\n  license_file: LICENSE.txt\n  summary: 'FreeFem : A high level multiphysics finite element software'\n  description: >\n    FreeFEM is a popular 2D and 3D partial differential equations (PDE) solver used by thousands of researchers across the world. It allows you to easily implement your own physics modules using the provided FreeFEM language. FreeFEM offers a large list of finite elements, like the Lagrange, Taylor-Hood, etc., usable in\n    the continuous and discontinuous Galerkin method framework.\n  doc_url: https://doc.freefem.org\n  dev_url: https://github.com/FreeFem\n\nextra:\n  recipe-maintainers:\n    - ldallolio\n    - cnrdn\n    - fbordeu\n",
+  "raw_meta_yaml": "{% set name = \"FreeFem\" %}\n{% set version = \"4.15\" %}\n{% set build = 2 %}\n\n# ensure mpi is defined (needed for conda-smithy recipe-lint)\n{% set mpi = mpi or 'nompi' %}\n\n{% if mpi == 'nompi' %}\n# prioritize nompi variant via build number\n{% set build = build + 100 %}\n{% endif %}\n\npackage:\n  name: {{ name|lower }}\n  version: \"{{ version }}\"\n\nsource:\n  url: https://github.com/{{ name }}/{{ name }}-sources/archive/refs/tags/v{{ version }}.tar.gz\n  sha256: a47af5a7c7006ae8c648845e55d732ea403837af869493000a008b2013c698e3\n  patches:\n    - Makefile.am_conda.patch\n    - Makefile.am_src_bin-win32_conda.patch\n    - ff-NLopt_nlopt-2.9.patch  # NLopt>=2.9 removed LD_LBFGS_NOCEDAL\n    - iovtk_fix_n_name_param_MeshS.patch  # upstream a1ec184e6, fixes testvtk.edp segfault\n    - ax_lib_hdf5_cmake-lists.patch  # HDF5>=2 h5cc -showconfig lists libs ';'-separated\n    - configure.ac_conda-layout.patch  # detect conda-forge superlu/scotch/mmg (SuperLu, scotch, mmg plugins)\n\nbuild:\n  number: {{ build }}\n  skip: true  # [osx or win or py2ks]\n  # Per https://conda-forge.org/docs/maintainer/knowledge_base.html#preferring-a-provider-usually-nompi\n  # add build string so packages can depend on\n  # mpi or nompi variants explicitly:\n  # `pkg * mpi_mpich_*` for mpich\n  # `pkg * mpi_*` for any mpi\n  # `pkg * nompi_*` for no mpi\n\n  {% if mpi != 'nompi' %}\n  {% set mpi_prefix = \"mpi_\" + mpi %}\n  {% else %}\n  {% set mpi_prefix = \"nompi\" %}\n  {% endif %}\n  string: \"{{ mpi_prefix }}_h{{ PKG_HASH }}_{{ build }}\"\n  run_exports:\n    # equivalent to pin_subpackage('freefem', max_pin='x.x') plus a build-string glob, written out\n    # by hand because conda-smithy's R-027 lint misreads `pin_subpackage(...) <build glob>`\n    - freefem >={{ version }},<{{ version.split('.')[0] }}.{{ version.split('.')[1]|int + 1 }}.0a0 {{ mpi_prefix }}_*\n\nrequirements:\n  build:\n    - {{ compiler('c') }}  # [unix]\n    - {{ stdlib(\"c\") }}    # [unix]\n    - {{ compiler('cxx') }}  # [unix]\n    - {{ compiler('fortran') }}  # [unix]\n    - {{ compiler('m2w64_c') }}  # [win]\n    - {{ stdlib(\"c\") }}          # [win]\n    - {{ compiler('m2w64_cxx') }}  # [win]\n    - {{ compiler('m2w64_fortran') }}  # [win]    \n    - autoconf  # [unix]\n    - m2-autoconf  # [win]\n    - m2-automake-wrapper  # [win]\n    - automake  # [unix]\n    - bison  # [unix]\n    - m2-bison  # [win]\n    - flex  # [unix]\n    - m2-flex  # [win]\n    - m4  # [unix]\n    - m2-m4  # [win]\n    - make  # [unix]\n    # HDF5>=2 h5cc is a pkg-config wrapper\n    - pkg-config  # [unix]\n    - m2w64-make  # [win]    \n    - patch  # [unix]\n    - m2-patch  # [win]\n    - m2-base  # [win]    \n    - unzip  # [unix]\n    - m2-unzip  # [win]\n  host:\n    - arpack\n    - fftw\n    - gmm  # [unix]\n    - gsl\n    - freeglut  # [linux]\n    # ipopt needs mumps-seq, which can't coexist with petsc's mumps-mpi since MUMPS 5.8\n    # (conda-forge/mumps-feedstock#144) -> Ipopt plugin only in the nompi variant for now\n    - ipopt  # [mpi == 'nompi']\n    - nlopt\n    - metis\n    - mumps-seq  # [not osx and mpi == 'nompi']\n    - mumps-mpi  # [mpi != 'nompi']\n    - petsc  # [mpi != 'nompi']\n    - slepc  # [mpi != 'nompi']\n    # parmetis/scalapack only exist as MPI builds (they pull in openmpi) and FreeFEM only\n    # uses them in plugin/mpi -> MPI variants only, so the nompi package stays MPI-free\n    - parmetis  # [mpi != 'nompi']\n    - mmgsuite\n    - scalapack  # [mpi != 'nompi']\n    - scotch\n    - hdf5\n    - libblas\n    - libcblas\n    - liblapack\n    - suitesparse\n    - superlu  # [unix]\n    - tetgen\n    - zlib\n    - zstd\n    - {{ mpi }}  # [mpi != 'nompi']\n  run:\n    - {{ mpi }}  # [mpi != 'nompi']\n    - {{ pin_compatible('hdf5', max_pin='x.x') }}\n\ntest:\n  commands:\n    - test -f $PREFIX/bin/FreeFem++  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\FreeFem++ exit 1  # [win]    \n    - test -f $PREFIX/bin/FreeFem++-nw  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\FreeFem++-nw exit 1  # [win] \n    - test -f $PREFIX/bin/ff-c++  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\ff-c++ exit 1  # [win] \n    - test -f $PREFIX/bin/ff-get-dep  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\ff-get-dep exit 1  # [win]\n    - test -f $PREFIX/bin/ff-pkg-download  # [unix]\n    - if not exist $PREFIX\\\\bin\\\\ff-pkg-download exit 1  # [win]\n    - FreeFem++ -nw $PREFIX/share/FreeFEM/${PKG_VERSION}/examples/tutorial/beam.edp  # [linux]\n    - FreeFem++ -nw $PREFIX/share/FreeFEM/${PKG_VERSION}/examples/3dSurf/buildMeshSfromMesh3.edp  # [linux]\n\nabout:\n  home: https://freefem.org/\n  license: LGPL-3.0-only\n  license_family: LGPL\n  license_file: LICENSE.txt\n  summary: 'FreeFem : A high level multiphysics finite element software'\n  description: >\n    FreeFEM is a popular 2D and 3D partial differential equations (PDE) solver used by thousands of researchers across the world. It allows you to easily implement your own physics modules using the provided FreeFEM language. FreeFEM offers a large list of finite elements, like the Lagrange, Taylor-Hood, etc., usable in\n    the continuous and discontinuous Galerkin method framework.\n  doc_url: https://doc.freefem.org\n  dev_url: https://github.com/FreeFem\n\nextra:\n  recipe-maintainers:\n    - ldallolio\n    - cnrdn\n    - fbordeu\n",
   "req": {
     "__set__": true,
     "elements": [
