@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "cdt_name:\n- conda\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.10'\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "bot": {
@@ -10,14 +10,16 @@
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "1429ac541db90c062dd736f980b8471baffc3c6e",
-  "feedstock_hash_ts": 1776947676,
+  "feedstock_hash": "d063035605bc3f3227b79739c39482b7722c1e33",
+  "feedstock_hash_ts": 1794757876,
   "feedstock_name": "email-validator",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -26,12 +28,22 @@
       "doc_url": "https://github.com/JoshData/python-email-validator",
       "home": "https://github.com/JoshData/python-email-validator",
       "license": "Unlicense",
+      "license_family": "Unlicense",
       "license_file": "LICENSE",
       "summary": "A robust email address syntax and deliverability validation library."
     },
     "build": {
       "noarch": "python",
-      "number": "0"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "email_validator = email_validator.__main__:main"
+        ]
+      },
+      "script": {
+        "file": "build_email_validator.sh",
+        "interpreter": "bash"
+      }
     },
     "extra": {
       "feedstock-name": "email-validator",
@@ -43,45 +55,63 @@
     "outputs": [
       {
         "build": {
-          "entry_points": [
-            "email_validator = email_validator.__main__:main"
-          ],
-          "noarch": "python"
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "email_validator = email_validator.__main__:main"
+            ]
+          }
         },
         "name": "email-validator",
         "requirements": {
+          "build": [],
           "host": [
-            "python 3.10",
+            "python 3.11.*",
             "pip",
             "setuptools"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "dnspython >=2.0.0",
             "idna >=2.0.0"
           ]
         },
-        "script": "build_email_validator.sh",
-        "test": {
-          "commands": [
-            "email_validator blah@blah.com",
-            "pytest --cov=email_validator"
-          ],
-          "imports": [
-            "email_validator"
-          ],
-          "requires": [
-            "coverage",
-            "docutils",
-            "flake8",
-            "pytest",
-            "pytest-cov",
-            "python 3.10"
-          ],
-          "source_files": [
-            "tests"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "email_validator"
+              ],
+              "pip_check": false,
+              "python_version": [
+                "3.11",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "coverage",
+                "docutils",
+                "flake8",
+                "pytest",
+                "pytest-cov",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "email_validator blah@blah.com",
+              "pytest --cov=email_validator"
+            ]
+          }
+        ],
+        "version": "2.4.0"
       },
       {
         "build": {
@@ -89,28 +119,48 @@
         },
         "name": "email_validator",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "email-validator"
           ]
         },
-        "test": {
-          "commands": [
-            "email_validator blah@blah.com"
-          ],
-          "imports": [
-            "email_validator"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "email_validator"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "email_validator blah@blah.com"
+          }
+        ],
+        "version": "2.4.0"
       }
     ],
     "package": {
-      "name": "email-validator-meta",
-      "version": "2.3.0"
+      "name": "email-validator",
+      "version": "2.4.0"
     },
-    "schema_version": 0,
+    "requirements": {
+      "host": [
+        "python 3.11.*",
+        "pip",
+        "setuptools"
+      ],
+      "run": [
+        "python >=3.11",
+        "dnspython >=2.0.0",
+        "idna >=2.0.0"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "sha256": "9fc05c37f2f6cf439ff414f8fc46d917929974a82244c20eb10231ba60c54426",
-      "url": "https://pypi.org/packages/source/e/email-validator/email_validator-2.3.0.tar.gz"
+      "sha256": "be487bc50bc3bd832a98515a55a15649d9bec06d954fa178663190714b6c4ee1",
+      "url": "https://files.pythonhosted.org/packages/source/e/email-validator/email_validator-2.4.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -141,6 +191,7 @@
         "coverage",
         "docutils",
         "flake8",
+        "pip",
         "pytest",
         "pytest-cov",
         "python"
@@ -153,12 +204,22 @@
       "doc_url": "https://github.com/JoshData/python-email-validator",
       "home": "https://github.com/JoshData/python-email-validator",
       "license": "Unlicense",
+      "license_family": "Unlicense",
       "license_file": "LICENSE",
       "summary": "A robust email address syntax and deliverability validation library."
     },
     "build": {
       "noarch": "python",
-      "number": "0"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "email_validator = email_validator.__main__:main"
+        ]
+      },
+      "script": {
+        "file": "build_email_validator.sh",
+        "interpreter": "bash"
+      }
     },
     "extra": {
       "feedstock-name": "email-validator",
@@ -170,45 +231,63 @@
     "outputs": [
       {
         "build": {
-          "entry_points": [
-            "email_validator = email_validator.__main__:main"
-          ],
-          "noarch": "python"
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "email_validator = email_validator.__main__:main"
+            ]
+          }
         },
         "name": "email-validator",
         "requirements": {
+          "build": [],
           "host": [
-            "python 3.10",
+            "python 3.11.*",
             "pip",
             "setuptools"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "dnspython >=2.0.0",
             "idna >=2.0.0"
           ]
         },
-        "script": "build_email_validator.sh",
-        "test": {
-          "commands": [
-            "email_validator blah@blah.com",
-            "pytest --cov=email_validator"
-          ],
-          "imports": [
-            "email_validator"
-          ],
-          "requires": [
-            "coverage",
-            "docutils",
-            "flake8",
-            "pytest",
-            "pytest-cov",
-            "python 3.10"
-          ],
-          "source_files": [
-            "tests"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "email_validator"
+              ],
+              "pip_check": false,
+              "python_version": [
+                "3.11",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "tests"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "coverage",
+                "docutils",
+                "flake8",
+                "pytest",
+                "pytest-cov",
+                "python 3.11.*"
+              ]
+            },
+            "script": [
+              "email_validator blah@blah.com",
+              "pytest --cov=email_validator"
+            ]
+          }
+        ],
+        "version": "2.4.0"
       },
       {
         "build": {
@@ -216,31 +295,51 @@
         },
         "name": "email_validator",
         "requirements": {
+          "build": [],
+          "host": [],
           "run": [
             "email-validator"
           ]
         },
-        "test": {
-          "commands": [
-            "email_validator blah@blah.com"
-          ],
-          "imports": [
-            "email_validator"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "email_validator"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "script": "email_validator blah@blah.com"
+          }
+        ],
+        "version": "2.4.0"
       }
     ],
     "package": {
-      "name": "email-validator-meta",
-      "version": "2.3.0"
+      "name": "email-validator",
+      "version": "2.4.0"
     },
-    "schema_version": 0,
+    "requirements": {
+      "host": [
+        "python 3.11.*",
+        "pip",
+        "setuptools"
+      ],
+      "run": [
+        "python >=3.11",
+        "dnspython >=2.0.0",
+        "idna >=2.0.0"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "sha256": "9fc05c37f2f6cf439ff414f8fc46d917929974a82244c20eb10231ba60c54426",
-      "url": "https://pypi.org/packages/source/e/email-validator/email_validator-2.3.0.tar.gz"
+      "sha256": "be487bc50bc3bd832a98515a55a15649d9bec06d954fa178663190714b6c4ee1",
+      "url": "https://files.pythonhosted.org/packages/source/e/email-validator/email_validator-2.4.0.tar.gz"
     }
   },
-  "name": "email-validator-meta",
+  "name": "email-validator",
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -255,7 +354,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/email-validator.json"
   },
-  "raw_meta_yaml": "{% set name = \"email-validator\" %}\n{% set version = \"2.3.0\" %}\n\npackage:\n  name: {{ name|lower }}-meta\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/email_validator-{{ version }}.tar.gz\n  sha256: 9fc05c37f2f6cf439ff414f8fc46d917929974a82244c20eb10231ba60c54426\n\nbuild:\n  number: 0\n  noarch: python\n\noutputs:\n  - name: {{ name|lower }}\n    build:\n      noarch: python\n      entry_points:\n        - email_validator = email_validator.__main__:main\n    script: build_email_validator.sh\n    requirements:\n      host:\n        - python {{ python_min }}\n        - pip\n        - setuptools\n      run:\n        - python >={{ python_min }}\n        - dnspython >=2.0.0\n        - idna >=2.0.0\n    test:\n      source_files:\n        - tests\n      requires:\n        - coverage\n        - docutils\n        - flake8\n        - pytest\n        - pytest-cov\n        - python {{ python_min }}\n      imports:\n        - email_validator\n      commands:\n        - email_validator blah@blah.com\n        - pytest --cov=email_validator\n\n  # Provide package with alternative name for backward compatibility\n  - name: email_validator\n    build:\n      noarch: generic\n    requirements:\n      run:\n        - {{ pin_subpackage('email-validator', max_pin=\"x.x.x\") }}\n    test:\n      imports:\n        - email_validator\n      commands:\n        - email_validator blah@blah.com\n\nabout:\n  home: https://github.com/JoshData/python-email-validator\n  summary: A robust email address syntax and deliverability validation library.\n  license: Unlicense\n  license_file: LICENSE\n  doc_url: https://github.com/JoshData/python-email-validator\n  dev_url: https://github.com/JoshData/python-email-validator\n\nextra:\n  feedstock-name: email-validator\n  recipe-maintainers:\n    - xylar\n    - pmlandwehr\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: email-validator\n  version: \"2.4.0\"\n\nrecipe:\n  name: ${{ name|lower }}-meta\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/${{ name[0] }}/${{ name }}/email_validator-${{ version }}.tar.gz\n  sha256: be487bc50bc3bd832a98515a55a15649d9bec06d954fa178663190714b6c4ee1\n\nbuild:\n  number: 0\n  noarch: python\n\noutputs:\n  - package:\n      name: ${{ name|lower }}\n    build:\n      noarch: python\n      python:\n        entry_points:\n          - email_validator = email_validator.__main__:main\n      script:\n        file: build_email_validator.sh\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools\n      run:\n        - python >=${{ python_min }}\n        - dnspython >=2.0.0\n        - idna >=2.0.0\n    tests:\n      - python:\n          imports:\n            - email_validator\n          pip_check: false\n          python_version:\n            - ${{ python_min }}\n            - \"*\"\n      - files:\n          source:\n            - tests\n        requirements:\n          run:\n            - coverage\n            - docutils\n            - flake8\n            - pytest\n            - pytest-cov\n            - python ${{ python_min }}.*\n        script:\n          - email_validator blah@blah.com\n          - pytest --cov=email_validator\n  # Provide package with alternative name for backward compatibility\n  - package:\n      name: email_validator\n    build:\n      noarch: generic\n    requirements:\n      run:\n        - ${{ pin_subpackage('email-validator', upper_bound=\"x.x.x\") }}\n    tests:\n      - python:\n          imports:\n            - email_validator\n          pip_check: false\n      - script:\n          - email_validator blah@blah.com\n\nabout:\n  summary: A robust email address syntax and deliverability validation library.\n  license: Unlicense\n  license_file: LICENSE\n  homepage: https://github.com/JoshData/python-email-validator\n  repository: https://github.com/JoshData/python-email-validator\n  documentation: https://github.com/JoshData/python-email-validator\n\nextra:\n  feedstock-name: email-validator\n  recipe-maintainers:\n    - xylar\n    - pmlandwehr\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -295,6 +394,7 @@
         "coverage",
         "docutils",
         "flake8",
+        "pip",
         "pytest",
         "pytest-cov",
         "python"
@@ -311,7 +411,7 @@
       "__set__": true,
       "elements": [
         "pip",
-        "python 3.10",
+        "python 3.11.*",
         "setuptools"
       ]
     },
@@ -321,7 +421,7 @@
         "dnspython >=2.0.0",
         "email-validator",
         "idna >=2.0.0",
-        "python >=3.10"
+        "python >=3.11"
       ]
     },
     "test": {
@@ -330,14 +430,15 @@
         "coverage",
         "docutils",
         "flake8",
+        "pip",
         "pytest",
         "pytest-cov",
-        "python 3.10"
+        "python 3.11.*"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/e/email-validator/email_validator-2.3.0.tar.gz",
-  "version": "2.3.0",
+  "url": "https://files.pythonhosted.org/packages/source/e/email-validator/email_validator-2.4.0.tar.gz",
+  "version": "2.4.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/email-validator.json"
   }
