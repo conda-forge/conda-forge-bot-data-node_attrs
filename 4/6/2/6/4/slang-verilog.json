@@ -27,8 +27,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "c232d70e13772c959380cb96a80b69e54a2f3d2b",
-  "feedstock_hash_ts": 1794588153,
+  "feedstock_hash": "d33be88de835b1d604fb4729590d60f6464758cd",
+  "feedstock_hash_ts": 1794705268,
   "feedstock_name": "slang-verilog",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -43,7 +43,7 @@
       "summary": "SystemVerilog compiler and language services"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.sh"
     },
     "extra": {
@@ -276,7 +276,9 @@
       "patches": [
         "thread-pool-dll.patch",
         "waiver-manager-move-only.patch",
-        "system-fmt.patch"
+        "system-fmt.patch",
+        "export-literal-base.patch",
+        "export-iterators.patch"
       ],
       "sha256": "e7454393956ef0f3e9bbcac27f7de473e11e1fd7be125c3009f1f2bfeddf0358",
       "url": "https://github.com/MikePopoloski/slang/archive/refs/tags/v12.1.tar.gz"
@@ -328,7 +330,7 @@
       "summary": "SystemVerilog compiler and language services"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.bat"
     },
     "extra": {
@@ -1645,7 +1647,9 @@
       "patches": [
         "thread-pool-dll.patch",
         "waiver-manager-move-only.patch",
-        "system-fmt.patch"
+        "system-fmt.patch",
+        "export-literal-base.patch",
+        "export-iterators.patch"
       ],
       "sha256": "e7454393956ef0f3e9bbcac27f7de473e11e1fd7be125c3009f1f2bfeddf0358",
       "url": "https://github.com/MikePopoloski/slang/archive/refs/tags/v12.1.tar.gz"
@@ -1664,7 +1668,7 @@
       "summary": "SystemVerilog compiler and language services"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.sh"
     },
     "extra": {
@@ -2068,7 +2072,9 @@
       "patches": [
         "thread-pool-dll.patch",
         "waiver-manager-move-only.patch",
-        "system-fmt.patch"
+        "system-fmt.patch",
+        "export-literal-base.patch",
+        "export-iterators.patch"
       ],
       "sha256": "e7454393956ef0f3e9bbcac27f7de473e11e1fd7be125c3009f1f2bfeddf0358",
       "url": "https://github.com/MikePopoloski/slang/archive/refs/tags/v12.1.tar.gz"
@@ -2120,7 +2126,7 @@
       "summary": "SystemVerilog compiler and language services"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.sh"
     },
     "extra": {
@@ -2524,7 +2530,9 @@
       "patches": [
         "thread-pool-dll.patch",
         "waiver-manager-move-only.patch",
-        "system-fmt.patch"
+        "system-fmt.patch",
+        "export-literal-base.patch",
+        "export-iterators.patch"
       ],
       "sha256": "e7454393956ef0f3e9bbcac27f7de473e11e1fd7be125c3009f1f2bfeddf0358",
       "url": "https://github.com/MikePopoloski/slang/archive/refs/tags/v12.1.tar.gz"
@@ -2583,7 +2591,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/slang-verilog.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"12.1\"\n  build_number: 1\n\nrecipe:\n  name: slang-verilog-packages\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/MikePopoloski/slang/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: e7454393956ef0f3e9bbcac27f7de473e11e1fd7be125c3009f1f2bfeddf0358\n  patches:\n    # Export accessors instead of thread-local data so shared builds work with MSVC.\n    - thread-pool-dll.patch\n    # Prevent MSVC from exporting copy operations for move-only waiver rules.\n    - waiver-manager-move-only.patch\n    # Link system fmt without also compiling its implementation into slang.\n    - system-fmt.patch\n\nbuild:\n  number: ${{ build_number }}\n\noutputs:\n  - package:\n      name: slang-verilog\n    build:\n      number: ${{ build_number }}\n      script:\n        - if: unix\n          then: build.sh\n        - if: win\n          then: build.bat\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake >=3.28\n        - ninja\n        - python\n      host:\n        - fmt >=12.1\n        - tomlplusplus >=3.4\n        - if: not win\n          then:\n            - mimalloc >=3.5\n        - libboost-devel\n      run:\n        - fmt >=12.1\n        - tomlplusplus >=3.4\n      ignore_run_exports:\n        by_name:\n          - libboost\n          - libboost-headers\n          - libboost-devel\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f $PREFIX/lib/libsvlang$SHLIB_EXT\n              - test -f $PREFIX/bin/slang\n              - slang --version\n          - if: win\n            then:\n              - if not exist %LIBRARY_LIB%\\svlang.lib exit 1\n              - slang --version\n\n  - package:\n      name: slang-systemverilog\n    build:\n      number: ${{ build_number }}\n      noarch: generic\n      script: \"echo 'alias package'\"\n    requirements:\n      run:\n        - slang-verilog ==${{ version }}\n    tests:\n      - script:\n          - slang --version\n\n  - package:\n      name: slang-sv\n    build:\n      number: ${{ build_number }}\n      noarch: generic\n      script: \"echo 'alias package'\"\n    requirements:\n      run:\n        - slang-verilog ==${{ version }}\n    tests:\n      - script:\n          - slang --version\n\n  - package:\n      name: svlang\n    build:\n      number: ${{ build_number }}\n      noarch: generic\n      script: \"echo 'alias package'\"\n    requirements:\n      run:\n        - slang-verilog ==${{ version }}\n    tests:\n      - script:\n          - slang --version\n\nabout:\n  homepage: https://sv-lang.com/\n  summary: SystemVerilog compiler and language services\n  description: |\n    slang is a software library that provides various components needed to\n    lexically analyze, parse, type check, and elaborate SystemVerilog code.\n    It comes with an executable tool that can compile and lint\n    SystemVerilog and is also usable as a library to power other tools.\n  license: MIT\n  license_file: LICENSE\n  repository: https://github.com/MikePopoloski/slang\n  documentation: https://sv-lang.com/user-manual.html\n\nextra:\n  feedstock-name: slang-verilog\n  recipe-maintainers:\n    - timkpaine\n",
+  "raw_meta_yaml": "context:\n  version: \"12.1\"\n  build_number: 2\n\nrecipe:\n  name: slang-verilog-packages\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/MikePopoloski/slang/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: e7454393956ef0f3e9bbcac27f7de473e11e1fd7be125c3009f1f2bfeddf0358\n  patches:\n    # Export accessors instead of thread-local data so shared builds work with MSVC.\n    - thread-pool-dll.patch\n    # Prevent MSVC from exporting copy operations for move-only waiver rules.\n    - waiver-manager-move-only.patch\n    # Link system fmt without also compiling its implementation into slang.\n    - system-fmt.patch\n    # Export the numeric helper and include ostream for public enum stream operators.\n    - export-literal-base.patch\n    # Export nested iterator methods needed by pyslang when linking the Windows DLL.\n    - export-iterators.patch\n\nbuild:\n  number: ${{ build_number }}\n\noutputs:\n  - package:\n      name: slang-verilog\n    build:\n      number: ${{ build_number }}\n      script:\n        - if: unix\n          then: build.sh\n        - if: win\n          then: build.bat\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib('c') }}\n        - cmake >=3.28\n        - ninja\n        - python\n      host:\n        - fmt >=12.1\n        - tomlplusplus >=3.4\n        - if: not win\n          then:\n            - mimalloc >=3.5\n        - libboost-devel\n      run:\n        - fmt >=12.1\n        - tomlplusplus >=3.4\n      ignore_run_exports:\n        by_name:\n          - libboost\n          - libboost-headers\n          - libboost-devel\n    tests:\n      - script:\n          - if: unix\n            then:\n              - test -f $PREFIX/lib/libsvlang$SHLIB_EXT\n              - test -f $PREFIX/bin/slang\n              - slang --version\n          - if: win\n            then:\n              - if not exist %LIBRARY_LIB%\\svlang.lib exit 1\n              - slang --version\n\n  - package:\n      name: slang-systemverilog\n    build:\n      number: ${{ build_number }}\n      noarch: generic\n      script: \"echo 'alias package'\"\n    requirements:\n      run:\n        - slang-verilog ==${{ version }}\n    tests:\n      - script:\n          - slang --version\n\n  - package:\n      name: slang-sv\n    build:\n      number: ${{ build_number }}\n      noarch: generic\n      script: \"echo 'alias package'\"\n    requirements:\n      run:\n        - slang-verilog ==${{ version }}\n    tests:\n      - script:\n          - slang --version\n\n  - package:\n      name: svlang\n    build:\n      number: ${{ build_number }}\n      noarch: generic\n      script: \"echo 'alias package'\"\n    requirements:\n      run:\n        - slang-verilog ==${{ version }}\n    tests:\n      - script:\n          - slang --version\n\nabout:\n  homepage: https://sv-lang.com/\n  summary: SystemVerilog compiler and language services\n  description: |\n    slang is a software library that provides various components needed to\n    lexically analyze, parse, type check, and elaborate SystemVerilog code.\n    It comes with an executable tool that can compile and lint\n    SystemVerilog and is also usable as a library to power other tools.\n  license: MIT\n  license_file: LICENSE\n  repository: https://github.com/MikePopoloski/slang\n  documentation: https://sv-lang.com/user-manual.html\n\nextra:\n  feedstock-name: slang-verilog\n  recipe-maintainers:\n    - timkpaine\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2692,7 +2700,7 @@
       "summary": "SystemVerilog compiler and language services"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "build.bat"
     },
     "extra": {
@@ -3087,7 +3095,9 @@
       "patches": [
         "thread-pool-dll.patch",
         "waiver-manager-move-only.patch",
-        "system-fmt.patch"
+        "system-fmt.patch",
+        "export-literal-base.patch",
+        "export-iterators.patch"
       ],
       "sha256": "e7454393956ef0f3e9bbcac27f7de473e11e1fd7be125c3009f1f2bfeddf0358",
       "url": "https://github.com/MikePopoloski/slang/archive/refs/tags/v12.1.tar.gz"
