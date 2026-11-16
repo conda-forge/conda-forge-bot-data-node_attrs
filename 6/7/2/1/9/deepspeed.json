@@ -27,8 +27,8 @@
       "free_disk_space": "quick"
     }
   },
-  "feedstock_hash": "b34e0ee47e9336b7c40bb326ae1f49ec73c57af5",
-  "feedstock_hash_ts": 1794791260,
+  "feedstock_hash": "e403d58de0067549457e86315b4192cbcc987b04",
+  "feedstock_hash_ts": 1794860940,
   "feedstock_name": "deepspeed",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -45,6 +45,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "isuruf",
         "loadams",
         "weiji14",
         "sdvillal"
@@ -2825,6 +2826,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "isuruf",
         "loadams",
         "weiji14",
         "sdvillal"
@@ -5806,6 +5808,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "isuruf",
         "loadams",
         "weiji14",
         "sdvillal"
@@ -6170,7 +6173,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/deepspeed.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: deepspeed\n  version: \"0.20.0\"\n  build_number: 0\n  torch_proc_type: ${{ \"cuda\" if cuda_compiler_version != \"None\" else \"cpu\" }}\n  build_string_prefix: ${{ \"cuda\" ~ cuda_compiler_version | version_to_buildstring if cuda_compiler_version != \"None\" else \"cpu\" }}\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/${{ name }}-${{ version }}.tar.gz\n  sha256: 67195f94b2bc63350f15f2da9126b489122261d2c858f34120f4aa33910bca7d\n  patches:\n    # Let DS_CPU_ARCH / DS_SIMD_WIDTH override build-machine detection\n    # (-march=native) so pre-compiled CPU ops are portable, and pass link\n    # flags (-fopenmp, -laio) when pre-compiling CPU ops.\n    - patches/0001-Make-pre-compiled-CPU-ops-portable-and-fully-linked.patch\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ build_string_prefix }}_py${{ python | version_to_buildstring }}_h${{ hash }}_${{ build_number }}\n  skip:\n    - win\n    - osx and x86_64\n  variant:\n    # Prefer the higher x86_64 microarch levels when the CPU supports them\n    down_prioritize_variant: ${{ 4 - (microarch_level | default(1) | int) if x86_64 else 0 }}\n    use_keys:\n      - CROSSCOMPILING_EMULATOR\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib(\"c\") }}\n    # Sets -march=x86-64-v<level> and run-exports the __archspec guard\n    - if: target_platform == \"linux-64\"\n      then: x86_64-microarch-level ==${{ microarch_level }}\n    - if: build_platform != target_platform\n      then:\n        - cross-python_${{ target_platform }}\n        - python\n    - if: cuda_compiler_version != \"None\"\n      then:\n        - ${{ compiler('cuda') }}\n        - ninja\n        - cuda-profiler-api\n        - libcublas-dev\n        - libcurand-dev\n        - libcusolver-dev\n        - libcusparse-dev\n  host:\n    - pip\n    - python\n    - setuptools\n    # Use {{ pytorch }} for the global pinning\n    - pytorch ${{ pytorch }}.* [build=${{ torch_proc_type }}*]\n    # For the `async_io` op\n    - if: linux\n      then: libaio\n    # OpenMP runtime for the CPU ops built with -fopenmp\n    - if: linux\n      then: libgomp\n    - if: osx\n      then: llvm-openmp\n    - if: cuda_compiler_version != \"None\"\n      then:\n        - cuda-profiler-api\n        - libcublas-dev\n        - libcurand-dev\n        - libcusolver-dev\n        - libcusparse-dev\n        # For the `gds` op\n        - libcufile-dev\n  run:\n    - einops\n    - hjson-py\n    - msgpack-python\n    - numpy\n    - packaging >=20.0\n    - psutil\n    - py-cpuinfo\n    - pydantic >=2.0.0\n    - python\n    - pytorch >=2.0.0 [build=${{ torch_proc_type }}*]\n    - tqdm\n    - if: cuda_compiler_version != \"None\"\n      then:\n        - nvidia-ml-py\n\ntests:\n  # No compiler here: ops must load from the pre-compiled extensions\n  - requirements:\n      run:\n        - ninja\n        - pip\n    files:\n      recipe:\n        - test_ops.py\n    script:\n      - ${CROSSCOMPILING_EMULATOR} python test_ops.py ${{ torch_proc_type }}\n      - ${CROSSCOMPILING_EMULATOR} python -m pip check\n  - requirements:\n      run:\n        - ninja\n    script:\n      - ${CROSSCOMPILING_EMULATOR} ds_report\n      - ${CROSSCOMPILING_EMULATOR} deepspeed --help\n\nabout:\n  homepage: http://deepspeed.ai\n  repository: https://github.com/deepspeedai/DeepSpeed\n  summary: DeepSpeed library\n  license: Apache-2.0\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - loadams\n    - weiji14\n    - sdvillal\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: deepspeed\n  version: \"0.20.0\"\n  build_number: 0\n  torch_proc_type: ${{ \"cuda\" if cuda_compiler_version != \"None\" else \"cpu\" }}\n  build_string_prefix: ${{ \"cuda\" ~ cuda_compiler_version | version_to_buildstring if cuda_compiler_version != \"None\" else \"cpu\" }}\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/${{ name }}-${{ version }}.tar.gz\n  sha256: 67195f94b2bc63350f15f2da9126b489122261d2c858f34120f4aa33910bca7d\n  patches:\n    # Let DS_CPU_ARCH / DS_SIMD_WIDTH override build-machine detection\n    # (-march=native) so pre-compiled CPU ops are portable, and pass link\n    # flags (-fopenmp, -laio) when pre-compiling CPU ops.\n    - patches/0001-Make-pre-compiled-CPU-ops-portable-and-fully-linked.patch\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ build_string_prefix }}_py${{ python | version_to_buildstring }}_h${{ hash }}_${{ build_number }}\n  skip:\n    - win\n    - osx and x86_64\n  variant:\n    # Prefer the higher x86_64 microarch levels when the CPU supports them\n    down_prioritize_variant: ${{ 4 - (microarch_level | default(1) | int) if x86_64 else 0 }}\n    use_keys:\n      - CROSSCOMPILING_EMULATOR\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib(\"c\") }}\n    # Sets -march=x86-64-v<level> and run-exports the __archspec guard\n    - if: target_platform == \"linux-64\"\n      then: x86_64-microarch-level ==${{ microarch_level }}\n    - if: build_platform != target_platform\n      then:\n        - cross-python_${{ target_platform }}\n        - python\n    - if: cuda_compiler_version != \"None\"\n      then:\n        - ${{ compiler('cuda') }}\n        - ninja\n        - cuda-profiler-api\n        - libcublas-dev\n        - libcurand-dev\n        - libcusolver-dev\n        - libcusparse-dev\n  host:\n    - pip\n    - python\n    - setuptools\n    # Use {{ pytorch }} for the global pinning\n    - pytorch ${{ pytorch }}.* [build=${{ torch_proc_type }}*]\n    # For the `async_io` op\n    - if: linux\n      then: libaio\n    # OpenMP runtime for the CPU ops built with -fopenmp\n    - if: linux\n      then: libgomp\n    - if: osx\n      then: llvm-openmp\n    - if: cuda_compiler_version != \"None\"\n      then:\n        - cuda-profiler-api\n        - libcublas-dev\n        - libcurand-dev\n        - libcusolver-dev\n        - libcusparse-dev\n        # For the `gds` op\n        - libcufile-dev\n  run:\n    - einops\n    - hjson-py\n    - msgpack-python\n    - numpy\n    - packaging >=20.0\n    - psutil\n    - py-cpuinfo\n    - pydantic >=2.0.0\n    - python\n    - pytorch >=2.0.0 [build=${{ torch_proc_type }}*]\n    - tqdm\n    - if: cuda_compiler_version != \"None\"\n      then:\n        - nvidia-ml-py\n\ntests:\n  # No compiler here: ops must load from the pre-compiled extensions\n  - requirements:\n      run:\n        - ninja\n        - pip\n    files:\n      recipe:\n        - test_ops.py\n    script:\n      - ${CROSSCOMPILING_EMULATOR} python test_ops.py ${{ torch_proc_type }}\n      - ${CROSSCOMPILING_EMULATOR} python -m pip check\n  - requirements:\n      run:\n        - ninja\n    script:\n      - ${CROSSCOMPILING_EMULATOR} ds_report\n      - ${CROSSCOMPILING_EMULATOR} deepspeed --help\n\nabout:\n  homepage: http://deepspeed.ai\n  repository: https://github.com/deepspeedai/DeepSpeed\n  summary: DeepSpeed library\n  license: Apache-2.0\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - isuruf\n    - loadams\n    - weiji14\n    - sdvillal\n",
   "req": {
     "__set__": true,
     "elements": [
