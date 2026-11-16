@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngsl:\n- '2.8'\nlibblas:\n- 3.9.* *netlib\nnlopt:\n- '2.11'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngsl:\n- '2.8'\nscotch:\n- 7.0.11\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
   "ci_support_migrations": {
     "gsl28": {
       "migration_number": 1,
@@ -11,8 +11,7 @@
   "conda-forge.yml": {
     "build_platform": {
       "linux_64": "linux_64",
-      "osx_64": "osx_64",
-      "osx_arm64": "osx_64"
+      "osx_64": "osx_64"
     },
     "conda_build": {
       "pkg_format": "2"
@@ -21,37 +20,42 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
+    },
+    "provider": {
+      "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "a018d70045c9edc5479428a38f1f5a69af9ad508",
-  "feedstock_hash_ts": 1793784734,
+  "feedstock_hash": "f794b70ca45f3e4879c8ab357b10c14c3f7acdfa",
+  "feedstock_hash_ts": 1794839665,
   "feedstock_name": "neper",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/neperfepx/neper",
       "doc_url": "https://neper.info",
-      "home": "http://neper.info/",
+      "home": "https://neper.info/",
       "license": "GPL-3.0-only",
       "license_family": "GPL",
       "license_file": [
         "COPYING",
-        "CREDITS"
+        "CREDITS",
+        "src/contrib/muparser/LICENSE"
       ],
       "summary": "Neper is a software package for polycrystal generation and meshing."
     },
     "build": {
-      "number": "1"
+      "number": "0"
     },
     "extra": {
       "recipe-maintainers": [
         "npavlovikj",
-        "lang-m"
+        "lang-m",
+        "rquey"
       ]
     },
     "package": {
       "name": "neper",
-      "version": "5.0.0"
+      "version": "7.0.0"
     },
     "requirements": {
       "build": [
@@ -62,29 +66,38 @@
         "make"
       ],
       "host": [
-        "libblas",
         "libgomp",
+        "gmsh >=4.9",
         "gsl",
-        "scotch <7",
-        "nlopt"
+        "scotch"
       ],
       "run": [
+        "gmsh",
         "gsl",
-        "scotch <7",
-        "nlopt",
-        "gmsh"
+        "scotch",
+        "povray"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "b6bc63db2f1090b0a78117d43bc3be823960b46f04b4b8978a81b7dd1c06dccc",
-      "url": "https://github.com/neperfepx/neper/archive/v5.0.0.tar.gz"
+      "patches": [
+        "0001-Fix-Gmsh-workers-on-macOS.patch"
+      ],
+      "sha256": "17fa03b5ae647a613d7c7fbd324c769061050b8835f24ea03a3b48aec9644032",
+      "url": "https://github.com/neperfepx/neper/archive/v7.0.0.tar.gz"
     },
     "test": {
       "commands": [
         "test -f $PREFIX/bin/neper",
-        "neper --help",
-        "neper -T -n 10 -reg 1"
+        "test -f $PREFIX/bin/orilib",
+        "neper --version",
+        "neper -T -n 10 -reg 1 -o n10",
+        "neper -M n10.tess",
+        "test -f n10.msh",
+        "neper -M n10.tess -part 2 -o n10p",
+        "grep -q NodePart n10p.msh",
+        "neper -V n10.tess,n10.msh -print img",
+        "test -f img.png"
       ]
     }
   },
@@ -102,10 +115,9 @@
     "host": {
       "__set__": true,
       "elements": [
+        "gmsh",
         "gsl",
-        "libblas",
         "libgomp",
-        "nlopt",
         "scotch"
       ]
     },
@@ -114,7 +126,7 @@
       "elements": [
         "gmsh",
         "gsl",
-        "nlopt",
+        "povray",
         "scotch"
       ]
     },
@@ -127,27 +139,29 @@
     "about": {
       "dev_url": "https://github.com/neperfepx/neper",
       "doc_url": "https://neper.info",
-      "home": "http://neper.info/",
+      "home": "https://neper.info/",
       "license": "GPL-3.0-only",
       "license_family": "GPL",
       "license_file": [
         "COPYING",
-        "CREDITS"
+        "CREDITS",
+        "src/contrib/muparser/LICENSE"
       ],
       "summary": "Neper is a software package for polycrystal generation and meshing."
     },
     "build": {
-      "number": "1"
+      "number": "0"
     },
     "extra": {
       "recipe-maintainers": [
         "npavlovikj",
-        "lang-m"
+        "lang-m",
+        "rquey"
       ]
     },
     "package": {
       "name": "neper",
-      "version": "5.0.0"
+      "version": "7.0.0"
     },
     "requirements": {
       "build": [
@@ -158,30 +172,39 @@
         "make"
       ],
       "host": [
-        "libblas",
         "libgomp",
+        "gmsh >=4.9",
         "gsl",
-        "scotch <7",
-        "nlopt",
+        "scotch",
         "llvm-openmp"
       ],
       "run": [
+        "gmsh",
         "gsl",
-        "scotch <7",
-        "nlopt",
-        "gmsh"
+        "scotch",
+        "povray"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "b6bc63db2f1090b0a78117d43bc3be823960b46f04b4b8978a81b7dd1c06dccc",
-      "url": "https://github.com/neperfepx/neper/archive/v5.0.0.tar.gz"
+      "patches": [
+        "0001-Fix-Gmsh-workers-on-macOS.patch"
+      ],
+      "sha256": "17fa03b5ae647a613d7c7fbd324c769061050b8835f24ea03a3b48aec9644032",
+      "url": "https://github.com/neperfepx/neper/archive/v7.0.0.tar.gz"
     },
     "test": {
       "commands": [
         "test -f $PREFIX/bin/neper",
-        "neper --help",
-        "neper -T -n 10 -reg 1"
+        "test -f $PREFIX/bin/orilib",
+        "neper --version",
+        "neper -T -n 10 -reg 1 -o n10",
+        "neper -M n10.tess",
+        "test -f n10.msh",
+        "neper -M n10.tess -part 2 -o n10p",
+        "grep -q NodePart n10p.msh",
+        "neper -V n10.tess,n10.msh -print img",
+        "test -f img.png"
       ]
     }
   },
@@ -190,27 +213,29 @@
     "about": {
       "dev_url": "https://github.com/neperfepx/neper",
       "doc_url": "https://neper.info",
-      "home": "http://neper.info/",
+      "home": "https://neper.info/",
       "license": "GPL-3.0-only",
       "license_family": "GPL",
       "license_file": [
         "COPYING",
-        "CREDITS"
+        "CREDITS",
+        "src/contrib/muparser/LICENSE"
       ],
       "summary": "Neper is a software package for polycrystal generation and meshing."
     },
     "build": {
-      "number": "1"
+      "number": "0"
     },
     "extra": {
       "recipe-maintainers": [
         "npavlovikj",
-        "lang-m"
+        "lang-m",
+        "rquey"
       ]
     },
     "package": {
       "name": "neper",
-      "version": "5.0.0"
+      "version": "7.0.0"
     },
     "requirements": {
       "build": [
@@ -221,29 +246,38 @@
         "make"
       ],
       "host": [
-        "libblas",
         "llvm-openmp",
+        "gmsh >=4.9",
         "gsl",
-        "scotch <7",
-        "nlopt"
+        "scotch"
       ],
       "run": [
+        "gmsh",
         "gsl",
-        "scotch <7",
-        "nlopt",
-        "gmsh"
+        "scotch",
+        "povray"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "b6bc63db2f1090b0a78117d43bc3be823960b46f04b4b8978a81b7dd1c06dccc",
-      "url": "https://github.com/neperfepx/neper/archive/v5.0.0.tar.gz"
+      "patches": [
+        "0001-Fix-Gmsh-workers-on-macOS.patch"
+      ],
+      "sha256": "17fa03b5ae647a613d7c7fbd324c769061050b8835f24ea03a3b48aec9644032",
+      "url": "https://github.com/neperfepx/neper/archive/v7.0.0.tar.gz"
     },
     "test": {
       "commands": [
         "test -f $PREFIX/bin/neper",
-        "neper --help",
-        "neper -T -n 10 -reg 1"
+        "test -f $PREFIX/bin/orilib",
+        "neper --version",
+        "neper -T -n 10 -reg 1 -o n10",
+        "neper -M n10.tess",
+        "test -f n10.msh",
+        "neper -M n10.tess -part 2 -o n10p",
+        "grep -q NodePart n10p.msh",
+        "neper -V n10.tess,n10.msh -print img",
+        "test -f img.png"
       ]
     }
   },
@@ -261,10 +295,9 @@
     "host": {
       "__set__": true,
       "elements": [
+        "gmsh",
         "gsl",
-        "libblas",
         "llvm-openmp",
-        "nlopt",
         "scotch"
       ]
     },
@@ -273,7 +306,7 @@
       "elements": [
         "gmsh",
         "gsl",
-        "nlopt",
+        "povray",
         "scotch"
       ]
     },
@@ -286,27 +319,29 @@
     "about": {
       "dev_url": "https://github.com/neperfepx/neper",
       "doc_url": "https://neper.info",
-      "home": "http://neper.info/",
+      "home": "https://neper.info/",
       "license": "GPL-3.0-only",
       "license_family": "GPL",
       "license_file": [
         "COPYING",
-        "CREDITS"
+        "CREDITS",
+        "src/contrib/muparser/LICENSE"
       ],
       "summary": "Neper is a software package for polycrystal generation and meshing."
     },
     "build": {
-      "number": "1"
+      "number": "0"
     },
     "extra": {
       "recipe-maintainers": [
         "npavlovikj",
-        "lang-m"
+        "lang-m",
+        "rquey"
       ]
     },
     "package": {
       "name": "neper",
-      "version": "5.0.0"
+      "version": "7.0.0"
     },
     "requirements": {
       "build": [
@@ -317,29 +352,38 @@
         "make"
       ],
       "host": [
-        "libblas",
         "llvm-openmp",
+        "gmsh >=4.9",
         "gsl",
-        "scotch <7",
-        "nlopt"
+        "scotch"
       ],
       "run": [
+        "gmsh",
         "gsl",
-        "scotch <7",
-        "nlopt",
-        "gmsh"
+        "scotch",
+        "povray"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "b6bc63db2f1090b0a78117d43bc3be823960b46f04b4b8978a81b7dd1c06dccc",
-      "url": "https://github.com/neperfepx/neper/archive/v5.0.0.tar.gz"
+      "patches": [
+        "0001-Fix-Gmsh-workers-on-macOS.patch"
+      ],
+      "sha256": "17fa03b5ae647a613d7c7fbd324c769061050b8835f24ea03a3b48aec9644032",
+      "url": "https://github.com/neperfepx/neper/archive/v7.0.0.tar.gz"
     },
     "test": {
       "commands": [
         "test -f $PREFIX/bin/neper",
-        "neper --help",
-        "neper -T -n 10 -reg 1"
+        "test -f $PREFIX/bin/orilib",
+        "neper --version",
+        "neper -T -n 10 -reg 1 -o n10",
+        "neper -M n10.tess",
+        "test -f n10.msh",
+        "neper -M n10.tess -part 2 -o n10p",
+        "grep -q NodePart n10p.msh",
+        "neper -V n10.tess,n10.msh -print img",
+        "test -f img.png"
       ]
     }
   },
@@ -357,10 +401,9 @@
     "host": {
       "__set__": true,
       "elements": [
+        "gmsh",
         "gsl",
-        "libblas",
         "llvm-openmp",
-        "nlopt",
         "scotch"
       ]
     },
@@ -369,7 +412,7 @@
       "elements": [
         "gmsh",
         "gsl",
-        "nlopt",
+        "povray",
         "scotch"
       ]
     },
@@ -393,7 +436,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/neper.json"
   },
-  "raw_meta_yaml": "{% set name = \"neper\" %}\n{% set version = \"5.0.0\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/neperfepx/neper/archive/v{{ version }}.tar.gz\n  sha256: b6bc63db2f1090b0a78117d43bc3be823960b46f04b4b8978a81b7dd1c06dccc\n\nbuild:\n  number: 1\n  skip: true  # [win]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n    - {{ stdlib('c') }}\n    - cmake\n    - make\n  host:\n    - libblas\n    - llvm-openmp  # [osx]\n    - libgomp  # [linux]\n    - gsl\n    - scotch <7\n    - nlopt\n  run:\n    - gsl\n    - scotch <7\n    - nlopt\n    - gmsh\n\ntest:\n  commands:\n    - test -f $PREFIX/bin/neper\n    - neper --help  # [build_platform == target_platform]\n    - neper -T -n 10 -reg 1  # [build_platform == target_platform]\n\nabout:\n  home: http://neper.info/\n  license: GPL-3.0-only\n  license_family: GPL\n  license_file:\n    - COPYING\n    - CREDITS\n  summary: Neper is a software package for polycrystal generation and meshing.\n  doc_url: https://neper.info\n  dev_url: https://github.com/neperfepx/neper\n\nextra:\n  recipe-maintainers:\n    - npavlovikj\n    - lang-m\n",
+  "raw_meta_yaml": "{% set name = \"neper\" %}\n{% set version = \"7.0.0\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/neperfepx/neper/archive/v{{ version }}.tar.gz\n  sha256: 17fa03b5ae647a613d7c7fbd324c769061050b8835f24ea03a3b48aec9644032\n  patches:\n    # Gmsh workers on macOS (upstream 98fd00365 and 46d7f8fd3, in 7.0.1)\n    - 0001-Fix-Gmsh-workers-on-macOS.patch\n\nbuild:\n  number: 0\n  skip: true  # [win]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n    - {{ stdlib('c') }}\n    - cmake\n    - make\n  host:\n    - llvm-openmp  # [osx]\n    - libgomp  # [linux]\n    # Gmsh library (libgmsh and gmshc.h), mandatory since Neper 7.0.0\n    - gmsh >=4.9\n    - gsl\n    - scotch\n  run:\n    # the Gmsh library changes name (soname) at each minor version\n    - {{ pin_compatible('gmsh', max_pin='x.x') }}\n    - gsl\n    - scotch\n    # image generation (neper -V)\n    - povray\n\ntest:\n  commands:\n    - test -f $PREFIX/bin/neper\n    - test -f $PREFIX/bin/orilib\n    - neper --version  # [build_platform == target_platform]\n    - neper -T -n 10 -reg 1 -o n10  # [build_platform == target_platform]\n    - neper -M n10.tess  # [build_platform == target_platform]\n    - test -f n10.msh  # [build_platform == target_platform]\n    - neper -M n10.tess -part 2 -o n10p  # [build_platform == target_platform]\n    - grep -q NodePart n10p.msh  # [build_platform == target_platform]\n    - neper -V n10.tess,n10.msh -print img  # [build_platform == target_platform]\n    - test -f img.png  # [build_platform == target_platform]\n\nabout:\n  home: https://neper.info/\n  license: GPL-3.0-only\n  license_family: GPL\n  license_file:\n    - COPYING\n    - CREDITS\n    - src/contrib/muparser/LICENSE\n  summary: Neper is a software package for polycrystal generation and meshing.\n  doc_url: https://neper.info\n  dev_url: https://github.com/neperfepx/neper\n\nextra:\n  recipe-maintainers:\n    - npavlovikj\n    - lang-m\n    - rquey\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -403,11 +446,10 @@
       "cxx_compiler_stub",
       "gmsh",
       "gsl",
-      "libblas",
       "libgomp",
       "llvm-openmp",
       "make",
-      "nlopt",
+      "povray",
       "scotch"
     ]
   },
@@ -429,11 +471,10 @@
         "c_stdlib_stub",
         "ctng-compilers",
         "cxx_compiler_stub",
+        "gmsh",
         "gsl",
-        "libblas",
         "libgomp",
         "llvm-openmp",
-        "nlopt",
         "openmp",
         "scotch"
       ]
@@ -447,8 +488,8 @@
         "cxx_compiler_stub",
         "gmsh",
         "gsl",
-        "nlopt",
         "openmp",
+        "povray",
         "scotch"
       ]
     },
@@ -472,12 +513,11 @@
     "host": {
       "__set__": true,
       "elements": [
+        "gmsh >=4.9",
         "gsl",
-        "libblas",
         "libgomp",
         "llvm-openmp",
-        "nlopt",
-        "scotch <7"
+        "scotch"
       ]
     },
     "run": {
@@ -485,8 +525,8 @@
       "elements": [
         "gmsh",
         "gsl",
-        "nlopt",
-        "scotch <7"
+        "povray",
+        "scotch"
       ]
     },
     "test": {
@@ -494,8 +534,8 @@
       "elements": []
     }
   },
-  "url": "https://github.com/neperfepx/neper/archive/v5.0.0.tar.gz",
-  "version": "5.0.0",
+  "url": "https://github.com/neperfepx/neper/archive/v7.0.0.tar.gz",
+  "version": "7.0.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/neper.json"
   }
