@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzstd:\n- '1.5'\n",
+  "ci_support_linux_64_python3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzstd:\n- '1.5'\n",
   "ci_support_migrations": {
     "python314t": {
       "migration_number": 1,
@@ -10,6 +10,10 @@
     "python315": {
       "migration_number": 1,
       "migrator_ts": 1755739490
+    },
+    "python315t": {
+      "migration_number": 1,
+      "migrator_ts": 1755739500
     }
   },
   "conda-forge.yml": {
@@ -35,8 +39,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "5cdf9deb18788a65ed75f5714372b96002111a33",
-  "feedstock_hash_ts": 1792690490,
+  "feedstock_hash": "f0108f354d928b4734478238176ff945ea347e28",
+  "feedstock_hash_ts": 1794835405,
   "feedstock_name": "backports.zstd",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -50,7 +54,7 @@
     },
     "build": {
       "noarch": "generic",
-      "number": "1",
+      "number": "2",
       "script": []
     },
     "extra": {
@@ -274,7 +278,7 @@
       "summary": "Backport of compression.zstd"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --config-settings=--build-option=--system-zstd --disable-pip-version-check --check-build-dependencies"
     },
     "extra": {
@@ -475,7 +479,7 @@
       "summary": "Backport of compression.zstd"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --config-settings=--build-option=--system-zstd --disable-pip-version-check --check-build-dependencies"
     },
     "extra": {
@@ -676,7 +680,7 @@
       "summary": "Backport of compression.zstd"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --config-settings=--build-option=--system-zstd --disable-pip-version-check --check-build-dependencies"
     },
     "extra": {
@@ -1477,7 +1481,7 @@
       "summary": "Backport of compression.zstd"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --config-settings=--build-option=--system-zstd --disable-pip-version-check --check-build-dependencies"
     },
     "extra": {
@@ -1678,7 +1682,7 @@
       "summary": "Backport of compression.zstd"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --config-settings=--build-option=--system-zstd --disable-pip-version-check --check-build-dependencies"
     },
     "extra": {
@@ -1887,7 +1891,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/backports.zstd.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"1.8.0\"\n\nrecipe:\n  name: backports.zstd-split\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/b/backports.zstd/backports_zstd-${{ version }}.tar.gz\n  sha256: 9dae4f4c481716e3db473d667457b4f508ff7459c0931b567a5c9677fb3db316\n\nbuild:\n  number: 1\n  # no builds needed on platforms which only ship python 3.14+\n  skip: match(python_min, \">=3.14\")\n\n# To allow downstream `noarch: python` feedstocks to unconditionally depend\n# on `backports.zstd` without having their _own_ variants, this builds multiple\n# `outputs` with the same name, but different build strings, per upstream release:\n#\n# - one build that links against `zstd` and `python` per {platform x architecture x python}\n#   for python 3.10-3.13\n# - a single, empty, `noarch: generic` build (built on `linux-64`) which can be\n#   installed on python 3.14+\n\noutputs:\n  - package:\n      name: backports.zstd\n    build:\n      skip: match(python, \">=3.14\")\n      script:\n        - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --config-settings=--build-option=--system-zstd --disable-pip-version-check --check-build-dependencies\n    requirements:\n      build:\n        - ${{ compiler(\"c\") }}\n        - ${{ stdlib(\"c\") }}\n        - if: build_platform != target_platform\n          then:\n            - python\n            - cross-python_${{ target_platform }}\n      host:\n        - pip\n        - python\n        - setuptools\n        - zstd\n      run:\n        - python\n    tests:\n      - package_contents:\n          strict: true\n          site_packages:\n            - backports/zstd/**\n            - backports_zstd-${{ version }}.dist-info/**\n      - python:\n          imports: backports.zstd\n          pip_check: true\n\n  - package:\n      name: backports.zstd\n    build:\n      skip: not (target_platform == \"linux-64\" and match(python, \"3.14.*\") and (\"cp314t\" not in python))\n      noarch: generic\n    requirements:\n      run:\n        - python >=3.14\n    tests:\n      - package_contents:\n          strict: true\n      - python:\n          imports: compression.zstd\n          pip_check: true\n          python_version:\n            - 3.14.*\n            - 3.15.*\n    about:\n      summary: Backport of compression.zstd (no-op on Python 3.14+)\n\nabout:\n  homepage: https://pypi.org/project/backports.zstd\n  repository: https://github.com/rogdham/backports.zstd\n  license: Python-2.0\n  license_file: LICENSE.txt\n  summary: Backport of compression.zstd\n\nextra:\n  feedstock-name: backports.zstd\n  recipe-maintainers:\n    - rogdham\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"1.8.0\"\n\nrecipe:\n  name: backports.zstd-split\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/b/backports.zstd/backports_zstd-${{ version }}.tar.gz\n  sha256: 9dae4f4c481716e3db473d667457b4f508ff7459c0931b567a5c9677fb3db316\n\nbuild:\n  number: 2\n  # no builds needed on platforms which only ship python 3.14+\n  skip: match(python_min, \">=3.14\")\n\n# To allow downstream `noarch: python` feedstocks to unconditionally depend\n# on `backports.zstd` without having their _own_ variants, this builds multiple\n# `outputs` with the same name, but different build strings, per upstream release:\n#\n# - one build that links against `zstd` and `python` per {platform x architecture x python}\n#   for python 3.10-3.13\n# - a single, empty, `noarch: generic` build (built on `linux-64`) which can be\n#   installed on python 3.14+\n\noutputs:\n  - package:\n      name: backports.zstd\n    build:\n      skip: match(python, \">=3.14\")\n      script:\n        - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --config-settings=--build-option=--system-zstd --disable-pip-version-check --check-build-dependencies\n    requirements:\n      build:\n        - ${{ compiler(\"c\") }}\n        - ${{ stdlib(\"c\") }}\n        - if: build_platform != target_platform\n          then:\n            - python\n            - cross-python_${{ target_platform }}\n      host:\n        - pip\n        - python\n        - setuptools\n        - zstd\n      run:\n        - python\n    tests:\n      - package_contents:\n          strict: true\n          site_packages:\n            - backports/zstd/**\n            - backports_zstd-${{ version }}.dist-info/**\n      - python:\n          imports: backports.zstd\n          pip_check: true\n\n  - package:\n      name: backports.zstd\n    build:\n      skip: not (target_platform == \"linux-64\" and match(python, \"3.14.*\") and (\"cp314t\" not in python))\n      noarch: generic\n    requirements:\n      run:\n        - python >=3.14\n    tests:\n      - package_contents:\n          strict: true\n      - python:\n          imports: compression.zstd\n          pip_check: true\n          python_version:\n            - 3.14.*\n            - 3.15.*\n    about:\n      summary: Backport of compression.zstd (no-op on Python 3.14+)\n\nabout:\n  homepage: https://pypi.org/project/backports.zstd\n  repository: https://github.com/rogdham/backports.zstd\n  license: Python-2.0\n  license_file: LICENSE.txt\n  summary: Backport of compression.zstd\n\nextra:\n  feedstock-name: backports.zstd\n  recipe-maintainers:\n    - rogdham\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1999,7 +2003,7 @@
       "summary": "Backport of compression.zstd"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --config-settings=--build-option=--system-zstd --disable-pip-version-check --check-build-dependencies"
     },
     "extra": {
