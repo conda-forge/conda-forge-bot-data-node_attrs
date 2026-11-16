@@ -1,15 +1,15 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_mallocsystem.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibboost_devel:\n- '1.90'\nlibhwloc:\n- 2.13.0\nmalloc:\n- system\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_mallocsystem.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibboost_devel:\n- '1.90'\nlibhwloc:\n- 2.15.0\nmalloc:\n- system\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {
     "libboost190": {
       "migration_number": 1,
       "migrator_ts": 1776998221.848913
     },
-    "mimalloc361": {
-      "migration_number": 1,
-      "migrator_ts": 1794008444.666072
+    "libhwloc2150": {
+      "migration_number": 2,
+      "migrator_ts": 1794007402.0872786
     }
   },
   "conda-forge.yml": {
@@ -28,8 +28,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "18464ea66f67b0070dcfafee69f6743cf17634d0",
-  "feedstock_hash_ts": 1794814464,
+  "feedstock_hash": "cf954f08ef8e466211d0929bd4b4f9ba7e550435",
+  "feedstock_hash_ts": 1794864250,
   "feedstock_name": "hpx",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,7 +44,7 @@
       "summary": "The C++ Standard Library for Parallelism and Concurrency"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "hpx"
@@ -261,7 +261,7 @@
       "summary": "The C++ Standard Library for Parallelism and Concurrency"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "hpx"
@@ -781,7 +781,7 @@
       "summary": "The C++ Standard Library for Parallelism and Concurrency"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "hpx"
@@ -998,7 +998,7 @@
       "summary": "The C++ Standard Library for Parallelism and Concurrency"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "hpx"
@@ -1219,7 +1219,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/hpx.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  name: hpx\n  version: 2.0.0\n  build_number: 1\n\nrecipe:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/TheHPXProject/hpx/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: c755ab893e9fdcbc896c6eb735ad411cc78b9314e916d87119c3cd5304928211\n\nbuild:\n  string: ${{ malloc }}_${{ hash }}_${{ build_number }}\n  number: ${{ build_number }}\n  variant:\n    use_keys:\n      # use malloc from the variant config, e.g. to build multiple malloc variants\n      - malloc\n    # this will down-prioritize the system variant versus other variants of the package\n    down_prioritize_variant: ${{ 1 if malloc == \"system\" else 0 }}\n\noutputs:\n  - package:\n      name: ${{ name }}\n      version: ${{ version }}\n    build:\n      script:\n        file: ${{ \"build.sh\" if unix else \"build.bat\" }}\n        env:\n          malloc: ${{ malloc }}\n    requirements:\n      build:\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib(\"c\") }}\n        - cmake\n        - python *\n        - if: win\n          then: git\n          else: ninja\n      host:\n        - asio\n        - libboost-devel\n        - if: not win\n          then: gperftools\n        - libhwloc\n        - if: win\n          then: mimalloc\n      run:\n        # Packages needed for downstream packages that use HPX at:\n        # - build-time: headers, libraries\n        # - runtime: shared libraries\n        # Only list packages whose meta.yaml doesn't contain a run_exports already\n        - asio\n        - libboost-devel\n        - if: not win\n          then: gperftools\n      run_exports:\n        weak:\n          - ${{ pin_subpackage(\"hpx\", upper_bound=\"x.x\") }}\n\n    tests:\n      - files:\n          recipe:\n            - test/CMakeLists.txt\n            - test/hello_hpx.cpp\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib(\"c\") }}\n            - cmake\n            - if: not win\n              then: ninja\n        script:\n          - if: win\n            then:\n              - run_test.bat\n            else:\n              - run_test.sh\n      - package_contents:\n          files:\n            - if: win\n              then:\n                - Library/bin/hpxrun.py\n              else:\n                - bin/hpxrun.py\n\nabout:\n  summary: The C++ Standard Library for Parallelism and Concurrency\n  description: |\n    HPX is a C++ Standard Library for Concurrency and Parallelism. It implements all of the\n    corresponding facilities as defined by the C++ Standard. Additionally, in HPX we implement\n    functionalities proposed as part of the ongoing C++ standardization process. We also extend\n    the C++ Standard APIs to the distributed case.\n  license: BSL-1.0\n  license_file: LICENSE_1_0.txt\n  homepage: https://hpx.dev\n  repository: https://github.com/TheHPXProject/hpx\n  documentation: https://docs.hpx.dev\n\nextra:\n  recipe-maintainers:\n    - kordejong\n    - oliverschmitz\n    - hkaiser\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  name: hpx\n  version: 2.0.0\n  build_number: 2\n\nrecipe:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/TheHPXProject/hpx/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: c755ab893e9fdcbc896c6eb735ad411cc78b9314e916d87119c3cd5304928211\n\nbuild:\n  string: ${{ malloc }}_${{ hash }}_${{ build_number }}\n  number: ${{ build_number }}\n  variant:\n    use_keys:\n      # use malloc from the variant config, e.g. to build multiple malloc variants\n      - malloc\n    # this will down-prioritize the system variant versus other variants of the package\n    down_prioritize_variant: ${{ 1 if malloc == \"system\" else 0 }}\n\noutputs:\n  - package:\n      name: ${{ name }}\n      version: ${{ version }}\n    build:\n      script:\n        file: ${{ \"build.sh\" if unix else \"build.bat\" }}\n        env:\n          malloc: ${{ malloc }}\n    requirements:\n      build:\n        - ${{ compiler('cxx') }}\n        - ${{ stdlib(\"c\") }}\n        - cmake\n        - python *\n        - if: win\n          then: git\n          else: ninja\n      host:\n        - asio\n        - libboost-devel\n        - if: not win\n          then: gperftools\n        - libhwloc\n        - if: win\n          then: mimalloc\n      run:\n        # Packages needed for downstream packages that use HPX at:\n        # - build-time: headers, libraries\n        # - runtime: shared libraries\n        # Only list packages whose meta.yaml doesn't contain a run_exports already\n        - asio\n        - libboost-devel\n        - if: not win\n          then: gperftools\n      run_exports:\n        weak:\n          - ${{ pin_subpackage(\"hpx\", upper_bound=\"x.x\") }}\n\n    tests:\n      - files:\n          recipe:\n            - test/CMakeLists.txt\n            - test/hello_hpx.cpp\n        requirements:\n          run:\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib(\"c\") }}\n            - cmake\n            - if: not win\n              then: ninja\n        script:\n          - if: win\n            then:\n              - run_test.bat\n            else:\n              - run_test.sh\n      - package_contents:\n          files:\n            - if: win\n              then:\n                - Library/bin/hpxrun.py\n              else:\n                - bin/hpxrun.py\n\nabout:\n  summary: The C++ Standard Library for Parallelism and Concurrency\n  description: |\n    HPX is a C++ Standard Library for Concurrency and Parallelism. It implements all of the\n    corresponding facilities as defined by the C++ Standard. Additionally, in HPX we implement\n    functionalities proposed as part of the ongoing C++ standardization process. We also extend\n    the C++ Standard APIs to the distributed case.\n  license: BSL-1.0\n  license_file: LICENSE_1_0.txt\n  homepage: https://hpx.dev\n  repository: https://github.com/TheHPXProject/hpx\n  documentation: https://docs.hpx.dev\n\nextra:\n  recipe-maintainers:\n    - kordejong\n    - oliverschmitz\n    - hkaiser\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1338,7 +1338,7 @@
       "summary": "The C++ Standard Library for Parallelism and Concurrency"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "hpx"
