@@ -30,8 +30,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "26ea7c3f8b848417cad773426c133acd0fa05779",
-  "feedstock_hash_ts": 1794837654,
+  "feedstock_hash": "3401bf50339bf3b427d6da00d31a2f6269bcce5c",
+  "feedstock_hash_ts": 1794951412,
   "feedstock_name": "mise",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -94,7 +94,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "openssl"
@@ -150,7 +150,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "openssl"
@@ -176,7 +176,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -252,7 +252,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "openssl"
@@ -305,7 +305,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "openssl"
@@ -331,7 +331,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -415,7 +415,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "openssl"
@@ -469,7 +469,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "openssl"
@@ -520,7 +520,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -569,7 +569,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -618,7 +618,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -668,7 +668,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -720,7 +720,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "openssl"
@@ -790,7 +790,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -841,7 +841,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -864,7 +864,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -938,7 +938,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -989,7 +989,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -1012,7 +1012,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1047,7 +1047,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/mise.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"2026.11.9\"\n  # upstream refs: https://github.com/jdx/mise/blob/main/scripts/build-tarball.sh & https://github.com/jdx/mise/blob/main/scripts/build-tarball.ps1\n  base_features: native-tls,rustls-native-roots,vfox/vendored-lua\n  extra_features: ${{ \",aws-lc-rs\" if target_platform == \"linux-armv7l\" else \"\" }}\n  self_update_msg: \"This version of mise was installed from conda-forge, a community-maintained channel of Conda packages. Use your Conda package manager (`conda`, `mamba`, `pixi` etc.) to update mise.\"\n\npackage:\n  name: mise\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/jdx/mise/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 0dd2fd42fddc636fae0ce8cb1344e0beaee1cbbd8c568cf35d6e0654335b4b7c\n\nbuild:\n  number: 0\n  script:\n    env:\n      AWS_LC_SYS_CMAKE_BUILDER: \"1\" # force CMake builder for `aws-lc-sys` native C/C++ code (to avoid clashing with conda-forge's CC compiler flags when building `jitterentropy.c`)\n      CARGO_PROFILE_RELEASE_LTO: \"thin\" # `rustc-LLVM` runs out of memory with `fat` LTO\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      OPENSSL_NO_VENDOR: \"1\"\n      # instruct `cc` crate to use clang-cl natively to compile build-time tools intended to be run on the host when cross-compiling from `win_64`\n      # (fixes compilation of `zstd-sys`)\n      AR_x86_64_pc_windows_msvc: llvm-lib\n      CC_x86_64_pc_windows_msvc: clang-cl\n      CXX_x86_64_pc_windows_msvc: clang-cl\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # set `LIBCLANG_PATH` for bindgen to find libclang\n      # cf. https://github.com/conda-forge/clangdev-feedstock/issues/373 & https://github.com/rust-lang/rust-bindgen/issues/918\n      - if: unix\n        then: $env.LIBCLANG_PATH = $env.BUILD_PREFIX | path join lib\n      - if: win\n        then:\n          - $env.LIBCLANG_PATH = $env.BUILD_PREFIX | path join Library lib\n          # bindgen expects libclang.dll but conda-forge only provides versioned DLLs on Windows, so create a copy\n          - let bin_dir = ($env.BUILD_PREFIX)/Library/bin | str replace --all '\\' '/'\n          - let source_dll = glob ($bin_dir)/libclang-*.dll | first\n          - cp $source_dll ($bin_dir)/libclang.dll\n      # build main app and generate license data\n      - cargo auditable install --path=. --root=($prefix) --no-track --locked --bins --no-default-features --features=${{ base_features }}${{ extra_features }}\n      - if: win\n        then: cargo auditable install --path=crates\\mise-shim --root=($prefix) --no-track --locked --bins\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      # write custom `mise self-update` message\n      - mkdir ($prefix)/lib\n      - echo 'message = \"${{ self_update_msg }}\"' | save ($prefix)/lib/mise-self-update-instructions.toml\n      # copy manpage\n      - mkdir ($prefix)/share/man/man1\n      - cp man/man1/*.1 ($prefix)/share/man/man1/\n      # generate shell completions\n      - if: build_platform == host_platform\n        then:\n          - ^mise completion bash | save --force ($prefix)/share/bash-completion/completions/mise\n          - ^mise completion fish | save --force ($prefix)/share/fish/vendor_completions.d/mise.fish\n          - ^mise completion zsh  | save --force ($prefix)/share/zsh/site-functions/_mise\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - clang\n    - cmake\n    - libclang\n    - make\n    - ninja\n    - nushell\n    - pkg-config\n  host:\n    - if: linux\n      then: openssl\n\ntests:\n  - script:\n      env:\n        MISE_NO_CONFIG: 1\n        MISE_OFFLINE: 1\n      content:\n        - mise help\n        - mise version\n  - package_contents:\n      bin:\n        - mise\n        - if: win\n          then: mise-shim\n      files:\n        - if: unix\n          then:\n            - lib/mise-self-update-instructions.toml\n            - share/man/man1/mise.1\n            - if: build_platform == host_platform\n              then:\n                - share/bash-completion/completions/mise\n                - share/fish/vendor_completions.d/mise.fish\n                - share/zsh/site-functions/_mise\n        - if: win\n          then:\n            - Library/lib/mise-self-update-instructions.toml\n            - Library/share/man/man1/mise.1\n            - if: build_platform == host_platform\n              then:\n                - Library/share/bash-completion/completions/mise\n                - Library/share/fish/vendor_completions.d/mise.fish\n                - Library/share/zsh/site-functions/_mise\n      strict: true\n\nabout:\n  summary: mise manages dev tools, env vars, and runs tasks.\n  description: |\n    `mise` (mise-en-place) is a unified CLI tool designed to simplify and manage local development environments.\n    It acts as a polyglot tool version manager, installing and seamlessly switching between versions of various\n    development tools (replacing utilities like `asdf`, `nvm`, and `pyenv`). Additionally, it functions as an\n    environment variable manager that dynamically loads project-specific env vars based on your current directory\n    (replacing `direnv`), and serves as a built-in task runner to define and execute project workflows as a modern\n    alternative to `make` or `npm` scripts.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://mise.jdx.dev/\n  repository: https://github.com/jdx/mise\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
+  "raw_meta_yaml": "context:\n  version: \"2026.11.9\"\n  # upstream refs: https://github.com/jdx/mise/blob/main/scripts/build-tarball.sh & https://github.com/jdx/mise/blob/main/scripts/build-tarball.ps1\n  base_features: native-tls,rustls-native-roots,vfox/vendored-lua\n  extra_features: ${{ \",aws-lc-rs\" if target_platform == \"linux-armv7l\" else \"\" }}\n  self_update_msg: \"This version of mise was installed from conda-forge, a community-maintained channel of Conda packages. Use your Conda package manager (`conda`, `mamba`, `pixi` etc.) to update mise.\"\n\npackage:\n  name: mise\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/jdx/mise/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 0dd2fd42fddc636fae0ce8cb1344e0beaee1cbbd8c568cf35d6e0654335b4b7c\n\nbuild:\n  number: 0\n  script:\n    env:\n      AWS_LC_SYS_CMAKE_BUILDER: \"1\" # force CMake builder for `aws-lc-sys` native C/C++ code (to avoid clashing with conda-forge's CC compiler flags when building `jitterentropy.c`)\n      CARGO_PROFILE_RELEASE_LTO: \"thin\" # `rustc-LLVM` runs out of memory with `fat` LTO\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      OPENSSL_NO_VENDOR: \"1\"\n      # instruct `cc` crate to use clang-cl natively to compile build-time tools intended to be run on the host when cross-compiling from `win_64`\n      # (fixes compilation of `zstd-sys`)\n      AR_x86_64_pc_windows_msvc: llvm-lib\n      CC_x86_64_pc_windows_msvc: clang-cl\n      CXX_x86_64_pc_windows_msvc: clang-cl\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # set `LIBCLANG_PATH` for bindgen to find libclang\n      # cf. https://github.com/conda-forge/clangdev-feedstock/issues/373 & https://github.com/rust-lang/rust-bindgen/issues/918\n      - if: unix\n        then: $env.LIBCLANG_PATH = $env.BUILD_PREFIX | path join lib\n      - if: win\n        then:\n          - $env.LIBCLANG_PATH = $env.BUILD_PREFIX | path join Library lib\n          # bindgen expects libclang.dll but conda-forge only provides versioned DLLs on Windows, so create a copy\n          - let bin_dir = ($env.BUILD_PREFIX)/Library/bin | str replace --all '\\' '/'\n          - let source_dll = glob ($bin_dir)/libclang-*.dll | first\n          - cp $source_dll ($bin_dir)/libclang.dll\n      # build main app and generate license data\n      - cargo auditable install --path=. --root=($prefix) --no-track --locked --bins --no-default-features --features=${{ base_features }}${{ extra_features }}\n      - if: win\n        then: cargo auditable install --path=crates\\mise-shim --root=($prefix) --no-track --locked --bins\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      # write custom `mise self-update` message\n      - mkdir ($prefix)/lib\n      - echo 'message = \"${{ self_update_msg }}\"' | save ($prefix)/lib/mise-self-update-instructions.toml\n      # copy manpage\n      - mkdir ($prefix)/share/man/man1\n      - cp man/man1/*.1 ($prefix)/share/man/man1/\n      # generate shell completions\n      - if: build_platform == host_platform\n        then:\n          - ^mise completion bash | save --force ($prefix)/share/bash-completion/completions/mise\n          - ^mise completion fish | save --force ($prefix)/share/fish/vendor_completions.d/mise.fish\n          - ^mise completion zsh  | save --force ($prefix)/share/zsh/site-functions/_mise\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - clang\n    - cmake\n    - libclang\n    - make\n    - ninja\n    - nushell\n    - pkgconf\n  host:\n    - if: linux\n      then: openssl\n\ntests:\n  - script:\n      env:\n        MISE_NO_CONFIG: 1\n        MISE_OFFLINE: 1\n      content:\n        - mise help\n        - mise version\n  - package_contents:\n      bin:\n        - mise\n        - if: win\n          then: mise-shim\n      files:\n        - if: unix\n          then:\n            - lib/mise-self-update-instructions.toml\n            - share/man/man1/mise.1\n            - if: build_platform == host_platform\n              then:\n                - share/bash-completion/completions/mise\n                - share/fish/vendor_completions.d/mise.fish\n                - share/zsh/site-functions/_mise\n        - if: win\n          then:\n            - Library/lib/mise-self-update-instructions.toml\n            - Library/share/man/man1/mise.1\n            - if: build_platform == host_platform\n              then:\n                - Library/share/bash-completion/completions/mise\n                - Library/share/fish/vendor_completions.d/mise.fish\n                - Library/share/zsh/site-functions/_mise\n      strict: true\n\nabout:\n  summary: mise manages dev tools, env vars, and runs tasks.\n  description: |\n    `mise` (mise-en-place) is a unified CLI tool designed to simplify and manage local development environments.\n    It acts as a polyglot tool version manager, installing and seamlessly switching between versions of various\n    development tools (replacing utilities like `asdf`, `nvm`, and `pyenv`). Additionally, it functions as an\n    environment variable manager that dynamically loads project-specific env vars based on your current directory\n    (replacing `direnv`), and serves as a built-in task runner to define and execute project workflows as a modern\n    alternative to `make` or `npm` scripts.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://mise.jdx.dev/\n  repository: https://github.com/jdx/mise\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1062,7 +1062,7 @@
       "ninja",
       "nushell",
       "openssl",
-      "pkg-config",
+      "pkgconf",
       "rust_compiler_stub"
     ]
   },
@@ -1080,7 +1080,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1119,7 +1119,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1204,7 +1204,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -1256,7 +1256,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -1279,7 +1279,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1357,7 +1357,7 @@
             "make",
             "ninja",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -1409,7 +1409,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -1432,7 +1432,7 @@
         "make",
         "ninja",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
