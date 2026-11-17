@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_mpimpich.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.28'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfftw:\n- '3'\nlibblas:\n- 3.9.* *netlib\nliblapack:\n- 3.9.* *netlib\nmpi:\n- mpich\nmpich:\n- '5'\nopenmpi:\n- '5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_mpimpich.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.28'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfftw:\n- '3'\nlibblas:\n- 3.9.* *netlib\nliblapack:\n- 3.9.* *netlib\nmpi:\n- mpich\nmpich:\n- '5'\nopenmpi:\n- '5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
@@ -24,8 +24,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "6e626cf8186a24b4661c74dabe5088fd5aa51985",
-  "feedstock_hash_ts": 1792489532,
+  "feedstock_hash": "f898dc3ef78d499ceca475d98d98738a0cd31ed7",
+  "feedstock_hash_ts": 1794937509,
   "feedstock_name": "plumed",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -40,7 +40,7 @@
       "summary": "Free energy calculations in molecular systems"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -71,7 +71,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -85,11 +86,19 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": [
               "plumed info --root",
               "plumed info --long-version",
               "plumed-patch -h",
               "plumed config has external_blas external_lapack fftw gsl zlib",
+              "printf '%s\\n' 'extern \"C\" int plumed_load_smoke = 0;' > load_smoke.cpp",
+              "printf '%s\\n' 'LOAD FILE=load_smoke.cpp' > load_smoke.dat",
+              "plumed driver --natoms 1 --parse-only --plumed load_smoke.dat",
               "plumed config has mpi",
               "plumed config has asmjit",
               "$PREFIX/lib/plumed/plumed-runtime -h"
@@ -118,7 +127,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -132,11 +142,19 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": [
               "plumed info --root",
               "plumed info --long-version",
               "plumed-patch -h",
               "plumed config has external_blas external_lapack fftw gsl zlib",
+              "printf '%s\\n' 'extern \"C\" int plumed_load_smoke = 0;' > load_smoke.cpp",
+              "printf '%s\\n' 'LOAD FILE=load_smoke.cpp' > load_smoke.dat",
+              "plumed driver --natoms 1 --parse-only --plumed load_smoke.dat",
               "plumed config has asmjit",
               "$PREFIX/lib/plumed/plumed-runtime -h"
             ]
@@ -166,7 +184,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -180,6 +199,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": [
               "export OMPI_MCA_plm=isolated",
               "export OMPI_MCA_btl_vader_single_copy_mechanism=none",
@@ -189,6 +213,9 @@
               "plumed info --long-version",
               "plumed-patch -h",
               "plumed config has external_blas external_lapack fftw gsl zlib",
+              "printf '%s\\n' 'extern \"C\" int plumed_load_smoke = 0;' > load_smoke.cpp",
+              "printf '%s\\n' 'LOAD FILE=load_smoke.cpp' > load_smoke.dat",
+              "plumed driver --natoms 1 --parse-only --plumed load_smoke.dat",
               "plumed config has mpi",
               "plumed config has asmjit",
               "$PREFIX/lib/plumed/plumed-runtime -h"
@@ -223,6 +250,7 @@
         "mpich",
         "gawk",
         "libopenblas * *openmp*",
+        "zlib",
         "openmpi"
       ]
     },
@@ -261,12 +289,15 @@
         "gawk",
         "libopenblas",
         "mpich",
-        "openmpi"
+        "openmpi",
+        "zlib"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cxx-compiler"
+      ]
     }
   },
   "linux_aarch64_meta_yaml": {
@@ -281,7 +312,7 @@
       "summary": "Free energy calculations in molecular systems"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -312,7 +343,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -326,6 +358,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -351,7 +388,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -365,6 +403,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -393,7 +436,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -407,6 +451,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -439,6 +488,7 @@
         "mpich",
         "gawk",
         "libopenblas * *openmp*",
+        "zlib",
         "openmpi"
       ]
     },
@@ -478,12 +528,15 @@
         "gawk",
         "libopenblas",
         "mpich",
-        "openmpi"
+        "openmpi",
+        "zlib"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cxx-compiler"
+      ]
     }
   },
   "linux_ppc64le_meta_yaml": {
@@ -498,7 +551,7 @@
       "summary": "Free energy calculations in molecular systems"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -529,7 +582,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -543,6 +597,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -568,7 +627,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -582,6 +642,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -610,7 +675,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -624,6 +690,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -656,6 +727,7 @@
         "mpich",
         "gawk",
         "libopenblas * *openmp*",
+        "zlib",
         "openmpi"
       ]
     },
@@ -695,12 +767,15 @@
         "gawk",
         "libopenblas",
         "mpich",
-        "openmpi"
+        "openmpi",
+        "zlib"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cxx-compiler"
+      ]
     }
   },
   "meta_yaml": {
@@ -715,7 +790,7 @@
       "summary": "Free energy calculations in molecular systems"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -746,7 +821,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -760,11 +836,19 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": [
               "plumed info --root",
               "plumed info --long-version",
               "plumed-patch -h",
               "plumed config has external_blas external_lapack fftw gsl zlib",
+              "printf '%s\\n' 'extern \"C\" int plumed_load_smoke = 0;' > load_smoke.cpp",
+              "printf '%s\\n' 'LOAD FILE=load_smoke.cpp' > load_smoke.dat",
+              "plumed driver --natoms 1 --parse-only --plumed load_smoke.dat",
               "plumed config has mpi",
               "plumed config has asmjit",
               "$PREFIX/lib/plumed/plumed-runtime -h"
@@ -793,7 +877,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -807,11 +892,19 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": [
               "plumed info --root",
               "plumed info --long-version",
               "plumed-patch -h",
               "plumed config has external_blas external_lapack fftw gsl zlib",
+              "printf '%s\\n' 'extern \"C\" int plumed_load_smoke = 0;' > load_smoke.cpp",
+              "printf '%s\\n' 'LOAD FILE=load_smoke.cpp' > load_smoke.dat",
+              "plumed driver --natoms 1 --parse-only --plumed load_smoke.dat",
               "plumed config has asmjit",
               "$PREFIX/lib/plumed/plumed-runtime -h"
             ]
@@ -841,7 +934,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -855,6 +949,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": [
               "export OMPI_MCA_plm=isolated",
               "export OMPI_MCA_btl_vader_single_copy_mechanism=none",
@@ -864,6 +963,9 @@
               "plumed info --long-version",
               "plumed-patch -h",
               "plumed config has external_blas external_lapack fftw gsl zlib",
+              "printf '%s\\n' 'extern \"C\" int plumed_load_smoke = 0;' > load_smoke.cpp",
+              "printf '%s\\n' 'LOAD FILE=load_smoke.cpp' > load_smoke.dat",
+              "plumed driver --natoms 1 --parse-only --plumed load_smoke.dat",
               "plumed config has mpi",
               "plumed config has asmjit",
               "$PREFIX/lib/plumed/plumed-runtime -h"
@@ -894,7 +996,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -908,6 +1011,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -933,7 +1041,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -947,6 +1056,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -975,7 +1089,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -989,6 +1104,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1016,7 +1136,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1030,6 +1151,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1055,7 +1181,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1069,6 +1196,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1097,7 +1229,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1111,6 +1244,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1138,7 +1276,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1152,6 +1291,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1177,7 +1321,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1191,6 +1336,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1219,7 +1369,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1233,6 +1384,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1260,7 +1416,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1274,6 +1431,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1299,7 +1461,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1313,6 +1476,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1341,7 +1509,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1355,6 +1524,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1387,6 +1561,7 @@
         "mpich",
         "gawk",
         "libopenblas * *openmp*",
+        "zlib",
         "openmpi"
       ]
     },
@@ -1409,7 +1584,7 @@
       "summary": "Free energy calculations in molecular systems"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1440,7 +1615,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1454,6 +1630,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1479,7 +1660,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1493,6 +1675,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1521,7 +1708,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1535,6 +1723,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1567,6 +1760,7 @@
         "mpich",
         "gawk",
         "libopenblas * *openmp*",
+        "zlib",
         "openmpi"
       ]
     },
@@ -1606,12 +1800,15 @@
         "gawk",
         "libopenblas",
         "mpich",
-        "openmpi"
+        "openmpi",
+        "zlib"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cxx-compiler"
+      ]
     }
   },
   "osx_arm64_meta_yaml": {
@@ -1626,7 +1823,7 @@
       "summary": "Free energy calculations in molecular systems"
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1657,7 +1854,8 @@
           "run": [
             "mpich",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1671,6 +1869,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1696,7 +1899,8 @@
           ],
           "run": [
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1710,6 +1914,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1738,7 +1947,8 @@
           "run": [
             "openmpi",
             "gawk",
-            "libopenblas * *openmp*"
+            "libopenblas * *openmp*",
+            "zlib"
           ]
         },
         "tests": [
@@ -1752,6 +1962,11 @@
             }
           },
           {
+            "requirements": {
+              "run": [
+                "cxx-compiler"
+              ]
+            },
             "script": []
           }
         ],
@@ -1784,6 +1999,7 @@
         "mpich",
         "gawk",
         "libopenblas * *openmp*",
+        "zlib",
         "openmpi"
       ]
     },
@@ -1823,12 +2039,15 @@
         "gawk",
         "libopenblas",
         "mpich",
-        "openmpi"
+        "openmpi",
+        "zlib"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cxx-compiler"
+      ]
     }
   },
   "outputs_names": {
@@ -1848,7 +2067,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/plumed.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: \"plumed\"\n  version: \"2.10.2\"\n  mpi_prefix: ${{ \"nompi\" if mpi == \"nompi\" else \"mpi_\" + mpi }}\n  # Prioritize nompi via build number\n  build_number: ${{ 0 + (100 if mpi == \"nompi\" else 0) }}\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/${{ name }}/${{ name }}2/archive/v${{ version }}.tar.gz\n  sha256: 74b3f35b62a338716efd3455aa488e292728b62a6cef71d9d3a9f41ff5a8733c\n\nbuild:\n  number: ${{ build_number }}\n  skip:\n    - win\n  string: ${{ mpi_prefix }}_h${{ hash }}_${{ build_number }}\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ stdlib(\"c\") }}\n    - make\n    # MPI compiler wrappers runnable on the build machine when cross-compiling\n    - if: build_platform != target_platform and mpi == \"openmpi\"\n      then: ${{ mpi }}\n  host:\n    - if: mpi != \"nompi\"\n      then: ${{ mpi }}\n    - fftw\n    - gsl >=2.8\n    - libblas\n    - liblapack\n    - \"libopenblas * *openmp*\"\n    - zlib\n  run:\n    - if: mpi != \"nompi\"\n      then: ${{ mpi }}\n    - gawk\n    - \"libopenblas * *openmp*\"\n\n\ntests:\n  - package_contents:\n      lib:\n        - ${{ name }}\n        - ${{ name }}Kernel\n        - lib${{ name }}Wrapper.a\n  - script:\n      - if: target_platform == build_platform\n        then:\n          - if: mpi == \"openmpi\"\n            then:\n              - export OMPI_MCA_plm=isolated\n              - export OMPI_MCA_btl_vader_single_copy_mechanism=none\n              - export OMPI_MCA_rmaps_base_oversubscribe=yes\n              - export OMPI_MCA_btl=vader,self\n          - plumed info --root\n          - plumed info --long-version\n          - plumed-patch -h\n          - plumed config has external_blas external_lapack fftw gsl zlib\n          - if: mpi != \"nompi\"\n            then:\n              - plumed config has mpi\n          - if: not (target_platform == \"linux-ppc64le\" or target_platform == \"linux-aarch64\" or target_platform == \"osx-arm64\")\n            then:\n              - plumed config has asmjit\n          - $PREFIX/lib/plumed/plumed-runtime -h\n\nabout:\n  homepage: http://www.plumed.org/\n  license: LGPL-3.0-only\n  license_file: COPYING.LESSER\n  summary: Free energy calculations in molecular systems\n  description: |\n    PLUMED is an open source library for free energy calculations in\n    molecular systems which works together with some of the most\n    popular molecular dynamics engines.\n  documentation: https://www.plumed.org/doc\n  repository: https://github.com/plumed/plumed2\n\nextra:\n  recipe-maintainers:\n    - GiovanniBussi\n    - mkrack\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: \"plumed\"\n  version: \"2.10.2\"\n  mpi_prefix: ${{ \"nompi\" if mpi == \"nompi\" else \"mpi_\" + mpi }}\n  # Prioritize nompi via build number\n  build_number: ${{ 1 + (100 if mpi == \"nompi\" else 0) }}\n\npackage:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/${{ name }}/${{ name }}2/archive/v${{ version }}.tar.gz\n  sha256: 74b3f35b62a338716efd3455aa488e292728b62a6cef71d9d3a9f41ff5a8733c\n\nbuild:\n  number: ${{ build_number }}\n  skip:\n    - win\n  string: ${{ mpi_prefix }}_h${{ hash }}_${{ build_number }}\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ stdlib(\"c\") }}\n    - make\n    # MPI compiler wrappers runnable on the build machine when cross-compiling\n    - if: build_platform != target_platform and mpi == \"openmpi\"\n      then: ${{ mpi }}\n  host:\n    - if: mpi != \"nompi\"\n      then: ${{ mpi }}\n    - fftw\n    - gsl >=2.8\n    - libblas\n    - liblapack\n    - \"libopenblas * *openmp*\"\n    - zlib\n  run:\n    - if: mpi != \"nompi\"\n      then: ${{ mpi }}\n    - gawk\n    - \"libopenblas * *openmp*\"\n    - zlib\n\n\ntests:\n  - package_contents:\n      lib:\n        - ${{ name }}\n        - ${{ name }}Kernel\n        - lib${{ name }}Wrapper.a\n  - script:\n      - if: target_platform == build_platform\n        then:\n          - if: mpi == \"openmpi\"\n            then:\n              - export OMPI_MCA_plm=isolated\n              - export OMPI_MCA_btl_vader_single_copy_mechanism=none\n              - export OMPI_MCA_rmaps_base_oversubscribe=yes\n              - export OMPI_MCA_btl=vader,self\n          - plumed info --root\n          - plumed info --long-version\n          - plumed-patch -h\n          - plumed config has external_blas external_lapack fftw gsl zlib\n          - printf '%s\\n' 'extern \"C\" int plumed_load_smoke = 0;' > load_smoke.cpp\n          - printf '%s\\n' 'LOAD FILE=load_smoke.cpp' > load_smoke.dat\n          - plumed driver --natoms 1 --parse-only --plumed load_smoke.dat\n          - if: mpi != \"nompi\"\n            then:\n              - plumed config has mpi\n          - if: not (target_platform == \"linux-ppc64le\" or target_platform == \"linux-aarch64\" or target_platform == \"osx-arm64\")\n            then:\n              - plumed config has asmjit\n          - $PREFIX/lib/plumed/plumed-runtime -h\n    requirements:\n      run:\n        - cxx-compiler\n\nabout:\n  homepage: http://www.plumed.org/\n  license: LGPL-3.0-only\n  license_file: COPYING.LESSER\n  summary: Free energy calculations in molecular systems\n  description: |\n    PLUMED is an open source library for free energy calculations in\n    molecular systems which works together with some of the most\n    popular molecular dynamics engines.\n  documentation: https://www.plumed.org/doc\n  repository: https://github.com/plumed/plumed2\n\nextra:\n  recipe-maintainers:\n    - GiovanniBussi\n    - mkrack\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1903,12 +2122,15 @@
         "gawk",
         "libopenblas",
         "mpich",
-        "openmpi"
+        "openmpi",
+        "zlib"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cxx-compiler"
+      ]
     }
   },
   "strong_exports": false,
@@ -1942,12 +2164,15 @@
         "gawk",
         "libopenblas * *openmp*",
         "mpich",
-        "openmpi"
+        "openmpi",
+        "zlib"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cxx-compiler"
+      ]
     }
   },
   "url": "https://github.com/plumed/plumed2/archive/v2.10.2.tar.gz",
