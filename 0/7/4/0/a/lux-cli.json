@@ -27,8 +27,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "dd575d771b399166f93d150733e5425bdca6dceb",
-  "feedstock_hash_ts": 1794577161,
+  "feedstock_hash": "ae29cdd7f3c7c1b540b95c9c16715a2a66d63482",
+  "feedstock_hash_ts": 1794948767,
   "feedstock_name": "lux-cli",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -83,7 +83,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "gpgme",
@@ -135,7 +135,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "gpgme",
@@ -163,7 +163,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -233,7 +233,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "gpgme",
@@ -278,7 +278,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "gpgme",
@@ -306,7 +306,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -383,7 +383,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "gpgme",
@@ -433,7 +433,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "gpgme",
@@ -476,7 +476,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "gpgme",
@@ -519,7 +519,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "gpgme",
@@ -562,7 +562,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config",
+            "pkgconf",
             "nasm"
           ],
           "host": [],
@@ -601,7 +601,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config",
+            "pkgconf",
             "nasm"
           ],
           "host": [],
@@ -642,7 +642,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "nasm"
       ],
       "host": [
@@ -708,7 +708,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "gpgme",
@@ -753,7 +753,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "gpgme",
@@ -781,7 +781,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -852,7 +852,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [
             "gpgme",
@@ -897,7 +897,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "gpgme",
@@ -925,7 +925,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -965,7 +965,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/lux-cli.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.55.1\"\n\npackage:\n  name: lux-cli\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/lumen-oss/lux/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: da9f4e9cd3a6767354b859c303eb5e4881d921d8ea6d3b8e888c3b26ff263d2e\n\nbuild:\n  number: 0\n  script:\n    env:\n      AWS_LC_SYS_CMAKE_BUILDER: ${{ \"1\" if win else \"\" }} # force CMake builder for `aws-lc-sys` native C/C++ code on Windows\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      OPENSSL_NO_VENDOR: ${{ \"1\" if unix else \"\" }} # force linking to host's (conda-forge's) OpenSSL libs on Unix\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # instruct Apple's `ld64` linker to drop unused OpenSSL symbols and to add correct `@rpath` for xtask\n      - if: osx\n        then: $env.RUSTFLAGS = $'($env.RUSTFLAGS?) -C link-arg=-Wl,-dead_strip_dylibs -C link-arg=-Wl,-rpath,($prefix)/lib' | str trim\n      # build main app and generate license data\n      - cd lux-cli\n      - if: win\n        then: ^cargo auditable install --path=. --root=($prefix) --no-track --locked --bins --no-default-features --features=vendored\n        else: ^cargo auditable install --path=. --root=($prefix) --no-track --locked --bins\n      - ^cargo-bundle-licenses --format=yaml --output=../THIRDPARTY.yml\n      # generate shell completions and manpage\n      - if: build_platform == host_platform\n        then:\n          - ^lx util completion bash --allow-root | save --force ($prefix)/share/bash-completion/completions/lx\n          - ^lx util completion fish --allow-root | save --force ($prefix)/share/fish/vendor_completions.d/lx.fish\n          - ^lx util completion zsh  --allow-root | save --force ($prefix)/share/zsh/site-functions/_lx\n          - ^lx util man             --allow-root   --target-dir=($prefix)/share/man/man1\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - cmake\n    - make\n    - nushell\n    - perl\n    - pkg-config\n    - if: win\n      then: nasm\n  host:\n    - if: unix\n      then:\n        - gpgme\n        - libgit2\n        - libgpg-error\n        - openssl\n\ntests:\n  - script:\n      - lx --help\n      - lx --version\n  - package_contents:\n      bin:\n        - lx\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/man/man1/lx.1\n            - share/man/man1/lux*.1\n            - share/bash-completion/completions/lx\n            - share/fish/vendor_completions.d/lx.fish\n            - share/zsh/site-functions/_lx\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/man/man1/lx.1\n            - Library/share/man/man1/lux*.1\n            - Library/share/bash-completion/completions/lx\n            - Library/share/fish/vendor_completions.d/lx.fish\n            - Library/share/zsh/site-functions/_lx\n      strict: true\n\nabout:\n  summary: A luxurious package manager for Lua\n  description: |\n    Lux is a modern package manager for Lua. It manages dependencies, build steps,\n    lockfiles, Lua versions, and existing LuaRocks projects through a single CLI.\n  license: LGPL-3.0-or-later\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://lux.lumen-labs.org\n  repository: https://github.com/lumen-oss/lux\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
+  "raw_meta_yaml": "context:\n  version: \"0.55.1\"\n\npackage:\n  name: lux-cli\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/lumen-oss/lux/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: da9f4e9cd3a6767354b859c303eb5e4881d921d8ea6d3b8e888c3b26ff263d2e\n\nbuild:\n  number: 0\n  script:\n    env:\n      AWS_LC_SYS_CMAKE_BUILDER: ${{ \"1\" if win else \"\" }} # force CMake builder for `aws-lc-sys` native C/C++ code on Windows\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      OPENSSL_NO_VENDOR: ${{ \"1\" if unix else \"\" }} # force linking to host's (conda-forge's) OpenSSL libs on Unix\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # instruct Apple's `ld64` linker to drop unused OpenSSL symbols and to add correct `@rpath` for xtask\n      - if: osx\n        then: $env.RUSTFLAGS = $'($env.RUSTFLAGS?) -C link-arg=-Wl,-dead_strip_dylibs -C link-arg=-Wl,-rpath,($prefix)/lib' | str trim\n      # build main app and generate license data\n      - cd lux-cli\n      - if: win\n        then: ^cargo auditable install --path=. --root=($prefix) --no-track --locked --bins --no-default-features --features=vendored\n        else: ^cargo auditable install --path=. --root=($prefix) --no-track --locked --bins\n      - ^cargo-bundle-licenses --format=yaml --output=../THIRDPARTY.yml\n      # generate shell completions and manpage\n      - if: build_platform == host_platform\n        then:\n          - ^lx util completion bash --allow-root | save --force ($prefix)/share/bash-completion/completions/lx\n          - ^lx util completion fish --allow-root | save --force ($prefix)/share/fish/vendor_completions.d/lx.fish\n          - ^lx util completion zsh  --allow-root | save --force ($prefix)/share/zsh/site-functions/_lx\n          - ^lx util man             --allow-root   --target-dir=($prefix)/share/man/man1\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - cmake\n    - make\n    - nushell\n    - perl\n    - pkgconf\n    - if: win\n      then: nasm\n  host:\n    - if: unix\n      then:\n        - gpgme\n        - libgit2\n        - libgpg-error\n        - openssl\n\ntests:\n  - script:\n      - lx --help\n      - lx --version\n  - package_contents:\n      bin:\n        - lx\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/man/man1/lx.1\n            - share/man/man1/lux*.1\n            - share/bash-completion/completions/lx\n            - share/fish/vendor_completions.d/lx.fish\n            - share/zsh/site-functions/_lx\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/man/man1/lx.1\n            - Library/share/man/man1/lux*.1\n            - Library/share/bash-completion/completions/lx\n            - Library/share/fish/vendor_completions.d/lx.fish\n            - Library/share/zsh/site-functions/_lx\n      strict: true\n\nabout:\n  summary: A luxurious package manager for Lua\n  description: |\n    Lux is a modern package manager for Lua. It manages dependencies, build steps,\n    lockfiles, Lua versions, and existing LuaRocks projects through a single CLI.\n  license: LGPL-3.0-or-later\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://lux.lumen-labs.org\n  repository: https://github.com/lumen-oss/lux\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -983,7 +983,7 @@
       "nushell",
       "openssl",
       "perl",
-      "pkg-config",
+      "pkgconf",
       "rust_compiler_stub"
     ]
   },
@@ -1001,7 +1001,7 @@
         "nasm",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1045,7 +1045,7 @@
         "nasm",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1120,7 +1120,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config",
+            "pkgconf",
             "nasm"
           ],
           "host": [],
@@ -1161,7 +1161,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "nasm"
       ]
     },
@@ -1185,7 +1185,7 @@
         "nasm",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1250,7 +1250,7 @@
             "make",
             "nushell",
             "perl",
-            "pkg-config",
+            "pkgconf",
             "nasm"
           ],
           "host": [],
@@ -1291,7 +1291,7 @@
         "make",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "nasm"
       ]
     },
@@ -1315,7 +1315,7 @@
         "nasm",
         "nushell",
         "perl",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
