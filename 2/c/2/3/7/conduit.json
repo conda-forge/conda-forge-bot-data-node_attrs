@@ -1,11 +1,19 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_mpimpichpython3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nhdf5:\n- 1.14.6\nmpi:\n- mpich\nmpich:\n- '4'\nnumpy:\n- '2'\nopenmpi:\n- '5'\nopenssl:\n- '3.5'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_hdf51.14.6mpimpichpython3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nfortran_compiler:\n- gfortran\nfortran_compiler_version:\n- '15'\nhdf5:\n- 1.14.6\nmpi:\n- mpich\nmpich:\n- '4'\nnumpy:\n- '2'\nopenmpi:\n- '5'\nopenssl:\n- '3.5'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - fortran_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {
     "flang21": {
       "migration_number": 1,
       "migrator_ts": 1761259558.8193212
+    },
+    "hdf52": {
+      "migration_number": 1,
+      "migrator_ts": 1774274234.55363
+    },
+    "python315": {
+      "migration_number": 1,
+      "migrator_ts": 1755739490
     }
   },
   "conda-forge.yml": {
@@ -18,8 +26,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "bba639505f5d82f2413c6bc68add96a59e3307b6",
-  "feedstock_hash_ts": 1794876859,
+  "feedstock_hash": "67e508941a8e968cd900448ba30cfe7a1abbb33b",
+  "feedstock_hash_ts": 1794939200,
   "feedstock_name": "conduit",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,7 +52,7 @@
     },
     "package": {
       "name": "conduit",
-      "version": "0.9.9"
+      "version": "0.9.10"
     },
     "requirements": {
       "build": [
@@ -60,6 +68,8 @@
         "libpython-static",
         "python",
         "pip",
+        "setuptools >=68",
+        "wheel",
         "numpy",
         "openssl",
         "hdf5",
@@ -75,12 +85,23 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "53cb6258de9b846ccc5a05205db36e88209fe45c5b786a1f0c0ae63a4302148b",
-      "url": "https://github.com/LLNL/conduit/releases/download/v0.9.9/conduit-v0.9.9-src-with-blt.tar.gz"
+      "patches": [
+        "0001-pip-v-instead-of-V.patch",
+        "0002-python-paths-backslashes-spaces.patch",
+        "0003-hdf5-system-libs-by-name.patch"
+      ],
+      "sha256": "d1cbbdf3c202d6c5a82397fa1d6604bc5a4883e6129004cc9fc62ac33812511a",
+      "url": "https://github.com/LLNL/conduit/releases/download/v0.9.10/conduit-v0.9.10-src-with-blt.tar.gz"
     },
     "test": {
       "commands": [
-        "test -f $PREFIX/lib/libconduit.so"
+        "test -f $PREFIX/lib/libconduit.so",
+        "cmake -S test -B build-test -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH:PATH=$PREFIX",
+        "cmake --build build-test",
+        "./build-test/conduit_smoke"
+      ],
+      "files": [
+        "test/"
       ],
       "imports": [
         "conduit",
@@ -88,7 +109,12 @@
         "conduit.blueprint"
       ],
       "requires": [
-        "numpy"
+        "numpy",
+        "cmake",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
       ]
     }
   },
@@ -115,6 +141,8 @@
         "openssl",
         "pip",
         "python",
+        "setuptools",
+        "wheel",
         "zlib"
       ]
     },
@@ -130,6 +158,11 @@
     "test": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja",
         "numpy"
       ]
     }
@@ -156,7 +189,7 @@
     },
     "package": {
       "name": "conduit",
-      "version": "0.9.9"
+      "version": "0.9.10"
     },
     "requirements": {
       "build": [
@@ -172,6 +205,8 @@
         "libpython-static",
         "python",
         "pip",
+        "setuptools >=68",
+        "wheel",
         "numpy",
         "openssl",
         "hdf5",
@@ -187,14 +222,27 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "53cb6258de9b846ccc5a05205db36e88209fe45c5b786a1f0c0ae63a4302148b",
-      "url": "https://github.com/LLNL/conduit/releases/download/v0.9.9/conduit-v0.9.9-src-with-blt.tar.gz"
+      "patches": [
+        "0001-pip-v-instead-of-V.patch",
+        "0002-python-paths-backslashes-spaces.patch",
+        "0003-hdf5-system-libs-by-name.patch"
+      ],
+      "sha256": "d1cbbdf3c202d6c5a82397fa1d6604bc5a4883e6129004cc9fc62ac33812511a",
+      "url": "https://github.com/LLNL/conduit/releases/download/v0.9.10/conduit-v0.9.10-src-with-blt.tar.gz"
     },
     "test": {
       "commands": [
         "test -f $PREFIX/lib/libconduit.so",
+        "cmake -S test -B build-test -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH:PATH=$PREFIX",
+        "cmake --build build-test",
+        "./build-test/conduit_smoke",
         "test -f $PREFIX/lib/libconduit.dylib",
-        "if not exist %PREFIX%\\\\Library\\\\lib\\\\conduit.lib exit 1"
+        "if not exist %PREFIX%\\\\Library\\\\lib\\\\conduit.lib exit 1",
+        "cmake -S test -B build-test -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH:PATH=%LIBRARY_PREFIX%",
+        "build-test\\conduit_smoke.exe"
+      ],
+      "files": [
+        "test/"
       ],
       "imports": [
         "conduit",
@@ -202,7 +250,12 @@
         "conduit.blueprint"
       ],
       "requires": [
-        "numpy"
+        "numpy",
+        "cmake",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
       ]
     }
   },
@@ -229,7 +282,7 @@
     },
     "package": {
       "name": "conduit",
-      "version": "0.9.9"
+      "version": "0.9.10"
     },
     "requirements": {
       "build": [
@@ -244,6 +297,8 @@
         "libpython-static",
         "python",
         "pip",
+        "setuptools >=68",
+        "wheel",
         "numpy",
         "openssl",
         "hdf5",
@@ -259,12 +314,23 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "53cb6258de9b846ccc5a05205db36e88209fe45c5b786a1f0c0ae63a4302148b",
-      "url": "https://github.com/LLNL/conduit/releases/download/v0.9.9/conduit-v0.9.9-src-with-blt.tar.gz"
+      "patches": [
+        "0001-pip-v-instead-of-V.patch",
+        "0002-python-paths-backslashes-spaces.patch",
+        "0003-hdf5-system-libs-by-name.patch"
+      ],
+      "sha256": "d1cbbdf3c202d6c5a82397fa1d6604bc5a4883e6129004cc9fc62ac33812511a",
+      "url": "https://github.com/LLNL/conduit/releases/download/v0.9.10/conduit-v0.9.10-src-with-blt.tar.gz"
     },
     "test": {
       "commands": [
-        "test -f $PREFIX/lib/libconduit.dylib"
+        "test -f $PREFIX/lib/libconduit.dylib",
+        "cmake -S test -B build-test -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH:PATH=$PREFIX",
+        "cmake --build build-test",
+        "./build-test/conduit_smoke"
+      ],
+      "files": [
+        "test/"
       ],
       "imports": [
         "conduit",
@@ -272,7 +338,12 @@
         "conduit.blueprint"
       ],
       "requires": [
-        "numpy"
+        "numpy",
+        "cmake",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
       ]
     }
   },
@@ -298,6 +369,8 @@
         "openssl",
         "pip",
         "python",
+        "setuptools",
+        "wheel",
         "zlib"
       ]
     },
@@ -313,6 +386,11 @@
     "test": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja",
         "numpy"
       ]
     }
@@ -332,7 +410,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/conduit.json"
   },
-  "raw_meta_yaml": "{% set name = \"conduit\" %}\n{% set version = \"0.9.9\" %}\n{% set sha256 = \"53cb6258de9b846ccc5a05205db36e88209fe45c5b786a1f0c0ae63a4302148b\" %}\n\npackage:\n  name: {{ name }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/LLNL/conduit/releases/download/v{{ version }}/conduit-v{{ version }}-src-with-blt.tar.gz\n  sha256: {{ sha256 }}\n\nbuild:\n  number: 0\n  skip: true  # [win and vc<14]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n    - {{ compiler(\"fortran\") }}\n    - make                       # [linux]\n    - cmake\n  host:\n    - {{ mpi }}  # [mpi != 'nompi']\n    - libpython-static  # [py>=38]\n    - python\n    - pip\n    - numpy\n    - openssl\n    - hdf5\n    - zlib\n  run:\n    - {{ mpi }}  # [mpi != 'nompi']\n    - python\n    - zlib\n\ntest:\n  requires:\n    - numpy\n  commands:\n    - test -f $PREFIX/lib/libconduit.dylib  # [osx]\n    - test -f $PREFIX/lib/libconduit.so     # [linux]\n    - if not exist %PREFIX%\\\\Library\\\\lib\\\\conduit.lib exit 1  # [win]\n  imports:\n    - conduit\n    - conduit.relay\n    - conduit.blueprint\nabout:\n  home: https://github.com/LLNL/conduit\n  license: BSD-3-Clause\n  license_family: BSD\n  license_file: LICENSE\n  summary: Simplified Data Exchange for HPC Simulations\n\n  description: |\n    Conduit is an open source project from Lawrence Livermore National\n    Laboratory that provides an intuitive model for describing hierarchical\n    scientific data in C++, C, Fortran, and Python. It is used for data\\\n    coupling between packages in-core, serialization, and I/O tasks.\n  doc_url: https://software.llnl.gov/conduit\n  dev_url: https://github.com/LLNL/conduit\n\nextra:\n  recipe-maintainers:\n    - ax3l\n    - cyrush\n",
+  "raw_meta_yaml": "{% set name = \"conduit\" %}\n{% set version = \"0.9.10\" %}\n{% set sha256 = \"d1cbbdf3c202d6c5a82397fa1d6604bc5a4883e6129004cc9fc62ac33812511a\" %}\n\npackage:\n  name: {{ name }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/LLNL/conduit/releases/download/v{{ version }}/conduit-v{{ version }}-src-with-blt.tar.gz\n  sha256: {{ sha256 }}\n  patches:\n    # backport of LLNL/conduit#1730: pip install -v, not -V (an error since pip 26.3)\n    - 0001-pip-v-instead-of-V.patch\n    # backport of LLNL/conduit#1732: backslash (Windows) paths and spaces in python\n    # paths broke the install with CMake >= 4 and the installed ConduitConfig.cmake\n    - 0002-python-paths-backslashes-spaces.patch\n    # backport of LLNL/conduit#1733: link HDF5's system libraries by name, not by\n    # absolute paths into the build environment's sysroot\n    - 0003-hdf5-system-libs-by-name.patch\n\nbuild:\n  number: 0\n  skip: true  # [win and vc<14]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n    - {{ compiler(\"fortran\") }}\n    - make                       # [linux]\n    - cmake\n  host:\n    - {{ mpi }}  # [mpi != 'nompi']\n    - libpython-static  # [py>=38]\n    - python\n    - pip\n    - setuptools >=68\n    - wheel\n    - numpy\n    - openssl\n    - hdf5\n    - zlib\n  run:\n    - {{ mpi }}  # [mpi != 'nompi']\n    - python\n    - zlib\n\ntest:\n  files:\n    - test/\n  requires:\n    - numpy\n    - cmake\n    - ninja\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n  commands:\n    - test -f $PREFIX/lib/libconduit.dylib  # [osx]\n    - test -f $PREFIX/lib/libconduit.so     # [linux]\n    - if not exist %PREFIX%\\\\Library\\\\lib\\\\conduit.lib exit 1  # [win]\n    # smoke test: find_package(Conduit) in a downstream CMake project\n    - cmake -S test -B build-test -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH:PATH=$PREFIX  # [unix]\n    - cmake -S test -B build-test -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH:PATH=%LIBRARY_PREFIX%  # [win]\n    - cmake --build build-test\n    - ./build-test/conduit_smoke  # [unix]\n    - build-test\\conduit_smoke.exe  # [win]\n  imports:\n    - conduit\n    - conduit.relay\n    - conduit.blueprint\nabout:\n  home: https://github.com/LLNL/conduit\n  license: BSD-3-Clause\n  license_family: BSD\n  license_file: LICENSE\n  summary: Simplified Data Exchange for HPC Simulations\n\n  description: |\n    Conduit is an open source project from Lawrence Livermore National\n    Laboratory that provides an intuitive model for describing hierarchical\n    scientific data in C++, C, Fortran, and Python. It is used for data\\\n    coupling between packages in-core, serialization, and I/O tasks.\n  doc_url: https://software.llnl.gov/conduit\n  dev_url: https://github.com/LLNL/conduit\n\nextra:\n  recipe-maintainers:\n    - ax3l\n    - cyrush\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -350,6 +428,8 @@
       "openssl",
       "pip",
       "python",
+      "setuptools",
+      "wheel",
       "zlib"
     ]
   },
@@ -380,6 +460,8 @@
         "openssl",
         "pip",
         "python",
+        "setuptools",
+        "wheel",
         "zlib"
       ]
     },
@@ -399,6 +481,11 @@
     "test": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja",
         "numpy"
       ]
     }
@@ -427,6 +514,8 @@
         "openssl",
         "pip",
         "python",
+        "setuptools >=68",
+        "wheel",
         "zlib"
       ]
     },
@@ -442,12 +531,17 @@
     "test": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja",
         "numpy"
       ]
     }
   },
-  "url": "https://github.com/LLNL/conduit/releases/download/v0.9.9/conduit-v0.9.9-src-with-blt.tar.gz",
-  "version": "0.9.9",
+  "url": "https://github.com/LLNL/conduit/releases/download/v0.9.10/conduit-v0.9.10-src-with-blt.tar.gz",
+  "version": "0.9.10",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/conduit.json"
   },
@@ -473,7 +567,7 @@
     },
     "package": {
       "name": "conduit",
-      "version": "0.9.9"
+      "version": "0.9.10"
     },
     "requirements": {
       "build": [
@@ -487,6 +581,8 @@
         "libpython-static",
         "python",
         "pip",
+        "setuptools >=68",
+        "wheel",
         "numpy",
         "openssl",
         "hdf5",
@@ -499,12 +595,23 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "53cb6258de9b846ccc5a05205db36e88209fe45c5b786a1f0c0ae63a4302148b",
-      "url": "https://github.com/LLNL/conduit/releases/download/v0.9.9/conduit-v0.9.9-src-with-blt.tar.gz"
+      "patches": [
+        "0001-pip-v-instead-of-V.patch",
+        "0002-python-paths-backslashes-spaces.patch",
+        "0003-hdf5-system-libs-by-name.patch"
+      ],
+      "sha256": "d1cbbdf3c202d6c5a82397fa1d6604bc5a4883e6129004cc9fc62ac33812511a",
+      "url": "https://github.com/LLNL/conduit/releases/download/v0.9.10/conduit-v0.9.10-src-with-blt.tar.gz"
     },
     "test": {
       "commands": [
-        "if not exist %PREFIX%\\\\Library\\\\lib\\\\conduit.lib exit 1"
+        "if not exist %PREFIX%\\\\Library\\\\lib\\\\conduit.lib exit 1",
+        "cmake -S test -B build-test -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH:PATH=%LIBRARY_PREFIX%",
+        "cmake --build build-test",
+        "build-test\\conduit_smoke.exe"
+      ],
+      "files": [
+        "test/"
       ],
       "imports": [
         "conduit",
@@ -512,7 +619,12 @@
         "conduit.blueprint"
       ],
       "requires": [
-        "numpy"
+        "numpy",
+        "cmake",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
       ]
     }
   },
@@ -536,6 +648,8 @@
         "openssl",
         "pip",
         "python",
+        "setuptools",
+        "wheel",
         "zlib"
       ]
     },
@@ -549,6 +663,11 @@
     "test": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja",
         "numpy"
       ]
     }
