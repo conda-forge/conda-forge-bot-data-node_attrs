@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_c_compiler_version14c_stdlib_version2.17cuda_compiler_version12.9cxx_compiler_version14python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- true\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n",
+  "ci_support_linux_64_c_compiler_version14c_stdlib_version2.17cuda_compiler_version12.9cxx_compiler_version14python3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- true\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\npython_min:\n- '3.11'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
@@ -12,10 +12,13 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
+    },
+    "provider": {
+      "linux_aarch64": "default"
     }
   },
-  "feedstock_hash": "b4903e1c17c5f7a0bb21c57c38b1ebead2c13053",
-  "feedstock_hash_ts": 1790790169,
+  "feedstock_hash": "3304ea4b21de9c26d1e73eb56668913f1f7786c5",
+  "feedstock_hash_ts": 1794950468,
   "feedstock_name": "tilelang",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -416,6 +419,419 @@
       ]
     }
   },
+  "linux_aarch64_meta_yaml": {
+    "about": {
+      "description": "Tile Language (tile-lang) is a concise domain-specific language designed to\nstreamline the development of high-performance GPU/CPU kernels (e.g., GEMM,\nDequant GEMM, FlashAttention, LinearAttention). It is built on top of TVM,\na vendored fork of which is included in this package.\n\nJust-in-time compilation of CUDA kernels requires `nvcc`; install\n`cuda-nvcc` alongside this package if you need it.",
+      "dev_url": "https://github.com/tile-ai/tilelang",
+      "doc_url": "https://tilelang.com/",
+      "home": "https://github.com/tile-ai/tilelang",
+      "license": "MIT AND Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND Unlicense",
+      "license_family": "MIT AND Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND Unlicense",
+      "license_file": "LICENSE",
+      "summary": "A tile level programming language to generate high performance code."
+    },
+    "build": {
+      "number": "0",
+      "python": {
+        "version_independent": true
+      },
+      "script": {
+        "content": [
+          "rm -rf 3rdparty/cutlass 3rdparty/hip-headers",
+          "export CMAKE_ARGS=\"${CMAKE_ARGS} -DPython3_EXECUTABLE=${PYTHON} -DZ3_INCLUDE_DIR=${PREFIX}/include -DZ3_LIBRARY=${PREFIX}/lib/libz3${SHLIB_EXT}\"",
+          "export CMAKE_BUILD_PARALLEL_LEVEL=${CPU_COUNT}",
+          "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
+        ],
+        "env": {
+          "CMAKE_GENERATOR": "Ninja",
+          "NO_VERSION_LABEL": "1",
+          "USE_CUDA": "ON",
+          "USE_ROCM": "OFF"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "iamthebot"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "tilelang",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1.0",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cuda_compiler_stub",
+            "cmake >=3.26.1",
+            "ninja",
+            "make",
+            "patchelf >=0.17.2"
+          ],
+          "host": [
+            "python 3.11.*",
+            "python-abi3 3.11.*",
+            "pip",
+            "cython >=3.1.0",
+            "scikit-build-core",
+            "z3-solver >=4.13.0,<4.15.5",
+            "libz3",
+            "cuda-version 12.9.*",
+            "cuda-cudart-dev",
+            "cuda-driver-dev",
+            "cuda-nvrtc-dev"
+          ],
+          "run": [
+            "python >=3.11",
+            "apache-tvm-ffi >=0.1.11,<0.1.13",
+            "torch-c-dlpack-ext",
+            "cloudpickle",
+            "ml_dtypes",
+            "numpy >=1.23.5",
+            "psutil",
+            "pytorch >=2.4",
+            "tqdm >=4.62.3",
+            "typing_extensions >=4.10.0",
+            "z3-solver >=4.13.0,<4.15.5",
+            "cuda-cudart",
+            "cuda-nvrtc",
+            "cutlass >=4.1.0,<5"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "tilelang",
+                "tilelang.cpu",
+                "tilelang.engine",
+                "tilelang.jit",
+                "tilelang.language",
+                "tilelang.utils"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_package.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "python test_package.py ${{ version }} ${{ \"cuda\" if cuda_enabled else \"cpu\" }}",
+              "abi3audit \"$(python -c 'import importlib.util, os; print(os.path.dirname(importlib.util.find_spec(\"tilelang\").origin))')/lib/tilelang_cython_wrapper.abi3.so\" -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
+          }
+        ],
+        "version": "0.1.14"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "tilelang",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1.0",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.26.1",
+            "ninja",
+            "make",
+            "patchelf >=0.17.2"
+          ],
+          "host": [
+            "python 3.11.*",
+            "python-abi3 3.11.*",
+            "pip",
+            "cython >=3.1.0",
+            "scikit-build-core",
+            "z3-solver >=4.13.0,<4.15.5",
+            "libz3"
+          ],
+          "run": [
+            "python >=3.11",
+            "apache-tvm-ffi >=0.1.11,<0.1.13",
+            "torch-c-dlpack-ext",
+            "cloudpickle",
+            "ml_dtypes",
+            "numpy >=1.23.5",
+            "psutil",
+            "pytorch >=2.4",
+            "tqdm >=4.62.3",
+            "typing_extensions >=4.10.0",
+            "z3-solver >=4.13.0,<4.15.5"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "tilelang",
+                "tilelang.cpu",
+                "tilelang.engine",
+                "tilelang.jit",
+                "tilelang.language",
+                "tilelang.utils"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_package.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "python test_package.py ${{ version }} ${{ \"cuda\" if cuda_enabled else \"cpu\" }}",
+              "abi3audit \"$(python -c 'import importlib.util, os; print(os.path.dirname(importlib.util.find_spec(\"tilelang\").origin))')/lib/tilelang_cython_wrapper.abi3.so\" -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
+          }
+        ],
+        "version": "0.1.14"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "tilelang",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1.0",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cuda_compiler_stub",
+            "cmake >=3.26.1",
+            "ninja",
+            "make",
+            "patchelf >=0.17.2"
+          ],
+          "host": [
+            "python 3.11.*",
+            "python-abi3 3.11.*",
+            "pip",
+            "cython >=3.1.0",
+            "scikit-build-core",
+            "z3-solver >=4.13.0,<4.15.5",
+            "libz3",
+            "cuda-version 13.4.*",
+            "cuda-cudart-dev",
+            "cuda-driver-dev",
+            "cuda-nvrtc-dev"
+          ],
+          "run": [
+            "python >=3.11",
+            "apache-tvm-ffi >=0.1.11,<0.1.13",
+            "torch-c-dlpack-ext",
+            "cloudpickle",
+            "ml_dtypes",
+            "numpy >=1.23.5",
+            "psutil",
+            "pytorch >=2.4",
+            "tqdm >=4.62.3",
+            "typing_extensions >=4.10.0",
+            "z3-solver >=4.13.0,<4.15.5",
+            "cuda-cudart",
+            "cuda-nvrtc",
+            "cutlass >=4.1.0,<5"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "tilelang",
+                "tilelang.cpu",
+                "tilelang.engine",
+                "tilelang.jit",
+                "tilelang.language",
+                "tilelang.utils"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_package.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "python test_package.py ${{ version }} ${{ \"cuda\" if cuda_enabled else \"cpu\" }}",
+              "abi3audit \"$(python -c 'import importlib.util, os; print(os.path.dirname(importlib.util.find_spec(\"tilelang\").origin))')/lib/tilelang_cython_wrapper.abi3.so\" -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
+          }
+        ],
+        "version": "0.1.14"
+      }
+    ],
+    "package": {
+      "name": "tilelang",
+      "version": "0.1.14"
+    },
+    "requirements": {
+      "build": [
+        "python",
+        "cross-python_linux-aarch64",
+        "cython >=3.1.0",
+        "c_compiler_stub",
+        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cuda_compiler_stub",
+        "cmake >=3.26.1",
+        "ninja",
+        "make",
+        "patchelf >=0.17.2"
+      ],
+      "host": [
+        "python 3.11.*",
+        "python-abi3 3.11.*",
+        "pip",
+        "cython >=3.1.0",
+        "scikit-build-core",
+        "z3-solver >=4.13.0,<4.15.5",
+        "libz3",
+        "cuda-version 12.9.*",
+        "cuda-cudart-dev",
+        "cuda-driver-dev",
+        "cuda-nvrtc-dev",
+        "cuda-version 13.4.*"
+      ],
+      "run": [
+        "python >=3.11",
+        "apache-tvm-ffi >=0.1.11,<0.1.13",
+        "torch-c-dlpack-ext",
+        "cloudpickle",
+        "ml_dtypes",
+        "numpy >=1.23.5",
+        "psutil",
+        "pytorch >=2.4",
+        "tqdm >=4.62.3",
+        "typing_extensions >=4.10.0",
+        "z3-solver >=4.13.0,<4.15.5",
+        "cuda-cudart",
+        "cuda-nvrtc",
+        "cutlass >=4.1.0,<5"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "patches/0001-do-not-vendor-cutlass.patch"
+      ],
+      "sha256": "7ae0fba6c63dae80b3c9c5c11a70bb8d7165794994f290f36e2fe87bfb143cfc",
+      "url": "https://pypi.org/packages/source/t/tilelang/tilelang-0.1.14.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cross-python_linux-aarch64",
+        "cuda_compiler_stub",
+        "cxx_compiler_stub",
+        "cython",
+        "make",
+        "ninja",
+        "patchelf",
+        "python"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "cuda-cudart-dev",
+        "cuda-driver-dev",
+        "cuda-nvrtc-dev",
+        "cuda-version",
+        "cython",
+        "libz3",
+        "pip",
+        "python",
+        "python-abi3",
+        "scikit-build-core",
+        "z3-solver"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "apache-tvm-ffi",
+        "cloudpickle",
+        "cuda-cudart",
+        "cuda-nvrtc",
+        "cutlass",
+        "ml_dtypes",
+        "numpy",
+        "psutil",
+        "python",
+        "pytorch",
+        "torch-c-dlpack-ext",
+        "tqdm",
+        "typing_extensions",
+        "z3-solver"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "abi3audit",
+        "pip",
+        "python"
+      ]
+    }
+  },
   "meta_yaml": {
     "about": {
       "description": "Tile Language (tile-lang) is a concise domain-specific language designed to\nstreamline the development of high-performance GPU/CPU kernels (e.g., GEMM,\nDequant GEMM, FlashAttention, LinearAttention). It is built on top of TVM,\na vendored fork of which is included in this package.\n\nJust-in-time compilation of CUDA kernels requires `nvcc`; install\n`cuda-nvcc` alongside this package if you need it.",
@@ -710,6 +1126,262 @@
         "requirements": {
           "build": [
             "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1.0",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cuda_compiler_stub",
+            "cmake >=3.26.1",
+            "ninja",
+            "make",
+            "patchelf >=0.17.2"
+          ],
+          "host": [
+            "python 3.11.*",
+            "python-abi3 3.11.*",
+            "pip",
+            "cython >=3.1.0",
+            "scikit-build-core",
+            "z3-solver >=4.13.0,<4.15.5",
+            "libz3",
+            "cuda-version 12.9.*",
+            "cuda-cudart-dev",
+            "cuda-driver-dev",
+            "cuda-nvrtc-dev"
+          ],
+          "run": [
+            "python >=3.11",
+            "apache-tvm-ffi >=0.1.11,<0.1.13",
+            "torch-c-dlpack-ext",
+            "cloudpickle",
+            "ml_dtypes",
+            "numpy >=1.23.5",
+            "psutil",
+            "pytorch >=2.4",
+            "tqdm >=4.62.3",
+            "typing_extensions >=4.10.0",
+            "z3-solver >=4.13.0,<4.15.5",
+            "cuda-cudart",
+            "cuda-nvrtc",
+            "cutlass >=4.1.0,<5"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "tilelang",
+                "tilelang.cpu",
+                "tilelang.engine",
+                "tilelang.jit",
+                "tilelang.language",
+                "tilelang.utils"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_package.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "python test_package.py ${{ version }} ${{ \"cuda\" if cuda_enabled else \"cpu\" }}",
+              "abi3audit \"$(python -c 'import importlib.util, os; print(os.path.dirname(importlib.util.find_spec(\"tilelang\").origin))')/lib/tilelang_cython_wrapper.abi3.so\" -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
+          }
+        ],
+        "version": "0.1.14"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "tilelang",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1.0",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.26.1",
+            "ninja",
+            "make",
+            "patchelf >=0.17.2"
+          ],
+          "host": [
+            "python 3.11.*",
+            "python-abi3 3.11.*",
+            "pip",
+            "cython >=3.1.0",
+            "scikit-build-core",
+            "z3-solver >=4.13.0,<4.15.5",
+            "libz3"
+          ],
+          "run": [
+            "python >=3.11",
+            "apache-tvm-ffi >=0.1.11,<0.1.13",
+            "torch-c-dlpack-ext",
+            "cloudpickle",
+            "ml_dtypes",
+            "numpy >=1.23.5",
+            "psutil",
+            "pytorch >=2.4",
+            "tqdm >=4.62.3",
+            "typing_extensions >=4.10.0",
+            "z3-solver >=4.13.0,<4.15.5"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "tilelang",
+                "tilelang.cpu",
+                "tilelang.engine",
+                "tilelang.jit",
+                "tilelang.language",
+                "tilelang.utils"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_package.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "python test_package.py ${{ version }} ${{ \"cuda\" if cuda_enabled else \"cpu\" }}",
+              "abi3audit \"$(python -c 'import importlib.util, os; print(os.path.dirname(importlib.util.find_spec(\"tilelang\").origin))')/lib/tilelang_cython_wrapper.abi3.so\" -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
+          }
+        ],
+        "version": "0.1.14"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "tilelang",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "cython >=3.1.0",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "c_stdlib_stub",
+            "cuda_compiler_stub",
+            "cmake >=3.26.1",
+            "ninja",
+            "make",
+            "patchelf >=0.17.2"
+          ],
+          "host": [
+            "python 3.11.*",
+            "python-abi3 3.11.*",
+            "pip",
+            "cython >=3.1.0",
+            "scikit-build-core",
+            "z3-solver >=4.13.0,<4.15.5",
+            "libz3",
+            "cuda-version 13.4.*",
+            "cuda-cudart-dev",
+            "cuda-driver-dev",
+            "cuda-nvrtc-dev"
+          ],
+          "run": [
+            "python >=3.11",
+            "apache-tvm-ffi >=0.1.11,<0.1.13",
+            "torch-c-dlpack-ext",
+            "cloudpickle",
+            "ml_dtypes",
+            "numpy >=1.23.5",
+            "psutil",
+            "pytorch >=2.4",
+            "tqdm >=4.62.3",
+            "typing_extensions >=4.10.0",
+            "z3-solver >=4.13.0,<4.15.5",
+            "cuda-cudart",
+            "cuda-nvrtc",
+            "cutlass >=4.1.0,<5"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "tilelang",
+                "tilelang.cpu",
+                "tilelang.engine",
+                "tilelang.jit",
+                "tilelang.language",
+                "tilelang.utils"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_package.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "python test_package.py ${{ version }} ${{ \"cuda\" if cuda_enabled else \"cpu\" }}",
+              "abi3audit \"$(python -c 'import importlib.util, os; print(os.path.dirname(importlib.util.find_spec(\"tilelang\").origin))')/lib/tilelang_cython_wrapper.abi3.so\" -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
+          }
+        ],
+        "version": "0.1.14"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "tilelang",
+        "requirements": {
+          "build": [
+            "python",
             "cross-python_osx-64",
             "cython >=3.1.0",
             "c_compiler_stub",
@@ -796,8 +1468,9 @@
         "make",
         "patchelf >=0.17.2",
         "python",
-        "cross-python_osx-64",
-        "cython >=3.1.0"
+        "cross-python_linux-aarch64",
+        "cython >=3.1.0",
+        "cross-python_osx-64"
       ],
       "host": [
         "python 3.11.*",
@@ -1070,6 +1743,7 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
     "osx_64"
   ],
   "pr_info": {
@@ -1084,6 +1758,7 @@
       "c_stdlib_stub",
       "cloudpickle",
       "cmake",
+      "cross-python_linux-aarch64",
       "cross-python_osx-64",
       "cuda-cudart",
       "cuda-cudart-dev",
@@ -1121,6 +1796,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-aarch64",
         "cross-python_osx-64",
         "cuda_compiler_stub",
         "cxx_compiler_stub",
@@ -1194,6 +1870,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake >=3.26.1",
+        "cross-python_linux-aarch64",
         "cross-python_osx-64",
         "cuda_compiler_stub",
         "cxx_compiler_stub",
