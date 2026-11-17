@@ -1,49 +1,56 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\npython_min:\n- '3.10'\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
+    "bot": {
+      "inspection": "update-grayskull"
+    },
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "4f4b2c5a2948cc52894ccc5c30cc68be058335dd",
-  "feedstock_hash_ts": 1782470276,
+  "feedstock_hash": "7f173e4d0a411ac3cef27a6801b703685ce46536",
+  "feedstock_hash_ts": 1794919149,
   "feedstock_name": "cachecontrol",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "CacheControl is a port of the caching algorithms in httplib2 for use with\nrequests session object.\nIt was written because httplib2's better support for caching is often\nmitigated by its lack of threadsafety. The same is true of requests\nin terms of caching.\n",
-      "dev_url": "https://github.com/ionrock/cachecontrol",
-      "doc_url": "http://cachecontrol.readthedocs.io/",
-      "home": "https://github.com/ionrock/cachecontrol",
+      "dev_url": "https://github.com/psf/cachecontrol",
+      "home": "https://pypi.org/project/CacheControl/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE.txt",
-      "summary": "The httplib2 caching algorithms packaged up for use with requests"
+      "summary": "httplib2 caching for requests"
     },
     "build": {
       "noarch": "python",
-      "number": "0"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "doesitcache = cachecontrol._cmd:main"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
-      "feedstock-name": "cachecontrol",
       "recipe-maintainers": [
         "djsutherland",
         "ocefpaf"
@@ -52,40 +59,50 @@
     "outputs": [
       {
         "build": {
-          "entry_points": [
-            "doesitcache = cachecontrol._cmd:main"
-          ],
-          "noarch": "python"
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "doesitcache = cachecontrol._cmd:main"
+            ]
+          }
         },
         "name": "cachecontrol",
         "requirements": {
           "build": [],
           "host": [
-            "python 3.10",
-            "flit-core >=3.2,<4",
-            "pip",
-            "uv-build"
+            "python 3.11.*",
+            "uv-build >=0.9.6,<0.14.0",
+            "pip"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "requests >=2.16.0",
             "msgpack-python >=0.5.2,<2.0.0"
           ]
         },
-        "script": "build_base.sh",
-        "test": {
-          "commands": [
-            "pip check",
-            "doesitcache --help"
-          ],
-          "imports": [
-            "cachecontrol"
-          ],
-          "requires": [
-            "pip",
-            "python 3.10"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "cachecontrol"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pip",
+                "python 3.11.*"
+              ]
+            },
+            "script": "doesitcache --help"
+          }
+        ],
+        "version": "0.15.0"
       },
       {
         "build": {
@@ -93,28 +110,24 @@
         },
         "name": "cachecontrol-with-redis",
         "requirements": {
+          "build": [],
           "host": [
-            "python 3.10"
+            "python 3.11.*"
           ],
           "run": [
+            "python >=3.11",
             "cachecontrol",
-            "python >=3.10",
             "redis-py >=2.10.5"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "doesitcache --help"
-          ],
-          "imports": [
-            "cachecontrol"
-          ],
-          "requires": [
-            "pip",
-            "python 3.10"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": []
+            }
+          }
+        ],
+        "version": "0.15.0"
       },
       {
         "build": {
@@ -122,38 +135,46 @@
         },
         "name": "cachecontrol-with-filecache",
         "requirements": {
+          "build": [],
           "host": [
-            "python 3.10"
+            "python 3.11.*"
           ],
           "run": [
+            "python >=3.11",
             "cachecontrol",
-            "filelock >=3.8.0",
-            "python >=3.10"
+            "filelock >=3.8.0"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "doesitcache --help"
-          ],
-          "imports": [
-            "cachecontrol"
-          ],
-          "requires": [
-            "pip",
-            "python 3.10"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": []
+            }
+          }
+        ],
+        "version": "0.15.0"
       }
     ],
     "package": {
-      "name": "cachecontrol-split",
-      "version": "0.14.4"
+      "name": "cachecontrol",
+      "version": "0.15.0"
     },
-    "schema_version": 0,
+    "requirements": {
+      "host": [
+        "python 3.11.*",
+        "uv-build >=0.9.6,<0.14.0",
+        "pip"
+      ],
+      "run": [
+        "python >=3.11",
+        "requests >=2.16.0",
+        "msgpack-python >=0.5.2,<2.0.0"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "sha256": "e6220afafa4c22a47dd0badb319f84475d79108100d04e26e8542ef7d3ab05a1",
-      "url": "https://pypi.org/packages/source/C/CacheControl/cachecontrol-0.14.4.tar.gz"
+      "sha256": "52157b539eb64d85c8c793660e86cf05cf95fad7b98c8ef6846e4a0ddffdb193",
+      "url": "https://files.pythonhosted.org/packages/source/c/cachecontrol/cachecontrol-0.15.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -164,7 +185,6 @@
     "host": {
       "__set__": true,
       "elements": [
-        "flit-core",
         "pip",
         "python",
         "uv-build"
@@ -191,21 +211,24 @@
   },
   "meta_yaml": {
     "about": {
-      "description": "CacheControl is a port of the caching algorithms in httplib2 for use with\nrequests session object.\nIt was written because httplib2's better support for caching is often\nmitigated by its lack of threadsafety. The same is true of requests\nin terms of caching.\n",
-      "dev_url": "https://github.com/ionrock/cachecontrol",
-      "doc_url": "http://cachecontrol.readthedocs.io/",
-      "home": "https://github.com/ionrock/cachecontrol",
+      "dev_url": "https://github.com/psf/cachecontrol",
+      "home": "https://pypi.org/project/CacheControl/",
       "license": "Apache-2.0",
-      "license_family": "Apache",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE.txt",
-      "summary": "The httplib2 caching algorithms packaged up for use with requests"
+      "summary": "httplib2 caching for requests"
     },
     "build": {
       "noarch": "python",
-      "number": "0"
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "doesitcache = cachecontrol._cmd:main"
+        ]
+      },
+      "script": "${{ PYTHON }} -m pip install . -vv"
     },
     "extra": {
-      "feedstock-name": "cachecontrol",
       "recipe-maintainers": [
         "djsutherland",
         "ocefpaf"
@@ -214,40 +237,50 @@
     "outputs": [
       {
         "build": {
-          "entry_points": [
-            "doesitcache = cachecontrol._cmd:main"
-          ],
-          "noarch": "python"
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "doesitcache = cachecontrol._cmd:main"
+            ]
+          }
         },
         "name": "cachecontrol",
         "requirements": {
           "build": [],
           "host": [
-            "python 3.10",
-            "flit-core >=3.2,<4",
-            "pip",
-            "uv-build"
+            "python 3.11.*",
+            "uv-build >=0.9.6,<0.14.0",
+            "pip"
           ],
           "run": [
-            "python >=3.10",
+            "python >=3.11",
             "requests >=2.16.0",
             "msgpack-python >=0.5.2,<2.0.0"
           ]
         },
-        "script": "build_base.sh",
-        "test": {
-          "commands": [
-            "pip check",
-            "doesitcache --help"
-          ],
-          "imports": [
-            "cachecontrol"
-          ],
-          "requires": [
-            "pip",
-            "python 3.10"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "cachecontrol"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "pip",
+                "python 3.11.*"
+              ]
+            },
+            "script": "doesitcache --help"
+          }
+        ],
+        "version": "0.15.0"
       },
       {
         "build": {
@@ -255,28 +288,24 @@
         },
         "name": "cachecontrol-with-redis",
         "requirements": {
+          "build": [],
           "host": [
-            "python 3.10"
+            "python 3.11.*"
           ],
           "run": [
+            "python >=3.11",
             "cachecontrol",
-            "python >=3.10",
             "redis-py >=2.10.5"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "doesitcache --help"
-          ],
-          "imports": [
-            "cachecontrol"
-          ],
-          "requires": [
-            "pip",
-            "python 3.10"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": []
+            }
+          }
+        ],
+        "version": "0.15.0"
       },
       {
         "build": {
@@ -284,41 +313,49 @@
         },
         "name": "cachecontrol-with-filecache",
         "requirements": {
+          "build": [],
           "host": [
-            "python 3.10"
+            "python 3.11.*"
           ],
           "run": [
+            "python >=3.11",
             "cachecontrol",
-            "filelock >=3.8.0",
-            "python >=3.10"
+            "filelock >=3.8.0"
           ]
         },
-        "test": {
-          "commands": [
-            "pip check",
-            "doesitcache --help"
-          ],
-          "imports": [
-            "cachecontrol"
-          ],
-          "requires": [
-            "pip",
-            "python 3.10"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": []
+            }
+          }
+        ],
+        "version": "0.15.0"
       }
     ],
     "package": {
-      "name": "cachecontrol-split",
-      "version": "0.14.4"
+      "name": "cachecontrol",
+      "version": "0.15.0"
     },
-    "schema_version": 0,
+    "requirements": {
+      "host": [
+        "python 3.11.*",
+        "uv-build >=0.9.6,<0.14.0",
+        "pip"
+      ],
+      "run": [
+        "python >=3.11",
+        "requests >=2.16.0",
+        "msgpack-python >=0.5.2,<2.0.0"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "sha256": "e6220afafa4c22a47dd0badb319f84475d79108100d04e26e8542ef7d3ab05a1",
-      "url": "https://pypi.org/packages/source/C/CacheControl/cachecontrol-0.14.4.tar.gz"
+      "sha256": "52157b539eb64d85c8c793660e86cf05cf95fad7b98c8ef6846e4a0ddffdb193",
+      "url": "https://files.pythonhosted.org/packages/source/c/cachecontrol/cachecontrol-0.15.0.tar.gz"
     }
   },
-  "name": "cachecontrol-split",
+  "name": "cachecontrol",
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -334,13 +371,12 @@
   "pr_info": {
     "__lazy_json__": "pr_info/cachecontrol.json"
   },
-  "raw_meta_yaml": "{% set version = \"0.14.4\" %}\n\npackage:\n  name: cachecontrol-split\n  version: {{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/C/CacheControl/cachecontrol-{{ version }}.tar.gz\n  sha256: e6220afafa4c22a47dd0badb319f84475d79108100d04e26e8542ef7d3ab05a1\n\nbuild:\n  number: 0\n  noarch: python\n\noutputs:\n  - name: cachecontrol\n    script: build_base.sh\n    build:\n      noarch: python\n      entry_points:\n        - doesitcache = cachecontrol._cmd:main\n    requirements:\n      build:\n        - python                                 # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n      host:\n        - python {{ python_min }}\n        - flit-core >=3.2,<4\n        - pip\n        - uv-build\n      run:\n        - python >={{ python_min }}\n        - requests >=2.16.0\n        - msgpack-python >=0.5.2,<2.0.0\n    test:\n      requires:\n        - pip\n        - python {{ python_min }}\n      imports:\n        - cachecontrol\n      commands:\n        - pip check\n        - doesitcache --help\n\n  - name: cachecontrol-with-redis\n    build:\n      noarch: python\n    requirements:\n      host:\n        - python {{ python_min }}\n      run:\n        - {{ pin_subpackage(\"cachecontrol\", exact=True) }}\n        - python >={{ python_min }}\n        - redis-py >=2.10.5\n    test:\n      requires:\n        - pip\n        - python {{ python_min }}\n      imports:\n        - cachecontrol\n      commands:\n        - pip check\n        - doesitcache --help\n\n\n  - name: cachecontrol-with-filecache\n    build:\n      noarch: python\n    requirements:\n      host:\n        - python {{ python_min }}\n      run:\n        - {{ pin_subpackage(\"cachecontrol\", exact=True) }}\n        - filelock >=3.8.0\n        - python >={{ python_min }}\n    test:\n      requires:\n        - pip\n        - python {{ python_min }}\n      imports:\n        - cachecontrol\n      commands:\n        - pip check\n        - doesitcache --help\n\n\n\nabout:\n  home: https://github.com/ionrock/cachecontrol\n  license: Apache-2.0\n  license_family: Apache\n  license_file: LICENSE.txt\n  summary: The httplib2 caching algorithms packaged up for use with requests\n  description: |\n    CacheControl is a port of the caching algorithms in httplib2 for use with\n    requests session object.\n    It was written because httplib2's better support for caching is often\n    mitigated by its lack of threadsafety. The same is true of requests\n    in terms of caching.\n  doc_url: http://cachecontrol.readthedocs.io/\n  dev_url: https://github.com/ionrock/cachecontrol\n\nextra:\n  feedstock-name: cachecontrol\n  recipe-maintainers:\n    - djsutherland\n    - ocefpaf\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.15.0\"\n\nrecipe:\n  name: cachecontrol\n  version: ${{ version }}\n\nsource:\n  url: https://files.pythonhosted.org/packages/source/c/cachecontrol/cachecontrol-${{ version }}.tar.gz\n  sha256: 52157b539eb64d85c8c793660e86cf05cf95fad7b98c8ef6846e4a0ddffdb193\n\nbuild:\n  number: 0\n  noarch: python\n\noutputs:\n  - package:\n      name: cachecontrol\n    build:\n      noarch: python\n      script: ${{ PYTHON }} -m pip install . -vv\n      python:\n        entry_points:\n          - doesitcache = cachecontrol._cmd:main\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n        - uv-build >=0.9.6,<0.14.0\n        - pip\n      run:\n        - python >=${{ python_min }}\n        - requests >=2.16.0\n        - msgpack-python >=0.5.2,<2.0.0\n\n    tests:\n      - python:\n          imports:\n            - cachecontrol\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n      - requirements:\n          run:\n            - pip\n            - python ${{ python_min }}.*\n        script:\n          - doesitcache --help\n\n  - package:\n      name: cachecontrol-with-redis\n    build:\n      noarch: python\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n      run:\n        - python >=${{ python_min }}\n        - ${{ pin_subpackage(\"cachecontrol\", exact=True) }}\n        - redis-py >=2.10.5\n    tests:\n      - python:\n          pip_check: true\n\n  - package:\n      name: cachecontrol-with-filecache\n    build:\n      noarch: python\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n      run:\n        - python >=${{ python_min }}\n        - ${{ pin_subpackage(\"cachecontrol\", exact=True) }}\n        - filelock >=3.8.0\n    tests:\n      - python:\n          pip_check: true\n\nabout:\n  summary: httplib2 caching for requests\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  homepage: https://pypi.org/project/CacheControl/\n  repository: https://github.com/psf/cachecontrol\n\nextra:\n  recipe-maintainers:\n    - djsutherland\n    - ocefpaf\n",
   "req": {
     "__set__": true,
     "elements": [
       "cachecontrol",
       "filelock",
-      "flit-core",
       "msgpack-python",
       "pip",
       "python",
@@ -357,7 +393,6 @@
     "host": {
       "__set__": true,
       "elements": [
-        "flit-core",
         "pip",
         "python",
         "uv-build"
@@ -391,10 +426,9 @@
     "host": {
       "__set__": true,
       "elements": [
-        "flit-core >=3.2,<4",
         "pip",
-        "python 3.10",
-        "uv-build"
+        "python 3.11.*",
+        "uv-build >=0.9.6,<0.14.0"
       ]
     },
     "run": {
@@ -403,7 +437,7 @@
         "cachecontrol",
         "filelock >=3.8.0",
         "msgpack-python >=0.5.2,<2.0.0",
-        "python >=3.10",
+        "python >=3.11",
         "redis-py >=2.10.5",
         "requests >=2.16.0"
       ]
@@ -412,12 +446,12 @@
       "__set__": true,
       "elements": [
         "pip",
-        "python 3.10"
+        "python 3.11.*"
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/C/CacheControl/cachecontrol-0.14.4.tar.gz",
-  "version": "0.14.4",
+  "url": "https://files.pythonhosted.org/packages/source/c/cachecontrol/cachecontrol-0.15.0.tar.gz",
+  "version": "0.15.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/cachecontrol.json"
   }
