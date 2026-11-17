@@ -25,8 +25,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "b4e9d11c4bf30f6cf44774043d57d650a8a026e1",
-  "feedstock_hash_ts": 1794941170,
+  "feedstock_hash": "c379e704cb5783522b423ac853c3b63f8ef0bf37",
+  "feedstock_hash_ts": 1794948267,
   "feedstock_name": "aube",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -89,7 +89,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -142,7 +142,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -166,7 +166,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -240,7 +240,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -288,7 +288,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -312,7 +312,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -389,7 +389,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -440,7 +440,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -486,7 +486,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -532,7 +532,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -578,7 +578,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -624,7 +624,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -672,7 +672,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -739,7 +739,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -787,7 +787,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -811,7 +811,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -885,7 +885,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -933,7 +933,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -957,7 +957,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -992,7 +992,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/aube.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"2.10.1\"\n\npackage:\n  name: aube\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/jdx/aube/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 72c07145c40fe69f40d7758644b50788a09426ae524c43a5aef3b16ead3b4bc8\n\nbuild:\n  number: 0\n  script:\n    env:\n      AUBE_PRIMER_TOP: \"2000\"\n      AUBE_PRIMER_VERSION_CAP: \"100\"\n      AUBE_REQUIRE_PRIMER: \"1\"\n      AWS_LC_SYS_CMAKE_BUILDER: ${{ \"1\" if host_platform == \"win-arm64\" else \"0\" }} # force CMake builder for `aws-lc-sys` native C/C++ code on `win-arm64`\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      # instruct `cc` crate to use clang-cl natively to compile build-time tools intended to be run on the host when cross-compiling from `win_64`\n      AR_x86_64_pc_windows_msvc: llvm-lib\n      CC_x86_64_pc_windows_msvc: clang-cl\n      CXX_x86_64_pc_windows_msvc: clang-cl\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # generate metadata primer, cf. https://github.com/aubepkg/aube/blob/main/.github/workflows/release.yml\n      - |\n        let schema = (\n          open --raw crates/aube-resolver/build.rs\n          | parse --regex 'const PRIMER_DATA_SCHEMA: u32 = (?<schema>\\d+);'\n          | get --optional 0.schema\n        )\n\n        if ($schema | is-empty) {\n          error make { msg: 'Failed to parse PRIMER_DATA_SCHEMA from crates/aube-resolver/build.rs' }\n        }\n\n        ^node ...[\n          scripts/generate-primer.mjs\n          --top=($env.AUBE_PRIMER_TOP)\n          --versions=($env.AUBE_PRIMER_VERSION_CAP)\n          --out=($\"crates/aube-resolver/data/primer-top($env.AUBE_PRIMER_TOP)-v($env.AUBE_PRIMER_VERSION_CAP)-s($schema).rkyv.json\")\n          --popular-names-out=crates/aube-resolver/data/popular-top100000-v1.json\n        ]\n      # build main app and generate license data\n      - cd crates/aube\n      - ^cargo auditable install --path=. --root=($prefix) --no-track --locked --bins --target=($env.CARGO_BUILD_TARGET)\n      - ^cargo-bundle-licenses --format=yaml --output=../../THIRDPARTY.yml\n      # generate shell completions\n      - if: build_platform == host_platform\n        then:\n          - ^aube completion bash | save --force ($prefix)/share/bash-completion/completions/aube\n          - ^aube completion fish | save --force ($prefix)/share/fish/vendor_completions.d/aube.fish\n          - ^aube completion zsh  | save --force ($prefix)/share/zsh/site-functions/_aube\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - clang\n    - cmake\n    - libclang\n    - make\n    - ninja\n    - nodejs\n    - nushell\n    - pkg-config\n\ntests:\n  - script:\n      - aube --help\n      - aube --version\n      - aubr --help\n      - aubr --version\n      - aubx --help\n      - aubx --version\n  - package_contents:\n      bin:\n        - aube\n        - aubr\n        - aubx\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/bash-completion/completions/aube\n            - share/fish/vendor_completions.d/aube.fish\n            - share/zsh/site-functions/_aube\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/bash-completion/completions/aube\n            - Library/share/fish/vendor_completions.d/aube.fish\n            - Library/share/zsh/site-functions/_aube\n      strict: true\n\nabout:\n  summary: Aube — a fast Node.js package manager\n  description: |\n    Aube installs automatically when you run a script. It has the tightest\n    security defaults of any Node.js package manager and is the only one\n    with a lifecycle-script jail. Aube drops into existing projects using\n    their existing lockfiles (`pnpm-lock.yaml`, `package-lock.json`,\n    `npm-shrinkwrap.json`, `yarn.lock` and `bun.lock`).\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://aube.jdx.dev\n  repository: https://github.com/jdx/aube\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
+  "raw_meta_yaml": "context:\n  version: \"2.10.1\"\n\npackage:\n  name: aube\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/jdx/aube/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 72c07145c40fe69f40d7758644b50788a09426ae524c43a5aef3b16ead3b4bc8\n\nbuild:\n  number: 0\n  script:\n    env:\n      AUBE_PRIMER_TOP: \"2000\"\n      AUBE_PRIMER_VERSION_CAP: \"100\"\n      AUBE_REQUIRE_PRIMER: \"1\"\n      AWS_LC_SYS_CMAKE_BUILDER: ${{ \"1\" if host_platform == \"win-arm64\" else \"0\" }} # force CMake builder for `aws-lc-sys` native C/C++ code on `win-arm64`\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      # instruct `cc` crate to use clang-cl natively to compile build-time tools intended to be run on the host when cross-compiling from `win_64`\n      AR_x86_64_pc_windows_msvc: llvm-lib\n      CC_x86_64_pc_windows_msvc: clang-cl\n      CXX_x86_64_pc_windows_msvc: clang-cl\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      # generate metadata primer, cf. https://github.com/aubepkg/aube/blob/main/.github/workflows/release.yml\n      - |\n        let schema = (\n          open --raw crates/aube-resolver/build.rs\n          | parse --regex 'const PRIMER_DATA_SCHEMA: u32 = (?<schema>\\d+);'\n          | get --optional 0.schema\n        )\n\n        if ($schema | is-empty) {\n          error make { msg: 'Failed to parse PRIMER_DATA_SCHEMA from crates/aube-resolver/build.rs' }\n        }\n\n        ^node ...[\n          scripts/generate-primer.mjs\n          --top=($env.AUBE_PRIMER_TOP)\n          --versions=($env.AUBE_PRIMER_VERSION_CAP)\n          --out=($\"crates/aube-resolver/data/primer-top($env.AUBE_PRIMER_TOP)-v($env.AUBE_PRIMER_VERSION_CAP)-s($schema).rkyv.json\")\n          --popular-names-out=crates/aube-resolver/data/popular-top100000-v1.json\n        ]\n      # build main app and generate license data\n      - cd crates/aube\n      - ^cargo auditable install --path=. --root=($prefix) --no-track --locked --bins --target=($env.CARGO_BUILD_TARGET)\n      - ^cargo-bundle-licenses --format=yaml --output=../../THIRDPARTY.yml\n      # generate shell completions\n      - if: build_platform == host_platform\n        then:\n          - ^aube completion bash | save --force ($prefix)/share/bash-completion/completions/aube\n          - ^aube completion fish | save --force ($prefix)/share/fish/vendor_completions.d/aube.fish\n          - ^aube completion zsh  | save --force ($prefix)/share/zsh/site-functions/_aube\n\nrequirements:\n  build:\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('rust') }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - clang\n    - cmake\n    - libclang\n    - make\n    - ninja\n    - nodejs\n    - nushell\n    - pkgconf\n\ntests:\n  - script:\n      - aube --help\n      - aube --version\n      - aubr --help\n      - aubr --version\n      - aubx --help\n      - aubx --version\n  - package_contents:\n      bin:\n        - aube\n        - aubr\n        - aubx\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/bash-completion/completions/aube\n            - share/fish/vendor_completions.d/aube.fish\n            - share/zsh/site-functions/_aube\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/bash-completion/completions/aube\n            - Library/share/fish/vendor_completions.d/aube.fish\n            - Library/share/zsh/site-functions/_aube\n      strict: true\n\nabout:\n  summary: Aube — a fast Node.js package manager\n  description: |\n    Aube installs automatically when you run a script. It has the tightest\n    security defaults of any Node.js package manager and is the only one\n    with a lifecycle-script jail. Aube drops into existing projects using\n    their existing lockfiles (`pnpm-lock.yaml`, `package-lock.json`,\n    `npm-shrinkwrap.json`, `yarn.lock` and `bun.lock`).\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://aube.jdx.dev\n  repository: https://github.com/jdx/aube\n\nextra:\n  recipe-maintainers:\n    - salim-b\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1007,7 +1007,7 @@
       "ninja",
       "nodejs",
       "nushell",
-      "pkg-config",
+      "pkgconf",
       "rust_compiler_stub"
     ]
   },
@@ -1026,7 +1026,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1065,7 +1065,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1144,7 +1144,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -1192,7 +1192,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -1216,7 +1216,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
@@ -1290,7 +1290,7 @@
             "ninja",
             "nodejs",
             "nushell",
-            "pkg-config"
+            "pkgconf"
           ],
           "host": [],
           "run": []
@@ -1338,7 +1338,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "schema_version": 1,
@@ -1362,7 +1362,7 @@
         "ninja",
         "nodejs",
         "nushell",
-        "pkg-config",
+        "pkgconf",
         "rust_compiler_stub"
       ]
     },
