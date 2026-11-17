@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibabseil:\n- '20260817'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_is_freethreadingfalsepython3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_freethreading:\n- false\nlibabseil:\n- '20260817'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n- - python\n  - is_freethreading\nzlib:\n- '1'\n",
   "ci_support_migrations": {
     "absl_grpc_proto_26Q2": {
       "migration_number": 1,
@@ -10,6 +10,10 @@
     "absl_grpc_proto_26Q4": {
       "migration_number": 1,
       "migrator_ts": 1793065783.6495733
+    },
+    "python314t": {
+      "migration_number": 1,
+      "migrator_ts": 1755739493
     },
     "python315": {
       "migration_number": 1,
@@ -43,8 +47,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "c425d8b64da5336839844d256f9ecef9cf27e224",
-  "feedstock_hash_ts": 1793075990,
+  "feedstock_hash": "df9ef7401a7b51d184e6a5db029b4deb8f25ad22",
+  "feedstock_hash_ts": 1794913615,
   "feedstock_name": "protobuf",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -59,7 +63,7 @@
       "summary": "Protocol Buffers - Google's data interchange format."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -74,6 +78,53 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
       {
         "build": null,
         "name": "protobuf",
@@ -345,7 +396,8 @@
         "patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch",
         "patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch",
         "patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch",
-        "patches/0010-unvendor-abseil-zlib.patch"
+        "patches/0009-Support-free-threaded-Unix-wheel-packaging.patch",
+        "patches/0012-unvendor-abseil-zlib.patch"
       ],
       "sha256": "7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530",
       "url": "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v36.2.tar.gz"
@@ -398,7 +450,7 @@
       "summary": "Protocol Buffers - Google's data interchange format."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -413,6 +465,57 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "libabseil",
+            "zlib",
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
       {
         "build": null,
         "name": "protobuf",
@@ -708,7 +811,8 @@
         "patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch",
         "patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch",
         "patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch",
-        "patches/0010-unvendor-abseil-zlib.patch"
+        "patches/0009-Support-free-threaded-Unix-wheel-packaging.patch",
+        "patches/0012-unvendor-abseil-zlib.patch"
       ],
       "sha256": "7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530",
       "url": "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v36.2.tar.gz"
@@ -765,7 +869,7 @@
       "summary": "Protocol Buffers - Google's data interchange format."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -780,6 +884,57 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "libabseil",
+            "zlib",
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
       {
         "build": null,
         "name": "protobuf",
@@ -1075,7 +1230,8 @@
         "patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch",
         "patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch",
         "patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch",
-        "patches/0010-unvendor-abseil-zlib.patch"
+        "patches/0009-Support-free-threaded-Unix-wheel-packaging.patch",
+        "patches/0012-unvendor-abseil-zlib.patch"
       ],
       "sha256": "7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530",
       "url": "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v36.2.tar.gz"
@@ -1132,7 +1288,7 @@
       "summary": "Protocol Buffers - Google's data interchange format."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1387,6 +1543,104 @@
         "name": "protobuf",
         "requirements": {
           "build": [
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "libabseil",
+            "zlib",
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
             "python",
             "cross-python_linux-aarch64",
             "libabseil",
@@ -1898,7 +2152,7 @@
         "requirements": {
           "build": [
             "python",
-            "cross-python_osx-64",
+            "cross-python_linux-ppc64le",
             "libabseil",
             "zlib",
             "bazel-toolchain >=0.3.1",
@@ -2103,6 +2357,159 @@
           "build": [
             "python",
             "cross-python_osx-64",
+            "libabseil",
+            "zlib",
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "libabseil",
+            "zlib",
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "libabseil",
+            "zlib",
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
             "libabseil",
             "zlib",
             "bazel-toolchain >=0.3.1",
@@ -2777,10 +3184,12 @@
         "patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch",
         "patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch",
         "patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch",
-        "patches/0010-unvendor-abseil-zlib.patch",
-        "patches/0009-Hacky-windows-workarounds.patch",
-        "patches/0011-Add-Windows-ARM64-Bazel-platform-and-wheel-tag.patch",
-        "patches/0012-Avoid-p2align-on-Windows-ARM64.patch"
+        "patches/0009-Support-free-threaded-Unix-wheel-packaging.patch",
+        "patches/0012-unvendor-abseil-zlib.patch",
+        "patches/0010-Hacky-windows-workarounds.patch",
+        "patches/0011-Use-the-source-proto-root-for-Windows-bootstrap-gene.patch",
+        "patches/0013-Add-Windows-ARM64-Bazel-platform-and-wheel-tag.patch",
+        "patches/0014-Avoid-p2align-on-Windows-ARM64.patch"
       ],
       "sha256": "7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530",
       "url": "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v36.2.tar.gz"
@@ -2799,7 +3208,7 @@
       "summary": "Protocol Buffers - Google's data interchange format."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -2814,6 +3223,57 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "libabseil",
+            "zlib",
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
       {
         "build": null,
         "name": "protobuf",
@@ -3109,7 +3569,8 @@
         "patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch",
         "patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch",
         "patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch",
-        "patches/0010-unvendor-abseil-zlib.patch"
+        "patches/0009-Support-free-threaded-Unix-wheel-packaging.patch",
+        "patches/0012-unvendor-abseil-zlib.patch"
       ],
       "sha256": "7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530",
       "url": "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v36.2.tar.gz"
@@ -3166,7 +3627,7 @@
       "summary": "Protocol Buffers - Google's data interchange format."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -3181,6 +3642,57 @@
       ]
     },
     "outputs": [
+      {
+        "build": null,
+        "name": "protobuf",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "libabseil",
+            "zlib",
+            "bazel-toolchain >=0.3.1",
+            "openjdk 21.*",
+            "sed",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "python",
+            "pip",
+            "setuptools",
+            "libabseil",
+            "zlib"
+          ],
+          "run": [
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "google",
+                "google.protobuf",
+                "google.protobuf.descriptor",
+                "google.protobuf.internal",
+                "google.protobuf.pyext",
+                "google.protobuf.util",
+                "google.protobuf.compiler",
+                "google._upb._message"
+              ]
+            }
+          },
+          {
+            "script": [
+              "python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"",
+              "python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\""
+            ]
+          }
+        ],
+        "version": "7.36.2"
+      },
       {
         "build": null,
         "name": "protobuf",
@@ -3476,7 +3988,8 @@
         "patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch",
         "patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch",
         "patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch",
-        "patches/0010-unvendor-abseil-zlib.patch"
+        "patches/0009-Support-free-threaded-Unix-wheel-packaging.patch",
+        "patches/0012-unvendor-abseil-zlib.patch"
       ],
       "sha256": "7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530",
       "url": "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v36.2.tar.gz"
@@ -3540,7 +4053,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/protobuf.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  # keep this without major version to let the bot pick it up\n  # protobuf doesn't add the major version in the tag, it's defined per language in\n  # https://github.com/protocolbuffers/protobuf/blob/main/version.json\n  # libprotobuf can have a different major version than protobuf\n  version: \"36.2\"\n  major: 7\n  lib_major: 7\n  bz_url: https://github.com/bazelbuild/bazel/releases/download\n  bz_ver: 8.7.0\n  bz_artefact: ${{ \"bazel_nojdk\" if unix else \"bazel\" }}\n  bz_fn: ${{ \"bazel-standalone-\" ~ bz_ver  if unix else \"bazel.exe\" }}\n  # Windows ARM64 runs the x86-64 Bazel binary under emulation.\n  bz_arch: ${{ \"linux-x86_64\" if build_platform == \"linux-64\" else\n               \"linux-arm64\" if build_platform == \"linux-aarch64\" else\n               \"darwin-x86_64\" if build_platform == \"osx-64\" else\n               \"darwin-arm64\" if build_platform == \"osx-arm64\" else\n               \"windows-x86_64.exe\" }}\n  bz_hash: ${{ \"83a0ec39f7ef3938b651c82d77ababfe96a9e4b9b566d7633f1c5f2ee9d2c8ed\" if build_platform == \"linux-64\" else\n               \"15f5a93b8d2179b1dbb53fd54ba3720ea7f3261d482641d61547acbd08733817\" if build_platform == \"linux-aarch64\" else\n               \"ac6175783fc463cc8f764353a52d4136550834d8855808086e7e21514f3c6ccd\" if build_platform == \"osx-64\" else\n               \"fb49e0b21742c29ae1b413396af49d5a9cc1d0d7b6b958df4335225ad5f8d4ad\" if build_platform == \"osx-arm64\" else\n               \"29f1796f57379933340afa135f02703ffa21dd30135754bea695f8fd15103420\" }}\n\npackage:\n  name: protobuf\n  version: ${{ major ~ \".\" ~ version }}\n\nsource:\n  - url: https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${{ version }}.tar.gz\n    sha256: 7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530\n    patches:\n      # backport https://github.com/protocolbuffers/protobuf/pull/17207 to avoid upb leakage\n      - patches/0001-Make-our-Python-source-wheel-use-the-version-script-.patch\n      - patches/0002-don-t-link-statically-on-windows.patch\n      - patches/0003-enable-windows-as-a-target-for-python-bindings.patch\n      - patches/0004-Support-more-architectures-for-Python-bindings.patch\n      - patches/0005-Compatible-windows-changes.patch\n      - patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch\n      - patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch\n      - patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch\n      - if: win\n        then:\n          - patches/0009-Hacky-windows-workarounds.patch\n        else:\n          # TF_SYSTEM_LIBS (or rather: abseil_dll setup) not compatible with windows\n          - patches/0010-unvendor-abseil-zlib.patch\n      - if: win and arm64\n        then:\n          # Upstream v35.1 defines Windows wheel platforms only for x86 and x86-64.\n          - patches/0011-Add-Windows-ARM64-Bazel-platform-and-wheel-tag.patch\n          # Clang's MSVC ARM64 target does not define __SEH__, so the upstream\n          # alignment guard does not prevent an SEH unwind-info compiler crash.\n          - patches/0012-Avoid-p2align-on-Windows-ARM64.patch\n\n  - url: ${{ bz_url }}/${{ bz_ver }}/${{ bz_artefact }}-${{ bz_ver }}-${{ bz_arch }}\n    sha256: ${{ bz_hash }}\n    file_name: ${{ bz_fn }}\n\nbuild:\n  number: 0\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - libabseil\n        - zlib\n        # - libprotobuf ${{ lib_major ~ \".\" ~ version }}.*\n    - if: unix\n      then:\n        - bazel-toolchain >=0.3.1\n        - openjdk 21.*\n        - sed\n      else:\n        - python\n        - m2-sed\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n  host:\n    - python\n    - pip\n    - setuptools\n    - if: unix\n      then:\n        - libabseil\n        - zlib\n    # - libprotobuf ${{ lib_major ~ \".\" ~ version }}.*\n  run:\n    - python\n  run_constraints:\n    - libprotobuf ${{ lib_major ~ \".\" ~ version }}.*\n\ntests:\n  - python:\n      imports:\n        - google\n        - google.protobuf\n        - google.protobuf.descriptor\n        - google.protobuf.internal\n        - google.protobuf.pyext\n        - google.protobuf.util\n        - google.protobuf.compiler\n        - google._upb._message\n      pip_check: true\n  - script:\n      - python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"\n      - python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\"\n\nabout:\n  license: BSD-3-Clause\n  license_file: LICENSE\n  summary: Protocol Buffers - Google's data interchange format.\n  description: |\n    Protocol buffers are Google's language-neutral, platform-neutral, extensible\n    mechanism for serializing structured data,think XML, but smaller, faster, and simpler.\n  homepage: https://developers.google.com/protocol-buffers/\n  repository: https://github.com/protocolbuffers/protobuf\n  documentation: https://developers.google.com/protocol-buffers/docs/tutorials\n\nextra:\n  recipe-maintainers:\n    - jjerphan\n    - JohanMabille\n    - dopplershift\n    - jakirkham\n    - ocefpaf\n    - hajapy\n    - xhochy\n    - conda-forge/libprotobuf\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  # keep this without major version to let the bot pick it up\n  # protobuf doesn't add the major version in the tag, it's defined per language in\n  # https://github.com/protocolbuffers/protobuf/blob/main/version.json\n  # libprotobuf can have a different major version than protobuf\n  version: \"36.2\"\n  major: 7\n  lib_major: 7\n  bz_url: https://github.com/bazelbuild/bazel/releases/download\n  bz_ver: 8.7.0\n  bz_artefact: ${{ \"bazel_nojdk\" if unix else \"bazel\" }}\n  bz_fn: ${{ \"bazel-standalone-\" ~ bz_ver  if unix else \"bazel.exe\" }}\n  # Windows ARM64 runs the x86-64 Bazel binary under emulation.\n  bz_arch: ${{ \"linux-x86_64\" if build_platform == \"linux-64\" else\n               \"linux-arm64\" if build_platform == \"linux-aarch64\" else\n               \"darwin-x86_64\" if build_platform == \"osx-64\" else\n               \"darwin-arm64\" if build_platform == \"osx-arm64\" else\n               \"windows-x86_64.exe\" }}\n  bz_hash: ${{ \"83a0ec39f7ef3938b651c82d77ababfe96a9e4b9b566d7633f1c5f2ee9d2c8ed\" if build_platform == \"linux-64\" else\n               \"15f5a93b8d2179b1dbb53fd54ba3720ea7f3261d482641d61547acbd08733817\" if build_platform == \"linux-aarch64\" else\n               \"ac6175783fc463cc8f764353a52d4136550834d8855808086e7e21514f3c6ccd\" if build_platform == \"osx-64\" else\n               \"fb49e0b21742c29ae1b413396af49d5a9cc1d0d7b6b958df4335225ad5f8d4ad\" if build_platform == \"osx-arm64\" else\n               \"29f1796f57379933340afa135f02703ffa21dd30135754bea695f8fd15103420\" }}\n\npackage:\n  name: protobuf\n  version: ${{ major ~ \".\" ~ version }}\n\nsource:\n  - url: https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${{ version }}.tar.gz\n    sha256: 7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530\n    patches:\n      # backport https://github.com/protocolbuffers/protobuf/pull/17207 to avoid upb leakage\n      - patches/0001-Make-our-Python-source-wheel-use-the-version-script-.patch\n      - patches/0002-don-t-link-statically-on-windows.patch\n      - patches/0003-enable-windows-as-a-target-for-python-bindings.patch\n      - patches/0004-Support-more-architectures-for-Python-bindings.patch\n      - patches/0005-Compatible-windows-changes.patch\n      - patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch\n      - patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch\n      - patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch\n      - patches/0009-Support-free-threaded-Unix-wheel-packaging.patch\n      - if: win\n        then:\n          - patches/0010-Hacky-windows-workarounds.patch\n          - patches/0011-Use-the-source-proto-root-for-Windows-bootstrap-gene.patch\n        else:\n          # TF_SYSTEM_LIBS (or rather: abseil_dll setup) not compatible with windows\n          - patches/0012-unvendor-abseil-zlib.patch\n      - if: win and arm64\n        then:\n          # Upstream v35.1 defines Windows wheel platforms only for x86 and x86-64.\n          - patches/0013-Add-Windows-ARM64-Bazel-platform-and-wheel-tag.patch\n          # Clang's MSVC ARM64 target does not define __SEH__, so the upstream\n          # alignment guard does not prevent an SEH unwind-info compiler crash.\n          - patches/0014-Avoid-p2align-on-Windows-ARM64.patch\n\n  - url: ${{ bz_url }}/${{ bz_ver }}/${{ bz_artefact }}-${{ bz_ver }}-${{ bz_arch }}\n    sha256: ${{ bz_hash }}\n    file_name: ${{ bz_fn }}\n\nbuild:\n  number: 1\n  # Protobuf uses a POSIX-only mutex in the free-threaded Python extension.\n  skip: win and is_freethreading\n  variant:\n    use_keys:\n      - is_freethreading\n\nrequirements:\n  build:\n    - if: build_platform != target_platform\n      then:\n        - python\n        - cross-python_${{ target_platform }}\n        - libabseil\n        - zlib\n        # - libprotobuf ${{ lib_major ~ \".\" ~ version }}.*\n    - if: unix\n      then:\n        - bazel-toolchain >=0.3.1\n        - openjdk 21.*\n        - sed\n      else:\n        - python\n        - m2-sed\n    - ${{ stdlib('c') }}\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n  host:\n    - python\n    - pip\n    - setuptools\n    - if: unix\n      then:\n        - libabseil\n        - zlib\n    # - libprotobuf ${{ lib_major ~ \".\" ~ version }}.*\n  run:\n    - python\n  run_constraints:\n    - libprotobuf ${{ lib_major ~ \".\" ~ version }}.*\n\ntests:\n  - python:\n      imports:\n        - google\n        - google.protobuf\n        - google.protobuf.descriptor\n        - google.protobuf.internal\n        - google.protobuf.pyext\n        - google.protobuf.util\n        - google.protobuf.compiler\n        - google._upb._message\n      pip_check: true\n  - script:\n      - python -c \"from google.protobuf.internal import api_implementation; print(api_implementation.Type())\"\n      - python -c \"from google.protobuf.internal import api_implementation; assert api_implementation.Type() == 'upb'\"\n\nabout:\n  license: BSD-3-Clause\n  license_file: LICENSE\n  summary: Protocol Buffers - Google's data interchange format.\n  description: |\n    Protocol buffers are Google's language-neutral, platform-neutral, extensible\n    mechanism for serializing structured data,think XML, but smaller, faster, and simpler.\n  homepage: https://developers.google.com/protocol-buffers/\n  repository: https://github.com/protocolbuffers/protobuf\n  documentation: https://developers.google.com/protocol-buffers/docs/tutorials\n\nextra:\n  recipe-maintainers:\n    - jjerphan\n    - JohanMabille\n    - dopplershift\n    - jakirkham\n    - ocefpaf\n    - hajapy\n    - xhochy\n    - conda-forge/libprotobuf\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -3680,7 +4193,7 @@
       "summary": "Protocol Buffers - Google's data interchange format."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -3966,7 +4479,9 @@
         "patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch",
         "patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch",
         "patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch",
-        "patches/0009-Hacky-windows-workarounds.patch"
+        "patches/0009-Support-free-threaded-Unix-wheel-packaging.patch",
+        "patches/0010-Hacky-windows-workarounds.patch",
+        "patches/0011-Use-the-source-proto-root-for-Windows-bootstrap-gene.patch"
       ],
       "sha256": "7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530",
       "url": "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v36.2.tar.gz"
@@ -4019,7 +4534,7 @@
       "summary": "Protocol Buffers - Google's data interchange format."
     },
     "build": {
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -4164,9 +4679,11 @@
         "patches/0006-Add-osx-64-and-linux-ppc64le-as-supported-wheel-tags.patch",
         "patches/0007-Workaround-nvcc-bug-in-message_lite.h.patch",
         "patches/0008-Add-ppc64le-to-python-dist-ABI-suffix-map.patch",
-        "patches/0009-Hacky-windows-workarounds.patch",
-        "patches/0011-Add-Windows-ARM64-Bazel-platform-and-wheel-tag.patch",
-        "patches/0012-Avoid-p2align-on-Windows-ARM64.patch"
+        "patches/0009-Support-free-threaded-Unix-wheel-packaging.patch",
+        "patches/0010-Hacky-windows-workarounds.patch",
+        "patches/0011-Use-the-source-proto-root-for-Windows-bootstrap-gene.patch",
+        "patches/0013-Add-Windows-ARM64-Bazel-platform-and-wheel-tag.patch",
+        "patches/0014-Avoid-p2align-on-Windows-ARM64.patch"
       ],
       "sha256": "7e7eaf580ec77f1a392ff1ab1013c13d3b04a6716f002f697f67f3c1113f0530",
       "url": "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v36.2.tar.gz"
