@@ -14,8 +14,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "fc323f320ad261fb83b876f23717271e2bb27bc1",
-  "feedstock_hash_ts": 1793824511,
+  "feedstock_hash": "49ea0acd84edd327287de2efe4e0577480e0f638",
+  "feedstock_hash_ts": 1795039495,
   "feedstock_name": "materialx",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -42,6 +42,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "traversaro",
         "oursland"
       ]
     },
@@ -225,6 +226,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "traversaro",
         "oursland"
       ]
     },
@@ -535,6 +537,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "traversaro",
         "oursland"
       ]
     },
@@ -690,7 +693,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/materialx.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: materialx\n  version: \"1.39.5\"\n\nrecipe:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/AcademySoftwareFoundation/MaterialX/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: c0d739b70a36f6f72888a0e8e66db5c83ae87c40737cc9b51c108166804f3a3b\n  patches:\n    # The data libraries are installed to share/materialx/libraries (see\n    # build-lib.sh); teach getDefaultDataSearchPath() to look there too.\n    - data-search-path-share.patch\n\nbuild:\n  number: 0\n\noutputs:\n  - package:\n      name: libmaterialx\n    build:\n      script:\n        file: build-lib\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n      host:\n        - if: linux\n          then:\n            - libgl-devel\n            - xorg-libx11\n            - xorg-libxt\n      run:\n        # MaterialXRenderHw links X11::X11 and X11::Xt publicly, so\n        # MaterialXConfig.cmake runs find_dependency(X11 COMPONENTS Xt) for\n        # every consumer, and FindX11 requires the protocol headers (X11/X.h).\n        - if: linux\n          then:\n            - xorg-xorgproto\n      run_exports:\n        # The C++ namespace is versioned down to the patch release\n        # (MaterialX_v1_39_5), so every release is ABI-incompatible.\n        - ${{ pin_subpackage('libmaterialx', upper_bound='x.x.x') }}\n    tests:\n      - package_contents:\n          include:\n            - MaterialXCore/Document.h\n            - MaterialXFormat/XmlIo.h\n            - MaterialXGenGlsl/GlslShaderGenerator.h\n            - MaterialXGenMsl/MslShaderGenerator.h\n            - MaterialXRender/ImageHandler.h\n          lib:\n            - MaterialXCore\n            - MaterialXFormat\n            - MaterialXGenShader\n            - MaterialXGenGlsl\n            - MaterialXGenMsl\n            - MaterialXGenOsl\n            - MaterialXGenMdl\n            - MaterialXRender\n            - MaterialXRenderGlsl\n            - if: osx\n              then: MaterialXRenderMsl\n          files:\n            - if: unix\n              then:\n                - share/materialx/libraries/stdlib/stdlib_defs.mtlx\n                - lib/cmake/MaterialX/MaterialXConfig.cmake\n              else:\n                - Library/share/materialx/libraries/stdlib/stdlib_defs.mtlx\n                - Library/lib/cmake/MaterialX/MaterialXConfig.cmake\n      - script:\n          - cmake-package-check MaterialX --targets MaterialXCore MaterialXFormat MaterialXGenShader MaterialXGenGlsl MaterialXRender\n        requirements:\n          run:\n            - cmake-package-check\n            - ${{ compiler('c') }}\n            - ${{ compiler('cxx') }}\n      # A downstream CMake project that generates GLSL for standard_surface,\n      # finding the data libraries through getDefaultDataSearchPath(). That\n      # searches upward from the executable, so run it from the prefix's bin.\n      - script:\n          - if: unix\n            then:\n              - cmake ${CMAKE_ARGS} -G Ninja -S test -B build\n              - cmake --build build\n              - cp build/load_stdlib ${PREFIX}/bin/\n              - load_stdlib\n            else:\n              - cmake %CMAKE_ARGS% -G Ninja -S test -B build\n              - cmake --build build\n              - copy build\\load_stdlib.exe %LIBRARY_BIN%\\\n              - load_stdlib.exe\n        files:\n          recipe:\n            - test/\n        requirements:\n          run:\n            - cmake\n            - ninja\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n\nabout:\n  homepage: https://materialx.org\n  repository: https://github.com/AcademySoftwareFoundation/MaterialX\n  documentation: https://materialx.org/docs/api/\n  summary: Open standard for the exchange of rich material and look-development content\n  description: |\n    MaterialX is an open standard for representing rich material and\n    look-development content in computer graphics, enabling its platform-independent\n    description and exchange across applications and renderers.\n  license: Apache-2.0 AND MIT\n  license_file:\n    - LICENSE.txt\n    - THIRD-PARTY.md\n\nextra:\n  recipe-maintainers:\n    - oursland\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: materialx\n  version: \"1.39.5\"\n\nrecipe:\n  name: ${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/AcademySoftwareFoundation/MaterialX/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: c0d739b70a36f6f72888a0e8e66db5c83ae87c40737cc9b51c108166804f3a3b\n  patches:\n    # The data libraries are installed to share/materialx/libraries (see\n    # build-lib.sh); teach getDefaultDataSearchPath() to look there too.\n    - data-search-path-share.patch\n\nbuild:\n  number: 0\n\noutputs:\n  - package:\n      name: libmaterialx\n    build:\n      script:\n        file: build-lib\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n      host:\n        - if: linux\n          then:\n            - libgl-devel\n            - xorg-libx11\n            - xorg-libxt\n      run:\n        # MaterialXRenderHw links X11::X11 and X11::Xt publicly, so\n        # MaterialXConfig.cmake runs find_dependency(X11 COMPONENTS Xt) for\n        # every consumer, and FindX11 requires the protocol headers (X11/X.h).\n        - if: linux\n          then:\n            - xorg-xorgproto\n      run_exports:\n        # The C++ namespace is versioned down to the patch release\n        # (MaterialX_v1_39_5), so every release is ABI-incompatible.\n        - ${{ pin_subpackage('libmaterialx', upper_bound='x.x.x') }}\n    tests:\n      - package_contents:\n          include:\n            - MaterialXCore/Document.h\n            - MaterialXFormat/XmlIo.h\n            - MaterialXGenGlsl/GlslShaderGenerator.h\n            - MaterialXGenMsl/MslShaderGenerator.h\n            - MaterialXRender/ImageHandler.h\n          lib:\n            - MaterialXCore\n            - MaterialXFormat\n            - MaterialXGenShader\n            - MaterialXGenGlsl\n            - MaterialXGenMsl\n            - MaterialXGenOsl\n            - MaterialXGenMdl\n            - MaterialXRender\n            - MaterialXRenderGlsl\n            - if: osx\n              then: MaterialXRenderMsl\n          files:\n            - if: unix\n              then:\n                - share/materialx/libraries/stdlib/stdlib_defs.mtlx\n                - lib/cmake/MaterialX/MaterialXConfig.cmake\n              else:\n                - Library/share/materialx/libraries/stdlib/stdlib_defs.mtlx\n                - Library/lib/cmake/MaterialX/MaterialXConfig.cmake\n      - script:\n          - cmake-package-check MaterialX --targets MaterialXCore MaterialXFormat MaterialXGenShader MaterialXGenGlsl MaterialXRender\n        requirements:\n          run:\n            - cmake-package-check\n            - ${{ compiler('c') }}\n            - ${{ compiler('cxx') }}\n      # A downstream CMake project that generates GLSL for standard_surface,\n      # finding the data libraries through getDefaultDataSearchPath(). That\n      # searches upward from the executable, so run it from the prefix's bin.\n      - script:\n          - if: unix\n            then:\n              - cmake ${CMAKE_ARGS} -G Ninja -S test -B build\n              - cmake --build build\n              - cp build/load_stdlib ${PREFIX}/bin/\n              - load_stdlib\n            else:\n              - cmake %CMAKE_ARGS% -G Ninja -S test -B build\n              - cmake --build build\n              - copy build\\load_stdlib.exe %LIBRARY_BIN%\\\n              - load_stdlib.exe\n        files:\n          recipe:\n            - test/\n        requirements:\n          run:\n            - cmake\n            - ninja\n            - ${{ compiler('cxx') }}\n            - ${{ stdlib('c') }}\n\nabout:\n  homepage: https://materialx.org\n  repository: https://github.com/AcademySoftwareFoundation/MaterialX\n  documentation: https://materialx.org/docs/api/\n  summary: Open standard for the exchange of rich material and look-development content\n  description: |\n    MaterialX is an open standard for representing rich material and\n    look-development content in computer graphics, enabling its platform-independent\n    description and exchange across applications and renderers.\n  license: Apache-2.0 AND MIT\n  license_file:\n    - LICENSE.txt\n    - THIRD-PARTY.md\n\nextra:\n  recipe-maintainers:\n    - traversaro\n    - oursland\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -815,6 +818,7 @@
     },
     "extra": {
       "recipe-maintainers": [
+        "traversaro",
         "oursland"
       ]
     },
