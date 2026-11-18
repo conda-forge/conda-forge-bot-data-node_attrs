@@ -13,8 +13,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "266895843955e578b4878891a6c4c8d1c4d22afd",
-  "feedstock_hash_ts": 1794658315,
+  "feedstock_hash": "c19fde734abe62838600835148c9c08ca01380ff",
+  "feedstock_hash_ts": 1795035405,
   "feedstock_name": "micro_sam",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -27,16 +27,7 @@
     },
     "build": {
       "entry_points": [
-        "micro_sam.annotator_2d = micro_sam.sam_annotator.annotator_2d:main",
-        "micro_sam.annotator_3d = micro_sam.sam_annotator.annotator_3d:main",
-        "micro_sam.annotator_tracking = micro_sam.sam_annotator.annotator_tracking:main",
-        "micro_sam.automatic_segmentation = micro_sam.automatic_segmentation:main",
-        "micro_sam.benchmark_sam = micro_sam.evaluation.benchmark_datasets:main",
-        "micro_sam.evaluate = micro_sam.evaluation.evaluation:main",
-        "micro_sam.image_series_annotator = micro_sam.sam_annotator.image_series_annotator:main",
-        "micro_sam.info = micro_sam.util:micro_sam_info",
-        "micro_sam.precompute_embeddings = micro_sam.precompute_state:main",
-        "micro_sam.train = micro_sam.training.training:main"
+        "micro_sam = micro_sam._cli:cli"
       ],
       "noarch": "python",
       "number": "0",
@@ -50,53 +41,84 @@
     },
     "package": {
       "name": "micro_sam",
-      "version": "1.9.0"
+      "version": "2.0.0"
     },
     "requirements": {
       "host": [
         "python 3.11",
         "pip",
-        "setuptools"
+        "setuptools >=42"
       ],
       "run": [
         "python >=3.11,<3.15",
-        "bioimage-cpp >=0.3,<0.11",
-        "bioimageio.core >=0.11,<0.12",
+        "bioimage-cpp >=0.7",
+        "bioimage-py >=0.2.2",
+        "bioimageio.core >=0.11",
+        "click",
+        "h5py",
+        "huggingface_hub",
+        "imagecodecs",
+        "imageio",
+        "joblib",
         "kornia",
+        "magicgui",
+        "matplotlib-base",
         "napari >=0.7.1,<0.11",
+        "natsort",
+        "networkx",
+        "numpy",
+        "pandas",
         "pooch",
         "pydantic <2.14",
         "pyqt6",
-        "python-elf >=0.9.0,<0.10",
+        "python-elf >=0.9",
         "python-xxhash",
-        "pytorch >=2.5,<3",
+        "pytorch >=2.5",
+        "sam-2 >=1.0.0.20241215",
+        "scikit-image",
+        "scikit-learn",
         "segment-anything >=1.0.1",
+        "superqt",
+        "tensordict",
         "timm",
-        "torch_em >=0.9.0,<0.11",
+        "torch_em >=0.10.8",
         "torchvision",
         "tqdm",
-        "trackastra >=0.5.3,<0.6",
+        "trackastra >=0.5.3",
+        "transformers >=4.56",
         "xarray",
-        "zarr <4"
+        "z5py >=3",
+        "zarr >=3"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "00f3af586a5eb15e39e359627443d66e991003317a0ccb51b1e55bab4849d96f",
-      "url": "https://github.com/computational-cell-analytics/micro-sam/archive/v1.9.0.tar.gz"
+      "sha256": "0f5c3b86e8e90303dccf0f7827cb4bb8928ca3c24df987140a6f806b6a719bb7",
+      "url": "https://github.com/computational-cell-analytics/micro-sam/archive/v2.0.0.tar.gz"
     },
     "test": {
       "commands": [
-        "python -m unittest discover -s test -v"
+        "micro_sam --help",
+        "micro_sam --version",
+        "pytest -m \"not v1 and not gui and not slow\" --deselect test/test_cli.py::TestCLI::test_automatic_segmentation test/test_cli.py test/test_util.py test/test_models/test_peft_sam2.py test/test_models/test_unisam2.py test/test_v2_*.py"
       ],
       "imports": [
-        "micro_sam"
+        "micro_sam",
+        "micro_sam.util",
+        "micro_sam.v1.util",
+        "micro_sam.v2.util",
+        "micro_sam.v2.instance_segmentation",
+        "micro_sam.v2.automatic_prompt_generation",
+        "micro_sam.classical_features",
+        "micro_sam.v2.training"
       ],
       "requires": [
-        "python 3.11"
+        "python 3.11",
+        "pytest"
       ],
       "source_files": [
-        "test/**/*.py"
+        "test/*.py",
+        "test/test_models/*.py"
       ]
     }
   },
@@ -117,9 +139,22 @@
       "__set__": true,
       "elements": [
         "bioimage-cpp",
+        "bioimage-py",
         "bioimageio.core",
+        "click",
+        "h5py",
+        "huggingface_hub",
+        "imagecodecs",
+        "imageio",
+        "joblib",
         "kornia",
+        "magicgui",
+        "matplotlib-base",
         "napari",
+        "natsort",
+        "networkx",
+        "numpy",
+        "pandas",
         "pooch",
         "pydantic",
         "pyqt6",
@@ -127,19 +162,27 @@
         "python-elf",
         "python-xxhash",
         "pytorch",
+        "sam-2",
+        "scikit-image",
+        "scikit-learn",
         "segment-anything",
+        "superqt",
+        "tensordict",
         "timm",
         "torch_em",
         "torchvision",
         "tqdm",
         "trackastra",
+        "transformers",
         "xarray",
+        "z5py",
         "zarr"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
+        "pytest",
         "python"
       ]
     }
@@ -154,16 +197,7 @@
     },
     "build": {
       "entry_points": [
-        "micro_sam.annotator_2d = micro_sam.sam_annotator.annotator_2d:main",
-        "micro_sam.annotator_3d = micro_sam.sam_annotator.annotator_3d:main",
-        "micro_sam.annotator_tracking = micro_sam.sam_annotator.annotator_tracking:main",
-        "micro_sam.automatic_segmentation = micro_sam.automatic_segmentation:main",
-        "micro_sam.benchmark_sam = micro_sam.evaluation.benchmark_datasets:main",
-        "micro_sam.evaluate = micro_sam.evaluation.evaluation:main",
-        "micro_sam.image_series_annotator = micro_sam.sam_annotator.image_series_annotator:main",
-        "micro_sam.info = micro_sam.util:micro_sam_info",
-        "micro_sam.precompute_embeddings = micro_sam.precompute_state:main",
-        "micro_sam.train = micro_sam.training.training:main"
+        "micro_sam = micro_sam._cli:cli"
       ],
       "noarch": "python",
       "number": "0",
@@ -177,53 +211,84 @@
     },
     "package": {
       "name": "micro_sam",
-      "version": "1.9.0"
+      "version": "2.0.0"
     },
     "requirements": {
       "host": [
         "python 3.11",
         "pip",
-        "setuptools"
+        "setuptools >=42"
       ],
       "run": [
         "python >=3.11,<3.15",
-        "bioimage-cpp >=0.3,<0.11",
-        "bioimageio.core >=0.11,<0.12",
+        "bioimage-cpp >=0.7",
+        "bioimage-py >=0.2.2",
+        "bioimageio.core >=0.11",
+        "click",
+        "h5py",
+        "huggingface_hub",
+        "imagecodecs",
+        "imageio",
+        "joblib",
         "kornia",
+        "magicgui",
+        "matplotlib-base",
         "napari >=0.7.1,<0.11",
+        "natsort",
+        "networkx",
+        "numpy",
+        "pandas",
         "pooch",
         "pydantic <2.14",
         "pyqt6",
-        "python-elf >=0.9.0,<0.10",
+        "python-elf >=0.9",
         "python-xxhash",
-        "pytorch >=2.5,<3",
+        "pytorch >=2.5",
+        "sam-2 >=1.0.0.20241215",
+        "scikit-image",
+        "scikit-learn",
         "segment-anything >=1.0.1",
+        "superqt",
+        "tensordict",
         "timm",
-        "torch_em >=0.9.0,<0.11",
+        "torch_em >=0.10.8",
         "torchvision",
         "tqdm",
-        "trackastra >=0.5.3,<0.6",
+        "trackastra >=0.5.3",
+        "transformers >=4.56",
         "xarray",
-        "zarr <4"
+        "z5py >=3",
+        "zarr >=3"
       ]
     },
     "schema_version": 0,
     "source": {
-      "sha256": "00f3af586a5eb15e39e359627443d66e991003317a0ccb51b1e55bab4849d96f",
-      "url": "https://github.com/computational-cell-analytics/micro-sam/archive/v1.9.0.tar.gz"
+      "sha256": "0f5c3b86e8e90303dccf0f7827cb4bb8928ca3c24df987140a6f806b6a719bb7",
+      "url": "https://github.com/computational-cell-analytics/micro-sam/archive/v2.0.0.tar.gz"
     },
     "test": {
       "commands": [
-        "python -m unittest discover -s test -v"
+        "micro_sam --help",
+        "micro_sam --version",
+        "pytest -m \"not v1 and not gui and not slow\" --deselect test/test_cli.py::TestCLI::test_automatic_segmentation test/test_cli.py test/test_util.py test/test_models/test_peft_sam2.py test/test_models/test_unisam2.py test/test_v2_*.py"
       ],
       "imports": [
-        "micro_sam"
+        "micro_sam",
+        "micro_sam.util",
+        "micro_sam.v1.util",
+        "micro_sam.v2.util",
+        "micro_sam.v2.instance_segmentation",
+        "micro_sam.v2.automatic_prompt_generation",
+        "micro_sam.classical_features",
+        "micro_sam.v2.training"
       ],
       "requires": [
-        "python 3.11"
+        "python 3.11",
+        "pytest"
       ],
       "source_files": [
-        "test/**/*.py"
+        "test/*.py",
+        "test/test_models/*.py"
       ]
     }
   },
@@ -241,14 +306,27 @@
   "pr_info": {
     "__lazy_json__": "pr_info/micro_sam.json"
   },
-  "raw_meta_yaml": "{% set version = \"1.9.0\" %}\n{% set python_max = \"3.15\" %}\n\npackage:\n  name: micro_sam\n  version: {{ version }}\n\nsource:\n  url: https://github.com/computational-cell-analytics/micro-sam/archive/v{{ version }}.tar.gz\n  sha256: 00f3af586a5eb15e39e359627443d66e991003317a0ccb51b1e55bab4849d96f\n\nbuild:\n  entry_points:\n    - micro_sam.annotator_2d = micro_sam.sam_annotator.annotator_2d:main\n    - micro_sam.annotator_3d = micro_sam.sam_annotator.annotator_3d:main\n    - micro_sam.annotator_tracking = micro_sam.sam_annotator.annotator_tracking:main\n    - micro_sam.automatic_segmentation = micro_sam.automatic_segmentation:main\n    - micro_sam.benchmark_sam = micro_sam.evaluation.benchmark_datasets:main\n    - micro_sam.evaluate = micro_sam.evaluation.evaluation:main\n    - micro_sam.image_series_annotator = micro_sam.sam_annotator.image_series_annotator:main\n    - micro_sam.info = micro_sam.util:micro_sam_info\n    - micro_sam.precompute_embeddings = micro_sam.precompute_state:main\n    - micro_sam.train = micro_sam.training.training:main\n  noarch: python\n  number: 0\n  script: pip install . --no-deps --ignore-installed --no-cache-dir -vvv\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip\n    - setuptools\n  run:\n    - python >={{ python_min }},<{{ python_max }}\n    - bioimage-cpp >=0.3,<0.11\n    - bioimageio.core >=0.11,<0.12\n    - kornia\n    - napari >=0.7.1,<0.11\n    - pooch\n    - pydantic <2.14\n    - pyqt6\n    - python-elf >=0.9.0,<0.10\n    - python-xxhash\n    - pytorch >=2.5,<3\n    - segment-anything >=1.0.1\n    - timm\n    - torch_em >=0.9.0,<0.11\n    - torchvision\n    - tqdm\n    - trackastra >=0.5.3,<0.6\n    - xarray\n    - zarr <4\n\ntest:\n  requires:\n    - python {{ python_min }}\n  imports:\n    - micro_sam\n  source_files:\n    - test/**/*.py\n  commands:\n    - python -m unittest discover -s test -v\n\nabout:\n  license: MIT\n  license_file: LICENSE\n  license_family: MIT\n  summary: Segment Anything for Microscopy.\n  home: https://github.com/computational-cell-analytics/micro-sam\n\nextra:\n  recipe-maintainers:\n    - anwai98\n    - constantinpape\n",
+  "raw_meta_yaml": "{% set version = \"2.0.0\" %}\n{% set python_min = \"3.11\" %}\n{% set python_max = \"3.15\" %}\n\npackage:\n  name: micro_sam\n  version: {{ version }}\n\nsource:\n  url: https://github.com/computational-cell-analytics/micro-sam/archive/v{{ version }}.tar.gz\n  sha256: 0f5c3b86e8e90303dccf0f7827cb4bb8928ca3c24df987140a6f806b6a719bb7\n\nbuild:\n  entry_points:\n    - micro_sam = micro_sam._cli:cli\n  noarch: python\n  number: 0\n  script: pip install . --no-deps --ignore-installed --no-cache-dir -vvv\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip\n    - setuptools >=42\n  run:\n    - python >={{ python_min }},<{{ python_max }}\n    - bioimage-cpp >=0.7\n    - bioimage-py >=0.2.2\n    - bioimageio.core >=0.11\n    - click\n    - h5py\n    - huggingface_hub\n    - imagecodecs\n    - imageio\n    - joblib\n    - kornia\n    - magicgui\n    - matplotlib-base\n    - napari >=0.7.1,<0.11\n    - natsort\n    - networkx\n    - numpy\n    - pandas\n    - pooch\n    - pydantic <2.14\n    - pyqt6\n    - python-elf >=0.9\n    - python-xxhash\n    - pytorch >=2.5\n    # sam-2 provides the 'sam2' module (Segment Anything 2).\n    - sam-2 >=1.0.0.20241215\n    - scikit-image\n    - scikit-learn\n    - segment-anything >=1.0.1\n    - superqt\n    - tensordict\n    - timm\n    - torch_em >=0.10.8\n    - torchvision\n    - tqdm\n    - trackastra >=0.5.3\n    - transformers >=4.56\n    - xarray\n    - z5py >=3\n    - zarr >=3\n\ntest:\n  requires:\n    - python {{ python_min }}\n    - pytest\n  # conda-build does not expand '**' recursively, so list each test folder.\n  source_files:\n    - test/*.py\n    - test/test_models/*.py\n  imports:\n    - micro_sam\n    - micro_sam.util\n    - micro_sam.v1.util\n    - micro_sam.v2.util\n    - micro_sam.v2.instance_segmentation\n    - micro_sam.v2.automatic_prompt_generation\n    - micro_sam.classical_features\n    - micro_sam.v2.training\n  commands:\n    - micro_sam --help\n    - micro_sam --version\n    # Run a v2 subset that loads only the hvit_t weights. The deselected CLI test needs hvit_t_cells.\n    - pytest -m \"not v1 and not gui and not slow\" --deselect test/test_cli.py::TestCLI::test_automatic_segmentation test/test_cli.py test/test_util.py test/test_models/test_peft_sam2.py test/test_models/test_unisam2.py test/test_v2_*.py\n\nabout:\n  license: MIT\n  license_file: LICENSE\n  license_family: MIT\n  summary: Segment Anything for Microscopy.\n  home: https://github.com/computational-cell-analytics/micro-sam\n\nextra:\n  recipe-maintainers:\n    - anwai98\n    - constantinpape\n",
   "req": {
     "__set__": true,
     "elements": [
       "bioimage-cpp",
+      "bioimage-py",
       "bioimageio.core",
+      "click",
+      "h5py",
+      "huggingface_hub",
+      "imagecodecs",
+      "imageio",
+      "joblib",
       "kornia",
+      "magicgui",
+      "matplotlib-base",
       "napari",
+      "natsort",
+      "networkx",
+      "numpy",
+      "pandas",
       "pip",
       "pooch",
       "pydantic",
@@ -257,14 +335,21 @@
       "python-elf",
       "python-xxhash",
       "pytorch",
+      "sam-2",
+      "scikit-image",
+      "scikit-learn",
       "segment-anything",
       "setuptools",
+      "superqt",
+      "tensordict",
       "timm",
       "torch_em",
       "torchvision",
       "tqdm",
       "trackastra",
+      "transformers",
       "xarray",
+      "z5py",
       "zarr"
     ]
   },
@@ -285,9 +370,22 @@
       "__set__": true,
       "elements": [
         "bioimage-cpp",
+        "bioimage-py",
         "bioimageio.core",
+        "click",
+        "h5py",
+        "huggingface_hub",
+        "imagecodecs",
+        "imageio",
+        "joblib",
         "kornia",
+        "magicgui",
+        "matplotlib-base",
         "napari",
+        "natsort",
+        "networkx",
+        "numpy",
+        "pandas",
         "pooch",
         "pydantic",
         "pyqt6",
@@ -295,19 +393,27 @@
         "python-elf",
         "python-xxhash",
         "pytorch",
+        "sam-2",
+        "scikit-image",
+        "scikit-learn",
         "segment-anything",
+        "superqt",
+        "tensordict",
         "timm",
         "torch_em",
         "torchvision",
         "tqdm",
         "trackastra",
+        "transformers",
         "xarray",
+        "z5py",
         "zarr"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
+        "pytest",
         "python"
       ]
     }
@@ -323,42 +429,63 @@
       "elements": [
         "pip",
         "python 3.11",
-        "setuptools"
+        "setuptools >=42"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
-        "bioimage-cpp >=0.3,<0.11",
-        "bioimageio.core >=0.11,<0.12",
+        "bioimage-cpp >=0.7",
+        "bioimage-py >=0.2.2",
+        "bioimageio.core >=0.11",
+        "click",
+        "h5py",
+        "huggingface_hub",
+        "imagecodecs",
+        "imageio",
+        "joblib",
         "kornia",
+        "magicgui",
+        "matplotlib-base",
         "napari >=0.7.1,<0.11",
+        "natsort",
+        "networkx",
+        "numpy",
+        "pandas",
         "pooch",
         "pydantic <2.14",
         "pyqt6",
         "python >=3.11,<3.15",
-        "python-elf >=0.9.0,<0.10",
+        "python-elf >=0.9",
         "python-xxhash",
-        "pytorch >=2.5,<3",
+        "pytorch >=2.5",
+        "sam-2 >=1.0.0.20241215",
+        "scikit-image",
+        "scikit-learn",
         "segment-anything >=1.0.1",
+        "superqt",
+        "tensordict",
         "timm",
-        "torch_em >=0.9.0,<0.11",
+        "torch_em >=0.10.8",
         "torchvision",
         "tqdm",
-        "trackastra >=0.5.3,<0.6",
+        "trackastra >=0.5.3",
+        "transformers >=4.56",
         "xarray",
-        "zarr <4"
+        "z5py >=3",
+        "zarr >=3"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
+        "pytest",
         "python 3.11"
       ]
     }
   },
-  "url": "https://github.com/computational-cell-analytics/micro-sam/archive/v1.9.0.tar.gz",
-  "version": "1.9.0",
+  "url": "https://github.com/computational-cell-analytics/micro-sam/archive/v2.0.0.tar.gz",
+  "version": "2.0.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/micro_sam.json"
   }
