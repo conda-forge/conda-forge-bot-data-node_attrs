@@ -17,8 +17,8 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "99c2b9db65a768861f7c3dae1eb09e73bd303344",
-  "feedstock_hash_ts": 1795095872,
+  "feedstock_hash": "b3772ea34762b13060124aa5c2f03140c9c44f69",
+  "feedstock_hash_ts": 1795099123,
   "feedstock_name": "ocaml-ppxlib",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -361,7 +361,8 @@
             "ocaml 5.5.1.* gcc_*",
             "ocaml-dune 3.24.*",
             "m2-make",
-            "m2-bash"
+            "m2-bash",
+            "m2-coreutils"
           ],
           "host": [
             "ocaml 5.5.1.* gcc_*",
@@ -398,7 +399,8 @@
               "run": [
                 "ocaml 5.5.1.* gcc_*",
                 "ocaml-dune 3.24.*",
-                "m2-bash"
+                "m2-bash",
+                "m2-coreutils"
               ]
             },
             "script": "bash testing/test_ppxlib.sh"
@@ -422,7 +424,8 @@
         "m2w64_c_stdlib_stub",
         "ocaml 5.5.1.* gcc_*",
         "m2-make",
-        "m2-bash"
+        "m2-bash",
+        "m2-coreutils"
       ],
       "host": [
         "ocaml 5.5.1.*",
@@ -756,13 +759,14 @@
   "pr_info": {
     "__lazy_json__": "pr_info/ocaml-ppxlib.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: ppxlib\n  version: \"0.38.0\"\n\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n  c_toolchain: ${{ \"\" if unix else \"gcc_*\" }}\n\npackage:\n  name: ocaml-${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml-ppx/ppxlib/releases/download/${{ version }}/ppxlib-${{ version }}.tbz\n  sha256: 89e049b3102f6670a213d34d802ea3ab0fc530a8959d2f1a1e8db830063429a3\n\nbuild:\n  number: 0\n  script: bash ${{ RECIPE_DIR }}/build.sh ppxlib\n\nrequirements:\n  build:\n    - if: unix\n      then:\n        - ${{ compiler(\"c\") }}\n        - ${{ stdlib(\"c\") }}\n      else:\n        - ${{ compiler(\"m2w64_c\") }}\n        - ${{ stdlib(\"m2w64_c\") }}\n    # non-unix: conda-forge ocaml has gcc_ and vs2022_ tracks; these recipes use the gcc (MinGW) track only.\n    - ocaml ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - ocaml-dune 3.24.*\n    - ${{ m2 }}make\n    - if: not unix\n      then:\n        - m2-bash\n  host:\n    - ocaml ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - ocaml-compiler-libs >=0.11\n    - ocaml-ppx-derivers >=1.0\n    - ocaml-sexplib0 >=0.12\n    - ocaml-stdlib-shims\n  run:\n    - ocaml-compiler-libs >=0.11\n    - ocaml-ppx-derivers >=1.0\n    - ocaml-sexplib0 >=0.12\n    - ocaml-stdlib-shims\n\ntests:\n  - package_contents:\n      files:\n        - ${{ library }}lib/ocaml/${{ name }}/META\n        - ${{ library }}lib/ocaml/${{ name }}/ppxlib.cmxa\n        - ${{ library }}lib/ocaml/${{ name }}/ast/ppxlib_ast.cmxa\n        - ${{ library }}lib/ocaml/${{ name }}/astlib/astlib.cmxa\n  - script: bash testing/test_ppxlib.sh\n    files:\n      recipe:\n        - testing/test_ppxlib.sh\n    requirements:\n      run:\n        - ocaml ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n        - ocaml-dune 3.24.*\n        - if: unix\n          then:\n            - ${{ compiler(\"c\") }}\n        - if: not unix\n          then:\n            - m2-bash\n\nabout:\n  homepage: https://github.com/ocaml-ppx/ppxlib\n  repository: https://github.com/ocaml-ppx/ppxlib\n  documentation: https://ocaml-ppx.github.io/ppxlib/\n  license: MIT\n  license_file: LICENSE.md\n  summary: Standard infrastructure for ppx rewriters\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n    - ManuelLerchner\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: ppxlib\n  version: \"0.38.0\"\n\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n  c_toolchain: ${{ \"\" if unix else \"gcc_*\" }}\n\npackage:\n  name: ocaml-${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml-ppx/ppxlib/releases/download/${{ version }}/ppxlib-${{ version }}.tbz\n  sha256: 89e049b3102f6670a213d34d802ea3ab0fc530a8959d2f1a1e8db830063429a3\n\nbuild:\n  number: 0\n  script: bash ${{ RECIPE_DIR }}/build.sh ppxlib\n\nrequirements:\n  build:\n    - if: unix\n      then:\n        - ${{ compiler(\"c\") }}\n        - ${{ stdlib(\"c\") }}\n      else:\n        - ${{ compiler(\"m2w64_c\") }}\n        - ${{ stdlib(\"m2w64_c\") }}\n    # non-unix: conda-forge ocaml has gcc_ and vs2022_ tracks; these recipes use the gcc (MinGW) track only.\n    - ocaml ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - ocaml-dune 3.24.*\n    - ${{ m2 }}make\n    - if: not unix\n      then:\n        - m2-bash\n        - m2-coreutils\n  host:\n    - ocaml ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - ocaml-compiler-libs >=0.11\n    - ocaml-ppx-derivers >=1.0\n    - ocaml-sexplib0 >=0.12\n    - ocaml-stdlib-shims\n  run:\n    - ocaml-compiler-libs >=0.11\n    - ocaml-ppx-derivers >=1.0\n    - ocaml-sexplib0 >=0.12\n    - ocaml-stdlib-shims\n\ntests:\n  - package_contents:\n      files:\n        - ${{ library }}lib/ocaml/${{ name }}/META\n        - ${{ library }}lib/ocaml/${{ name }}/ppxlib.cmxa\n        - ${{ library }}lib/ocaml/${{ name }}/ast/ppxlib_ast.cmxa\n        - ${{ library }}lib/ocaml/${{ name }}/astlib/astlib.cmxa\n  - script: bash testing/test_ppxlib.sh\n    files:\n      recipe:\n        - testing/test_ppxlib.sh\n    requirements:\n      run:\n        - ocaml ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n        - ocaml-dune 3.24.*\n        - if: unix\n          then:\n            - ${{ compiler(\"c\") }}\n        - if: not unix\n          then:\n            - m2-bash\n            - m2-coreutils\n\nabout:\n  homepage: https://github.com/ocaml-ppx/ppxlib\n  repository: https://github.com/ocaml-ppx/ppxlib\n  documentation: https://ocaml-ppx.github.io/ppxlib/\n  license: MIT\n  license_file: LICENSE.md\n  summary: Standard infrastructure for ppx rewriters\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n    - ManuelLerchner\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
       "c_stdlib_stub",
       "m2-bash",
+      "m2-coreutils",
       "m2-make",
       "m2w64_c_compiler_stub",
       "m2w64_c_stdlib_stub",
@@ -782,6 +786,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "m2-bash",
+        "m2-coreutils",
         "m2-make",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
@@ -819,6 +824,7 @@
       "elements": [
         "c_compiler_stub",
         "m2-bash",
+        "m2-coreutils",
         "ocaml",
         "ocaml-dune"
       ]
@@ -832,6 +838,7 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "m2-bash",
+        "m2-coreutils",
         "m2-make",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
@@ -866,6 +873,7 @@
       "elements": [
         "c_compiler_stub",
         "m2-bash",
+        "m2-coreutils",
         "ocaml 5.5.1.*",
         "ocaml 5.5.1.* gcc_*",
         "ocaml-dune 3.24.*"
@@ -908,7 +916,8 @@
             "ocaml 5.5.1.* gcc_*",
             "ocaml-dune 3.24.*",
             "m2-make",
-            "m2-bash"
+            "m2-bash",
+            "m2-coreutils"
           ],
           "host": [
             "ocaml 5.5.1.* gcc_*",
@@ -945,7 +954,8 @@
               "run": [
                 "ocaml 5.5.1.* gcc_*",
                 "ocaml-dune 3.24.*",
-                "m2-bash"
+                "m2-bash",
+                "m2-coreutils"
               ]
             },
             "script": "bash testing/test_ppxlib.sh"
@@ -965,7 +975,8 @@
         "ocaml 5.5.1.* gcc_*",
         "ocaml-dune 3.24.*",
         "m2-make",
-        "m2-bash"
+        "m2-bash",
+        "m2-coreutils"
       ],
       "host": [
         "ocaml 5.5.1.* gcc_*",
@@ -992,6 +1003,7 @@
       "__set__": true,
       "elements": [
         "m2-bash",
+        "m2-coreutils",
         "m2-make",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
@@ -1022,6 +1034,7 @@
       "__set__": true,
       "elements": [
         "m2-bash",
+        "m2-coreutils",
         "ocaml",
         "ocaml-dune"
       ]
