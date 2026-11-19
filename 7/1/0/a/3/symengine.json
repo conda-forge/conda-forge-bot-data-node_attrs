@@ -1,13 +1,16 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngmp:\n- '6'\nlibflint:\n- '3.5'\nmpfr:\n- '4'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngmp:\n- '6'\nlibflint:\n- '3.6'\nmpfr:\n- '4'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
+  "ci_support_migrations": {
+    "libflint36": {
+      "migration_number": 1,
+      "migrator_ts": 1794828695.9196339
+    }
+  },
   "conda-forge.yml": {
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "error_overlinking": true,
@@ -20,12 +23,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "45d60cca954cd36b9b507f56f37c721ab7d551fa",
-  "feedstock_hash_ts": 1787872792,
+  "feedstock_hash": "ec4114785c5a3f7934aeb5d05876891ec38fc7fc",
+  "feedstock_hash_ts": 1795102546,
   "feedstock_name": "symengine",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -36,7 +40,7 @@
       "summary": "SymEngine is a fast symbolic manipulation library, written in C++"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "symengine"
       ]
@@ -124,7 +128,7 @@
       "summary": "SymEngine is a fast symbolic manipulation library, written in C++"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "symengine"
       ]
@@ -212,7 +216,7 @@
       "summary": "SymEngine is a fast symbolic manipulation library, written in C++"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "symengine"
       ]
@@ -300,7 +304,7 @@
       "summary": "SymEngine is a fast symbolic manipulation library, written in C++"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "symengine"
       ]
@@ -363,7 +367,7 @@
       "summary": "SymEngine is a fast symbolic manipulation library, written in C++"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "symengine"
       ]
@@ -451,7 +455,7 @@
       "summary": "SymEngine is a fast symbolic manipulation library, written in C++"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "symengine"
       ]
@@ -549,7 +553,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/symengine.json"
   },
-  "raw_meta_yaml": "{% set version = \"0.15.0\" %}\n{% set maj_min = \".\".join(version.split(\".\")[:2]) %}\n\npackage:\n  name: symengine\n  version: {{ version }}\n\nsource:\n  url: https://github.com/symengine/symengine/releases/download/v{{ version }}/symengine-{{ version }}.tar.gz\n  sha256: 9f75f0367221abd88b9b60ef7b104b4aa1e34e99d3152c3df2bb2467bad2f04f\n  patches:\n    # series.h(235): error C2676: binary '/=': 'Poly' does not define this operator\n    - poly.patch\n\nbuild:\n  number: 0\n  run_exports:\n    - {{ pin_subpackage(\"symengine\", max_pin=\"x.x\") }}\n\nrequirements:\n  build:\n    - cmake\n    - make             # [unix]\n    - ninja            # [win]\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n    - {{ stdlib(\"c\") }}\n  host:\n    - gmp\n    - mpfr\n    - mpc\n    - libflint\n    - winpthreads-devel   # [win]\n    - llvmdev\n    # these two come from LLVM\n    - zstd\n    - zlib\n\ntest:\n  commands:\n    - if not exist %LIBRARY_INC%\\\\symengine\\\\basic.h exit 1     # [win]\n    - if not exist %LIBRARY_LIB%\\\\symengine.lib exit 1          # [win]\n    - if not exist %LIBRARY_BIN%\\\\symengine-{{ maj_min }}.dll exit 1          # [win]\n    - test -f $PREFIX/include/symengine/basic.h                 # [unix]\n    - test -f $PREFIX/lib/libsymengine.so                       # [linux]\n    - test -f $PREFIX/lib/libsymengine.dylib                    # [osx]\n\nabout:\n  home: https://github.com/symengine/symengine\n  license: MIT\n  license_file: LICENSE\n  summary: SymEngine is a fast symbolic manipulation library, written in C++\n\nextra:\n  recipe-maintainers:\n    - isuruf\n    - certik\n",
+  "raw_meta_yaml": "{% set version = \"0.15.0\" %}\n{% set maj_min = \".\".join(version.split(\".\")[:2]) %}\n\npackage:\n  name: symengine\n  version: {{ version }}\n\nsource:\n  url: https://github.com/symengine/symengine/releases/download/v{{ version }}/symengine-{{ version }}.tar.gz\n  sha256: 9f75f0367221abd88b9b60ef7b104b4aa1e34e99d3152c3df2bb2467bad2f04f\n  patches:\n    # series.h(235): error C2676: binary '/=': 'Poly' does not define this operator\n    - poly.patch\n\nbuild:\n  number: 1\n  run_exports:\n    - {{ pin_subpackage(\"symengine\", max_pin=\"x.x\") }}\n\nrequirements:\n  build:\n    - cmake\n    - make             # [unix]\n    - ninja            # [win]\n    - {{ compiler('c') }}\n    - {{ compiler('cxx') }}\n    - {{ stdlib(\"c\") }}\n  host:\n    - gmp\n    - mpfr\n    - mpc\n    - libflint\n    - winpthreads-devel   # [win]\n    - llvmdev\n    # these two come from LLVM\n    - zstd\n    - zlib\n\ntest:\n  commands:\n    - if not exist %LIBRARY_INC%\\\\symengine\\\\basic.h exit 1     # [win]\n    - if not exist %LIBRARY_LIB%\\\\symengine.lib exit 1          # [win]\n    - if not exist %LIBRARY_BIN%\\\\symengine-{{ maj_min }}.dll exit 1          # [win]\n    - test -f $PREFIX/include/symengine/basic.h                 # [unix]\n    - test -f $PREFIX/lib/libsymengine.so                       # [linux]\n    - test -f $PREFIX/lib/libsymengine.dylib                    # [osx]\n\nabout:\n  home: https://github.com/symengine/symengine\n  license: MIT\n  license_file: LICENSE\n  summary: SymEngine is a fast symbolic manipulation library, written in C++\n\nextra:\n  recipe-maintainers:\n    - isuruf\n    - certik\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -661,7 +665,7 @@
       "summary": "SymEngine is a fast symbolic manipulation library, written in C++"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": [
         "symengine"
       ]
