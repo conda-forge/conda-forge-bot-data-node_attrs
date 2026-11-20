@@ -11,13 +11,13 @@
       "migration_number": 1,
       "migrator_ts": 1771653339.3913436
     },
-    "netcdf_cxx4432": {
-      "migration_number": 1,
-      "migrator_ts": 1794490747.3171296
-    },
     "python315": {
       "migration_number": 1,
       "migrator_ts": 1755739490
+    },
+    "suitesparse7": {
+      "migration_number": 1,
+      "migrator_ts": 1794893263.341256
     }
   },
   "conda-forge.yml": {
@@ -37,8 +37,8 @@
       "win": "azure"
     }
   },
-  "feedstock_hash": "fb42c92e5d38b9c3f8c17f25d1ef0b77434e4c7a",
-  "feedstock_hash_ts": 1794553579,
+  "feedstock_hash": "d12e3737180112179518b187683bcb6f55a0ec0b",
+  "feedstock_hash_ts": 1795185187,
   "feedstock_name": "trilinos",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -52,7 +52,7 @@
       "summary": "Sandia's suite of HPC solvers and enabling technologies"
     },
     "build": {
-      "number": "4",
+      "number": "5",
       "run_exports": {
         "weak": [
           "trilinos"
@@ -1572,7 +1572,7 @@
       "summary": "Sandia's suite of HPC solvers and enabling technologies"
     },
     "build": {
-      "number": "4",
+      "number": "5",
       "run_exports": {
         "weak": [
           "trilinos"
@@ -3092,7 +3092,7 @@
       "summary": "Sandia's suite of HPC solvers and enabling technologies"
     },
     "build": {
-      "number": "4",
+      "number": "5",
       "run_exports": {
         "weak": [
           "trilinos"
@@ -7276,7 +7276,7 @@
       "summary": "Sandia's suite of HPC solvers and enabling technologies"
     },
     "build": {
-      "number": "4",
+      "number": "5",
       "run_exports": {
         "weak": [
           "trilinos"
@@ -8801,7 +8801,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/trilinos.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"16.2.0\"\n\nrecipe:\n  name: trilinos-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/trilinos/Trilinos/archive/trilinos-release-${{ version | replace('.', '-') }}.tar.gz\n  sha256: 543aa56232d7c0cbe73705fab2d3b5524f11b15fef8917aa14de02d23a5ca418\n  patches:\n    - swig-include-dirs.patch\n    - tpetra-swig-remove-classic.patch\n    - pytrilinos-python-version.patch\n\nbuild:\n  number: 4\n  skip: win\n\noutputs:\n  - staging:\n      name: trilinos-split-build\n    build:\n      script: build\n    requirements:\n      build:\n        - cmake >=3.23.0\n        - ninja\n        - make\n        - ${{ compiler('c') }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('fortran') }}\n        - numpy\n        - swig\n      host:\n        - libblas\n        - liblapack\n        - if: unix\n          then: ${{ mpi }}\n        - libboost-devel\n        - suitesparse\n        - libnetcdf\n        - netcdf-cxx4\n        - libmatio\n        - xorg-libx11\n        - hdf5\n        - hdf5 <2 mpi_${{ mpi }}_*\n        # trilinos cmake expects specific kokkos/kokkos-kernels versions\n        - kokkos ==4.7.01\n        - kokkos-kernels ==4.7.01\n        - numpy\n        - python\n        - if: match(python, \"==3.13\")\n          then: python_abi * *_cp313\n        - swig\n        - mpi4py\n\n  - package:\n      name: trilinos\n    inherit: trilinos-split-build\n    build:\n      files:\n        - include/*\n        - if: linux\n          then: lib/lib*.so*\n        - if: osx\n          then: lib/lib*.dylib\n        - lib/cmake/Trilinos/*\n        - share/trilinos/*\n    requirements:\n      run:\n        - if: unix\n          then: ${{ mpi }}\n        - libboost-devel\n        - suitesparse\n        - kokkos ==4.7.01\n        - kokkos-kernels ==4.7.01\n        - hdf5 <2 mpi_${{ mpi }}_*\n        - libnetcdf\n        - netcdf-cxx4\n        - libmatio\n        - xorg-libx11\n      run_exports:\n        - ${{ pin_subpackage('trilinos', upper_bound='x.x') }}\n    tests:\n      - script:\n          - if: unix\n            then: test -f $PREFIX/include/TeuchosCore_ConfigDefs.hpp\n          - if: osx\n            then: test -f $PREFIX/lib/libteuchoscore.${{ version }}.dylib\n          - if: linux\n            then: test -f $PREFIX/lib/libteuchoscore.so.${{ version }}\n          - if: win\n            then:\n              - if not exist %PREFIX%\\\\Library\\\\include\\\\TeuchosCore_ConfigDefs.hpp exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\teuchoscore.lib exit 1\n  - package:\n      name: pytrilinos\n    inherit: trilinos-split-build\n    build:\n      files:\n        - lib/python*/site-packages/PyTrilinos/*\n        - lib/python*/site-packages/PyTrilinos/**/*\n    requirements:\n      host:\n        - python\n      run:\n        - ${{ pin_subpackage('trilinos', exact=True) }}\n        - python\n        - numpy\n        - mpi4py\n        - if: unix\n          then: ${{ mpi }}\n    tests:\n      - python:\n          imports:\n            - PyTrilinos.Teuchos\n            - PyTrilinos.Epetra\n            - PyTrilinos.TriUtils\n            - PyTrilinos.Tpetra\n            - PyTrilinos.EpetraExt\n            - PyTrilinos.Isorropia\n            - PyTrilinos.Pliris\n            - PyTrilinos.AztecOO\n            - PyTrilinos.Galeri\n            - PyTrilinos.Amesos\n            - PyTrilinos.IFPACK\n            - PyTrilinos.ML\n            - PyTrilinos.Anasazi\n            - PyTrilinos.NOX\n            - PyTrilinos.NOX.Abstract\n            - PyTrilinos.NOX.StatusTest\n            - PyTrilinos.NOX.Solver\n            - PyTrilinos.NOX.Epetra\n            - PyTrilinos.NOX.Epetra.Interface\n            - PyTrilinos.LOCA\n          pip_check: false\n\nabout:\n  license: BSD-3-Clause\n  license_file: LICENSE\n  summary: Sandia's suite of HPC solvers and enabling technologies\n  description: Fast, compiled object-oriented algorithms and enabling technologies that support the solution of large-scale, complex multi-physics engineering and scientific problems.\n  homepage: https://trilinos.org\n  repository: https://github.com/trilinos/Trilinos\n\nextra:\n  recipe-maintainers:\n    - rfiorella\n    - pyt-viper\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"16.2.0\"\n\nrecipe:\n  name: trilinos-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/trilinos/Trilinos/archive/trilinos-release-${{ version | replace('.', '-') }}.tar.gz\n  sha256: 543aa56232d7c0cbe73705fab2d3b5524f11b15fef8917aa14de02d23a5ca418\n  patches:\n    - swig-include-dirs.patch\n    - tpetra-swig-remove-classic.patch\n    - pytrilinos-python-version.patch\n\nbuild:\n  number: 5\n  skip: win\n\noutputs:\n  - staging:\n      name: trilinos-split-build\n    build:\n      script: build\n    requirements:\n      build:\n        - cmake >=3.23.0\n        - ninja\n        - make\n        - ${{ compiler('c') }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler('cxx') }}\n        - ${{ compiler('fortran') }}\n        - numpy\n        - swig\n      host:\n        - libblas\n        - liblapack\n        - if: unix\n          then: ${{ mpi }}\n        - libboost-devel\n        - suitesparse\n        - libnetcdf\n        - netcdf-cxx4\n        - libmatio\n        - xorg-libx11\n        - hdf5\n        - hdf5 <2 mpi_${{ mpi }}_*\n        # trilinos cmake expects specific kokkos/kokkos-kernels versions\n        - kokkos ==4.7.01\n        - kokkos-kernels ==4.7.01\n        - numpy\n        - python\n        - if: match(python, \"==3.13\")\n          then: python_abi * *_cp313\n        - swig\n        - mpi4py\n\n  - package:\n      name: trilinos\n    inherit: trilinos-split-build\n    build:\n      files:\n        - include/*\n        - if: linux\n          then: lib/lib*.so*\n        - if: osx\n          then: lib/lib*.dylib\n        - lib/cmake/Trilinos/*\n        - share/trilinos/*\n    requirements:\n      run:\n        - if: unix\n          then: ${{ mpi }}\n        - libboost-devel\n        - suitesparse\n        - kokkos ==4.7.01\n        - kokkos-kernels ==4.7.01\n        - hdf5 <2 mpi_${{ mpi }}_*\n        - libnetcdf\n        - netcdf-cxx4\n        - libmatio\n        - xorg-libx11\n      run_exports:\n        - ${{ pin_subpackage('trilinos', upper_bound='x.x') }}\n    tests:\n      - script:\n          - if: unix\n            then: test -f $PREFIX/include/TeuchosCore_ConfigDefs.hpp\n          - if: osx\n            then: test -f $PREFIX/lib/libteuchoscore.${{ version }}.dylib\n          - if: linux\n            then: test -f $PREFIX/lib/libteuchoscore.so.${{ version }}\n          - if: win\n            then:\n              - if not exist %PREFIX%\\\\Library\\\\include\\\\TeuchosCore_ConfigDefs.hpp exit 1\n              - if not exist %PREFIX%\\\\Library\\\\lib\\\\teuchoscore.lib exit 1\n  - package:\n      name: pytrilinos\n    inherit: trilinos-split-build\n    build:\n      files:\n        - lib/python*/site-packages/PyTrilinos/*\n        - lib/python*/site-packages/PyTrilinos/**/*\n    requirements:\n      host:\n        - python\n      run:\n        - ${{ pin_subpackage('trilinos', exact=True) }}\n        - python\n        - numpy\n        - mpi4py\n        - if: unix\n          then: ${{ mpi }}\n    tests:\n      - python:\n          imports:\n            - PyTrilinos.Teuchos\n            - PyTrilinos.Epetra\n            - PyTrilinos.TriUtils\n            - PyTrilinos.Tpetra\n            - PyTrilinos.EpetraExt\n            - PyTrilinos.Isorropia\n            - PyTrilinos.Pliris\n            - PyTrilinos.AztecOO\n            - PyTrilinos.Galeri\n            - PyTrilinos.Amesos\n            - PyTrilinos.IFPACK\n            - PyTrilinos.ML\n            - PyTrilinos.Anasazi\n            - PyTrilinos.NOX\n            - PyTrilinos.NOX.Abstract\n            - PyTrilinos.NOX.StatusTest\n            - PyTrilinos.NOX.Solver\n            - PyTrilinos.NOX.Epetra\n            - PyTrilinos.NOX.Epetra.Interface\n            - PyTrilinos.LOCA\n          pip_check: false\n\nabout:\n  license: BSD-3-Clause\n  license_file: LICENSE\n  summary: Sandia's suite of HPC solvers and enabling technologies\n  description: Fast, compiled object-oriented algorithms and enabling technologies that support the solution of large-scale, complex multi-physics engineering and scientific problems.\n  homepage: https://trilinos.org\n  repository: https://github.com/trilinos/Trilinos\n\nextra:\n  recipe-maintainers:\n    - rfiorella\n    - pyt-viper\n",
   "req": {
     "__set__": true,
     "elements": [
