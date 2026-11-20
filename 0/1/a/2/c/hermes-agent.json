@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
@@ -19,8 +19,8 @@
       "win_64"
     ]
   },
-  "feedstock_hash": "7f9e882aedc10756ad581bc82590308703753380",
-  "feedstock_hash_ts": 1791663237,
+  "feedstock_hash": "b1c95947370aa9f535a0fe9e1b9daeac0e5d1488",
+  "feedstock_hash_ts": 1795147163,
   "feedstock_name": "hermes-agent",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -40,7 +40,7 @@
       "python": {
         "entry_points": [
           "hermes = hermes_cli.main:main",
-          "hermes-agent = run_agent:main",
+          "hermes-agent = agent.legacy_cli:main",
           "hermes-acp = acp_adapter.entry:main"
         ]
       }
@@ -57,7 +57,7 @@
           "python": {
             "entry_points": [
               "hermes = hermes_cli.main:main",
-              "hermes-agent = run_agent:main",
+              "hermes-agent = agent.legacy_cli:main",
               "hermes-acp = acp_adapter.entry:main"
             ]
           }
@@ -65,53 +65,61 @@
         "name": "hermes-agent",
         "requirements": {
           "build": [
-            "nodejs",
-            "pnpm",
+            "nodejs >=26",
+            "pnpm >=12.15,<13",
             "pnpm-licenses"
           ],
           "host": [
             "pip",
-            "python 3.11.*",
-            "setuptools >=77.0,<83"
+            "python 3.14.*",
+            "setuptools ==84.1.0",
+            "wheel ==0.48.0"
           ],
           "run": [
             "ffmpeg",
             "git",
-            "nodejs >=22.22.0",
-            "python >=3.11,<3.14",
+            "nodejs >=26",
+            "python >=3.14,<3.15",
             "ripgrep",
-            "openai ==2.24.0",
-            "certifi ==2026.5.20",
-            "python-dotenv ==1.2.2",
+            "openai ==2.54.0",
+            "certifi ==2026.10.19",
+            "truststore ==0.10.5",
+            "python-dotenv ==1.2.4",
             "fire ==0.7.1",
             "httpx ==0.28.1",
             "socksio",
-            "rich ==14.3.3",
-            "tenacity ==9.1.4",
-            "pyyaml ==6.0.3",
-            "ruamel.yaml ==0.18.17",
-            "requests ==2.33.0",
+            "rich ==14.3.4",
+            "tomli-w ==1.2.0",
+            "ruamel.yaml ==0.18.16",
+            "ruamel.yaml.clib ==0.2.15",
+            "requests ==2.34.2",
             "jinja2 ==3.1.6",
-            "pydantic ==2.13.4",
-            "prompt_toolkit ==3.0.52",
-            "croniter ==6.0.0",
-            "packaging ==26.0",
-            "markdown ==3.10.2",
-            "pyjwt ==2.13.0",
-            "urllib3 >=2.7.0,<3",
-            "cryptography ==46.0.7",
+            "pydantic ==2.14.1",
+            "prompt_toolkit ==3.0.53",
+            "croniter ==6.2.4",
+            "snowballstemmer ==3.1.1",
+            "packaging ==26.3",
+            "markdown ==3.11.2",
+            "pyjwt ==2.15.1",
+            "urllib3 >=2.8.0,<3",
+            "cryptography ==50.0.2",
             "psutil ==7.2.2",
             "websockets ==15.0.1",
             "pathspec ==1.1.1",
             "fastapi >=0.104.0,<1",
-            "uvicorn-standard >=0.24.0,<1",
-            "pillow ==12.2.0",
+            "uvicorn >=0.31.0,<1",
+            "httptools >=0.6.3,<0.9",
+            "watchfiles >=0.20,<2",
+            "pillow ==13.0.0",
+            "pillow-heif >=1.4.0,<2",
+            "resvg-py ==0.5.0",
             "python-multipart >=0.0.9,<1",
             "openssh",
             "ptyprocess >=0.7.0,<1",
             "__linux",
             "wl-clipboard-rs",
-            "xclip"
+            "xclip",
+            "python-nemo-relay >=0.11,<0.12"
           ]
         },
         "tests": [
@@ -126,11 +134,13 @@
                 "gateway",
                 "hermes_bootstrap",
                 "hermes_cli",
+                "hermes_agent",
+                "hermes_platform",
+                "pm",
                 "hermes_constants",
                 "hermes_logging",
                 "hermes_state",
                 "hermes_time",
-                "mcp_serve",
                 "model_tools",
                 "plugins",
                 "providers",
@@ -141,96 +151,113 @@
                 "trajectory_compressor",
                 "tui_gateway",
                 "utils"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "python 3.11.*"
+                "python 3.14.*"
               ]
             },
             "script": [
-              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.19.0'\"",
-              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'plan' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
+              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.23.2'\"",
+              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'codebase-inspection' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
               "python -c \"from hermes_constants import get_optional_skills_dir as o; assert (o() / 'research' / 'parallel-cli' / 'SKILL.md').is_file()\"",
               "python -c \"from hermes_constants import get_optional_mcps_dir as m; assert (m() / 'linear' / 'manifest.yaml').is_file()\"",
               "python -c \"from agent.i18n import _locales_dir; assert (_locales_dir() / 'en.yaml').is_file()\"",
-              "python -c \"from hermes_cli.main import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
+              "python -c \"from hermes_cli.main_tui_launch import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
               "python -c \"from hermes_cli.web_server import WEB_DIST; assert (WEB_DIST / 'index.html').is_file()\"",
               "python -c \"from hermes_cli.plugins import get_bundled_plugins_dir as p; assert (p() / 'security-guidance' / 'plugin.yaml').is_file()\"",
+              "python -c \"from hermes_cli.version_info import get_version_info; v = get_version_info(); assert v.base_version == '0.23.2'; assert v.commit == 'ae2a81ccc00e9b7c06301523e5bb09608397149c'\"",
               "hermes --help",
               "hermes-agent --help",
               "hermes-acp --help"
             ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.14.*"
+              ]
+            },
+            "script": "test_optional_features.py"
           }
         ],
-        "version": "2026.7.20"
+        "version": "1!0.23.2"
       }
     ],
     "package": {
       "name": "hermes-agent",
-      "version": "2026.7.20"
+      "version": "1!0.23.2"
     },
     "requirements": {
       "build": [
-        "nodejs",
-        "pnpm",
+        "nodejs >=26",
+        "pnpm >=12.15,<13",
         "pnpm-licenses"
       ],
       "host": [
         "pip",
-        "python 3.11.*",
-        "setuptools >=77.0,<83"
+        "python 3.14.*",
+        "setuptools ==84.1.0",
+        "wheel ==0.48.0"
       ],
       "run": [
         "ffmpeg",
         "git",
-        "nodejs >=22.22.0",
-        "python >=3.11,<3.14",
+        "nodejs >=26",
+        "python >=3.14,<3.15",
         "ripgrep",
-        "openai ==2.24.0",
-        "certifi ==2026.5.20",
-        "python-dotenv ==1.2.2",
+        "openai ==2.54.0",
+        "certifi ==2026.10.19",
+        "truststore ==0.10.5",
+        "python-dotenv ==1.2.4",
         "fire ==0.7.1",
         "httpx ==0.28.1",
         "socksio",
-        "rich ==14.3.3",
-        "tenacity ==9.1.4",
-        "pyyaml ==6.0.3",
-        "ruamel.yaml ==0.18.17",
-        "requests ==2.33.0",
+        "rich ==14.3.4",
+        "tomli-w ==1.2.0",
+        "ruamel.yaml ==0.18.16",
+        "ruamel.yaml.clib ==0.2.15",
+        "requests ==2.34.2",
         "jinja2 ==3.1.6",
-        "pydantic ==2.13.4",
-        "prompt_toolkit ==3.0.52",
-        "croniter ==6.0.0",
-        "packaging ==26.0",
-        "markdown ==3.10.2",
-        "pyjwt ==2.13.0",
-        "urllib3 >=2.7.0,<3",
-        "cryptography ==46.0.7",
+        "pydantic ==2.14.1",
+        "prompt_toolkit ==3.0.53",
+        "croniter ==6.2.4",
+        "snowballstemmer ==3.1.1",
+        "packaging ==26.3",
+        "markdown ==3.11.2",
+        "pyjwt ==2.15.1",
+        "urllib3 >=2.8.0,<3",
+        "cryptography ==50.0.2",
         "psutil ==7.2.2",
         "websockets ==15.0.1",
         "pathspec ==1.1.1",
         "fastapi >=0.104.0,<1",
-        "uvicorn-standard >=0.24.0,<1",
-        "pillow ==12.2.0",
+        "uvicorn >=0.31.0,<1",
+        "httptools >=0.6.3,<0.9",
+        "watchfiles >=0.20,<2",
+        "pillow ==13.0.0",
+        "pillow-heif >=1.4.0,<2",
+        "resvg-py ==0.5.0",
         "python-multipart >=0.0.9,<1",
         "openssh",
         "ptyprocess >=0.7.0,<1",
         "__linux",
         "wl-clipboard-rs",
-        "xclip"
+        "xclip",
+        "python-nemo-relay >=0.11,<0.12"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "285f3fc134ff466a90065e1517801a68993733b807158ee8f32aa01613786990",
-      "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v2026.7.20.tar.gz"
+      "patches": [
+        "conda-packaging.patch",
+        "optional-features.patch"
+      ],
+      "sha256": "7e828086c549fc2d90c16795daf416a81a8180d8a52b5d4a29656f7a2ba8f827",
+      "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v0.23.2.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -247,7 +274,8 @@
       "elements": [
         "pip",
         "python",
-        "setuptools"
+        "setuptools",
+        "wheel"
       ]
     },
     "run": {
@@ -261,6 +289,7 @@
         "ffmpeg",
         "fire",
         "git",
+        "httptools",
         "httpx",
         "jinja2",
         "markdown",
@@ -270,6 +299,7 @@
         "packaging",
         "pathspec",
         "pillow",
+        "pillow-heif",
         "prompt_toolkit",
         "psutil",
         "ptyprocess",
@@ -278,15 +308,20 @@
         "python",
         "python-dotenv",
         "python-multipart",
-        "pyyaml",
+        "python-nemo-relay",
         "requests",
+        "resvg-py",
         "rich",
         "ripgrep",
         "ruamel.yaml",
+        "ruamel.yaml.clib",
+        "snowballstemmer",
         "socksio",
-        "tenacity",
+        "tomli-w",
+        "truststore",
         "urllib3",
-        "uvicorn-standard",
+        "uvicorn",
+        "watchfiles",
         "websockets",
         "wl-clipboard-rs",
         "xclip"
@@ -317,7 +352,7 @@
       "python": {
         "entry_points": [
           "hermes = hermes_cli.main:main",
-          "hermes-agent = run_agent:main",
+          "hermes-agent = agent.legacy_cli:main",
           "hermes-acp = acp_adapter.entry:main"
         ]
       }
@@ -334,7 +369,7 @@
           "python": {
             "entry_points": [
               "hermes = hermes_cli.main:main",
-              "hermes-agent = run_agent:main",
+              "hermes-agent = agent.legacy_cli:main",
               "hermes-acp = acp_adapter.entry:main"
             ]
           }
@@ -342,53 +377,61 @@
         "name": "hermes-agent",
         "requirements": {
           "build": [
-            "nodejs",
-            "pnpm",
+            "nodejs >=26",
+            "pnpm >=12.15,<13",
             "pnpm-licenses"
           ],
           "host": [
             "pip",
-            "python 3.11.*",
-            "setuptools >=77.0,<83"
+            "python 3.14.*",
+            "setuptools ==84.1.0",
+            "wheel ==0.48.0"
           ],
           "run": [
             "ffmpeg",
             "git",
-            "nodejs >=22.22.0",
-            "python >=3.11,<3.14",
+            "nodejs >=26",
+            "python >=3.14,<3.15",
             "ripgrep",
-            "openai ==2.24.0",
-            "certifi ==2026.5.20",
-            "python-dotenv ==1.2.2",
+            "openai ==2.54.0",
+            "certifi ==2026.10.19",
+            "truststore ==0.10.5",
+            "python-dotenv ==1.2.4",
             "fire ==0.7.1",
             "httpx ==0.28.1",
             "socksio",
-            "rich ==14.3.3",
-            "tenacity ==9.1.4",
-            "pyyaml ==6.0.3",
-            "ruamel.yaml ==0.18.17",
-            "requests ==2.33.0",
+            "rich ==14.3.4",
+            "tomli-w ==1.2.0",
+            "ruamel.yaml ==0.18.16",
+            "ruamel.yaml.clib ==0.2.15",
+            "requests ==2.34.2",
             "jinja2 ==3.1.6",
-            "pydantic ==2.13.4",
-            "prompt_toolkit ==3.0.52",
-            "croniter ==6.0.0",
-            "packaging ==26.0",
-            "markdown ==3.10.2",
-            "pyjwt ==2.13.0",
-            "urllib3 >=2.7.0,<3",
-            "cryptography ==46.0.7",
+            "pydantic ==2.14.1",
+            "prompt_toolkit ==3.0.53",
+            "croniter ==6.2.4",
+            "snowballstemmer ==3.1.1",
+            "packaging ==26.3",
+            "markdown ==3.11.2",
+            "pyjwt ==2.15.1",
+            "urllib3 >=2.8.0,<3",
+            "cryptography ==50.0.2",
             "psutil ==7.2.2",
             "websockets ==15.0.1",
             "pathspec ==1.1.1",
             "fastapi >=0.104.0,<1",
-            "uvicorn-standard >=0.24.0,<1",
-            "pillow ==12.2.0",
+            "uvicorn >=0.31.0,<1",
+            "httptools >=0.6.3,<0.9",
+            "watchfiles >=0.20,<2",
+            "pillow ==13.0.0",
+            "pillow-heif >=1.4.0,<2",
+            "resvg-py ==0.5.0",
             "python-multipart >=0.0.9,<1",
             "openssh",
             "ptyprocess >=0.7.0,<1",
             "__linux",
             "wl-clipboard-rs",
-            "xclip"
+            "xclip",
+            "python-nemo-relay >=0.11,<0.12"
           ]
         },
         "tests": [
@@ -403,11 +446,13 @@
                 "gateway",
                 "hermes_bootstrap",
                 "hermes_cli",
+                "hermes_agent",
+                "hermes_platform",
+                "pm",
                 "hermes_constants",
                 "hermes_logging",
                 "hermes_state",
                 "hermes_time",
-                "mcp_serve",
                 "model_tools",
                 "plugins",
                 "providers",
@@ -418,35 +463,40 @@
                 "trajectory_compressor",
                 "tui_gateway",
                 "utils"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "python 3.11.*"
+                "python 3.14.*"
               ]
             },
             "script": [
-              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.19.0'\"",
-              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'plan' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
+              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.23.2'\"",
+              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'codebase-inspection' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
               "python -c \"from hermes_constants import get_optional_skills_dir as o; assert (o() / 'research' / 'parallel-cli' / 'SKILL.md').is_file()\"",
               "python -c \"from hermes_constants import get_optional_mcps_dir as m; assert (m() / 'linear' / 'manifest.yaml').is_file()\"",
               "python -c \"from agent.i18n import _locales_dir; assert (_locales_dir() / 'en.yaml').is_file()\"",
-              "python -c \"from hermes_cli.main import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
+              "python -c \"from hermes_cli.main_tui_launch import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
               "python -c \"from hermes_cli.web_server import WEB_DIST; assert (WEB_DIST / 'index.html').is_file()\"",
               "python -c \"from hermes_cli.plugins import get_bundled_plugins_dir as p; assert (p() / 'security-guidance' / 'plugin.yaml').is_file()\"",
+              "python -c \"from hermes_cli.version_info import get_version_info; v = get_version_info(); assert v.base_version == '0.23.2'; assert v.commit == 'ae2a81ccc00e9b7c06301523e5bb09608397149c'\"",
               "hermes --help",
               "hermes-agent --help",
               "hermes-acp --help"
             ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.14.*"
+              ]
+            },
+            "script": "test_optional_features.py"
           }
         ],
-        "version": "2026.7.20"
+        "version": "1!0.23.2"
       },
       {
         "build": {
@@ -454,7 +504,7 @@
           "python": {
             "entry_points": [
               "hermes = hermes_cli.main:main",
-              "hermes-agent = run_agent:main",
+              "hermes-agent = agent.legacy_cli:main",
               "hermes-acp = acp_adapter.entry:main"
             ]
           }
@@ -462,51 +512,59 @@
         "name": "hermes-agent",
         "requirements": {
           "build": [
-            "nodejs",
-            "pnpm",
+            "nodejs >=26",
+            "pnpm >=12.15,<13",
             "pnpm-licenses"
           ],
           "host": [
             "pip",
-            "python 3.11.*",
-            "setuptools >=77.0,<83"
+            "python 3.14.*",
+            "setuptools ==84.1.0",
+            "wheel ==0.48.0"
           ],
           "run": [
             "ffmpeg",
             "git",
-            "nodejs >=22.22.0",
-            "python >=3.11,<3.14",
+            "nodejs >=26",
+            "python >=3.14,<3.15",
             "ripgrep",
-            "openai ==2.24.0",
-            "certifi ==2026.5.20",
-            "python-dotenv ==1.2.2",
+            "openai ==2.54.0",
+            "certifi ==2026.10.19",
+            "truststore ==0.10.5",
+            "python-dotenv ==1.2.4",
             "fire ==0.7.1",
             "httpx ==0.28.1",
             "socksio",
-            "rich ==14.3.3",
-            "tenacity ==9.1.4",
-            "pyyaml ==6.0.3",
-            "ruamel.yaml ==0.18.17",
-            "requests ==2.33.0",
+            "rich ==14.3.4",
+            "tomli-w ==1.2.0",
+            "ruamel.yaml ==0.18.16",
+            "ruamel.yaml.clib ==0.2.15",
+            "requests ==2.34.2",
             "jinja2 ==3.1.6",
-            "pydantic ==2.13.4",
-            "prompt_toolkit ==3.0.52",
-            "croniter ==6.0.0",
-            "packaging ==26.0",
-            "markdown ==3.10.2",
-            "pyjwt ==2.13.0",
-            "urllib3 >=2.7.0,<3",
-            "cryptography ==46.0.7",
+            "pydantic ==2.14.1",
+            "prompt_toolkit ==3.0.53",
+            "croniter ==6.2.4",
+            "snowballstemmer ==3.1.1",
+            "packaging ==26.3",
+            "markdown ==3.11.2",
+            "pyjwt ==2.15.1",
+            "urllib3 >=2.8.0,<3",
+            "cryptography ==50.0.2",
             "psutil ==7.2.2",
             "websockets ==15.0.1",
             "pathspec ==1.1.1",
             "fastapi >=0.104.0,<1",
-            "uvicorn-standard >=0.24.0,<1",
-            "pillow ==12.2.0",
+            "uvicorn >=0.31.0,<1",
+            "httptools >=0.6.3,<0.9",
+            "watchfiles >=0.20,<2",
+            "pillow ==13.0.0",
+            "pillow-heif >=1.4.0,<2",
+            "resvg-py ==0.5.0",
             "python-multipart >=0.0.9,<1",
             "openssh",
             "ptyprocess >=0.7.0,<1",
-            "__osx"
+            "__osx",
+            "python-nemo-relay >=0.11,<0.12"
           ]
         },
         "tests": [
@@ -521,11 +579,13 @@
                 "gateway",
                 "hermes_bootstrap",
                 "hermes_cli",
+                "hermes_agent",
+                "hermes_platform",
+                "pm",
                 "hermes_constants",
                 "hermes_logging",
                 "hermes_state",
                 "hermes_time",
-                "mcp_serve",
                 "model_tools",
                 "plugins",
                 "providers",
@@ -536,35 +596,40 @@
                 "trajectory_compressor",
                 "tui_gateway",
                 "utils"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "python 3.11.*"
+                "python 3.14.*"
               ]
             },
             "script": [
-              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.19.0'\"",
-              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'plan' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
+              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.23.2'\"",
+              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'codebase-inspection' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
               "python -c \"from hermes_constants import get_optional_skills_dir as o; assert (o() / 'research' / 'parallel-cli' / 'SKILL.md').is_file()\"",
               "python -c \"from hermes_constants import get_optional_mcps_dir as m; assert (m() / 'linear' / 'manifest.yaml').is_file()\"",
               "python -c \"from agent.i18n import _locales_dir; assert (_locales_dir() / 'en.yaml').is_file()\"",
-              "python -c \"from hermes_cli.main import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
+              "python -c \"from hermes_cli.main_tui_launch import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
               "python -c \"from hermes_cli.web_server import WEB_DIST; assert (WEB_DIST / 'index.html').is_file()\"",
               "python -c \"from hermes_cli.plugins import get_bundled_plugins_dir as p; assert (p() / 'security-guidance' / 'plugin.yaml').is_file()\"",
+              "python -c \"from hermes_cli.version_info import get_version_info; v = get_version_info(); assert v.base_version == '0.23.2'; assert v.commit == 'ae2a81ccc00e9b7c06301523e5bb09608397149c'\"",
               "hermes --help",
               "hermes-agent --help",
               "hermes-acp --help"
             ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.14.*"
+              ]
+            },
+            "script": "test_optional_features.py"
           }
         ],
-        "version": "2026.7.20"
+        "version": "1!0.23.2"
       },
       {
         "build": {
@@ -572,7 +637,7 @@
           "python": {
             "entry_points": [
               "hermes = hermes_cli.main:main",
-              "hermes-agent = run_agent:main",
+              "hermes-agent = agent.legacy_cli:main",
               "hermes-acp = acp_adapter.entry:main"
             ]
           }
@@ -580,52 +645,61 @@
         "name": "hermes-agent",
         "requirements": {
           "build": [
-            "nodejs",
-            "pnpm",
+            "nodejs >=26",
+            "pnpm >=12.15,<13",
             "pnpm-licenses"
           ],
           "host": [
             "pip",
-            "python 3.11.*",
-            "setuptools >=77.0,<83"
+            "python 3.14.*",
+            "setuptools ==84.1.0",
+            "wheel ==0.48.0"
           ],
           "run": [
             "ffmpeg",
             "git",
-            "nodejs >=22.22.0",
-            "python >=3.11,<3.14",
+            "nodejs >=26",
+            "python >=3.14,<3.15",
             "ripgrep",
-            "openai ==2.24.0",
-            "certifi ==2026.5.20",
-            "python-dotenv ==1.2.2",
+            "openai ==2.54.0",
+            "certifi ==2026.10.19",
+            "truststore ==0.10.5",
+            "python-dotenv ==1.2.4",
             "fire ==0.7.1",
             "httpx ==0.28.1",
             "socksio",
-            "rich ==14.3.3",
-            "tenacity ==9.1.4",
-            "pyyaml ==6.0.3",
-            "ruamel.yaml ==0.18.17",
-            "requests ==2.33.0",
+            "rich ==14.3.4",
+            "tomli-w ==1.2.0",
+            "ruamel.yaml ==0.18.16",
+            "ruamel.yaml.clib ==0.2.15",
+            "requests ==2.34.2",
             "jinja2 ==3.1.6",
-            "pydantic ==2.13.4",
-            "prompt_toolkit ==3.0.52",
-            "croniter ==6.0.0",
-            "packaging ==26.0",
-            "markdown ==3.10.2",
-            "pyjwt ==2.13.0",
-            "urllib3 >=2.7.0,<3",
-            "cryptography ==46.0.7",
+            "pydantic ==2.14.1",
+            "prompt_toolkit ==3.0.53",
+            "croniter ==6.2.4",
+            "snowballstemmer ==3.1.1",
+            "packaging ==26.3",
+            "markdown ==3.11.2",
+            "pyjwt ==2.15.1",
+            "urllib3 >=2.8.0,<3",
+            "cryptography ==50.0.2",
             "psutil ==7.2.2",
             "websockets ==15.0.1",
             "pathspec ==1.1.1",
             "fastapi >=0.104.0,<1",
-            "uvicorn-standard >=0.24.0,<1",
-            "pillow ==12.2.0",
+            "uvicorn >=0.31.0,<1",
+            "httptools >=0.6.3,<0.9",
+            "watchfiles >=0.20,<2",
+            "pillow ==13.0.0",
+            "pillow-heif >=1.4.0,<2",
+            "resvg-py ==0.5.0",
             "python-multipart >=0.0.9,<1",
             "__win",
-            "pywinpty >=2.0.0,<3",
+            "pywinpty >=3.0.5,<4",
+            "pywin32 >=306,<312",
             "python-tzdata ==2025.3",
-            "concurrent-log-handler ==0.9.29"
+            "concurrent-log-handler ==0.9.30",
+            "python-nemo-relay >=0.11,<0.12"
           ]
         },
         "tests": [
@@ -640,11 +714,13 @@
                 "gateway",
                 "hermes_bootstrap",
                 "hermes_cli",
+                "hermes_agent",
+                "hermes_platform",
+                "pm",
                 "hermes_constants",
                 "hermes_logging",
                 "hermes_state",
                 "hermes_time",
-                "mcp_serve",
                 "model_tools",
                 "plugins",
                 "providers",
@@ -655,101 +731,119 @@
                 "trajectory_compressor",
                 "tui_gateway",
                 "utils"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "python 3.11.*"
+                "python 3.14.*"
               ]
             },
             "script": [
-              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.19.0'\"",
-              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'plan' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
+              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.23.2'\"",
+              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'codebase-inspection' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
               "python -c \"from hermes_constants import get_optional_skills_dir as o; assert (o() / 'research' / 'parallel-cli' / 'SKILL.md').is_file()\"",
               "python -c \"from hermes_constants import get_optional_mcps_dir as m; assert (m() / 'linear' / 'manifest.yaml').is_file()\"",
               "python -c \"from agent.i18n import _locales_dir; assert (_locales_dir() / 'en.yaml').is_file()\"",
-              "python -c \"from hermes_cli.main import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
+              "python -c \"from hermes_cli.main_tui_launch import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
               "python -c \"from hermes_cli.web_server import WEB_DIST; assert (WEB_DIST / 'index.html').is_file()\"",
               "python -c \"from hermes_cli.plugins import get_bundled_plugins_dir as p; assert (p() / 'security-guidance' / 'plugin.yaml').is_file()\"",
+              "python -c \"from hermes_cli.version_info import get_version_info; v = get_version_info(); assert v.base_version == '0.23.2'; assert v.commit == 'ae2a81ccc00e9b7c06301523e5bb09608397149c'\"",
               "hermes --help",
               "hermes-agent --help",
               "hermes-acp --help"
             ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.14.*"
+              ]
+            },
+            "script": "test_optional_features.py"
           }
         ],
-        "version": "2026.7.20"
+        "version": "1!0.23.2"
       }
     ],
     "package": {
       "name": "hermes-agent",
-      "version": "2026.7.20"
+      "version": "1!0.23.2"
     },
     "requirements": {
       "build": [
-        "nodejs",
-        "pnpm",
+        "nodejs >=26",
+        "pnpm >=12.15,<13",
         "pnpm-licenses"
       ],
       "host": [
         "pip",
-        "python 3.11.*",
-        "setuptools >=77.0,<83"
+        "python 3.14.*",
+        "setuptools ==84.1.0",
+        "wheel ==0.48.0"
       ],
       "run": [
         "ffmpeg",
         "git",
-        "nodejs >=22.22.0",
-        "python >=3.11,<3.14",
+        "nodejs >=26",
+        "python >=3.14,<3.15",
         "ripgrep",
-        "openai ==2.24.0",
-        "certifi ==2026.5.20",
-        "python-dotenv ==1.2.2",
+        "openai ==2.54.0",
+        "certifi ==2026.10.19",
+        "truststore ==0.10.5",
+        "python-dotenv ==1.2.4",
         "fire ==0.7.1",
         "httpx ==0.28.1",
         "socksio",
-        "rich ==14.3.3",
-        "tenacity ==9.1.4",
-        "pyyaml ==6.0.3",
-        "ruamel.yaml ==0.18.17",
-        "requests ==2.33.0",
+        "rich ==14.3.4",
+        "tomli-w ==1.2.0",
+        "ruamel.yaml ==0.18.16",
+        "ruamel.yaml.clib ==0.2.15",
+        "requests ==2.34.2",
         "jinja2 ==3.1.6",
-        "pydantic ==2.13.4",
-        "prompt_toolkit ==3.0.52",
-        "croniter ==6.0.0",
-        "packaging ==26.0",
-        "markdown ==3.10.2",
-        "pyjwt ==2.13.0",
-        "urllib3 >=2.7.0,<3",
-        "cryptography ==46.0.7",
+        "pydantic ==2.14.1",
+        "prompt_toolkit ==3.0.53",
+        "croniter ==6.2.4",
+        "snowballstemmer ==3.1.1",
+        "packaging ==26.3",
+        "markdown ==3.11.2",
+        "pyjwt ==2.15.1",
+        "urllib3 >=2.8.0,<3",
+        "cryptography ==50.0.2",
         "psutil ==7.2.2",
         "websockets ==15.0.1",
         "pathspec ==1.1.1",
         "fastapi >=0.104.0,<1",
-        "uvicorn-standard >=0.24.0,<1",
-        "pillow ==12.2.0",
+        "uvicorn >=0.31.0,<1",
+        "httptools >=0.6.3,<0.9",
+        "watchfiles >=0.20,<2",
+        "pillow ==13.0.0",
+        "pillow-heif >=1.4.0,<2",
+        "resvg-py ==0.5.0",
         "python-multipart >=0.0.9,<1",
         "openssh",
         "ptyprocess >=0.7.0,<1",
         "__linux",
         "wl-clipboard-rs",
         "xclip",
+        "python-nemo-relay >=0.11,<0.12",
         "__osx",
         "__win",
-        "pywinpty >=2.0.0,<3",
+        "pywinpty >=3.0.5,<4",
+        "pywin32 >=306,<312",
         "python-tzdata ==2025.3",
-        "concurrent-log-handler ==0.9.29"
+        "concurrent-log-handler ==0.9.30"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "285f3fc134ff466a90065e1517801a68993733b807158ee8f32aa01613786990",
-      "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v2026.7.20.tar.gz"
+      "patches": [
+        "conda-packaging.patch",
+        "optional-features.patch"
+      ],
+      "sha256": "7e828086c549fc2d90c16795daf416a81a8180d8a52b5d4a29656f7a2ba8f827",
+      "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v0.23.2.tar.gz"
     }
   },
   "name": "hermes-agent",
@@ -770,7 +864,7 @@
       "python": {
         "entry_points": [
           "hermes = hermes_cli.main:main",
-          "hermes-agent = run_agent:main",
+          "hermes-agent = agent.legacy_cli:main",
           "hermes-acp = acp_adapter.entry:main"
         ]
       }
@@ -787,7 +881,7 @@
           "python": {
             "entry_points": [
               "hermes = hermes_cli.main:main",
-              "hermes-agent = run_agent:main",
+              "hermes-agent = agent.legacy_cli:main",
               "hermes-acp = acp_adapter.entry:main"
             ]
           }
@@ -795,51 +889,59 @@
         "name": "hermes-agent",
         "requirements": {
           "build": [
-            "nodejs",
-            "pnpm",
+            "nodejs >=26",
+            "pnpm >=12.15,<13",
             "pnpm-licenses"
           ],
           "host": [
             "pip",
-            "python 3.11.*",
-            "setuptools >=77.0,<83"
+            "python 3.14.*",
+            "setuptools ==84.1.0",
+            "wheel ==0.48.0"
           ],
           "run": [
             "ffmpeg",
             "git",
-            "nodejs >=22.22.0",
-            "python >=3.11,<3.14",
+            "nodejs >=26",
+            "python >=3.14,<3.15",
             "ripgrep",
-            "openai ==2.24.0",
-            "certifi ==2026.5.20",
-            "python-dotenv ==1.2.2",
+            "openai ==2.54.0",
+            "certifi ==2026.10.19",
+            "truststore ==0.10.5",
+            "python-dotenv ==1.2.4",
             "fire ==0.7.1",
             "httpx ==0.28.1",
             "socksio",
-            "rich ==14.3.3",
-            "tenacity ==9.1.4",
-            "pyyaml ==6.0.3",
-            "ruamel.yaml ==0.18.17",
-            "requests ==2.33.0",
+            "rich ==14.3.4",
+            "tomli-w ==1.2.0",
+            "ruamel.yaml ==0.18.16",
+            "ruamel.yaml.clib ==0.2.15",
+            "requests ==2.34.2",
             "jinja2 ==3.1.6",
-            "pydantic ==2.13.4",
-            "prompt_toolkit ==3.0.52",
-            "croniter ==6.0.0",
-            "packaging ==26.0",
-            "markdown ==3.10.2",
-            "pyjwt ==2.13.0",
-            "urllib3 >=2.7.0,<3",
-            "cryptography ==46.0.7",
+            "pydantic ==2.14.1",
+            "prompt_toolkit ==3.0.53",
+            "croniter ==6.2.4",
+            "snowballstemmer ==3.1.1",
+            "packaging ==26.3",
+            "markdown ==3.11.2",
+            "pyjwt ==2.15.1",
+            "urllib3 >=2.8.0,<3",
+            "cryptography ==50.0.2",
             "psutil ==7.2.2",
             "websockets ==15.0.1",
             "pathspec ==1.1.1",
             "fastapi >=0.104.0,<1",
-            "uvicorn-standard >=0.24.0,<1",
-            "pillow ==12.2.0",
+            "uvicorn >=0.31.0,<1",
+            "httptools >=0.6.3,<0.9",
+            "watchfiles >=0.20,<2",
+            "pillow ==13.0.0",
+            "pillow-heif >=1.4.0,<2",
+            "resvg-py ==0.5.0",
             "python-multipart >=0.0.9,<1",
             "openssh",
             "ptyprocess >=0.7.0,<1",
-            "__osx"
+            "__osx",
+            "python-nemo-relay >=0.11,<0.12"
           ]
         },
         "tests": [
@@ -854,11 +956,13 @@
                 "gateway",
                 "hermes_bootstrap",
                 "hermes_cli",
+                "hermes_agent",
+                "hermes_platform",
+                "pm",
                 "hermes_constants",
                 "hermes_logging",
                 "hermes_state",
                 "hermes_time",
-                "mcp_serve",
                 "model_tools",
                 "plugins",
                 "providers",
@@ -869,94 +973,111 @@
                 "trajectory_compressor",
                 "tui_gateway",
                 "utils"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "python 3.11.*"
+                "python 3.14.*"
               ]
             },
             "script": [
-              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.19.0'\"",
-              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'plan' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
+              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.23.2'\"",
+              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'codebase-inspection' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
               "python -c \"from hermes_constants import get_optional_skills_dir as o; assert (o() / 'research' / 'parallel-cli' / 'SKILL.md').is_file()\"",
               "python -c \"from hermes_constants import get_optional_mcps_dir as m; assert (m() / 'linear' / 'manifest.yaml').is_file()\"",
               "python -c \"from agent.i18n import _locales_dir; assert (_locales_dir() / 'en.yaml').is_file()\"",
-              "python -c \"from hermes_cli.main import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
+              "python -c \"from hermes_cli.main_tui_launch import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
               "python -c \"from hermes_cli.web_server import WEB_DIST; assert (WEB_DIST / 'index.html').is_file()\"",
               "python -c \"from hermes_cli.plugins import get_bundled_plugins_dir as p; assert (p() / 'security-guidance' / 'plugin.yaml').is_file()\"",
+              "python -c \"from hermes_cli.version_info import get_version_info; v = get_version_info(); assert v.base_version == '0.23.2'; assert v.commit == 'ae2a81ccc00e9b7c06301523e5bb09608397149c'\"",
               "hermes --help",
               "hermes-agent --help",
               "hermes-acp --help"
             ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.14.*"
+              ]
+            },
+            "script": "test_optional_features.py"
           }
         ],
-        "version": "2026.7.20"
+        "version": "1!0.23.2"
       }
     ],
     "package": {
       "name": "hermes-agent",
-      "version": "2026.7.20"
+      "version": "1!0.23.2"
     },
     "requirements": {
       "build": [
-        "nodejs",
-        "pnpm",
+        "nodejs >=26",
+        "pnpm >=12.15,<13",
         "pnpm-licenses"
       ],
       "host": [
         "pip",
-        "python 3.11.*",
-        "setuptools >=77.0,<83"
+        "python 3.14.*",
+        "setuptools ==84.1.0",
+        "wheel ==0.48.0"
       ],
       "run": [
         "ffmpeg",
         "git",
-        "nodejs >=22.22.0",
-        "python >=3.11,<3.14",
+        "nodejs >=26",
+        "python >=3.14,<3.15",
         "ripgrep",
-        "openai ==2.24.0",
-        "certifi ==2026.5.20",
-        "python-dotenv ==1.2.2",
+        "openai ==2.54.0",
+        "certifi ==2026.10.19",
+        "truststore ==0.10.5",
+        "python-dotenv ==1.2.4",
         "fire ==0.7.1",
         "httpx ==0.28.1",
         "socksio",
-        "rich ==14.3.3",
-        "tenacity ==9.1.4",
-        "pyyaml ==6.0.3",
-        "ruamel.yaml ==0.18.17",
-        "requests ==2.33.0",
+        "rich ==14.3.4",
+        "tomli-w ==1.2.0",
+        "ruamel.yaml ==0.18.16",
+        "ruamel.yaml.clib ==0.2.15",
+        "requests ==2.34.2",
         "jinja2 ==3.1.6",
-        "pydantic ==2.13.4",
-        "prompt_toolkit ==3.0.52",
-        "croniter ==6.0.0",
-        "packaging ==26.0",
-        "markdown ==3.10.2",
-        "pyjwt ==2.13.0",
-        "urllib3 >=2.7.0,<3",
-        "cryptography ==46.0.7",
+        "pydantic ==2.14.1",
+        "prompt_toolkit ==3.0.53",
+        "croniter ==6.2.4",
+        "snowballstemmer ==3.1.1",
+        "packaging ==26.3",
+        "markdown ==3.11.2",
+        "pyjwt ==2.15.1",
+        "urllib3 >=2.8.0,<3",
+        "cryptography ==50.0.2",
         "psutil ==7.2.2",
         "websockets ==15.0.1",
         "pathspec ==1.1.1",
         "fastapi >=0.104.0,<1",
-        "uvicorn-standard >=0.24.0,<1",
-        "pillow ==12.2.0",
+        "uvicorn >=0.31.0,<1",
+        "httptools >=0.6.3,<0.9",
+        "watchfiles >=0.20,<2",
+        "pillow ==13.0.0",
+        "pillow-heif >=1.4.0,<2",
+        "resvg-py ==0.5.0",
         "python-multipart >=0.0.9,<1",
         "openssh",
         "ptyprocess >=0.7.0,<1",
-        "__osx"
+        "__osx",
+        "python-nemo-relay >=0.11,<0.12"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "285f3fc134ff466a90065e1517801a68993733b807158ee8f32aa01613786990",
-      "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v2026.7.20.tar.gz"
+      "patches": [
+        "conda-packaging.patch",
+        "optional-features.patch"
+      ],
+      "sha256": "7e828086c549fc2d90c16795daf416a81a8180d8a52b5d4a29656f7a2ba8f827",
+      "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v0.23.2.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -973,7 +1094,8 @@
       "elements": [
         "pip",
         "python",
-        "setuptools"
+        "setuptools",
+        "wheel"
       ]
     },
     "run": {
@@ -987,6 +1109,7 @@
         "ffmpeg",
         "fire",
         "git",
+        "httptools",
         "httpx",
         "jinja2",
         "markdown",
@@ -996,6 +1119,7 @@
         "packaging",
         "pathspec",
         "pillow",
+        "pillow-heif",
         "prompt_toolkit",
         "psutil",
         "ptyprocess",
@@ -1004,15 +1128,20 @@
         "python",
         "python-dotenv",
         "python-multipart",
-        "pyyaml",
+        "python-nemo-relay",
         "requests",
+        "resvg-py",
         "rich",
         "ripgrep",
         "ruamel.yaml",
+        "ruamel.yaml.clib",
+        "snowballstemmer",
         "socksio",
-        "tenacity",
+        "tomli-w",
+        "truststore",
         "urllib3",
-        "uvicorn-standard",
+        "uvicorn",
+        "watchfiles",
         "websockets"
       ]
     },
@@ -1039,7 +1168,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/hermes-agent.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  # Upstream tag v2026.7.20 is equivalent to PyPI package v0.19.0.\n  version: \"2026.7.20\"\n\npackage:\n  name: hermes-agent\n  version: ${{ version }}\n\nsource:\n  # Build the web/TUI assets and their license report from the tagged sources.\n  url: https://github.com/NousResearch/hermes-agent/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 285f3fc134ff466a90065e1517801a68993733b807158ee8f32aa01613786990\n\nbuild:\n  number: 0\n  noarch: python\n  variant:\n    ignore_keys:\n      - nodejs\n  python:\n    entry_points:\n      - hermes = hermes_cli.main:main\n      - hermes-agent = run_agent:main\n      - hermes-acp = acp_adapter.entry:main\n\nrequirements:\n  build:\n    - nodejs\n    - pnpm\n    - pnpm-licenses\n  host:\n    - pip\n    - python ${{ python_min }}.*\n    - setuptools >=77.0,<83\n  run:\n    - ffmpeg\n    - git\n    - nodejs >=22.22.0\n    - python  >=${{ python_min }},<3.14\n    - ripgrep\n    - openai ==2.24.0\n    - certifi ==2026.5.20\n    - python-dotenv ==1.2.2\n    - fire ==0.7.1\n    - httpx ==0.28.1\n    - socksio\n    - rich ==14.3.3\n    - tenacity ==9.1.4\n    - pyyaml ==6.0.3\n    - ruamel.yaml ==0.18.17\n    - requests ==2.33.0\n    - jinja2 ==3.1.6\n    - pydantic ==2.13.4\n    - prompt_toolkit ==3.0.52\n    - croniter ==6.0.0\n    - packaging ==26.0\n    - markdown ==3.10.2\n    - pyjwt ==2.13.0\n    - urllib3 >=2.7.0,<3\n    - cryptography ==46.0.7\n    - psutil ==7.2.2\n    - websockets ==15.0.1\n    - pathspec ==1.1.1\n    - fastapi >=0.104.0,<1\n    - uvicorn-standard >=0.24.0,<1\n    - pillow ==12.2.0\n    - python-multipart >=0.0.9,<1\n    - if: unix\n      then:\n        # openssh is not available on win-64; Windows provides it separately.\n        - openssh\n        - ptyprocess >=0.7.0,<1\n    - if: linux\n      then:\n        - __linux\n        # Support the clipboard under both Wayland and X11 sessions.\n        - wl-clipboard-rs\n        - xclip\n    - if: osx\n      then:\n        - __osx\n    - if: win\n      then:\n        - __win\n        - pywinpty >=2.0.0,<3\n        - python-tzdata ==2025.3\n        - concurrent-log-handler ==0.9.29\n\ntests:\n  - python:\n      imports:\n        - acp_adapter\n        - agent\n        - batch_runner\n        - cli\n        - cron\n        - gateway\n        - hermes_bootstrap\n        - hermes_cli\n        - hermes_constants\n        - hermes_logging\n        - hermes_state\n        - hermes_time\n        - mcp_serve\n        - model_tools\n        - plugins\n        - providers\n        - run_agent\n        - tools\n        - toolset_distributions\n        - toolsets\n        - trajectory_compressor\n        - tui_gateway\n        - utils\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n\n  - script:\n      - python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.19.0'\"\n      - python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'plan' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"\n      - python -c \"from hermes_constants import get_optional_skills_dir as o; assert (o() / 'research' / 'parallel-cli' / 'SKILL.md').is_file()\"\n      - python -c \"from hermes_constants import get_optional_mcps_dir as m; assert (m() / 'linear' / 'manifest.yaml').is_file()\"\n      - python -c \"from agent.i18n import _locales_dir; assert (_locales_dir() / 'en.yaml').is_file()\"\n      - python -c \"from hermes_cli.main import _find_bundled_tui; assert _find_bundled_tui().is_file()\"\n      - python -c \"from hermes_cli.web_server import WEB_DIST; assert (WEB_DIST / 'index.html').is_file()\"\n      - python -c \"from hermes_cli.plugins import get_bundled_plugins_dir as p; assert (p() / 'security-guidance' / 'plugin.yaml').is_file()\"\n      - hermes --help\n      - hermes-agent --help\n      - hermes-acp --help\n    requirements:\n      run:\n        - python ${{ python_min }}.*\n\nabout:\n  homepage: https://hermes-agent.nousresearch.com\n  documentation: https://hermes-agent.nousresearch.com/docs\n  repository: https://github.com/NousResearch/hermes-agent\n  license: MIT AND Apache-2.0\n  license_file:\n    - LICENSE\n    - skills/creative/humanizer/LICENSE\n    - plugins/hermes-achievements/LICENSE\n    - plugins/security-guidance/LICENSE\n    - plugins/security-guidance/NOTICE\n    - third-party-licenses.txt\n  summary: The agent that grows with you\n  description: |\n    **The self-improving AI agent built by [Nous Research](https://nousresearch.com).**\n    It's the only agent with a built-in learning loop — it creates skills from experience,\n    improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions.\n    Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle.\n    It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.\n\n    Use any model you want —\n    [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://hermes-agent.nousresearch.com/docs/integrations/providers).\n    Switch with `hermes model` — no code changes, no lock-in.\n\nextra:\n  recipe-maintainers:\n    - eunos-1128\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  # Upstream switched from calendar tags to semantic versions.\n  version: \"0.23.2\"\n  python_min: \"3.14\"\n\npackage:\n  name: hermes-agent\n  # Epoch 1 makes this newer than the previously published 2026.7.20.\n  version: 1!${{ version }}\n\nsource:\n  # Build the web/TUI assets and their license report from the tagged sources.\n  url: https://github.com/NousResearch/hermes-agent/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 7e828086c549fc2d90c16795daf416a81a8180d8a52b5d4a29656f7a2ba8f827\n\n  patches:\n    - conda-packaging.patch\n    - optional-features.patch\n\nbuild:\n  number: 0\n  noarch: python\n  variant:\n    ignore_keys:\n      - nodejs\n  python:\n    entry_points:\n      - hermes = hermes_cli.main:main\n      - hermes-agent = agent.legacy_cli:main\n      - hermes-acp = acp_adapter.entry:main\n\nrequirements:\n  build:\n    - nodejs >=26\n    - pnpm >=12.15,<13\n    - pnpm-licenses\n  host:\n    - pip\n    - python ${{ python_min }}.*\n    - setuptools ==84.1.0\n    - wheel ==0.48.0\n  run:\n    - ffmpeg\n    - git\n    - nodejs >=26\n    - python >=${{ python_min }},<3.15\n    - ripgrep\n    - openai ==2.54.0\n    - certifi ==2026.10.19\n    - truststore ==0.10.5\n    - python-dotenv ==1.2.4\n    - fire ==0.7.1\n    - httpx ==0.28.1\n    - socksio\n    - rich ==14.3.4\n    - tomli-w ==1.2.0\n    - ruamel.yaml ==0.18.16\n    - ruamel.yaml.clib ==0.2.15\n    - requests ==2.34.2\n    - jinja2 ==3.1.6\n    - pydantic ==2.14.1\n    - prompt_toolkit ==3.0.53\n    - croniter ==6.2.4\n    - snowballstemmer ==3.1.1\n    - packaging ==26.3\n    - markdown ==3.11.2\n    - pyjwt ==2.15.1\n    - urllib3 >=2.8.0,<3\n    - cryptography ==50.0.2\n    - psutil ==7.2.2\n    - websockets ==15.0.1\n    - pathspec ==1.1.1\n    - fastapi >=0.104.0,<1\n    - uvicorn >=0.31.0,<1\n    - httptools >=0.6.3,<0.9\n    - watchfiles >=0.20,<2\n    - pillow ==13.0.0\n    - pillow-heif >=1.4.0,<2\n    - resvg-py ==0.5.0\n    - python-multipart >=0.0.9,<1\n    - if: unix\n      then:\n        # openssh is not available on win-64; Windows provides it separately.\n        - openssh\n        - ptyprocess >=0.7.0,<1\n    - if: linux\n      then:\n        - __linux\n        # Support the clipboard under both Wayland and X11 sessions.\n        - wl-clipboard-rs\n        - xclip\n    - if: osx\n      then:\n        - __osx\n    - if: win\n      then:\n        - __win\n        - pywinpty >=3.0.5,<4\n        - pywin32 >=306,<312\n        - python-tzdata ==2025.3\n        - concurrent-log-handler ==0.9.30\n\n    # PyPI calls this nemo-relay. Conda-forge also provides Intel macOS builds,\n    # so the upstream wheel-availability marker is not needed here.\n    - python-nemo-relay >=0.11,<0.12\n\ntests:\n  - python:\n      imports:\n        - acp_adapter\n        - agent\n        - batch_runner\n        - cli\n        - cron\n        - gateway\n        - hermes_bootstrap\n        - hermes_cli\n        - hermes_agent\n        - hermes_platform\n        - pm\n        - hermes_constants\n        - hermes_logging\n        - hermes_state\n        - hermes_time\n        - model_tools\n        - plugins\n        - providers\n        - run_agent\n        - tools\n        - toolset_distributions\n        - toolsets\n        - trajectory_compressor\n        - tui_gateway\n        - utils\n      pip_check: true\n\n  - script:\n      - python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.23.2'\"\n      - python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'codebase-inspection' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"\n      - python -c \"from hermes_constants import get_optional_skills_dir as o; assert (o() / 'research' / 'parallel-cli' / 'SKILL.md').is_file()\"\n      - python -c \"from hermes_constants import get_optional_mcps_dir as m; assert (m() / 'linear' / 'manifest.yaml').is_file()\"\n      - python -c \"from agent.i18n import _locales_dir; assert (_locales_dir() / 'en.yaml').is_file()\"\n      - python -c \"from hermes_cli.main_tui_launch import _find_bundled_tui; assert _find_bundled_tui().is_file()\"\n      - python -c \"from hermes_cli.web_server import WEB_DIST; assert (WEB_DIST / 'index.html').is_file()\"\n      - python -c \"from hermes_cli.plugins import get_bundled_plugins_dir as p; assert (p() / 'security-guidance' / 'plugin.yaml').is_file()\"\n      - python -c \"from hermes_cli.version_info import get_version_info; v = get_version_info(); assert v.base_version == '0.23.2'; assert v.commit == 'ae2a81ccc00e9b7c06301523e5bb09608397149c'\"\n      - hermes --help\n      - hermes-agent --help\n      - hermes-acp --help\n    requirements:\n      run:\n        - python ${{ python_min }}.*\n\n  - script: test_optional_features.py\n    requirements:\n      run:\n        - python ${{ python_min }}.*\n\nabout:\n  homepage: https://hermes-agent.nousresearch.com\n  documentation: https://hermes-agent.nousresearch.com/docs\n  repository: https://github.com/NousResearch/hermes-agent\n  license: MIT AND Apache-2.0\n  license_file:\n    - LICENSE\n    - skills/creative/humanizer/LICENSE\n    - skills/productivity/pdf/LICENSE\n    - skills/productivity/microsoft-office/LICENSE\n    - plugins/hermes-achievements/LICENSE\n    - plugins/security-guidance/LICENSE\n    - plugins/security-guidance/NOTICE\n    - third-party-licenses.txt\n  summary: The agent that grows with you\n  description: |\n    **The self-improving AI agent built by [Nous Research](https://nousresearch.com).**\n    It's the only agent with a built-in learning loop — it creates skills from experience,\n    improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions.\n    Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle.\n    It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.\n\n    Use any model you want —\n    [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://hermes-agent.nousresearch.com/docs/integrations/providers).\n    Switch with `hermes model` — no code changes, no lock-in.\n\nextra:\n  recipe-maintainers:\n    - eunos-1128\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1054,6 +1183,7 @@
       "ffmpeg",
       "fire",
       "git",
+      "httptools",
       "httpx",
       "jinja2",
       "markdown",
@@ -1063,6 +1193,7 @@
       "packaging",
       "pathspec",
       "pillow",
+      "pillow-heif",
       "pip",
       "pnpm",
       "pnpm-licenses",
@@ -1074,19 +1205,26 @@
       "python",
       "python-dotenv",
       "python-multipart",
+      "python-nemo-relay",
       "python-tzdata",
+      "pywin32",
       "pywinpty",
-      "pyyaml",
       "requests",
+      "resvg-py",
       "rich",
       "ripgrep",
       "ruamel.yaml",
+      "ruamel.yaml.clib",
       "setuptools",
+      "snowballstemmer",
       "socksio",
-      "tenacity",
+      "tomli-w",
+      "truststore",
       "urllib3",
-      "uvicorn-standard",
+      "uvicorn",
+      "watchfiles",
       "websockets",
+      "wheel",
       "wl-clipboard-rs",
       "xclip"
     ]
@@ -1105,7 +1243,8 @@
       "elements": [
         "pip",
         "python",
-        "setuptools"
+        "setuptools",
+        "wheel"
       ]
     },
     "run": {
@@ -1122,6 +1261,7 @@
         "ffmpeg",
         "fire",
         "git",
+        "httptools",
         "httpx",
         "jinja2",
         "markdown",
@@ -1131,6 +1271,7 @@
         "packaging",
         "pathspec",
         "pillow",
+        "pillow-heif",
         "prompt_toolkit",
         "psutil",
         "ptyprocess",
@@ -1139,17 +1280,23 @@
         "python",
         "python-dotenv",
         "python-multipart",
+        "python-nemo-relay",
         "python-tzdata",
+        "pywin32",
         "pywinpty",
-        "pyyaml",
         "requests",
+        "resvg-py",
         "rich",
         "ripgrep",
         "ruamel.yaml",
+        "ruamel.yaml.clib",
+        "snowballstemmer",
         "socksio",
-        "tenacity",
+        "tomli-w",
+        "truststore",
         "urllib3",
-        "uvicorn-standard",
+        "uvicorn",
+        "watchfiles",
         "websockets",
         "wl-clipboard-rs",
         "xclip"
@@ -1168,8 +1315,8 @@
     "build": {
       "__set__": true,
       "elements": [
-        "nodejs",
-        "pnpm",
+        "nodejs >=26",
+        "pnpm >=12.15,<13",
         "pnpm-licenses"
       ]
     },
@@ -1177,8 +1324,9 @@
       "__set__": true,
       "elements": [
         "pip",
-        "python 3.11.*",
-        "setuptools >=77.0,<83"
+        "python 3.14.*",
+        "setuptools ==84.1.0",
+        "wheel ==0.48.0"
       ]
     },
     "run": {
@@ -1187,42 +1335,50 @@
         "__linux",
         "__osx",
         "__win",
-        "certifi ==2026.5.20",
-        "concurrent-log-handler ==0.9.29",
-        "croniter ==6.0.0",
-        "cryptography ==46.0.7",
+        "certifi ==2026.10.19",
+        "concurrent-log-handler ==0.9.30",
+        "croniter ==6.2.4",
+        "cryptography ==50.0.2",
         "fastapi >=0.104.0,<1",
         "ffmpeg",
         "fire ==0.7.1",
         "git",
+        "httptools >=0.6.3,<0.9",
         "httpx ==0.28.1",
         "jinja2 ==3.1.6",
-        "markdown ==3.10.2",
-        "nodejs >=22.22.0",
-        "openai ==2.24.0",
+        "markdown ==3.11.2",
+        "nodejs >=26",
+        "openai ==2.54.0",
         "openssh",
-        "packaging ==26.0",
+        "packaging ==26.3",
         "pathspec ==1.1.1",
-        "pillow ==12.2.0",
-        "prompt_toolkit ==3.0.52",
+        "pillow ==13.0.0",
+        "pillow-heif >=1.4.0,<2",
+        "prompt_toolkit ==3.0.53",
         "psutil ==7.2.2",
         "ptyprocess >=0.7.0,<1",
-        "pydantic ==2.13.4",
-        "pyjwt ==2.13.0",
-        "python >=3.11,<3.14",
-        "python-dotenv ==1.2.2",
+        "pydantic ==2.14.1",
+        "pyjwt ==2.15.1",
+        "python >=3.14,<3.15",
+        "python-dotenv ==1.2.4",
         "python-multipart >=0.0.9,<1",
+        "python-nemo-relay >=0.11,<0.12",
         "python-tzdata ==2025.3",
-        "pywinpty >=2.0.0,<3",
-        "pyyaml ==6.0.3",
-        "requests ==2.33.0",
-        "rich ==14.3.3",
+        "pywin32 >=306,<312",
+        "pywinpty >=3.0.5,<4",
+        "requests ==2.34.2",
+        "resvg-py ==0.5.0",
+        "rich ==14.3.4",
         "ripgrep",
-        "ruamel.yaml ==0.18.17",
+        "ruamel.yaml ==0.18.16",
+        "ruamel.yaml.clib ==0.2.15",
+        "snowballstemmer ==3.1.1",
         "socksio",
-        "tenacity ==9.1.4",
-        "urllib3 >=2.7.0,<3",
-        "uvicorn-standard >=0.24.0,<1",
+        "tomli-w ==1.2.0",
+        "truststore ==0.10.5",
+        "urllib3 >=2.8.0,<3",
+        "uvicorn >=0.31.0,<1",
+        "watchfiles >=0.20,<2",
         "websockets ==15.0.1",
         "wl-clipboard-rs",
         "xclip"
@@ -1232,12 +1388,12 @@
       "__set__": true,
       "elements": [
         "pip",
-        "python 3.11.*"
+        "python 3.14.*"
       ]
     }
   },
-  "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v2026.7.20.tar.gz",
-  "version": "2026.7.20",
+  "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v0.23.2.tar.gz",
+  "version": "1!0.23.2",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/hermes-agent.json"
   },
@@ -1258,7 +1414,7 @@
       "python": {
         "entry_points": [
           "hermes = hermes_cli.main:main",
-          "hermes-agent = run_agent:main",
+          "hermes-agent = agent.legacy_cli:main",
           "hermes-acp = acp_adapter.entry:main"
         ]
       }
@@ -1275,7 +1431,7 @@
           "python": {
             "entry_points": [
               "hermes = hermes_cli.main:main",
-              "hermes-agent = run_agent:main",
+              "hermes-agent = agent.legacy_cli:main",
               "hermes-acp = acp_adapter.entry:main"
             ]
           }
@@ -1283,52 +1439,61 @@
         "name": "hermes-agent",
         "requirements": {
           "build": [
-            "nodejs",
-            "pnpm",
+            "nodejs >=26",
+            "pnpm >=12.15,<13",
             "pnpm-licenses"
           ],
           "host": [
             "pip",
-            "python 3.11.*",
-            "setuptools >=77.0,<83"
+            "python 3.14.*",
+            "setuptools ==84.1.0",
+            "wheel ==0.48.0"
           ],
           "run": [
             "ffmpeg",
             "git",
-            "nodejs >=22.22.0",
-            "python >=3.11,<3.14",
+            "nodejs >=26",
+            "python >=3.14,<3.15",
             "ripgrep",
-            "openai ==2.24.0",
-            "certifi ==2026.5.20",
-            "python-dotenv ==1.2.2",
+            "openai ==2.54.0",
+            "certifi ==2026.10.19",
+            "truststore ==0.10.5",
+            "python-dotenv ==1.2.4",
             "fire ==0.7.1",
             "httpx ==0.28.1",
             "socksio",
-            "rich ==14.3.3",
-            "tenacity ==9.1.4",
-            "pyyaml ==6.0.3",
-            "ruamel.yaml ==0.18.17",
-            "requests ==2.33.0",
+            "rich ==14.3.4",
+            "tomli-w ==1.2.0",
+            "ruamel.yaml ==0.18.16",
+            "ruamel.yaml.clib ==0.2.15",
+            "requests ==2.34.2",
             "jinja2 ==3.1.6",
-            "pydantic ==2.13.4",
-            "prompt_toolkit ==3.0.52",
-            "croniter ==6.0.0",
-            "packaging ==26.0",
-            "markdown ==3.10.2",
-            "pyjwt ==2.13.0",
-            "urllib3 >=2.7.0,<3",
-            "cryptography ==46.0.7",
+            "pydantic ==2.14.1",
+            "prompt_toolkit ==3.0.53",
+            "croniter ==6.2.4",
+            "snowballstemmer ==3.1.1",
+            "packaging ==26.3",
+            "markdown ==3.11.2",
+            "pyjwt ==2.15.1",
+            "urllib3 >=2.8.0,<3",
+            "cryptography ==50.0.2",
             "psutil ==7.2.2",
             "websockets ==15.0.1",
             "pathspec ==1.1.1",
             "fastapi >=0.104.0,<1",
-            "uvicorn-standard >=0.24.0,<1",
-            "pillow ==12.2.0",
+            "uvicorn >=0.31.0,<1",
+            "httptools >=0.6.3,<0.9",
+            "watchfiles >=0.20,<2",
+            "pillow ==13.0.0",
+            "pillow-heif >=1.4.0,<2",
+            "resvg-py ==0.5.0",
             "python-multipart >=0.0.9,<1",
             "__win",
-            "pywinpty >=2.0.0,<3",
+            "pywinpty >=3.0.5,<4",
+            "pywin32 >=306,<312",
             "python-tzdata ==2025.3",
-            "concurrent-log-handler ==0.9.29"
+            "concurrent-log-handler ==0.9.30",
+            "python-nemo-relay >=0.11,<0.12"
           ]
         },
         "tests": [
@@ -1343,11 +1508,13 @@
                 "gateway",
                 "hermes_bootstrap",
                 "hermes_cli",
+                "hermes_agent",
+                "hermes_platform",
+                "pm",
                 "hermes_constants",
                 "hermes_logging",
                 "hermes_state",
                 "hermes_time",
-                "mcp_serve",
                 "model_tools",
                 "plugins",
                 "providers",
@@ -1358,95 +1525,113 @@
                 "trajectory_compressor",
                 "tui_gateway",
                 "utils"
-              ],
-              "python_version": [
-                "3.11.*",
-                "*"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "python 3.11.*"
+                "python 3.14.*"
               ]
             },
             "script": [
-              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.19.0'\"",
-              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'plan' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
+              "python -c \"import importlib.metadata as m; assert m.version('hermes-agent') == '0.23.2'\"",
+              "python -c \"from hermes_constants import get_bundled_skills_dir as b; p = b(); assert (p / 'software-development' / 'codebase-inspection' / 'SKILL.md').is_file(); assert not (p / 'productivity' / 'powerpoint').exists()\"",
               "python -c \"from hermes_constants import get_optional_skills_dir as o; assert (o() / 'research' / 'parallel-cli' / 'SKILL.md').is_file()\"",
               "python -c \"from hermes_constants import get_optional_mcps_dir as m; assert (m() / 'linear' / 'manifest.yaml').is_file()\"",
               "python -c \"from agent.i18n import _locales_dir; assert (_locales_dir() / 'en.yaml').is_file()\"",
-              "python -c \"from hermes_cli.main import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
+              "python -c \"from hermes_cli.main_tui_launch import _find_bundled_tui; assert _find_bundled_tui().is_file()\"",
               "python -c \"from hermes_cli.web_server import WEB_DIST; assert (WEB_DIST / 'index.html').is_file()\"",
               "python -c \"from hermes_cli.plugins import get_bundled_plugins_dir as p; assert (p() / 'security-guidance' / 'plugin.yaml').is_file()\"",
+              "python -c \"from hermes_cli.version_info import get_version_info; v = get_version_info(); assert v.base_version == '0.23.2'; assert v.commit == 'ae2a81ccc00e9b7c06301523e5bb09608397149c'\"",
               "hermes --help",
               "hermes-agent --help",
               "hermes-acp --help"
             ]
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.14.*"
+              ]
+            },
+            "script": "test_optional_features.py"
           }
         ],
-        "version": "2026.7.20"
+        "version": "1!0.23.2"
       }
     ],
     "package": {
       "name": "hermes-agent",
-      "version": "2026.7.20"
+      "version": "1!0.23.2"
     },
     "requirements": {
       "build": [
-        "nodejs",
-        "pnpm",
+        "nodejs >=26",
+        "pnpm >=12.15,<13",
         "pnpm-licenses"
       ],
       "host": [
         "pip",
-        "python 3.11.*",
-        "setuptools >=77.0,<83"
+        "python 3.14.*",
+        "setuptools ==84.1.0",
+        "wheel ==0.48.0"
       ],
       "run": [
         "ffmpeg",
         "git",
-        "nodejs >=22.22.0",
-        "python >=3.11,<3.14",
+        "nodejs >=26",
+        "python >=3.14,<3.15",
         "ripgrep",
-        "openai ==2.24.0",
-        "certifi ==2026.5.20",
-        "python-dotenv ==1.2.2",
+        "openai ==2.54.0",
+        "certifi ==2026.10.19",
+        "truststore ==0.10.5",
+        "python-dotenv ==1.2.4",
         "fire ==0.7.1",
         "httpx ==0.28.1",
         "socksio",
-        "rich ==14.3.3",
-        "tenacity ==9.1.4",
-        "pyyaml ==6.0.3",
-        "ruamel.yaml ==0.18.17",
-        "requests ==2.33.0",
+        "rich ==14.3.4",
+        "tomli-w ==1.2.0",
+        "ruamel.yaml ==0.18.16",
+        "ruamel.yaml.clib ==0.2.15",
+        "requests ==2.34.2",
         "jinja2 ==3.1.6",
-        "pydantic ==2.13.4",
-        "prompt_toolkit ==3.0.52",
-        "croniter ==6.0.0",
-        "packaging ==26.0",
-        "markdown ==3.10.2",
-        "pyjwt ==2.13.0",
-        "urllib3 >=2.7.0,<3",
-        "cryptography ==46.0.7",
+        "pydantic ==2.14.1",
+        "prompt_toolkit ==3.0.53",
+        "croniter ==6.2.4",
+        "snowballstemmer ==3.1.1",
+        "packaging ==26.3",
+        "markdown ==3.11.2",
+        "pyjwt ==2.15.1",
+        "urllib3 >=2.8.0,<3",
+        "cryptography ==50.0.2",
         "psutil ==7.2.2",
         "websockets ==15.0.1",
         "pathspec ==1.1.1",
         "fastapi >=0.104.0,<1",
-        "uvicorn-standard >=0.24.0,<1",
-        "pillow ==12.2.0",
+        "uvicorn >=0.31.0,<1",
+        "httptools >=0.6.3,<0.9",
+        "watchfiles >=0.20,<2",
+        "pillow ==13.0.0",
+        "pillow-heif >=1.4.0,<2",
+        "resvg-py ==0.5.0",
         "python-multipart >=0.0.9,<1",
         "__win",
-        "pywinpty >=2.0.0,<3",
+        "pywinpty >=3.0.5,<4",
+        "pywin32 >=306,<312",
         "python-tzdata ==2025.3",
-        "concurrent-log-handler ==0.9.29"
+        "concurrent-log-handler ==0.9.30",
+        "python-nemo-relay >=0.11,<0.12"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "285f3fc134ff466a90065e1517801a68993733b807158ee8f32aa01613786990",
-      "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v2026.7.20.tar.gz"
+      "patches": [
+        "conda-packaging.patch",
+        "optional-features.patch"
+      ],
+      "sha256": "7e828086c549fc2d90c16795daf416a81a8180d8a52b5d4a29656f7a2ba8f827",
+      "url": "https://github.com/NousResearch/hermes-agent/archive/refs/tags/v0.23.2.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -1463,7 +1648,8 @@
       "elements": [
         "pip",
         "python",
-        "setuptools"
+        "setuptools",
+        "wheel"
       ]
     },
     "run": {
@@ -1478,6 +1664,7 @@
         "ffmpeg",
         "fire",
         "git",
+        "httptools",
         "httpx",
         "jinja2",
         "markdown",
@@ -1486,6 +1673,7 @@
         "packaging",
         "pathspec",
         "pillow",
+        "pillow-heif",
         "prompt_toolkit",
         "psutil",
         "pydantic",
@@ -1493,17 +1681,23 @@
         "python",
         "python-dotenv",
         "python-multipart",
+        "python-nemo-relay",
         "python-tzdata",
+        "pywin32",
         "pywinpty",
-        "pyyaml",
         "requests",
+        "resvg-py",
         "rich",
         "ripgrep",
         "ruamel.yaml",
+        "ruamel.yaml.clib",
+        "snowballstemmer",
         "socksio",
-        "tenacity",
+        "tomli-w",
+        "truststore",
         "urllib3",
-        "uvicorn-standard",
+        "uvicorn",
+        "watchfiles",
         "websockets"
       ]
     },
