@@ -1,23 +1,23 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '13'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '13'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.10.* *_cpython\n- 3.11.* *_cpython\n- 3.12.* *_cpython\n- 3.13.* *_cp313\n- 3.14.* *_cp314\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '13'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '13'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\n- 3.12.* *_cpython\n- 3.13.* *_cp313\n- 3.14.* *_cp314\n- 3.15.* *_cp315\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {
-    "python314": {
+    "python315": {
       "migration_number": 1,
-      "migrator_ts": 1724712607
+      "migrator_ts": 1755739490
     }
   },
   "conda-forge.yml": {
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
@@ -25,23 +25,31 @@
     "provider": {
       "linux_aarch64": "default",
       "linux_ppc64le": "azure",
+      "osx_arm64": "default",
       "win": "azure"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "8edf8b67e4162011065d6e9424635766f85ff622",
-  "feedstock_hash_ts": 1776921004,
+  "feedstock_hash": "b21466edb6fc8da6c6e25f40971dd4670d97922f",
+  "feedstock_hash_ts": 1795295852,
   "feedstock_name": "bullet",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "home": "http://bulletphysics.org",
+      "home": "http://bulletphysics.org/",
       "license": "Zlib",
+      "license_family": "Zlib",
       "license_file": "LICENSE.txt",
-      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc.\n"
+      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc."
     },
     "build": {
-      "number": "5"
+      "number": "6",
+      "run_exports": {
+        "weak": [
+          "bullet-cpp"
+        ]
+      },
+      "script": "build_cpp.sh"
     },
     "extra": {
       "recipe-maintainers": [
@@ -52,9 +60,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -68,30 +78,36 @@
           "host": [
             "libgl-devel",
             "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
+            "xorg-libxext"
           ],
           "run": [
             "xorg-libx11",
             "xorg-libxext"
           ]
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
@@ -112,49 +128,333 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       }
     ],
     "package": {
-      "name": "bullet",
+      "name": "bullet-cpp",
       "version": "3.25"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake <4",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
+      ],
+      "host": [
+        "libgl-devel",
+        "xorg-libx11",
+        "xorg-libxext"
+      ],
+      "run": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "fn": "bullet3-3.25.tar.gz",
       "patches": [
         "devendorzlib.patch",
-        "add_rt.patch",
-        "fix-find-pythonlibs.patch",
-        "double-precision-postfix.patch"
+        "double-precision-postfix.patch",
+        "add_rt.patch"
       ],
       "sha256": "c45afb6399e3f68036ddb641c6bf6f552bf332d5ab6be62f7e6c54eda05ceb77",
       "url": "https://github.com/bulletphysics/bullet3/archive/3.25.tar.gz"
@@ -190,7 +490,6 @@
       "__set__": true,
       "elements": [
         "bullet-cpp",
-        "numpy",
         "pybullet",
         "python",
         "xorg-libx11",
@@ -199,18 +498,27 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "linux_aarch64_meta_yaml": {
     "about": {
-      "home": "http://bulletphysics.org",
+      "home": "http://bulletphysics.org/",
       "license": "Zlib",
+      "license_family": "Zlib",
       "license_file": "LICENSE.txt",
-      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc.\n"
+      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc."
     },
     "build": {
-      "number": "5"
+      "number": "6",
+      "run_exports": {
+        "weak": [
+          "bullet-cpp"
+        ]
+      },
+      "script": "build_cpp.sh"
     },
     "extra": {
       "recipe-maintainers": [
@@ -221,9 +529,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -237,33 +547,42 @@
           "host": [
             "libgl-devel",
             "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
+            "xorg-libxext"
           ],
           "run": [
             "xorg-libx11",
             "xorg-libxext"
           ]
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -281,49 +600,345 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       }
     ],
     "package": {
-      "name": "bullet",
+      "name": "bullet-cpp",
       "version": "3.25"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake <4",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
+      ],
+      "host": [
+        "libgl-devel",
+        "xorg-libx11",
+        "xorg-libxext"
+      ],
+      "run": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "fn": "bullet3-3.25.tar.gz",
       "patches": [
         "devendorzlib.patch",
-        "add_rt.patch",
-        "fix-find-pythonlibs.patch",
-        "double-precision-postfix.patch"
+        "double-precision-postfix.patch",
+        "add_rt.patch"
       ],
       "sha256": "c45afb6399e3f68036ddb641c6bf6f552bf332d5ab6be62f7e6c54eda05ceb77",
       "url": "https://github.com/bulletphysics/bullet3/archive/3.25.tar.gz"
@@ -336,8 +951,11 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-aarch64",
         "cxx_compiler_stub",
-        "ninja"
+        "ninja",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -359,7 +977,6 @@
       "__set__": true,
       "elements": [
         "bullet-cpp",
-        "numpy",
         "pybullet",
         "python",
         "xorg-libx11",
@@ -368,18 +985,27 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "linux_ppc64le_meta_yaml": {
     "about": {
-      "home": "http://bulletphysics.org",
+      "home": "http://bulletphysics.org/",
       "license": "Zlib",
+      "license_family": "Zlib",
       "license_file": "LICENSE.txt",
-      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc.\n"
+      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc."
     },
     "build": {
-      "number": "5"
+      "number": "6",
+      "run_exports": {
+        "weak": [
+          "bullet-cpp"
+        ]
+      },
+      "script": "build_cpp.sh"
     },
     "extra": {
       "recipe-maintainers": [
@@ -390,9 +1016,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -406,33 +1034,42 @@
           "host": [
             "libgl-devel",
             "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
+            "xorg-libxext"
           ],
           "run": [
             "xorg-libx11",
             "xorg-libxext"
           ]
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -450,51 +1087,347 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       }
     ],
     "package": {
-      "name": "bullet",
+      "name": "bullet-cpp",
       "version": "3.25"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake <4",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
+      ],
+      "host": [
+        "libgl-devel",
+        "xorg-libx11",
+        "xorg-libxext"
+      ],
+      "run": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "fn": "bullet3-3.25.tar.gz",
       "patches": [
         "devendorzlib.patch",
+        "double-precision-postfix.patch",
         "add_rt.patch",
         "disable-bullet3opencl.patch",
-        "setup-py-single-thread-compilation.patch",
-        "fix-find-pythonlibs.patch",
-        "double-precision-postfix.patch"
+        "setup-py-single-thread-compilation.patch"
       ],
       "sha256": "c45afb6399e3f68036ddb641c6bf6f552bf332d5ab6be62f7e6c54eda05ceb77",
       "url": "https://github.com/bulletphysics/bullet3/archive/3.25.tar.gz"
@@ -507,8 +1440,11 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-ppc64le",
         "cxx_compiler_stub",
-        "ninja"
+        "ninja",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -530,7 +1466,6 @@
       "__set__": true,
       "elements": [
         "bullet-cpp",
-        "numpy",
         "pybullet",
         "python",
         "xorg-libx11",
@@ -539,18 +1474,27 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "meta_yaml": {
     "about": {
-      "home": "http://bulletphysics.org",
+      "home": "http://bulletphysics.org/",
       "license": "Zlib",
+      "license_family": "Zlib",
       "license_file": "LICENSE.txt",
-      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc.\n"
+      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc."
     },
     "build": {
-      "number": "5"
+      "number": "6",
+      "run_exports": {
+        "weak": [
+          "bullet-cpp"
+        ]
+      },
+      "script": "bld_cpp.bat"
     },
     "extra": {
       "recipe-maintainers": [
@@ -561,9 +1505,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -577,30 +1523,36 @@
           "host": [
             "libgl-devel",
             "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
+            "xorg-libxext"
           ],
           "run": [
             "xorg-libx11",
             "xorg-libxext"
           ]
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
@@ -621,41 +1573,311 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -669,33 +1891,42 @@
           "host": [
             "libgl-devel",
             "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
+            "xorg-libxext"
           ],
           "run": [
             "xorg-libx11",
             "xorg-libxext"
           ]
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -713,41 +1944,323 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-aarch64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -761,33 +2274,42 @@
           "host": [
             "libgl-devel",
             "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
+            "xorg-libxext"
           ],
           "run": [
             "xorg-libx11",
             "xorg-libxext"
           ]
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -805,80 +2327,29 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
-        "name": "bullet",
-        "requirements": {
-          "run": [
-            "bullet-cpp",
-            "pybullet",
-            "python",
-            "numpy"
-          ]
-        },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
-          ],
-          "imports": [
-            "pybullet"
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
-        },
-        "name": "bullet-cpp",
-        "requirements": {
-          "build": [
-            "cmake <4",
-            "ninja",
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
-          ],
-          "run": [
-            "xorg-libx11",
-            "xorg-libxext"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -896,80 +2367,29 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
-        "name": "bullet",
-        "requirements": {
-          "run": [
-            "bullet-cpp",
-            "pybullet",
-            "python",
-            "numpy"
-          ]
-        },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
-          ],
-          "imports": [
-            "pybullet"
-          ]
-        }
-      },
-      {
-        "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
-        },
-        "name": "bullet-cpp",
-        "requirements": {
-          "build": [
-            "cmake <4",
-            "ninja",
-            "c_compiler_stub",
-            "c_stdlib_stub",
-            "cxx_compiler_stub"
-          ],
-          "host": [
-            "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
-          ],
-          "run": [
-            "xorg-libx11",
-            "xorg-libxext"
-          ]
-        },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
-      },
-      {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -987,41 +2407,243 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_linux-ppc64le",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -1033,25 +2655,796 @@
             "cxx_compiler_stub"
           ],
           "host": [
+            "xorg-libx11",
+            "xorg-libxext"
+          ],
+          "run": [
+            "xorg-libx11",
+            "xorg-libxext"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
             "python",
             "numpy"
           ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
+        },
+        "name": "bullet-cpp",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "xorg-libx11",
+            "xorg-libxext"
+          ],
+          "run": [
+            "xorg-libx11",
+            "xorg-libxext"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
+        },
+        "name": "bullet-cpp",
+        "requirements": {
+          "build": [
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [],
           "run": []
         },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_PREFIX%\\include\\bullet\\BulletSoftBody\\btSoftBody.h (exit 1)",
-            "if not exist %LIBRARY_PREFIX%\\lib\\cmake\\bullet\\BulletConfig.cmake (exit 1)",
-            "if not exist %LIBRARY_PREFIX%\\lib\\BussIK.lib (exit 1)",
-            "if not exist %LIBRARY_PREFIX%\\lib\\BulletCollision.lib (exit 1)"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/lib/cmake/bullet/BulletConfig.cmake",
+                "Library/lib/BussIK.lib",
+                "Library/lib/BulletCollision.lib"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -1069,49 +3462,344 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_PREFIX%\\include\\bullet\\BulletSoftBody\\btSoftBody.h (exit 1)"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       }
     ],
     "package": {
-      "name": "bullet",
+      "name": "bullet-cpp",
       "version": "3.25"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake <4",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
+      ],
+      "host": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ],
+      "run": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "fn": "bullet3-3.25.tar.gz",
       "patches": [
         "devendorzlib.patch",
-        "add_rt.patch",
-        "fix-find-pythonlibs.patch",
         "double-precision-postfix.patch",
+        "add_rt.patch",
         "disable-bullet3opencl.patch",
         "setup-py-single-thread-compilation.patch"
       ],
@@ -1119,16 +3807,23 @@
       "url": "https://github.com/bulletphysics/bullet3/archive/3.25.tar.gz"
     }
   },
-  "name": "bullet",
+  "name": "bullet-cpp",
   "osx_64_meta_yaml": {
     "about": {
-      "home": "http://bulletphysics.org",
+      "home": "http://bulletphysics.org/",
       "license": "Zlib",
+      "license_family": "Zlib",
       "license_file": "LICENSE.txt",
-      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc.\n"
+      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc."
     },
     "build": {
-      "number": "5"
+      "number": "6",
+      "run_exports": {
+        "weak": [
+          "bullet-cpp"
+        ]
+      },
+      "script": "build_cpp.sh"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1139,9 +3834,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -1154,33 +3851,42 @@
           ],
           "host": [
             "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
+            "xorg-libxext"
           ],
           "run": [
             "xorg-libx11",
             "xorg-libxext"
           ]
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -1198,44 +3904,340 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       }
     ],
     "package": {
-      "name": "bullet",
+      "name": "bullet-cpp",
       "version": "3.25"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake <4",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
+      ],
+      "host": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ],
+      "run": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "fn": "bullet3-3.25.tar.gz",
       "patches": [
         "devendorzlib.patch",
         "double-precision-postfix.patch"
@@ -1251,8 +4253,11 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_osx-64",
         "cxx_compiler_stub",
-        "ninja"
+        "ninja",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -1273,7 +4278,6 @@
       "__set__": true,
       "elements": [
         "bullet-cpp",
-        "numpy",
         "pybullet",
         "python",
         "xorg-libx11",
@@ -1282,18 +4286,27 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "osx_arm64_meta_yaml": {
     "about": {
-      "home": "http://bulletphysics.org",
+      "home": "http://bulletphysics.org/",
       "license": "Zlib",
+      "license_family": "Zlib",
       "license_file": "LICENSE.txt",
-      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc.\n"
+      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc."
     },
     "build": {
-      "number": "5"
+      "number": "6",
+      "run_exports": {
+        "weak": [
+          "bullet-cpp"
+        ]
+      },
+      "script": "build_cpp.sh"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1304,9 +4317,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -1319,33 +4334,42 @@
           ],
           "host": [
             "xorg-libx11",
-            "xorg-libxext",
-            "python",
-            "numpy"
+            "xorg-libxext"
           ],
           "run": [
             "xorg-libx11",
             "xorg-libxext"
           ]
         },
-        "script": "build_cpp.sh",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/bullet",
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h",
-            "test -f ${PREFIX}/lib/pkgconfig/bullet.pc",
-            "test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake",
-            "test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/bullet.pc",
+                "lib/cmake/bullet/BulletConfig.cmake"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ],
+              "lib": [
+                "BulletExampleBrowserLib",
+                "gwen",
+                "BussIK",
+                "Bullet3Dynamics"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -1363,44 +4387,340 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "build_py.sh",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_osx-arm64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       }
     ],
     "package": {
-      "name": "bullet",
+      "name": "bullet-cpp",
       "version": "3.25"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake <4",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
+      ],
+      "host": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ],
+      "run": [
+        "xorg-libx11",
+        "xorg-libxext"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "fn": "bullet3-3.25.tar.gz",
       "patches": [
         "devendorzlib.patch",
         "double-precision-postfix.patch"
@@ -1416,8 +4736,11 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_osx-arm64",
         "cxx_compiler_stub",
-        "ninja"
+        "ninja",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -1438,7 +4761,6 @@
       "__set__": true,
       "elements": [
         "bullet-cpp",
-        "numpy",
         "pybullet",
         "python",
         "xorg-libx11",
@@ -1447,7 +4769,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "outputs_names": {
@@ -1470,7 +4794,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/bullet.json"
   },
-  "raw_meta_yaml": "{% set version = \"3.25\" %}\n\npackage:\n  name: bullet\n  version: {{ version }}\n\nsource:\n  fn: bullet3-{{ version }}.tar.gz\n  url: https://github.com/bulletphysics/bullet3/archive/{{ version }}.tar.gz\n  sha256: c45afb6399e3f68036ddb641c6bf6f552bf332d5ab6be62f7e6c54eda05ceb77\n  patches:\n    - devendorzlib.patch\n    - add_rt.patch  # [linux]\n    # On ppc64le compilation of Bullet3OpenCL fails (https://github.com/conda-forge/bullet-feedstock/issues/24)\n    - disable-bullet3opencl.patch  # [ppc64le]\n    # The setup.py hardcodes a custom logic to decide the number of compilation threads, \n    # let's override it for memory limited architectures (as of early 2021, travis with ppc64le)\n    - setup-py-single-thread-compilation.patch  # [ppc64le]\n    - fix-find-pythonlibs.patch  # [linux]\n    - double-precision-postfix.patch\n\nbuild:\n  number: 5\n\noutputs:\n  - name: bullet-cpp\n    script: build_cpp.sh  # [unix]\n    script: bld_cpp.bat  # [win]\n    build:\n      run_exports:\n        - {{ pin_subpackage('bullet-cpp', max_pin='x.x') }}\n\n    requirements:\n      build:\n        - python                                 # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n        - numpy                                  # [build_platform != target_platform]\n        - cmake <4\n        - ninja\n        - {{ compiler(\"c\") }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n      host:\n        - libgl-devel    # [linux]\n        - xorg-libx11    # [unix]\n        - xorg-libxext   # [unix]\n        - python\n        - numpy\n      run:\n        - xorg-libx11   # [unix]\n        - xorg-libxext  # [unix]\n    test:\n      commands:\n        - test -d ${PREFIX}/include/bullet  # [unix]\n        - test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h  # [unix]\n        - test -f ${PREFIX}/lib/pkgconfig/bullet.pc  # [unix]\n        - test -f ${PREFIX}/lib/cmake/bullet/BulletConfig.cmake  # [unix]\n        - test -f ${PREFIX}/lib/libBulletExampleBrowserLib${SHLIB_EXT}  # [unix]\n        - test -f ${PREFIX}/lib/libgwen${SHLIB_EXT}  # [unix]\n        - test -f ${PREFIX}/lib/libBussIK${SHLIB_EXT}  # [unix]\n        - test -f ${PREFIX}/lib/libBullet3Dynamics${SHLIB_EXT}  # [unix]\n        - if not exist %LIBRARY_PREFIX%\\include\\bullet\\BulletSoftBody\\btSoftBody.h (exit 1)  # [win]\n        - if not exist %LIBRARY_PREFIX%\\lib\\cmake\\bullet\\BulletConfig.cmake (exit 1)  # [win]\n        - if not exist %LIBRARY_PREFIX%\\lib\\BussIK.lib (exit 1)  # [win]\n        - if not exist %LIBRARY_PREFIX%\\lib\\BulletCollision.lib (exit 1)  # [win]\n\n  - name: pybullet\n    script: build_py.sh  # [unix]\n    script: bld_py.bat  # [win]\n    requirements:\n      build:\n        - python                                 # [build_platform != target_platform]\n        - cross-python_{{ target_platform }}     # [build_platform != target_platform]\n        - numpy                                  # [build_platform != target_platform]\n        - cmake <4\n        - ninja\n        - {{ compiler(\"c\") }}\n        - {{ stdlib(\"c\") }}\n        - {{ compiler(\"cxx\") }}\n      host:\n        - {{ pin_subpackage(\"bullet-cpp\", exact=True) }}\n        - python\n        - pip\n        - setuptools\n        - wheel\n        - numpy\n        - zlib\n      run:\n        - {{ pin_subpackage(\"bullet-cpp\", exact=True) }}\n        - python\n        - numpy\n    test:\n      imports:\n        - pybullet\n\n  - name: bullet\n    requirements:\n      run:\n        - {{ pin_subpackage(\"bullet-cpp\", exact=True) }}\n        - {{ pin_subpackage(\"pybullet\", exact=True) }}\n        - python\n        - numpy\n    test:\n      imports:\n        - pybullet\n      commands:\n        - test -f ${PREFIX}/include/bullet/BulletSoftBody/btSoftBody.h  # [unix]\n        - if not exist %LIBRARY_PREFIX%\\include\\bullet\\BulletSoftBody\\btSoftBody.h (exit 1)  # [win]\n\nabout:\n  home: http://bulletphysics.org\n  license: Zlib\n  license_file: LICENSE.txt\n  summary: |\n    Bullet Physics SDK real-time collision detection and multi-physics\n    simulation for VR, games, visual effects, robotics, machine learning\n    etc.\n\nextra:\n  recipe-maintainers:\n    - traversaro\n    - wolfv\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"3.25\"\n\nrecipe:\n  name: bullet\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/bulletphysics/bullet3/archive/${{ version }}.tar.gz\n  sha256: c45afb6399e3f68036ddb641c6bf6f552bf332d5ab6be62f7e6c54eda05ceb77\n  patches:\n    - devendorzlib.patch\n    - double-precision-postfix.patch\n    - if: linux\n      then: add_rt.patch\n    - if: ppc64le\n      then:\n        # On ppc64le compilation of Bullet3OpenCL fails (https://github.com/conda-forge/bullet-feedstock/issues/24)\n        - disable-bullet3opencl.patch\n        # The setup.py hardcodes a custom logic to decide the number of compilation threads,\n        # let's override it for memory limited architectures (as of early 2021, travis with ppc64le)\n        - setup-py-single-thread-compilation.patch\n\nbuild:\n  number: 6\n\noutputs:\n  - package:\n      name: bullet-cpp\n    build:\n      script:\n        - if: unix\n          then: build_cpp.sh\n          else: bld_cpp.bat\n    requirements:\n      build:\n        - cmake <4\n        - ninja\n        - ${{ compiler(\"c\") }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler(\"cxx\") }}\n      host:\n        # No python here on purpose: bullet-cpp is independent of the Python version,\n        # the Python bindings are built from source in the pybullet output\n        - if: linux\n          then: libgl-devel\n        - if: unix\n          then:\n            - xorg-libx11\n            - xorg-libxext\n      run:\n        - if: unix\n          then:\n            - xorg-libx11\n            - xorg-libxext\n      run_exports:\n        - ${{ pin_subpackage('bullet-cpp', upper_bound='x.x') }}\n    tests:\n      - package_contents:\n          include:\n            - bullet/BulletSoftBody/btSoftBody.h\n          files:\n            - if: unix\n              then:\n                - lib/pkgconfig/bullet.pc\n                - lib/cmake/bullet/BulletConfig.cmake\n              else:\n                - Library/lib/cmake/bullet/BulletConfig.cmake\n                - Library/lib/BussIK.lib\n                - Library/lib/BulletCollision.lib\n          lib:\n            - if: unix\n              then:\n                - BulletExampleBrowserLib\n                - gwen\n                - BussIK\n                - Bullet3Dynamics\n\n  - package:\n      name: pybullet\n    build:\n      script:\n        - if: unix\n          then: build_py.sh\n          else: bld_py.bat\n    requirements:\n      build:\n        - if: build_platform != target_platform\n          then:\n            - python\n            - cross-python_${{ target_platform }}\n            - numpy\n        - cmake <4\n        - ninja\n        - ${{ compiler(\"c\") }}\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler(\"cxx\") }}\n      host:\n        - ${{ pin_subpackage(\"bullet-cpp\", exact=True) }}\n        - python\n        - pip\n        - setuptools\n        - wheel\n        - numpy\n        - zlib\n      run:\n        - ${{ pin_subpackage(\"bullet-cpp\", exact=True) }}\n        - python\n    tests:\n      - python:\n          imports:\n            - pybullet\n          pip_check: false\n\n  - package:\n      name: bullet\n    requirements:\n      host:\n        # Not a real dependency, it ensures that there is one variant of this output per Python version\n        - python\n        - numpy\n      run:\n        - ${{ pin_subpackage(\"bullet-cpp\", exact=True) }}\n        - ${{ pin_subpackage(\"pybullet\", exact=True) }}\n        - python\n    tests:\n      - python:\n          imports:\n            - pybullet\n          pip_check: false\n\nabout:\n  homepage: http://bulletphysics.org\n  license: Zlib\n  license_file: LICENSE.txt\n  summary: |\n    Bullet Physics SDK real-time collision detection and multi-physics\n    simulation for VR, games, visual effects, robotics, machine learning\n    etc.\n\nextra:\n  recipe-maintainers:\n    - traversaro\n    - wolfv\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1478,6 +4802,11 @@
       "c_compiler_stub",
       "c_stdlib_stub",
       "cmake",
+      "cross-python_linux-aarch64",
+      "cross-python_linux-ppc64le",
+      "cross-python_osx-64",
+      "cross-python_osx-arm64",
+      "cross-python_win-64",
       "cxx_compiler_stub",
       "libgl-devel",
       "ninja",
@@ -1499,8 +4828,15 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
         "cxx_compiler_stub",
-        "ninja"
+        "ninja",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -1509,6 +4845,7 @@
         "bullet-cpp",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "cxx_compiler_stub",
         "libgl-devel",
         "numpy",
@@ -1527,8 +4864,8 @@
         "bullet-cpp",
         "c_compiler_stub",
         "c_stdlib_stub",
+        "cross-python",
         "cxx_compiler_stub",
-        "numpy",
         "pybullet",
         "python",
         "xorg-libx11",
@@ -1537,7 +4874,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "strong_exports": false,
@@ -1548,8 +4887,15 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake <4",
+        "cross-python_linux-aarch64",
+        "cross-python_linux-ppc64le",
+        "cross-python_osx-64",
+        "cross-python_osx-arm64",
+        "cross-python_win-64",
         "cxx_compiler_stub",
-        "ninja"
+        "ninja",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -1571,7 +4917,6 @@
       "__set__": true,
       "elements": [
         "bullet-cpp",
-        "numpy",
         "pybullet",
         "python",
         "xorg-libx11",
@@ -1580,7 +4925,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "url": "https://github.com/bulletphysics/bullet3/archive/3.25.tar.gz",
@@ -1590,13 +4937,20 @@
   },
   "win_64_meta_yaml": {
     "about": {
-      "home": "http://bulletphysics.org",
+      "home": "http://bulletphysics.org/",
       "license": "Zlib",
+      "license_family": "Zlib",
       "license_file": "LICENSE.txt",
-      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc.\n"
+      "summary": "Bullet Physics SDK real-time collision detection and multi-physics\nsimulation for VR, games, visual effects, robotics, machine learning\netc."
     },
     "build": {
-      "number": "5"
+      "number": "6",
+      "run_exports": {
+        "weak": [
+          "bullet-cpp"
+        ]
+      },
+      "script": "bld_cpp.bat"
     },
     "extra": {
       "recipe-maintainers": [
@@ -1607,9 +4961,11 @@
     "outputs": [
       {
         "build": {
-          "run_exports": [
-            "bullet-cpp"
-          ]
+          "run_exports": {
+            "weak": [
+              "bullet-cpp"
+            ]
+          }
         },
         "name": "bullet-cpp",
         "requirements": {
@@ -1620,26 +4976,33 @@
             "c_stdlib_stub",
             "cxx_compiler_stub"
           ],
-          "host": [
-            "python",
-            "numpy"
-          ],
+          "host": [],
           "run": []
         },
-        "script": "bld_cpp.bat",
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_PREFIX%\\include\\bullet\\BulletSoftBody\\btSoftBody.h (exit 1)",
-            "if not exist %LIBRARY_PREFIX%\\lib\\cmake\\bullet\\BulletConfig.cmake (exit 1)",
-            "if not exist %LIBRARY_PREFIX%\\lib\\BussIK.lib (exit 1)",
-            "if not exist %LIBRARY_PREFIX%\\lib\\BulletCollision.lib (exit 1)"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/lib/cmake/bullet/BulletConfig.cmake",
+                "Library/lib/BussIK.lib",
+                "Library/lib/BulletCollision.lib"
+              ],
+              "include": [
+                "bullet/BulletSoftBody/btSoftBody.h"
+              ]
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
         "name": "pybullet",
         "requirements": {
           "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
             "cmake <4",
             "ninja",
             "c_compiler_stub",
@@ -1657,44 +5020,332 @@
           ],
           "run": [
             "bullet-cpp",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "script": "bld_py.bat",
-        "test": {
-          "imports": [
-            "pybullet"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       },
       {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "pybullet",
+        "requirements": {
+          "build": [
+            "python",
+            "cross-python_win-64",
+            "numpy",
+            "cmake <4",
+            "ninja",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub"
+          ],
+          "host": [
+            "bullet-cpp",
+            "python",
+            "pip",
+            "setuptools",
+            "wheel",
+            "numpy",
+            "zlib"
+          ],
+          "run": [
+            "bullet-cpp",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
         "name": "bullet",
         "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
           "run": [
             "bullet-cpp",
             "pybullet",
-            "python",
-            "numpy"
+            "python"
           ]
         },
-        "test": {
-          "commands": [
-            "if not exist %LIBRARY_PREFIX%\\include\\bullet\\BulletSoftBody\\btSoftBody.h (exit 1)"
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
           ],
-          "imports": [
-            "pybullet"
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
           ]
-        }
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
+      },
+      {
+        "build": null,
+        "name": "bullet",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python",
+            "numpy"
+          ],
+          "run": [
+            "bullet-cpp",
+            "pybullet",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "pybullet"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "3.25"
       }
     ],
     "package": {
-      "name": "bullet",
+      "name": "bullet-cpp",
       "version": "3.25"
     },
-    "schema_version": 0,
+    "requirements": {
+      "build": [
+        "cmake <4",
+        "ninja",
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub"
+      ]
+    },
+    "schema_version": 1,
     "source": {
-      "fn": "bullet3-3.25.tar.gz",
       "patches": [
         "devendorzlib.patch",
         "double-precision-postfix.patch"
@@ -1710,8 +5361,11 @@
         "c_compiler_stub",
         "c_stdlib_stub",
         "cmake",
+        "cross-python_win-64",
         "cxx_compiler_stub",
-        "ninja"
+        "ninja",
+        "numpy",
+        "python"
       ]
     },
     "host": {
@@ -1730,14 +5384,15 @@
       "__set__": true,
       "elements": [
         "bullet-cpp",
-        "numpy",
         "pybullet",
         "python"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   }
 }
