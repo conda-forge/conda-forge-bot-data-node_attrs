@@ -1,18 +1,18 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\neigen_abi_devel:\n- 5.0.1\nlibboost_devel:\n- '1.90'\nmetis:\n- 5.1.0\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\nsuitesparse:\n- '7'\ntarget_platform:\n- linux-64\ntbb:\n- '2023'\ntbb_devel:\n- '2023'\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_channel_sourcesconda-forgeconda-forgelabelpython_rcpython3.15.____cp315.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge,conda-forge/label/python_rc\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\neigen_abi_devel:\n- 5.0.1\nlibboost_devel:\n- '1.90'\nmetis:\n- 5.1.0\nnumpy:\n- '2'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.15.* *_cp315\nsuitesparse:\n- '7'\ntarget_platform:\n- linux-64\ntbb:\n- '2023'\ntbb_devel:\n- '2023'\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n- - python\n  - channel_sources\n",
   "ci_support_migrations": {
     "libboost190": {
       "migration_number": 1,
       "migrator_ts": 1776998221.848913
+    },
+    "python315": {
+      "migration_number": 1,
+      "migrator_ts": 1755739490
     }
   },
   "conda-forge.yml": {
-    "build_platform": {
-      "linux_aarch64": "linux_aarch64",
-      "osx_arm64": "osx_arm64"
-    },
     "conda_build": {
       "pkg_format": "2"
     },
@@ -37,8 +37,8 @@
       ]
     }
   },
-  "feedstock_hash": "a798272f3838d782b56dbabd06649b645c969404",
-  "feedstock_hash_ts": 1790690575,
+  "feedstock_hash": "69bd4ef4c6198a6cafb41eccd2d8b98a54a839b3",
+  "feedstock_hash_ts": 1795224177,
   "feedstock_name": "gtsam",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -52,7 +52,7 @@
       "summary": "GTSAM is a library of C++ classes that implement smoothing and mapping (SAM) in robotics and vision"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "gtsam"
@@ -68,6 +68,111 @@
       ]
     },
     "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build",
+              "./build/example"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": [
+              "python regression_test_25.py",
+              "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
+              "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
       {
         "build": {
           "run_exports": {
@@ -529,7 +634,8 @@
         "fix-metis-partition-label-order.patch",
         "fix-link-threads.patch",
         "fix-gtwrap-cmake-config-location.patch",
-        "fix-cephes-libm-absolute-path.patch"
+        "fix-cephes-libm-absolute-path.patch",
+        "fix-python-development-module.patch"
       ],
       "sha256": "4539afcd47d336864deb8399e0a9a5c283a638f605892c942ec46f3541fd4fb0",
       "url": "https://github.com/borglab/gtsam/archive/refs/tags/4.3.0.tar.gz"
@@ -601,7 +707,7 @@
       "summary": "GTSAM is a library of C++ classes that implement smoothing and mapping (SAM) in robotics and vision"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "gtsam"
@@ -617,6 +723,108 @@
       ]
     },
     "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake",
+            "pybind11",
+            "numpy",
+            "python",
+            "cross-python_linux-aarch64"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "script": [
+              "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
+              "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
       {
         "build": {
           "run_exports": {
@@ -1070,7 +1278,8 @@
         "fix-metis-partition-label-order.patch",
         "fix-link-threads.patch",
         "fix-gtwrap-cmake-config-location.patch",
-        "fix-cephes-libm-absolute-path.patch"
+        "fix-cephes-libm-absolute-path.patch",
+        "fix-python-development-module.patch"
       ],
       "sha256": "4539afcd47d336864deb8399e0a9a5c283a638f605892c942ec46f3541fd4fb0",
       "url": "https://github.com/borglab/gtsam/archive/refs/tags/4.3.0.tar.gz"
@@ -1145,7 +1354,7 @@
       "summary": "GTSAM is a library of C++ classes that implement smoothing and mapping (SAM) in robotics and vision"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "gtsam"
@@ -1596,6 +1805,315 @@
             "c_compiler_stub",
             "cxx_compiler_stub",
             "ninja",
+            "cmake"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build",
+              "./build/example"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python"
+              ]
+            },
+            "script": [
+              "python regression_test_25.py",
+              "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
+              "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake",
+            "pybind11",
+            "numpy",
+            "python",
+            "cross-python_linux-aarch64"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "script": [
+              "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
+              "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake",
+            "pybind11",
+            "numpy",
+            "python",
+            "cross-python_linux-aarch64"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "script": [
+              "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
+              "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
             "cmake",
             "pybind11",
             "numpy",
@@ -1906,7 +2424,7 @@
             "pybind11",
             "numpy",
             "python",
-            "cross-python_linux-aarch64"
+            "cross-python_osx-64"
           ],
           "host": [
             "python",
@@ -2800,6 +3318,212 @@
             "script": [
               "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
               "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake",
+            "pybind11",
+            "numpy",
+            "python",
+            "cross-python_osx-arm64"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "script": [
+              "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
+              "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake",
+            "pybind11",
+            "numpy",
+            "python",
+            "cross-python_win-64"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build",
+              "build\\example.exe"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "script": [
+              "if not exist %LIBRARY_INC%\\gtsam\\base\\types.h exit 1",
+              "if not exist %LIBRARY_LIB%\\gtsam.lib exit 1",
+              "if not exist %LIBRARY_BIN%\\gtsam.dll exit 1"
             ]
           }
         ],
@@ -3270,6 +3994,7 @@
         "fix-link-threads.patch",
         "fix-gtwrap-cmake-config-location.patch",
         "fix-cephes-libm-absolute-path.patch",
+        "fix-python-development-module.patch",
         "fix-python-build-win.patch",
         "fix-boost.patch"
       ],
@@ -3289,7 +4014,7 @@
       "summary": "GTSAM is a library of C++ classes that implement smoothing and mapping (SAM) in robotics and vision"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "gtsam"
@@ -3305,6 +4030,108 @@
       ]
     },
     "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake",
+            "pybind11",
+            "numpy",
+            "python",
+            "cross-python_osx-64"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "script": [
+              "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
+              "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
       {
         "build": {
           "run_exports": {
@@ -3758,7 +4585,8 @@
         "fix-metis-partition-label-order.patch",
         "fix-link-threads.patch",
         "fix-gtwrap-cmake-config-location.patch",
-        "fix-cephes-libm-absolute-path.patch"
+        "fix-cephes-libm-absolute-path.patch",
+        "fix-python-development-module.patch"
       ],
       "sha256": "4539afcd47d336864deb8399e0a9a5c283a638f605892c942ec46f3541fd4fb0",
       "url": "https://github.com/borglab/gtsam/archive/refs/tags/4.3.0.tar.gz"
@@ -3833,7 +4661,7 @@
       "summary": "GTSAM is a library of C++ classes that implement smoothing and mapping (SAM) in robotics and vision"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "gtsam"
@@ -3849,6 +4677,108 @@
       ]
     },
     "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake",
+            "pybind11",
+            "numpy",
+            "python",
+            "cross-python_osx-arm64"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "script": [
+              "test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}",
+              "test -f ${PREFIX}/include/gtsam/base/types.h"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
       {
         "build": {
           "run_exports": {
@@ -4302,7 +5232,8 @@
         "fix-metis-partition-label-order.patch",
         "fix-link-threads.patch",
         "fix-gtwrap-cmake-config-location.patch",
-        "fix-cephes-libm-absolute-path.patch"
+        "fix-cephes-libm-absolute-path.patch",
+        "fix-python-development-module.patch"
       ],
       "sha256": "4539afcd47d336864deb8399e0a9a5c283a638f605892c942ec46f3541fd4fb0",
       "url": "https://github.com/borglab/gtsam/archive/refs/tags/4.3.0.tar.gz"
@@ -4383,7 +5314,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/gtsam.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"4.3.0\"\n\npackage:\n  name: gtsam\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/borglab/gtsam/archive/refs/tags/${{ version }}.tar.gz\n  sha256: 4539afcd47d336864deb8399e0a9a5c283a638f605892c942ec46f3541fd4fb0\n  patches:\n    - fix-metis-partition-label-order.patch\n    - fix-link-threads.patch\n    - fix-gtwrap-cmake-config-location.patch\n    - fix-cephes-libm-absolute-path.patch\n    - if: win\n      then:\n        - fix-python-build-win.patch\n        - fix-boost.patch\n\nbuild:\n  number: 1\n\nrequirements:\n  build:\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ninja\n    - cmake\n    - if: build_platform != target_platform\n      then:\n        - pybind11\n        - numpy\n        - python\n        - cross-python_${{ target_platform }}\n  host:\n    - python\n    - libboost-devel\n    - eigen\n    - eigen-abi-devel\n    - geographiclib-cpp\n    - metis\n    - suitesparse\n    - tbb\n    - tbb-devel\n    - pybind11\n    - pyparsing\n    - numpy\n    - setuptools\n    - pip\n  run:\n    - python\n    - pyparsing\n    - numpy\n  run_exports:\n    - ${{ pin_subpackage(\"gtsam\", upper_bound=\"x.x\") }}\n\ntests:\n  - python:\n      imports:\n        - gtsam\n      pip_check: false\n  - requirements:\n      run:\n        - cmake-package-check\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - libboost-devel\n        - eigen\n        - tbb-devel\n        - pybind11\n    script:\n      - cmake-package-check GTSAM gtwrap\n  # cmake-package-check only configures. Build, link and run the upstream CMake\n  # example to catch broken link interfaces exported in GTSAMConfig.cmake and\n  # GTSAM-exports.cmake.\n  - files:\n      source:\n        - cmake/example_cmake_find_gtsam/\n    requirements:\n      run:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - libboost-devel\n        - eigen\n        - tbb-devel\n    script:\n      - cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release\n      - cmake --build build\n      - if: build_platform == target_platform and not win\n        then: ./build/example\n      - if: win\n        then: build\\example.exe\n  - files:\n      recipe:\n        - regression_test_25.py\n    requirements:\n      run:\n        - if: build_platform == target_platform\n          then: python\n    script:\n      - if: build_platform == target_platform\n        then: python regression_test_25.py\n      - if: not win\n        then:\n          - test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}\n          - test -f ${PREFIX}/include/gtsam/base/types.h\n      - if: win\n        then:\n          - if not exist %LIBRARY_INC%\\gtsam\\base\\types.h exit 1\n          - if not exist %LIBRARY_LIB%\\gtsam.lib exit 1\n          - if not exist %LIBRARY_BIN%\\gtsam.dll exit 1\n\nabout:\n  homepage: https://github.com/borglab/gtsam\n  summary: GTSAM is a library of C++ classes that implement smoothing and mapping (SAM) in robotics and vision\n  license: BSD-3-Clause\n  license_file:\n    - LICENSE\n    - LICENSE.BSD\n    - gtsam/3rdparty/cephes/LICENSE.txt\n  repository: https://github.com/borglab/gtsam\n  documentation: https://gtsam.org/\n\nextra:\n  recipe-maintainers:\n    - wolfv\n    - ameysutavani\n    - Tobias-Fischer\n    - traversaro\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"4.3.0\"\n\npackage:\n  name: gtsam\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/borglab/gtsam/archive/refs/tags/${{ version }}.tar.gz\n  sha256: 4539afcd47d336864deb8399e0a9a5c283a638f605892c942ec46f3541fd4fb0\n  patches:\n    - fix-metis-partition-label-order.patch\n    - fix-link-threads.patch\n    - fix-gtwrap-cmake-config-location.patch\n    - fix-cephes-libm-absolute-path.patch\n    - fix-python-development-module.patch\n    - if: win\n      then:\n        - fix-python-build-win.patch\n        - fix-boost.patch\n\nbuild:\n  number: 2\n\nrequirements:\n  build:\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ninja\n    - cmake\n    - if: build_platform != target_platform\n      then:\n        - pybind11\n        - numpy\n        - python\n        - cross-python_${{ target_platform }}\n  host:\n    - python\n    - libboost-devel\n    - eigen\n    - eigen-abi-devel\n    - geographiclib-cpp\n    - metis\n    - suitesparse\n    - tbb\n    - tbb-devel\n    - pybind11\n    - pyparsing\n    - numpy\n    - setuptools\n    - pip\n  run:\n    - python\n    - pyparsing\n    - numpy\n  run_exports:\n    - ${{ pin_subpackage(\"gtsam\", upper_bound=\"x.x\") }}\n\ntests:\n  - python:\n      imports:\n        - gtsam\n      pip_check: false\n  - requirements:\n      run:\n        - cmake-package-check\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - libboost-devel\n        - eigen\n        - tbb-devel\n        - pybind11\n    script:\n      - cmake-package-check GTSAM gtwrap\n  # cmake-package-check only configures. Build, link and run the upstream CMake\n  # example to catch broken link interfaces exported in GTSAMConfig.cmake and\n  # GTSAM-exports.cmake.\n  - files:\n      source:\n        - cmake/example_cmake_find_gtsam/\n    requirements:\n      run:\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - libboost-devel\n        - eigen\n        - tbb-devel\n    script:\n      - cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release\n      - cmake --build build\n      - if: build_platform == target_platform and not win\n        then: ./build/example\n      - if: win\n        then: build\\example.exe\n  - files:\n      recipe:\n        - regression_test_25.py\n    requirements:\n      run:\n        - if: build_platform == target_platform\n          then: python\n    script:\n      - if: build_platform == target_platform\n        then: python regression_test_25.py\n      - if: not win\n        then:\n          - test -f ${PREFIX}/lib/libgtsam${SHLIB_EXT}\n          - test -f ${PREFIX}/include/gtsam/base/types.h\n        else:\n          - if not exist %LIBRARY_INC%\\gtsam\\base\\types.h exit 1\n          - if not exist %LIBRARY_LIB%\\gtsam.lib exit 1\n          - if not exist %LIBRARY_BIN%\\gtsam.dll exit 1\nabout:\n  homepage: https://github.com/borglab/gtsam\n  summary: GTSAM is a library of C++ classes that implement smoothing and mapping (SAM) in robotics and vision\n  license: BSD-3-Clause\n  license_file:\n    - LICENSE\n    - LICENSE.BSD\n    - gtsam/3rdparty/cephes/LICENSE.txt\n  repository: https://github.com/borglab/gtsam\n  documentation: https://gtsam.org/\n\nextra:\n  recipe-maintainers:\n    - wolfv\n    - ameysutavani\n    - Tobias-Fischer\n    - traversaro\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -4561,7 +5492,7 @@
       "summary": "GTSAM is a library of C++ classes that implement smoothing and mapping (SAM) in robotics and vision"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "gtsam"
@@ -4577,6 +5508,110 @@
       ]
     },
     "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "gtsam"
+            ]
+          }
+        },
+        "name": "gtsam",
+        "requirements": {
+          "build": [
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "ninja",
+            "cmake",
+            "pybind11",
+            "numpy",
+            "python",
+            "cross-python_win-64"
+          ],
+          "host": [
+            "python",
+            "libboost-devel",
+            "eigen",
+            "eigen-abi-devel",
+            "geographiclib-cpp",
+            "metis",
+            "suitesparse",
+            "tbb",
+            "tbb-devel",
+            "pybind11",
+            "pyparsing",
+            "numpy",
+            "setuptools",
+            "pip"
+          ],
+          "run": [
+            "python",
+            "pyparsing",
+            "numpy"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "gtsam"
+              ],
+              "pip_check": false
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "cmake-package-check",
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel",
+                "pybind11"
+              ]
+            },
+            "script": "cmake-package-check GTSAM gtwrap"
+          },
+          {
+            "files": {
+              "source": [
+                "cmake/example_cmake_find_gtsam/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub",
+                "cxx_compiler_stub",
+                "cmake",
+                "ninja",
+                "libboost-devel",
+                "eigen",
+                "tbb-devel"
+              ]
+            },
+            "script": [
+              "cmake -S cmake/example_cmake_find_gtsam -B build -GNinja -DCMAKE_BUILD_TYPE=Release",
+              "cmake --build build",
+              "build\\example.exe"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "regression_test_25.py"
+              ]
+            },
+            "script": [
+              "if not exist %LIBRARY_INC%\\gtsam\\base\\types.h exit 1",
+              "if not exist %LIBRARY_LIB%\\gtsam.lib exit 1",
+              "if not exist %LIBRARY_BIN%\\gtsam.dll exit 1"
+            ]
+          }
+        ],
+        "version": "4.3.0"
+      },
       {
         "build": {
           "run_exports": {
@@ -5039,6 +6074,7 @@
         "fix-link-threads.patch",
         "fix-gtwrap-cmake-config-location.patch",
         "fix-cephes-libm-absolute-path.patch",
+        "fix-python-development-module.patch",
         "fix-python-build-win.patch",
         "fix-boost.patch"
       ],
