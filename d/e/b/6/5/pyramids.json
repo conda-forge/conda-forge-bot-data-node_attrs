@@ -13,8 +13,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "122d534f707a5d2fa2136b23a2f268e1f14337c9",
-  "feedstock_hash_ts": 1795063692,
+  "feedstock_hash": "69a05e78aec2836ffb6b7b8ddf1203d74a0d78fa",
+  "feedstock_hash_ts": 1795280645,
   "feedstock_name": "pyramids",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -97,7 +97,7 @@
     ],
     "package": {
       "name": "pyramids",
-      "version": "0.80.0"
+      "version": "0.81.0"
     },
     "requirements": {
       "host": [
@@ -132,8 +132,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "3d73d4f11ff424b6a99d0ebad1a6ef8467963a2b1f719e5197a2f9dca709c544",
-      "url": "https://github.com/serapeum-org/pyramids-core/archive/0.80.0.tar.gz"
+      "sha256": "2e645dbf7c25a0015f4120e2788350577db6c4b5ac49dbcb3fa6729d623f43f6",
+      "url": "https://github.com/serapeum-org/pyramids-core/archive/0.81.0.tar.gz"
     },
     "test": {
       "commands": [
@@ -273,7 +273,7 @@
     ],
     "package": {
       "name": "pyramids",
-      "version": "0.80.0"
+      "version": "0.81.0"
     },
     "requirements": {
       "host": [
@@ -308,8 +308,8 @@
     },
     "schema_version": 0,
     "source": {
-      "sha256": "3d73d4f11ff424b6a99d0ebad1a6ef8467963a2b1f719e5197a2f9dca709c544",
-      "url": "https://github.com/serapeum-org/pyramids-core/archive/0.80.0.tar.gz"
+      "sha256": "2e645dbf7c25a0015f4120e2788350577db6c4b5ac49dbcb3fa6729d623f43f6",
+      "url": "https://github.com/serapeum-org/pyramids-core/archive/0.81.0.tar.gz"
     },
     "test": {
       "commands": [
@@ -340,7 +340,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/pyramids.json"
   },
-  "raw_meta_yaml": "{% set python_min = \"3.11\" %}\n{% set name = \"pyramids\" %}\n{% set version = \"0.80.0\" %}\n\n\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/serapeum-org/pyramids-core/archive/{{ version }}.tar.gz\n  sha256: 3d73d4f11ff424b6a99d0ebad1a6ef8467963a2b1f719e5197a2f9dca709c544\n\nbuild:\n  number: 0\n  noarch: python\n  script: python -m pip install . -vv\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip >=24.3.1\n    - setuptools >=80.0.0\n    - wheel\n  run:\n    - python >={{ python_min }}\n    - cftime >=1.6.4\n    - geopandas >=1.0.0\n    - hpc >=0.1.5\n    - numpy >=2.0.0\n    - pandas >=2.0.0\n    - pyproj >=3.7.0\n    - PyYAML >=6.0.0\n    - Shapely >=2.1.0\n    - scipy >=1.10.0\n    - gdal >=3.10.0,<4\n    - libgdal-netcdf >=3.10.0,<4\n    - libgdal-hdf4 >=3.10.0,<4\n    # libgdal-grib provides the GRIB driver pyramids.grib.open_grib needs.\n    - libgdal-grib >=3.10.0,<4\n    # libgdal-jp2openjpeg ships the JP2OpenJPEG driver (pulls openjpeg) so\n    # GDAL can read JPEG2000-packed GRIB2 (WMO template 5.40 —\n    # NCEP/ECCC/ECMWF).\n    - libgdal-jp2openjpeg >=3.10.0,<4\n    # conda-forge's geopandas-base no longer pulls a vector-IO backend;\n    # pyogrio is required for GeoDataFrame.to_file / read_file on every env.\n    - pyogrio >=0.7\n\n  run_constrained:\n    # viz — `cleopatra-tiles` is the conda-forge equivalent of the PyPI\n    # `cleopatra[tiles]` extra (pulls cleopatra + mercantile + xyzservices + Pillow).\n    - cleopatra-tiles >=0.46.1\n    # parquet — core's eager GeoParquet (read_parquet/to_parquet) via pyarrow.\n    # The lazy compute backend (dask/zarr/kerchunk/h5py) and the lazy vector path\n    # (dask-geopandas) moved to the separate `pyramids-lazy` plugin as of 0.80.0,\n    # so they are no longer pyramids-core extras and are dropped here.\n    - pyarrow >=10.0.0\n    # stac — conda-forge equivalent of the PyPI `stac` extra. The PyPI extra also\n    # pins stac-asset>=0.4.7, which is not yet packaged on conda-forge; add it here\n    # once it lands on the channel.\n    - pystac-client >=0.8.4\n\ntest:\n  requires:\n    - python {{ python_min }}\n  imports:\n    - pyramids\n  commands:\n    # verify the `pyramids` console entry point (pyramids.cli:main) is installed and runnable\n    - pyramids --help\n\noutputs:\n  - name: {{ name }}\n\n  - name: {{ name }}-viz\n    build:\n      noarch: python\n    requirements:\n      run:\n        - {{ pin_subpackage(name, exact=True) }}\n        # conda-forge equivalent of the PyPI `cleopatra[tiles]` extra\n        # (cleopatra + mercantile + xyzservices + Pillow).\n        - cleopatra-tiles >=0.46.1\n    test:\n      imports:\n        - pyramids\n\n  - name: {{ name }}-parquet\n    build:\n      noarch: python\n    requirements:\n      run:\n        - {{ pin_subpackage(name, exact=True) }}\n        # conda-forge equivalent of the PyPI `parquet` extra (pyarrow only). The\n        # lazy vector path (dask-geopandas) moved to the `pyramids-lazy` plugin.\n        - pyarrow >=10.0.0\n    test:\n      imports:\n        - pyramids\n\n  - name: {{ name }}-stac\n    build:\n      noarch: python\n    requirements:\n      run:\n        - {{ pin_subpackage(name, exact=True) }}\n        # conda-forge equivalent of the PyPI `stac` extra. stac-asset>=0.4.7 (also\n        # part of the PyPI extra) is not yet on conda-forge; add it once available.\n        - pystac-client >=0.8.4\n    test:\n      imports:\n        - pyramids\n\nabout:\n  home: https://github.com/serapeum-org/pyramids-core\n  license: GPL-3.0-only\n  license_family: GPL\n  license_file: LICENSE.md\n  summary: GIS utility package\n  description: |\n    GIS utility package.\n  dev_url: https://github.com/serapeum-org/pyramids-core\n  doc_url: https://serapeum-org.github.io/pyramids-core\n  doc_source_url: https://github.com/serapeum-org/pyramids-core/blob/main/README.md\n\nextra:\n  recipe-maintainers:\n    - MAfarrag\n",
+  "raw_meta_yaml": "{% set python_min = \"3.11\" %}\n{% set name = \"pyramids\" %}\n{% set version = \"0.81.0\" %}\n\n\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/serapeum-org/pyramids-core/archive/{{ version }}.tar.gz\n  sha256: 2e645dbf7c25a0015f4120e2788350577db6c4b5ac49dbcb3fa6729d623f43f6\n\nbuild:\n  number: 0\n  noarch: python\n  script: python -m pip install . -vv\n\nrequirements:\n  host:\n    - python {{ python_min }}\n    - pip >=24.3.1\n    - setuptools >=80.0.0\n    - wheel\n  run:\n    - python >={{ python_min }}\n    - cftime >=1.6.4\n    - geopandas >=1.0.0\n    - hpc >=0.1.5\n    - numpy >=2.0.0\n    - pandas >=2.0.0\n    - pyproj >=3.7.0\n    - PyYAML >=6.0.0\n    - Shapely >=2.1.0\n    - scipy >=1.10.0\n    - gdal >=3.10.0,<4\n    - libgdal-netcdf >=3.10.0,<4\n    - libgdal-hdf4 >=3.10.0,<4\n    # libgdal-grib provides the GRIB driver pyramids.grib.open_grib needs.\n    - libgdal-grib >=3.10.0,<4\n    # libgdal-jp2openjpeg ships the JP2OpenJPEG driver (pulls openjpeg) so\n    # GDAL can read JPEG2000-packed GRIB2 (WMO template 5.40 —\n    # NCEP/ECCC/ECMWF).\n    - libgdal-jp2openjpeg >=3.10.0,<4\n    # conda-forge's geopandas-base no longer pulls a vector-IO backend;\n    # pyogrio is required for GeoDataFrame.to_file / read_file on every env.\n    - pyogrio >=0.7\n\n  run_constrained:\n    # viz — `cleopatra-tiles` is the conda-forge equivalent of the PyPI\n    # `cleopatra[tiles]` extra (pulls cleopatra + mercantile + xyzservices + Pillow).\n    - cleopatra-tiles >=0.46.1\n    # parquet — core's eager GeoParquet (read_parquet/to_parquet) via pyarrow.\n    # The lazy compute backend (dask/zarr/kerchunk/h5py) and the lazy vector path\n    # (dask-geopandas) moved to the separate `pyramids-lazy` plugin as of 0.80.0,\n    # so they are no longer pyramids-core extras and are dropped here.\n    - pyarrow >=10.0.0\n    # stac — conda-forge equivalent of the PyPI `stac` extra. The PyPI extra also\n    # pins stac-asset>=0.4.7, which is not yet packaged on conda-forge; add it here\n    # once it lands on the channel.\n    - pystac-client >=0.8.4\n\ntest:\n  requires:\n    - python {{ python_min }}\n  imports:\n    - pyramids\n  commands:\n    # verify the `pyramids` console entry point (pyramids.cli:main) is installed and runnable\n    - pyramids --help\n\noutputs:\n  - name: {{ name }}\n\n  - name: {{ name }}-viz\n    build:\n      noarch: python\n    requirements:\n      run:\n        - {{ pin_subpackage(name, exact=True) }}\n        # conda-forge equivalent of the PyPI `cleopatra[tiles]` extra\n        # (cleopatra + mercantile + xyzservices + Pillow).\n        - cleopatra-tiles >=0.46.1\n    test:\n      imports:\n        - pyramids\n\n  - name: {{ name }}-parquet\n    build:\n      noarch: python\n    requirements:\n      run:\n        - {{ pin_subpackage(name, exact=True) }}\n        # conda-forge equivalent of the PyPI `parquet` extra (pyarrow only). The\n        # lazy vector path (dask-geopandas) moved to the `pyramids-lazy` plugin.\n        - pyarrow >=10.0.0\n    test:\n      imports:\n        - pyramids\n\n  - name: {{ name }}-stac\n    build:\n      noarch: python\n    requirements:\n      run:\n        - {{ pin_subpackage(name, exact=True) }}\n        # conda-forge equivalent of the PyPI `stac` extra. stac-asset>=0.4.7 (also\n        # part of the PyPI extra) is not yet on conda-forge; add it once available.\n        - pystac-client >=0.8.4\n    test:\n      imports:\n        - pyramids\n\nabout:\n  home: https://github.com/serapeum-org/pyramids-core\n  license: GPL-3.0-only\n  license_family: GPL\n  license_file: LICENSE.md\n  summary: GIS utility package\n  description: |\n    GIS utility package.\n  dev_url: https://github.com/serapeum-org/pyramids-core\n  doc_url: https://serapeum-org.github.io/pyramids-core\n  doc_source_url: https://github.com/serapeum-org/pyramids-core/blob/main/README.md\n\nextra:\n  recipe-maintainers:\n    - MAfarrag\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -462,8 +462,8 @@
       ]
     }
   },
-  "url": "https://github.com/serapeum-org/pyramids-core/archive/0.80.0.tar.gz",
-  "version": "0.80.0",
+  "url": "https://github.com/serapeum-org/pyramids-core/archive/0.81.0.tar.gz",
+  "version": "0.81.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/pyramids.json"
   }
