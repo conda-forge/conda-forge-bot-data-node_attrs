@@ -1,87 +1,75 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_openssl1.1.1python3.10.____cpython.yaml": "attr:\n- '2.5'\nc_compiler:\n- gcc\nc_compiler_version:\n- '10'\ncdt_name:\n- cos6\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '10'\ndocker_image:\n- quay.io/condaforge/linux-anvil-cos7-x86_64\nexpat:\n- '2'\nglib:\n- '2'\nlibcurl:\n- '7'\nlibxml2:\n- '2.9'\nopenssl:\n- 1.1.1\npin_run_as_build:\n  libcurl:\n    max_pin: x\n  libxml2:\n    max_pin: x.x\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.10.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzstd:\n- '1.5'\n",
+  "ci_support_linux_64_python3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nattr:\n- '2.5'\nc_compiler:\n- gcc\nc_compiler_version:\n- 13\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nexpat:\n- '2'\nglib:\n- '2'\ngpgme:\n- '2.3'\nlibcurl:\n- '8'\nlibxml2_devel:\n- '2.15'\nopenssl:\n- '3.5'\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
   "ci_support_migrations": {
-    "attr25": {
+    "gpgme23": {
       "migration_number": 1,
-      "migrator_ts": 1649211998
-    },
-    "openssl3": {
-      "migration_number": 1,
-      "migrator_ts": 1631932209.13688
-    },
-    "python310": {
-      "migration_number": 1,
-      "migrator_ts": 1634137107
+      "migrator_ts": 1795198577.9719408
     }
   },
   "conda-forge.yml": {
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "f2ff76ead66e1d3c481e3013fbb41954af3c3ae2",
-  "feedstock_hash_ts": 1776822760,
+  "feedstock_hash": "c84e5c783a66e4723f0b94b22cede28e7ded68e8",
+  "feedstock_hash_ts": 1795247013,
   "feedstock_name": "librepo",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
       "doc_url": "https://rpm-software-management.github.io/librepo",
       "home": "https://github.com/rpm-software-management/librepo",
-      "license": "LGPL-2.1",
-      "license_family": "GPL",
+      "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "A library providing C and Python (libcURL like) API for downloading repository metadata and packages"
     },
     "build": {
-      "number": "7",
-      "run_exports": [
-        "librepo"
-      ]
+      "number": "8",
+      "run_exports": {
+        "weak": [
+          "librepo"
+        ]
+      },
+      "script": []
     },
     "extra": {
+      "feedstock-name": "librepo",
       "recipe-maintainers": [
         "wolfv",
         "JohanMabille",
-        "SylvainCorlay"
+        "SylvainCorlay",
+        "h-vetinari"
       ]
     },
     "outputs": [
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librepo"
+            ]
+          }
+        },
         "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
-        "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -90,50 +78,44 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg"
           ],
-          "run": [
-            "librepo",
-            "python"
-          ]
+          "run": []
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/librepo.pc"
+              ],
+              "include": [
+                "librepo/librepo.h",
+                "librepo/checksum.h"
+              ],
+              "lib": [
+                "librepo"
+              ]
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
-        "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
+        "build": null,
         "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -142,50 +124,48 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg",
+            "librepo"
           ],
           "run": [
             "librepo",
             "python"
           ]
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "librepo"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librepo"
+            ]
+          }
+        },
         "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
-        "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -194,50 +174,44 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg"
           ],
-          "run": [
-            "librepo",
-            "python"
-          ]
+          "run": []
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/librepo.pc"
+              ],
+              "include": [
+                "librepo/librepo.h",
+                "librepo/checksum.h"
+              ],
+              "lib": [
+                "librepo"
+              ]
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
-        "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
+        "build": null,
         "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -246,50 +220,48 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg",
+            "librepo"
           ],
           "run": [
             "librepo",
             "python"
           ]
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "librepo"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librepo"
+            ]
+          }
+        },
         "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
-        "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -298,50 +270,44 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg"
           ],
-          "run": [
-            "librepo",
-            "python"
-          ]
+          "run": []
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/librepo.pc"
+              ],
+              "include": [
+                "librepo/librepo.h",
+                "librepo/checksum.h"
+              ],
+              "lib": [
+                "librepo"
+              ]
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
-        "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
+        "build": null,
         "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -350,50 +316,48 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg",
+            "librepo"
           ],
           "run": [
             "librepo",
             "python"
           ]
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "librepo"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librepo"
+            ]
+          }
+        },
         "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
-        "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -402,50 +366,44 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg"
           ],
-          "run": [
-            "librepo",
-            "python"
-          ]
+          "run": []
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/librepo.pc"
+              ],
+              "include": [
+                "librepo/librepo.h",
+                "librepo/checksum.h"
+              ],
+              "lib": [
+                "librepo"
+              ]
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
-        "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
+        "build": null,
         "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -454,20 +412,29 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg",
+            "librepo"
           ],
           "run": [
             "librepo",
             "python"
           ]
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "librepo"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "1.12.1"
       }
     ],
     "package": {
@@ -477,9 +444,10 @@
     "requirements": {
       "build": [
         "c_compiler_stub",
-        "cmake",
+        "c_stdlib_stub",
+        "cmake <4",
         "make",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "libcurl",
@@ -490,13 +458,20 @@
         "glib",
         "check",
         "zchunk",
-        "libxml2",
+        "libxml2-devel",
+        "zlib",
         "zstd",
-        "python"
+        "python",
+        "gnupg"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
+      "patches": [
+        "patches/0001-use-sysconfig-instead-of-distutils.patch",
+        "patches/0002-find-gpgme-via-pkg-config.patch",
+        "patches/0003-drop-ntlm-test-assertion.patch"
+      ],
       "sha256": "b78113f3aeb0d562b034dbeb926609019b7bed27e05c9ab5a584a9938de8da9f",
       "url": "https://github.com/rpm-software-management/librepo/archive/1.12.1.tar.gz"
     }
@@ -506,10 +481,10 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
-        "cxx_compiler_stub",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -519,13 +494,15 @@
         "check",
         "expat",
         "glib",
+        "gnupg",
         "gpgme",
         "libcurl",
         "librepo",
-        "libxml2",
+        "libxml2-devel",
         "openssl",
         "python",
         "zchunk",
+        "zlib",
         "zstd"
       ]
     },
@@ -538,61 +515,57 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "meta_yaml": {
     "about": {
       "doc_url": "https://rpm-software-management.github.io/librepo",
       "home": "https://github.com/rpm-software-management/librepo",
-      "license": "LGPL-2.1",
-      "license_family": "GPL",
+      "license": "LGPL-2.1-or-later",
+      "license_family": "LGPL-2.1-or-later",
       "license_file": "COPYING",
       "summary": "A library providing C and Python (libcURL like) API for downloading repository metadata and packages"
     },
     "build": {
-      "number": "7",
-      "run_exports": [
-        "librepo"
-      ]
+      "number": "8",
+      "run_exports": {
+        "weak": [
+          "librepo"
+        ]
+      },
+      "script": []
     },
     "extra": {
+      "feedstock-name": "librepo",
       "recipe-maintainers": [
         "wolfv",
         "JohanMabille",
-        "SylvainCorlay"
+        "SylvainCorlay",
+        "h-vetinari"
       ]
     },
     "outputs": [
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librepo"
+            ]
+          }
+        },
         "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
-        "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -601,50 +574,44 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg"
           ],
-          "run": [
-            "librepo",
-            "python"
-          ]
+          "run": []
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/librepo.pc"
+              ],
+              "include": [
+                "librepo/librepo.h",
+                "librepo/checksum.h"
+              ],
+              "lib": [
+                "librepo"
+              ]
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
-        "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
+        "build": null,
         "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -653,50 +620,48 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg",
+            "librepo"
           ],
           "run": [
             "librepo",
             "python"
           ]
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "librepo"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librepo"
+            ]
+          }
+        },
         "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
-        "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -705,50 +670,44 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg"
           ],
-          "run": [
-            "librepo",
-            "python"
-          ]
+          "run": []
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/librepo.pc"
+              ],
+              "include": [
+                "librepo/librepo.h",
+                "librepo/checksum.h"
+              ],
+              "lib": [
+                "librepo"
+              ]
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
-        "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
+        "build": null,
         "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -757,50 +716,48 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg",
+            "librepo"
           ],
           "run": [
             "librepo",
             "python"
           ]
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "librepo"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librepo"
+            ]
+          }
+        },
         "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
-        "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -809,50 +766,44 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg"
           ],
-          "run": [
-            "librepo",
-            "python"
-          ]
+          "run": []
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/librepo.pc"
+              ],
+              "include": [
+                "librepo/librepo.h",
+                "librepo/checksum.h"
+              ],
+              "lib": [
+                "librepo"
+              ]
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
-        "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
+        "build": null,
         "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -861,50 +812,48 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg",
+            "librepo"
           ],
           "run": [
             "librepo",
             "python"
           ]
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "librepo"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
+        "build": {
+          "run_exports": {
+            "weak": [
+              "librepo"
+            ]
+          }
+        },
         "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
-        "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -913,50 +862,44 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg"
           ],
-          "run": [
-            "librepo",
-            "python"
-          ]
+          "run": []
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/pkgconfig/librepo.pc"
+              ],
+              "include": [
+                "librepo/librepo.h",
+                "librepo/checksum.h"
+              ],
+              "lib": [
+                "librepo"
+              ]
+            }
+          }
+        ],
+        "version": "1.12.1"
       },
       {
-        "files": [
-          "lib/librepo*",
-          "lib/pkgconfig/librepo*",
-          "include/librepo/*"
-        ],
-        "name": "librepo",
-        "test": {
-          "commands": [
-            "test -d ${PREFIX}/include/librepo",
-            "test -f ${PREFIX}/include/librepo/librepo.h",
-            "test -f ${PREFIX}/include/librepo/checksum.h",
-            "test -f ${PREFIX}/lib/librepo${SHLIB_EXT}",
-            "test -f ${PREFIX}/lib/pkgconfig/librepo.pc"
-          ]
-        }
-      },
-      {
-        "files": [
-          "lib/python*/site-packages/librepo/**"
-        ],
+        "build": null,
         "name": "py-librepo",
         "requirements": {
           "build": [
-            "cmake",
-            "cxx_compiler_stub"
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake <4",
+            "make",
+            "pkgconf"
           ],
           "host": [
-            "librepo",
             "libcurl",
             "gpgme",
             "attr",
@@ -965,20 +908,29 @@
             "glib",
             "check",
             "zchunk",
-            "libxml2",
+            "libxml2-devel",
+            "zlib",
             "zstd",
-            "python"
+            "python",
+            "gnupg",
+            "librepo"
           ],
           "run": [
             "librepo",
             "python"
           ]
         },
-        "test": {
-          "imports": [
-            "librepo"
-          ]
-        }
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "librepo"
+              ],
+              "pip_check": false
+            }
+          }
+        ],
+        "version": "1.12.1"
       }
     ],
     "package": {
@@ -988,9 +940,10 @@
     "requirements": {
       "build": [
         "c_compiler_stub",
-        "cmake",
+        "c_stdlib_stub",
+        "cmake <4",
         "make",
-        "pkg-config"
+        "pkgconf"
       ],
       "host": [
         "libcurl",
@@ -1001,13 +954,20 @@
         "glib",
         "check",
         "zchunk",
-        "libxml2",
+        "libxml2-devel",
+        "zlib",
         "zstd",
-        "python"
+        "python",
+        "gnupg"
       ]
     },
-    "schema_version": 0,
+    "schema_version": 1,
     "source": {
+      "patches": [
+        "patches/0001-use-sysconfig-instead-of-distutils.patch",
+        "patches/0002-find-gpgme-via-pkg-config.patch",
+        "patches/0003-drop-ntlm-test-assertion.patch"
+      ],
       "sha256": "b78113f3aeb0d562b034dbeb926609019b7bed27e05c9ab5a584a9938de8da9f",
       "url": "https://github.com/rpm-software-management/librepo/archive/1.12.1.tar.gz"
     }
@@ -1027,26 +987,28 @@
   "pr_info": {
     "__lazy_json__": "pr_info/librepo.json"
   },
-  "raw_meta_yaml": "{% set name = \"librepo\" %}\n{% set version = \"1.12.1\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nsource:\n  url: https://github.com/rpm-software-management/librepo/archive/{{ version }}.tar.gz\n  sha256: b78113f3aeb0d562b034dbeb926609019b7bed27e05c9ab5a584a9938de8da9f\n\nbuild:\n  number: 7\n  skip: true  # [win or osx]\n  run_exports:\n    - {{ pin_subpackage(name, max_pin='x.x' ) }}\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - cmake\n    - make  # [unix]\n    - pkg-config\n  host:\n    - libcurl\n    - gpgme\n    - attr\n    - openssl\n    - expat\n    - glib\n    - check\n    - zchunk  # [linux]\n    - libxml2\n    - zstd\n    - python\n\noutputs:\n  - name: librepo\n    files:\n      - lib/librepo*\n      - lib/pkgconfig/librepo*\n      - include/librepo/*\n    test:\n      commands:\n        - test -d ${PREFIX}/include/librepo  # [unix]\n        - test -f ${PREFIX}/include/librepo/librepo.h  # [unix]\n        - test -f ${PREFIX}/include/librepo/checksum.h  # [unix]\n        - test -f ${PREFIX}/lib/librepo${SHLIB_EXT}  # [unix]\n        - test -f ${PREFIX}/lib/pkgconfig/librepo.pc  # [unix]\n\n  - name: py-librepo\n    files:\n      - lib/python*/site-packages/librepo/**\n    requirements:\n      build:\n        - cmake\n        - {{ compiler('cxx') }}\n      host:\n        - {{ pin_subpackage('librepo', exact=True) }}\n        - libcurl\n        - gpgme\n        - attr\n        - openssl\n        - expat\n        - glib\n        - check\n        - zchunk\n        - libxml2\n        - zstd\n        - python\n      run:\n        - {{ pin_subpackage('librepo', exact=True) }}\n        - python\n    test:\n      imports:\n        - librepo\n\nabout:\n  home: https://github.com/rpm-software-management/librepo\n  license: LGPL-2.1\n  license_family: GPL\n  license_file: COPYING\n  summary: A library providing C and Python (libcURL like) API for downloading repository metadata and packages\n  doc_url: https://rpm-software-management.github.io/librepo\n\nextra:\n  recipe-maintainers:\n    - wolfv\n    - JohanMabille\n    - SylvainCorlay\n",
+  "raw_meta_yaml": "context:\n  version: \"1.12.1\"\n\nrecipe:\n  name: librepo-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/rpm-software-management/librepo/archive/${{ version }}.tar.gz\n  sha256: b78113f3aeb0d562b034dbeb926609019b7bed27e05c9ab5a584a9938de8da9f\n  patches:\n    - patches/0001-use-sysconfig-instead-of-distutils.patch\n    - patches/0002-find-gpgme-via-pkg-config.patch\n    - patches/0003-drop-ntlm-test-assertion.patch\n\nbuild:\n  number: 8\n  skip: not linux\n\noutputs:\n  - staging:\n      name: librepo-build\n    requirements:\n      build:\n        - ${{ compiler('c') }}\n        - ${{ stdlib('c') }}\n        - cmake <4\n        - make\n        - pkgconf\n      host:\n        - libcurl\n        - gpgme\n        - attr\n        - openssl\n        - expat\n        - glib\n        - check\n        - zchunk\n        - libxml2-devel\n        - zlib\n        - zstd\n        - python\n        # gpg binary needed by the C test suite (gpgme shells out to it)\n        - gnupg\n    build:\n      script: build.sh\n\n  - package:\n      name: librepo\n    inherit: librepo-build\n    build:\n      files:\n        - lib/librepo*\n        - lib/pkgconfig/librepo*\n        - include/librepo/\n    requirements:\n      run_exports:\n        - ${{ pin_subpackage('librepo', upper_bound='x.x') }}\n      ignore_run_exports:\n        by_name:\n          - python_abi\n          - gnupg\n          - libattr\n          - libexpat\n          - libzlib\n          - zstd\n    tests:\n      - package_contents:\n          include:\n            - librepo/librepo.h\n            - librepo/checksum.h\n          lib:\n            - librepo\n          files:\n            - lib/pkgconfig/librepo.pc\n\n  - package:\n      name: py-librepo\n    inherit: librepo-build\n    build:\n      files:\n        - lib/python*/site-packages/librepo/\n    requirements:\n      host:\n        - ${{ pin_subpackage('librepo', exact=True) }}\n        - python\n      run:\n        - ${{ pin_subpackage('librepo', exact=True) }}\n        - python\n      ignore_run_exports:\n        by_name:\n          - gnupg\n          - libattr\n          - libexpat\n          - libzlib\n          - zstd\n    tests:\n      - python:\n          imports:\n            - librepo\n          pip_check: false\n\nabout:\n  homepage: https://github.com/rpm-software-management/librepo\n  license: LGPL-2.1-or-later\n  license_file: COPYING\n  summary: A library providing C and Python (libcURL like) API for downloading repository metadata and packages\n  documentation: https://rpm-software-management.github.io/librepo\n\nextra:\n  feedstock-name: librepo\n  recipe-maintainers:\n    - wolfv\n    - JohanMabille\n    - SylvainCorlay\n    - h-vetinari\n",
   "req": {
     "__set__": true,
     "elements": [
       "attr",
       "c_compiler_stub",
+      "c_stdlib_stub",
       "check",
       "cmake",
-      "cxx_compiler_stub",
       "expat",
       "glib",
+      "gnupg",
       "gpgme",
       "libcurl",
       "librepo",
-      "libxml2",
+      "libxml2-devel",
       "make",
       "openssl",
-      "pkg-config",
+      "pkgconf",
       "python",
       "zchunk",
+      "zlib",
       "zstd"
     ]
   },
@@ -1055,10 +1017,10 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
-        "cxx_compiler_stub",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -1066,17 +1028,19 @@
       "elements": [
         "attr",
         "c_compiler_stub",
+        "c_stdlib_stub",
         "check",
-        "cxx_compiler_stub",
         "expat",
         "glib",
+        "gnupg",
         "gpgme",
         "libcurl",
         "librepo",
-        "libxml2",
+        "libxml2-devel",
         "openssl",
         "python",
         "zchunk",
+        "zlib",
         "zstd"
       ]
     },
@@ -1084,14 +1048,16 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "cxx_compiler_stub",
+        "c_stdlib_stub",
         "librepo",
         "python"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "strong_exports": false,
@@ -1100,10 +1066,10 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "cmake",
-        "cxx_compiler_stub",
+        "c_stdlib_stub",
+        "cmake <4",
         "make",
-        "pkg-config"
+        "pkgconf"
       ]
     },
     "host": {
@@ -1113,13 +1079,15 @@
         "check",
         "expat",
         "glib",
+        "gnupg",
         "gpgme",
         "libcurl",
         "librepo",
-        "libxml2",
+        "libxml2-devel",
         "openssl",
         "python",
         "zchunk",
+        "zlib",
         "zstd"
       ]
     },
@@ -1132,7 +1100,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "pip"
+      ]
     }
   },
   "url": "https://github.com/rpm-software-management/librepo/archive/1.12.1.tar.gz",
