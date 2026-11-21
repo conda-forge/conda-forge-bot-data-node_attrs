@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_is_abi3falsepython3.14.____cp314t.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - is_abi3\n",
+  "ci_support_linux_64_is_abi3false.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\n- false\nis_python_min:\n- false\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\n- 3.15.* *_cp315t\npython_min:\n- '3.11'\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzip_keys:\n- - python\n  - is_python_min\n  - is_abi3\n",
   "ci_support_migrations": {
     "python314t": {
       "migration_number": 1,
@@ -10,6 +10,10 @@
     "python315": {
       "migration_number": 1,
       "migrator_ts": 1755739490
+    },
+    "python315t": {
+      "migration_number": 1,
+      "migrator_ts": 1755739500
     }
   },
   "conda-forge.yml": {
@@ -17,6 +21,7 @@
       "automerge": true
     },
     "build_platform": {
+      "linux_ppc64le": "linux_64",
       "linux_riscv64": "linux_64"
     },
     "conda_build": {
@@ -35,8 +40,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "bc11f5e53ec0e633782b414b71678289c3442b10",
-  "feedstock_hash_ts": 1794939109,
+  "feedstock_hash": "9b27fc80fb52a55cd355c4e9ea19c5a01172ec60",
+  "feedstock_hash_ts": 1795296315,
   "feedstock_name": "watchfiles",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -50,7 +55,7 @@
       "summary": "Simple, modern and high performance file watching and code reload in python."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "watchfiles = watchfiles.cli:cli"
@@ -59,13 +64,13 @@
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
           "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
           "PYTHONIOENCODING": "utf-8",
@@ -104,8 +109,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -113,6 +118,9 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -135,74 +143,6 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
-            ]
-          }
-        ],
-        "version": "1.3.0"
-      },
-      {
-        "build": {
-          "python": {
-            "entry_points": [
-              "watchfiles = watchfiles.cli:cli"
-            ],
-            "version_independent": true
-          }
-        },
-        "name": "watchfiles",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "rust_compiler_stub",
-            "c_stdlib_stub",
-            "cargo-auditable",
-            "cargo-bundle-licenses"
-          ],
-          "host": [
-            "maturin >=0.14.16,<2",
-            "pip",
-            "python",
-            "python 3.11.*",
-            "python-abi3"
-          ],
-          "run": [
-            "python",
-            "anyio >=3.0.0",
-            "python >=3.11",
-            "python-abi3"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "watchfiles"
-              ]
-            }
-          },
-          {
-            "files": {
-              "source": [
-                "pyproject.toml",
-                "tests/"
-              ]
-            },
-            "requirements": {
-              "run": [
-                "dirty-equals >=0.8.0",
-                "pytest >=7.4.4,<9.1",
-                "pytest-mock >=3.14.0",
-                "pytest-pretty >=1.2.0",
-                "pytest-timeout >=2.3.1",
-                "python 3.11.*",
-                "abi3audit"
-              ]
-            },
-            "script": [
-              "watchfiles -h",
-              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
             ]
           }
         ],
@@ -231,8 +171,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -240,6 +180,9 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -288,12 +231,203 @@
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1",
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ],
+            "version_independent": true
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
             "python 3.14.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.14",
             "python-abi3"
@@ -304,6 +438,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.14.*"
               ]
             }
           },
@@ -328,8 +466,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -357,8 +494,8 @@
         "python 3.14.*"
       ],
       "run": [
-        "python",
         "anyio >=3.0.0",
+        "python",
         "python >=3.11",
         "python-abi3",
         "python >=3.14"
@@ -423,7 +560,7 @@
       "summary": "Simple, modern and high performance file watching and code reload in python."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "watchfiles = watchfiles.cli:cli"
@@ -432,13 +569,13 @@
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
           "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
           "PYTHONIOENCODING": "utf-8",
@@ -465,13 +602,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_linux-aarch64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -479,8 +616,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -488,6 +625,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -527,23 +731,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_linux-aarch64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -554,6 +756,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -578,8 +784,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -592,13 +797,13 @@
     },
     "requirements": {
       "build": [
-        "python",
-        "cross-python_linux-aarch64",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_linux-aarch64"
       ],
       "host": [
         "maturin >=0.14.16,<2",
@@ -608,8 +813,8 @@
         "python-abi3"
       ],
       "run": [
-        "python",
         "anyio >=3.0.0",
+        "python",
         "python >=3.11",
         "python-abi3"
       ]
@@ -675,7 +880,7 @@
       "summary": "Simple, modern and high performance file watching and code reload in python."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "watchfiles = watchfiles.cli:cli"
@@ -684,13 +889,13 @@
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
           "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
           "PYTHONIOENCODING": "utf-8",
@@ -717,13 +922,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_linux-ppc64le",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-ppc64le"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -731,8 +936,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -740,6 +945,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-ppc64le"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -779,23 +1051,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_linux-ppc64le",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-ppc64le"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -806,6 +1076,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -830,8 +1104,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -844,13 +1117,13 @@
     },
     "requirements": {
       "build": [
-        "python",
-        "cross-python_linux-ppc64le",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_linux-ppc64le"
       ],
       "host": [
         "maturin >=0.14.16,<2",
@@ -860,8 +1133,8 @@
         "python-abi3"
       ],
       "run": [
-        "python",
         "anyio >=3.0.0",
+        "python",
         "python >=3.11",
         "python-abi3"
       ]
@@ -927,7 +1200,7 @@
       "summary": "Simple, modern and high performance file watching and code reload in python."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "watchfiles = watchfiles.cli:cli"
@@ -935,11 +1208,11 @@
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
           "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml",
-          "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\""
+          "copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\""
         ],
         "env": {
           "CARGO": "cargo-auditable-wrapper.bat",
@@ -981,8 +1254,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -990,6 +1263,9 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1012,74 +1288,6 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
-            ]
-          }
-        ],
-        "version": "1.3.0"
-      },
-      {
-        "build": {
-          "python": {
-            "entry_points": [
-              "watchfiles = watchfiles.cli:cli"
-            ],
-            "version_independent": true
-          }
-        },
-        "name": "watchfiles",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "rust_compiler_stub",
-            "c_stdlib_stub",
-            "cargo-auditable",
-            "cargo-bundle-licenses"
-          ],
-          "host": [
-            "maturin >=0.14.16,<2",
-            "pip",
-            "python",
-            "python 3.11.*",
-            "python-abi3"
-          ],
-          "run": [
-            "python",
-            "anyio >=3.0.0",
-            "python >=3.11",
-            "python-abi3"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "watchfiles"
-              ]
-            }
-          },
-          {
-            "files": {
-              "source": [
-                "pyproject.toml",
-                "tests/"
-              ]
-            },
-            "requirements": {
-              "run": [
-                "dirty-equals >=0.8.0",
-                "pytest >=7.4.4,<9.1",
-                "pytest-mock >=3.14.0",
-                "pytest-pretty >=1.2.0",
-                "pytest-timeout >=2.3.1",
-                "python 3.11.*",
-                "abi3audit"
-              ]
-            },
-            "script": [
-              "watchfiles -h",
-              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
             ]
           }
         ],
@@ -1108,8 +1316,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -1117,6 +1325,9 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1165,12 +1376,203 @@
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
+            "python 3.11.*",
+            "python-abi3"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python >=3.11",
+            "python-abi3"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1",
+                "python 3.11.*",
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ],
+            "version_independent": true
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
             "python 3.14.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.14",
             "python-abi3"
@@ -1181,6 +1583,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.14.*"
               ]
             }
           },
@@ -1205,8 +1611,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -1223,13 +1628,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_linux-aarch64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -1237,8 +1642,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -1246,6 +1651,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1285,23 +1757,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_linux-aarch64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-aarch64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -1312,6 +1782,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -1336,8 +1810,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -1354,13 +1827,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_linux-ppc64le",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-ppc64le"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -1368,8 +1841,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -1377,6 +1850,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-ppc64le"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1416,23 +1956,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_linux-ppc64le",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_linux-ppc64le"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -1443,6 +1981,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -1467,8 +2009,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -1485,13 +2026,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_osx-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -1499,8 +2040,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -1508,6 +2049,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1547,23 +2155,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_osx-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -1574,6 +2180,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -1598,8 +2208,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -1616,13 +2225,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_osx-arm64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -1630,8 +2239,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -1639,6 +2248,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1678,23 +2354,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_osx-arm64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -1705,6 +2379,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -1729,8 +2407,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -1747,13 +2424,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_win-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -1761,8 +2438,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -1770,6 +2447,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -1809,23 +2553,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_win-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -1836,6 +2578,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -1860,8 +2606,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"%SP_DIR%\\watchfiles\\_rust_notify.pyd\""
             ]
           }
         ],
@@ -1895,8 +2640,8 @@
         "python 3.14.*"
       ],
       "run": [
-        "python",
         "anyio >=3.0.0",
+        "python",
         "python >=3.11",
         "python-abi3",
         "python >=3.14"
@@ -1920,7 +2665,7 @@
       "summary": "Simple, modern and high performance file watching and code reload in python."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "watchfiles = watchfiles.cli:cli"
@@ -1929,13 +2674,13 @@
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
           "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
           "PYTHONIOENCODING": "utf-8",
@@ -1962,13 +2707,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_osx-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -1976,8 +2721,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -1985,6 +2730,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -2024,23 +2836,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_osx-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -2051,6 +2861,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -2075,8 +2889,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -2089,13 +2902,13 @@
     },
     "requirements": {
       "build": [
-        "python",
-        "cross-python_osx-64",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_osx-64"
       ],
       "host": [
         "maturin >=0.14.16,<2",
@@ -2105,8 +2918,8 @@
         "python-abi3"
       ],
       "run": [
-        "python",
         "anyio >=3.0.0",
+        "python",
         "python >=3.11",
         "python-abi3"
       ]
@@ -2172,7 +2985,7 @@
       "summary": "Simple, modern and high performance file watching and code reload in python."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "watchfiles = watchfiles.cli:cli"
@@ -2181,13 +2994,13 @@
       },
       "script": {
         "content": [
-          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
-          "chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"",
+          "cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"",
+          "chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"",
           "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
         "env": {
-          "CARGO": "cargo-auditable-wrapper",
+          "CARGO": "cargo-auditable-wrapper.sh",
           "CARGO_PROFILE_RELEASE_LTO": "fat",
           "CARGO_PROFILE_RELEASE_STRIP": "symbols",
           "PYTHONIOENCODING": "utf-8",
@@ -2214,13 +3027,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_osx-arm64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -2228,8 +3041,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -2237,6 +3050,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -2276,23 +3156,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_osx-arm64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_osx-arm64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -2303,6 +3181,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -2327,8 +3209,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\""
             ]
           }
         ],
@@ -2341,13 +3222,13 @@
     },
     "requirements": {
       "build": [
-        "python",
-        "cross-python_osx-arm64",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_osx-arm64"
       ],
       "host": [
         "maturin >=0.14.16,<2",
@@ -2357,8 +3238,8 @@
         "python-abi3"
       ],
       "run": [
-        "python",
         "anyio >=3.0.0",
+        "python",
         "python >=3.11",
         "python-abi3"
       ]
@@ -2431,7 +3312,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/watchfiles.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  name: watchfiles\n  version: \"1.3.0\"\n  python_check_max: \"3.14\"\n  # skip rationale:\n  #   cli_help                    missing a fixture\n  #   ignore_permission_denied    hangs in linux CI container\n  pytest_k: not (cli_help or ignore_permission_denied)\n\npackage:\n  name: watchfiles\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/w/watchfiles/watchfiles-${{ version }}.tar.gz\n  sha256: 99aee4a07847c06820765fd7b1b49ceac4f3f711ccb7d104655a33231de1c207\n\nbuild:\n  number: 1\n  skip: is_abi3 and not is_python_min\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO: cargo-auditable-wrapper${{ \".bat\" if win }}\n      PYTHONIOENCODING: utf-8\n      PYTHONLEGACYTEXTENCODING: utf-8\n    content:\n      - if: win\n        then:\n          - copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"\n        else:\n          - cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/cargo-auditable-wrapper\"\n      - |-\n        ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n  python:\n    version_independent: ${{ is_abi3 }}\n    entry_points:\n      - watchfiles = watchfiles.cli:cli\n\nrequirements:\n  build:\n    - if: build_platform != host_platform\n      then: python\n    - if: build_platform != host_platform\n      then: cross-python_${{ host_platform }}\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n  host:\n    - maturin >=0.14.16,<2\n    - pip\n    - python\n    - if: is_abi3\n      then:\n        - python ${{ python_min }}.*\n        - python-abi3\n  run:\n    - python\n    - anyio >=3.0.0\n    - if: is_abi3\n      then:\n        - python >=${{ python_min }}\n        - python-abi3\n\ntests:\n  - python:\n      imports: watchfiles\n      pip_check: true\n  - files:\n      source:\n        - pyproject.toml\n        - tests/\n    requirements:\n      run:\n        - dirty-equals >=0.8.0\n        - pytest >=7.4.4,<9.1\n        - pytest-mock >=3.14.0\n        - pytest-pretty >=1.2.0\n        - pytest-timeout >=2.3.1\n        - if: is_abi3\n          then:\n            - python ${{ python_min }}.*\n            - abi3audit\n    script:\n      - watchfiles -h\n      - pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"\n      - if: is_abi3\n        then:\n          - cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"\n          - abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}\n\nabout:\n  summary: Simple, modern and high performance file watching and code reload in python.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://pypi.org/project/watchfiles\n  repository: https://github.com/samuelcolvin/watchfiles\n  documentation: https://watchfiles.helpmanual.io\n\nextra:\n  recipe-maintainers:\n    - davidbrochart\n    - samuelcolvin\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  name: watchfiles\n  version: \"1.3.0\"\n  cargo_wrapper: cargo-auditable-wrapper${{ \".bat\" if win else \".sh\" }}\n  python_check_max: \"3.15\"\n  # skip rationale:\n  #   cli_help                    missing a fixture\n  #   ignore_permission_denied    hangs in linux CI container\n  pytest_k: not (cli_help or ignore_permission_denied)\n  abi3audit_args: abi3audit -s -v --assume-minimum-abi3 ${{ python_min }}\n\npackage:\n  name: watchfiles\n  version: ${{ version }}\n\nsource:\n  url: https://pypi.org/packages/source/w/watchfiles/watchfiles-${{ version }}.tar.gz\n  sha256: 99aee4a07847c06820765fd7b1b49ceac4f3f711ccb7d104655a33231de1c207\n\nbuild:\n  number: 2\n  skip: is_abi3 and not is_python_min\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO: ${{ cargo_wrapper }}\n      PYTHONIOENCODING: utf-8\n      PYTHONLEGACYTEXTENCODING: utf-8\n    content:\n      - if: win\n        then:\n          - copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\"\n        else:\n          - cp \"${RECIPE_DIR}/cargo-auditable-wrapper.sh\" \"${BUILD_PREFIX}/bin/\"\n          - chmod 755 \"${BUILD_PREFIX}/bin/${{ cargo_wrapper }}\"\n      - |-\n        ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies\n      - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml\n  python:\n    version_independent: ${{ is_abi3 }}\n    entry_points:\n      - watchfiles = watchfiles.cli:cli\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - if: build_platform != host_platform\n      then:\n        - python\n        - cross-python_${{ host_platform }}\n  host:\n    - maturin >=0.14.16,<2\n    - pip\n    - if: is_abi3\n      then:\n        - python ${{ python_min }}.*\n        - python-abi3\n      else:\n        - python\n\n  run:\n    - anyio >=3.0.0\n    - if: is_abi3\n      then:\n        - python >=${{ python_min }}\n        - python-abi3\n      else:\n        - python\n\ntests:\n  - python:\n      imports: watchfiles\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then:\n            - ${{ python_check_max }}.*\n            - ${{ python_min }}.*\n          else:\n            - \"*\"\n\n  - files:\n      source:\n        - pyproject.toml\n        - tests/\n    requirements:\n      run:\n        - dirty-equals >=0.8.0\n        - pytest >=7.4.4,<9.1\n        - pytest-mock >=3.14.0\n        - pytest-pretty >=1.2.0\n        - pytest-timeout >=2.3.1\n        - if: is_abi3\n          then:\n            - python ${{ python_min }}.*\n            - abi3audit\n    script:\n      - watchfiles -h\n      - pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"\n      - if: is_abi3 and unix\n        then: ${{ abi3audit_args }} \"${SP_DIR}/watchfiles/_rust_notify.abi3.so\"\n      - if: is_abi3 and win\n        then: ${{ abi3audit_args }} \"%SP_DIR%\\watchfiles\\_rust_notify.pyd\"\n\nabout:\n  summary: Simple, modern and high performance file watching and code reload in python.\n  license: MIT\n  license_file:\n    - LICENSE\n    - THIRDPARTY.yml\n  homepage: https://pypi.org/project/watchfiles\n  repository: https://github.com/samuelcolvin/watchfiles\n  documentation: https://watchfiles.helpmanual.io\n\nextra:\n  recipe-maintainers:\n    - davidbrochart\n    - samuelcolvin\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2576,7 +3457,7 @@
       "summary": "Simple, modern and high performance file watching and code reload in python."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "python": {
         "entry_points": [
           "watchfiles = watchfiles.cli:cli"
@@ -2585,7 +3466,7 @@
       },
       "script": {
         "content": [
-          "copy \"%RECIPE_DIR%\\cargo-auditable-wrapper.bat\" \"%BUILD_PREFIX%\\Library\\bin\\cargo-auditable-wrapper.bat\"",
+          "copy \"%RECIPE_DIR%\\${{ cargo_wrapper }}\" \"%BUILD_PREFIX%\\Library\\bin\\\"",
           "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --disable-pip-version-check --check-build-dependencies",
           "cargo-bundle-licenses --format yaml --output THIRDPARTY.yml"
         ],
@@ -2617,13 +3498,13 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_win-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
@@ -2631,8 +3512,8 @@
             "python"
           ],
           "run": [
-            "python",
-            "anyio >=3.0.0"
+            "anyio >=3.0.0",
+            "python"
           ]
         },
         "tests": [
@@ -2640,6 +3521,73 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "*"
+              ]
+            }
+          },
+          {
+            "files": {
+              "source": [
+                "pyproject.toml",
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "dirty-equals >=0.8.0",
+                "pytest >=7.4.4,<9.1",
+                "pytest-mock >=3.14.0",
+                "pytest-pretty >=1.2.0",
+                "pytest-timeout >=2.3.1"
+              ]
+            },
+            "script": [
+              "watchfiles -h",
+              "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\""
+            ]
+          }
+        ],
+        "version": "1.3.0"
+      },
+      {
+        "build": {
+          "python": {
+            "entry_points": [
+              "watchfiles = watchfiles.cli:cli"
+            ]
+          }
+        },
+        "name": "watchfiles",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "rust_compiler_stub",
+            "c_stdlib_stub",
+            "cargo-auditable",
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64"
+          ],
+          "host": [
+            "maturin >=0.14.16,<2",
+            "pip",
+            "python"
+          ],
+          "run": [
+            "anyio >=3.0.0",
+            "python"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "watchfiles"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
@@ -2679,23 +3627,21 @@
         "name": "watchfiles",
         "requirements": {
           "build": [
-            "python",
-            "cross-python_win-64",
             "c_compiler_stub",
             "rust_compiler_stub",
             "c_stdlib_stub",
             "cargo-auditable",
-            "cargo-bundle-licenses"
+            "cargo-bundle-licenses",
+            "python",
+            "cross-python_win-64"
           ],
           "host": [
             "maturin >=0.14.16,<2",
             "pip",
-            "python",
             "python 3.11.*",
             "python-abi3"
           ],
           "run": [
-            "python",
             "anyio >=3.0.0",
             "python >=3.11",
             "python-abi3"
@@ -2706,6 +3652,10 @@
             "python": {
               "imports": [
                 "watchfiles"
+              ],
+              "python_version": [
+                "3.15.*",
+                "3.11.*"
               ]
             }
           },
@@ -2730,8 +3680,7 @@
             "script": [
               "watchfiles -h",
               "pytest -vv --tb=long --color=yes -k \"${{ pytest_k }}\"",
-              "cd \"${{ '$SP_DIR' if unix else '%SP_DIR%' }}/watchfiles\"",
-              "abi3audit -s -v --assume-minimum-abi3 ${{ python_min }} _rust_notify.${{ 'abi3.so' if unix else 'pyd' }}"
+              "${{ abi3audit_args }} \"%SP_DIR%\\watchfiles\\_rust_notify.pyd\""
             ]
           }
         ],
@@ -2744,13 +3693,13 @@
     },
     "requirements": {
       "build": [
-        "python",
-        "cross-python_win-64",
         "c_compiler_stub",
         "rust_compiler_stub",
         "c_stdlib_stub",
         "cargo-auditable",
-        "cargo-bundle-licenses"
+        "cargo-bundle-licenses",
+        "python",
+        "cross-python_win-64"
       ],
       "host": [
         "maturin >=0.14.16,<2",
@@ -2760,8 +3709,8 @@
         "python-abi3"
       ],
       "run": [
-        "python",
         "anyio >=3.0.0",
+        "python",
         "python >=3.11",
         "python-abi3"
       ]
