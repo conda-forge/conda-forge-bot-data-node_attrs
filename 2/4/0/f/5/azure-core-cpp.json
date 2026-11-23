@@ -1,10 +1,11 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibcurl:\n- '8'\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibcurl:\n- '8'\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
+      "linux_riscv64": "linux_64",
       "osx_arm64": "osx_64"
     },
     "conda_build": {
@@ -22,8 +23,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "5e2e9fd5528e167f0a434eda461533188bc26f16",
-  "feedstock_hash_ts": 1789383977,
+  "feedstock_hash": "ecc75aa161337c3f8835b5e0de31e089f54f31a5",
+  "feedstock_hash_ts": 1795425903,
   "feedstock_name": "azure-core-cpp",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -41,7 +42,7 @@
       "summary": "Azure SDK Core Library for C++"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "azure-core-cpp"
       ]
@@ -140,7 +141,7 @@
       "summary": "Azure SDK Core Library for C++"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "azure-core-cpp"
       ]
@@ -239,7 +240,7 @@
       "summary": "Azure SDK Core Library for C++"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "azure-core-cpp"
       ]
@@ -338,7 +339,7 @@
       "summary": "Azure SDK Core Library for C++"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "azure-core-cpp"
       ]
@@ -422,7 +423,7 @@
       "summary": "Azure SDK Core Library for C++"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "azure-core-cpp"
       ]
@@ -521,7 +522,7 @@
       "summary": "Azure SDK Core Library for C++"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "azure-core-cpp"
       ]
@@ -624,7 +625,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/azure-core-cpp.json"
   },
-  "raw_meta_yaml": "{% set version = \"1.16.4\" %}\n{% set sha256 = \"25f8badf23c66ae82debd95e0d074d6269b276e5fa2ce5d4d3cff38fda9ab8c2\" %}\n\npackage:\n  name: azure-core-cpp\n  version: {{ version }}\n\nsource:\n  url: https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/azure-core_{{ version }}.tar.gz\n  sha256: {{ sha256 }}\n  patches:\n    # https://github.com/Azure/azure-sdk-for-cpp/issues/4784\n    # https://github.com/Azure/azure-sdk-for-cpp/pull/4785\n    - 0001-remove-wil-from-exported-config.patch\n    - 0002-winhttp-wil-cxx17.patch  # [win]\n\nbuild:\n  number: 1\n  run_exports:\n    - {{ pin_subpackage(\"azure-core-cpp\", max_pin=\"x.x.x\") }}\n\n# https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core/vcpkg.json\nrequirements:\n  build:\n    - {{ compiler(\"cxx\") }}\n    - {{ stdlib(\"c\") }}\n    - cmake\n    - ninja\n  host:\n    - libcurl  # [not win]\n    - openssl  # [not win]\n    - wil >=1.0.260126.7   # [win]\n\ntest:\n  files:\n    - consumer  # [win and arm64]\n  requires:\n    - {{ compiler('cxx') }}\n    - cmake\n    - ninja\n  commands:\n    # shared libs\n    - test -f ${PREFIX}/lib/libazure-core${SHLIB_EXT}   # [unix]\n    - if not exist %LIBRARY_BIN%\\azure-core.dll exit 1  # [win]\n    - if not exist %LIBRARY_LIB%\\azure-core.lib exit 1  # [win]\n\n    # headers\n    - test -f ${PREFIX}/include/azure/core.hpp    # [unix]\n    - if not exist %LIBRARY_INC%\\azure\\core.hpp exit 1  # [win]\n\n    # CMake metadata\n    - test -f ${PREFIX}/share/azure-core-cpp/azure-core-cppTargets.cmake                     # [unix]\n    - if not exist %LIBRARY_PREFIX%\\share\\azure-core-cpp\\azure-core-cppTargets.cmake exit 1  # [win]\n\n    # CMake find_package() and target_link_libraries()\n    - cmake $CMAKE_ARGS -G Ninja -S $RECIPE_DIR/test-linking-src -B test-linking-bld    # [unix]\n    - cmake %CMAKE_ARGS% -G Ninja -S %RECIPE_DIR%\\test-linking-src -B test-linking-bld  # [win]\n    - cmake --build test-linking-bld\n    - cmake --build test-linking-bld --target test\n    - cmake -S consumer -B consumer-build -G \"NMake Makefiles\" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=\"%LIBRARY_PREFIX%\"  # [win and arm64]\n    - cmake --build consumer-build  # [win and arm64]\n    - consumer-build\\azure_core_consumer.exe  # [win and arm64]\n    - dumpbin /headers consumer-build\\azure_core_consumer.exe | findstr /I /C:\"AA64 machine (ARM64)\"  # [win and arm64]\n    - dumpbin /headers %LIBRARY_BIN%\\azure-core.dll | findstr /I /C:\"AA64 machine (ARM64)\"  # [win and arm64]\n\nabout:\n  home: https://github.com/Azure/azure-sdk-for-cpp/\n  summary: Azure SDK Core Library for C++\n  description: >-\n    Azure::Core (`azure-core`) provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++\n  license: MIT\n  license_family: MIT\n  license_file:\n    - LICENSE.txt\n    - sdk/core/azure-core/NOTICE.txt\n  doc_url: https://azure.github.io/azure-sdk-for-cpp/\n  dev_url: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core/\n\nextra:\n  recipe-maintainers:\n    - teo-tsirpanis\n    - jdblischak\n    - jjerphan\n    - Shelnutt2\n",
+  "raw_meta_yaml": "{% set version = \"1.16.4\" %}\n{% set sha256 = \"25f8badf23c66ae82debd95e0d074d6269b276e5fa2ce5d4d3cff38fda9ab8c2\" %}\n\npackage:\n  name: azure-core-cpp\n  version: {{ version }}\n\nsource:\n  url: https://github.com/Azure/azure-sdk-for-cpp/archive/refs/tags/azure-core_{{ version }}.tar.gz\n  sha256: {{ sha256 }}\n  patches:\n    # https://github.com/Azure/azure-sdk-for-cpp/issues/4784\n    # https://github.com/Azure/azure-sdk-for-cpp/pull/4785\n    - 0001-remove-wil-from-exported-config.patch\n    - 0002-winhttp-wil-cxx17.patch  # [win]\n\nbuild:\n  number: 2\n  run_exports:\n    - {{ pin_subpackage(\"azure-core-cpp\", max_pin=\"x.x.x\") }}\n\n# https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core/vcpkg.json\nrequirements:\n  build:\n    - {{ compiler(\"cxx\") }}\n    - {{ stdlib(\"c\") }}\n    - cmake\n    - ninja\n  host:\n    - libcurl  # [not win]\n    - openssl  # [not win]\n    - wil >=1.0.260126.7   # [win]\n\ntest:\n  files:\n    - consumer  # [win and arm64]\n  requires:\n    - {{ compiler('cxx') }}\n    - cmake\n    - ninja\n  commands:\n    # shared libs\n    - test -f ${PREFIX}/lib/libazure-core${SHLIB_EXT}   # [unix]\n    - if not exist %LIBRARY_BIN%\\azure-core.dll exit 1  # [win]\n    - if not exist %LIBRARY_LIB%\\azure-core.lib exit 1  # [win]\n\n    # headers\n    - test -f ${PREFIX}/include/azure/core.hpp    # [unix]\n    - if not exist %LIBRARY_INC%\\azure\\core.hpp exit 1  # [win]\n\n    # CMake metadata\n    - test -f ${PREFIX}/share/azure-core-cpp/azure-core-cppTargets.cmake                     # [unix]\n    - if not exist %LIBRARY_PREFIX%\\share\\azure-core-cpp\\azure-core-cppTargets.cmake exit 1  # [win]\n\n    # CMake find_package() and target_link_libraries()\n    - cmake $CMAKE_ARGS -G Ninja -S $RECIPE_DIR/test-linking-src -B test-linking-bld    # [unix]\n    - cmake %CMAKE_ARGS% -G Ninja -S %RECIPE_DIR%\\test-linking-src -B test-linking-bld  # [win]\n    - cmake --build test-linking-bld\n    - cmake --build test-linking-bld --target test\n    - cmake -S consumer -B consumer-build -G \"NMake Makefiles\" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=\"%LIBRARY_PREFIX%\"  # [win and arm64]\n    - cmake --build consumer-build  # [win and arm64]\n    - consumer-build\\azure_core_consumer.exe  # [win and arm64]\n    - dumpbin /headers consumer-build\\azure_core_consumer.exe | findstr /I /C:\"AA64 machine (ARM64)\"  # [win and arm64]\n    - dumpbin /headers %LIBRARY_BIN%\\azure-core.dll | findstr /I /C:\"AA64 machine (ARM64)\"  # [win and arm64]\n\nabout:\n  home: https://github.com/Azure/azure-sdk-for-cpp/\n  summary: Azure SDK Core Library for C++\n  description: >-\n    Azure::Core (`azure-core`) provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++\n  license: MIT\n  license_family: MIT\n  license_file:\n    - LICENSE.txt\n    - sdk/core/azure-core/NOTICE.txt\n  doc_url: https://azure.github.io/azure-sdk-for-cpp/\n  dev_url: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core/\n\nextra:\n  recipe-maintainers:\n    - teo-tsirpanis\n    - jdblischak\n    - jjerphan\n    - Shelnutt2\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -725,7 +726,7 @@
       "summary": "Azure SDK Core Library for C++"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "azure-core-cpp"
       ]
@@ -824,7 +825,7 @@
       "summary": "Azure SDK Core Library for C++"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": [
         "azure-core-cpp"
       ]
