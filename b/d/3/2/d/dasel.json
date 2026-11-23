@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "channel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\n",
   "ci_support_migrations": {
     "go_macos": {
       "migration_number": 1,
@@ -27,13 +27,12 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default",
       "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "9fc888845d7304507f09a4928e4fc3d01cd11799",
-  "feedstock_hash_ts": 1784367202,
+  "feedstock_hash": "0a11682ea64d211aa3142d782fc6c87d16251cf6",
+  "feedstock_hash_ts": 1795473976,
   "feedstock_name": "dasel",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -47,17 +46,21 @@
       "summary": "Dasel (short for data-selector) allows you to query and modify data structures\nusing selector strings."
     },
     "build": {
-      "number": "1",
-      "script": [
-        "go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
-        "go build -v -trimpath -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"$PREFIX\"/bin/dasel ./cmd/dasel",
-        "mkdir -p \"$PREFIX\"/share/man/man1 \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-        "\"$PREFIX\"/bin/dasel man             > \"$PREFIX\"/share/man/man1/dasel.1",
-        "\"$PREFIX\"/bin/dasel completion bash > \"$PREFIX\"/share/bash-completion/completions/dasel",
-        "\"$PREFIX\"/bin/dasel completion fish > \"$PREFIX\"/share/fish/vendor_completions.d/dasel.fish",
-        "\"$PREFIX\"/bin/dasel completion zsh  > \"$PREFIX\"/share/zsh/site-functions/_dasel",
-        "cp -a library_licenses_2/. library_licenses/ && rm -rf library_licenses_2"
-      ]
+      "number": "2",
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "^go build -o=($prefix)/bin/ -v -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" ./cmd/dasel",
+          "^dasel man             | save --force ($prefix)/share/man/man1/dasel.1",
+          "^dasel completion bash | save --force ($prefix)/share/bash-completion/completions/dasel",
+          "^dasel completion fish | save --force ($prefix)/share/fish/vendor_completions.d/dasel.fish",
+          "^dasel completion zsh  | save --force ($prefix)/share/zsh/site-functions/_dasel",
+          "^go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
+          "cp --recursive library_licenses_2/. library_licenses/",
+          "rm --recursive library_licenses_2"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -73,7 +76,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -111,7 +115,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -125,7 +130,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -152,12 +158,17 @@
       "summary": "Dasel (short for data-selector) allows you to query and modify data structures\nusing selector strings."
     },
     "build": {
-      "number": "1",
-      "script": [
-        "go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
-        "go build -v -trimpath -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"$PREFIX\"/bin/dasel ./cmd/dasel",
-        "cp -a library_licenses_2/. library_licenses/ && rm -rf library_licenses_2"
-      ]
+      "number": "2",
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "^go build -o=($prefix)/bin/ -v -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" ./cmd/dasel",
+          "^go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
+          "cp --recursive library_licenses_2/. library_licenses/",
+          "rm --recursive library_licenses_2"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -173,7 +184,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -205,7 +217,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -219,101 +232,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
-      ]
-    },
-    "host": {
-      "__set__": true,
-      "elements": []
-    },
-    "run": {
-      "__set__": true,
-      "elements": []
-    },
-    "test": {
-      "__set__": true,
-      "elements": []
-    }
-  },
-  "linux_ppc64le_meta_yaml": {
-    "about": {
-      "description": "Select, put and delete data from JSON, TOML, YAML, XML and CSV files with a single\ntool. Supports conversion between formats and can be used as a Go package.",
-      "dev_url": "https://github.com/TomWright/dasel",
-      "home": "https://daseldocs.tomwright.me/",
-      "license": "MIT",
-      "license_family": "MIT",
-      "license_file": "LICENSE",
-      "summary": "Dasel (short for data-selector) allows you to query and modify data structures\nusing selector strings."
-    },
-    "build": {
-      "number": "1",
-      "script": [
-        "go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
-        "go build -v -trimpath -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"$PREFIX\"/bin/dasel ./cmd/dasel",
-        "cp -a library_licenses_2/. library_licenses/ && rm -rf library_licenses_2"
-      ]
-    },
-    "extra": {
-      "recipe-maintainers": [
-        "salim-b",
-        "tomwright",
-        "maresb"
-      ]
-    },
-    "outputs": [
-      {
-        "build": null,
-        "name": "dasel",
-        "requirements": {
-          "build": [
-            "go-nocgo_compiler_stub",
-            "go-licenses"
-          ],
-          "host": [],
-          "run": []
-        },
-        "tests": [
-          {
-            "script": [
-              "dasel --help",
-              "dasel version",
-              "dasel version | grep ${{ version }}"
-            ]
-          },
-          {
-            "package_contents": {
-              "bin": [
-                "dasel"
-              ],
-              "strict": true
-            }
-          }
-        ],
-        "version": "3.11.2"
-      }
-    ],
-    "package": {
-      "name": "dasel",
-      "version": "3.11.2"
-    },
-    "requirements": {
-      "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
-      ]
-    },
-    "schema_version": 1,
-    "source": {
-      "sha256": "5471fe33b28c98efed2b1a13431ed24097785f56a24dc9fb15e37b1e266446e1",
-      "url": "https://github.com/TomWright/dasel/archive/refs/tags/v3.11.2.tar.gz"
-    }
-  },
-  "linux_ppc64le_requirements": {
-    "build": {
-      "__set__": true,
-      "elements": [
-        "go-licenses",
-        "go-nocgo_compiler_stub"
+        "nushell"
       ]
     },
     "host": {
@@ -340,19 +260,21 @@
       "summary": "Dasel (short for data-selector) allows you to query and modify data structures\nusing selector strings."
     },
     "build": {
-      "number": "1",
-      "script": [
-        "go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
-        "go build -v -trimpath -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"$PREFIX\"/bin/dasel ./cmd/dasel",
-        "mkdir -p \"$PREFIX\"/share/man/man1 \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions",
-        "\"$PREFIX\"/bin/dasel man             > \"$PREFIX\"/share/man/man1/dasel.1",
-        "\"$PREFIX\"/bin/dasel completion bash > \"$PREFIX\"/share/bash-completion/completions/dasel",
-        "\"$PREFIX\"/bin/dasel completion fish > \"$PREFIX\"/share/fish/vendor_completions.d/dasel.fish",
-        "\"$PREFIX\"/bin/dasel completion zsh  > \"$PREFIX\"/share/zsh/site-functions/_dasel",
-        "cp -a library_licenses_2/. library_licenses/ && rm -rf library_licenses_2",
-        "go build -v -trimpath -ldflags=\"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"%LIBRARY_BIN%\"\\dasel.exe ./cmd/dasel",
-        "xcopy \"library_licenses_2\\*\" \"library_licenses\\\" /E /I /Y & if errorlevel 1 exit /b %ERRORLEVEL% & rmdir /S /Q \"library_licenses_2\""
-      ]
+      "number": "2",
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "^go build -o=($prefix)/bin/ -v -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" ./cmd/dasel",
+          "^dasel man             | save --force ($prefix)/share/man/man1/dasel.1",
+          "^dasel completion bash | save --force ($prefix)/share/bash-completion/completions/dasel",
+          "^dasel completion fish | save --force ($prefix)/share/fish/vendor_completions.d/dasel.fish",
+          "^dasel completion zsh  | save --force ($prefix)/share/zsh/site-functions/_dasel",
+          "^go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
+          "cp --recursive library_licenses_2/. library_licenses/",
+          "rm --recursive library_licenses_2"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -368,7 +290,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -404,7 +327,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -434,7 +358,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -464,7 +389,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -494,37 +420,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
-          ],
-          "host": [],
-          "run": []
-        },
-        "tests": [
-          {
-            "script": [
-              "dasel --help",
-              "dasel version",
-              "dasel version | grep ${{ version }}"
-            ]
-          },
-          {
-            "package_contents": {
-              "bin": [
-                "dasel"
-              ],
-              "strict": true
-            }
-          }
-        ],
-        "version": "3.11.2"
-      },
-      {
-        "build": null,
-        "name": "dasel",
-        "requirements": {
-          "build": [
-            "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -553,7 +450,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -584,7 +482,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -605,12 +504,17 @@
       "summary": "Dasel (short for data-selector) allows you to query and modify data structures\nusing selector strings."
     },
     "build": {
-      "number": "1",
-      "script": [
-        "go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
-        "go build -v -trimpath -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"$PREFIX\"/bin/dasel ./cmd/dasel",
-        "cp -a library_licenses_2/. library_licenses/ && rm -rf library_licenses_2"
-      ]
+      "number": "2",
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "^go build -o=($prefix)/bin/ -v -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" ./cmd/dasel",
+          "^go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
+          "cp --recursive library_licenses_2/. library_licenses/",
+          "rm --recursive library_licenses_2"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -626,7 +530,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -658,7 +563,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -672,7 +578,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -699,12 +606,17 @@
       "summary": "Dasel (short for data-selector) allows you to query and modify data structures\nusing selector strings."
     },
     "build": {
-      "number": "1",
-      "script": [
-        "go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
-        "go build -v -trimpath -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"$PREFIX\"/bin/dasel ./cmd/dasel",
-        "cp -a library_licenses_2/. library_licenses/ && rm -rf library_licenses_2"
-      ]
+      "number": "2",
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "^go build -o=($prefix)/bin/ -v -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" ./cmd/dasel",
+          "^go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
+          "cp --recursive library_licenses_2/. library_licenses/",
+          "rm --recursive library_licenses_2"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -720,7 +632,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -752,7 +665,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -766,7 +680,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -792,7 +707,6 @@
   "platforms": [
     "linux_64",
     "linux_aarch64",
-    "linux_ppc64le",
     "osx_64",
     "osx_arm64",
     "win_64",
@@ -801,12 +715,13 @@
   "pr_info": {
     "__lazy_json__": "pr_info/dasel.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"3.11.2\"\n\npackage:\n  name: dasel\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/TomWright/dasel/archive/refs/tags/v${{ version }}.tar.gz\n    sha256: 5471fe33b28c98efed2b1a13431ed24097785f56a24dc9fb15e37b1e266446e1\n  # the following dependencies miss standard license file layout, so we have to manually add their license files\n  - url: https://raw.githubusercontent.com/mattn/go-localereader/master/LICENSE\n    sha256: dceede03550621e65ec7b79fcba87cf6dbb9d31132a8ae71a8fe8ceec0af7da3\n    target_directory: library_licenses_2/github.com/mattn/go-localereader\n\nbuild:\n  number: 1\n  script:\n    - go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader\n    - if: unix\n      then:\n        - go build -v -trimpath -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"$PREFIX\"/bin/dasel ./cmd/dasel\n        # generate manpage and shell completions\n        - if: build_platform == host_platform\n          then:\n            - mkdir -p \"$PREFIX\"/share/man/man1 \"$PREFIX\"/share/bash-completion/completions \"$PREFIX\"/share/fish/vendor_completions.d \"$PREFIX\"/share/zsh/site-functions\n            - '\"$PREFIX\"/bin/dasel man             > \"$PREFIX\"/share/man/man1/dasel.1'\n            - '\"$PREFIX\"/bin/dasel completion bash > \"$PREFIX\"/share/bash-completion/completions/dasel'\n            - '\"$PREFIX\"/bin/dasel completion fish > \"$PREFIX\"/share/fish/vendor_completions.d/dasel.fish'\n            - '\"$PREFIX\"/bin/dasel completion zsh  > \"$PREFIX\"/share/zsh/site-functions/_dasel'\n        # merge library license files\n        - cp -a library_licenses_2/. library_licenses/ && rm -rf library_licenses_2\n    - if: win\n      then:\n        - go build -v -trimpath -ldflags=\"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"%LIBRARY_BIN%\"\\dasel.exe ./cmd/dasel\n        # generate manpage and shell completions\n        - if: build_platform == host_platform\n          then:\n            - mkdir \"%LIBRARY_PREFIX%\"\\share\\man\\man1\n            - mkdir \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\n            - mkdir \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\n            - mkdir \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\n            - '\"%LIBRARY_BIN%\"\\dasel.exe man             > \"%LIBRARY_PREFIX%\"\\share\\man\\man1\\dasel.1'\n            - '\"%LIBRARY_BIN%\"\\dasel.exe completion bash > \"%LIBRARY_PREFIX%\"\\share\\bash-completion\\completions\\dasel'\n            - '\"%LIBRARY_BIN%\"\\dasel.exe completion fish > \"%LIBRARY_PREFIX%\"\\share\\fish\\vendor_completions.d\\dasel.fish'\n            - '\"%LIBRARY_BIN%\"\\dasel.exe completion zsh  > \"%LIBRARY_PREFIX%\"\\share\\zsh\\site-functions\\_dasel'\n        # merge library license files\n        - xcopy \"library_licenses_2\\*\" \"library_licenses\\\" /E /I /Y & if errorlevel 1 exit /b %ERRORLEVEL% & rmdir /S /Q \"library_licenses_2\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"go-nocgo\") }}\n    - go-licenses\n\ntests:\n  - script:\n      - dasel --help\n      - dasel version\n      - if: not win\n        then: dasel version | grep ${{ version }}\n  - package_contents:\n      bin:\n        - dasel\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/man/man1/dasel.1\n            - share/bash-completion/completions/dasel\n            - share/fish/vendor_completions.d/dasel.fish\n            - share/zsh/site-functions/_dasel\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/man/man1/dasel.1\n            - Library/share/bash-completion/completions/dasel\n            - Library/share/fish/vendor_completions.d/dasel.fish\n            - Library/share/zsh/site-functions/_dasel\n      strict: true\n\nabout:\n  license: MIT\n  license_file:\n    - LICENSE\n    - library_licenses/\n  summary: |\n    Dasel (short for data-selector) allows you to query and modify data structures\n    using selector strings.\n  description: |\n    Select, put and delete data from JSON, TOML, YAML, XML and CSV files with a single\n    tool. Supports conversion between formats and can be used as a Go package.\n  homepage: https://daseldocs.tomwright.me\n  repository: https://github.com/TomWright/dasel\n\nextra:\n  recipe-maintainers:\n    - salim-b\n    - tomwright\n    - maresb\n",
+  "raw_meta_yaml": "context:\n  version: \"3.11.2\"\n\npackage:\n  name: dasel\n  version: ${{ version }}\n\nsource:\n  - url: https://github.com/TomWright/dasel/archive/refs/tags/v${{ version }}.tar.gz\n    sha256: 5471fe33b28c98efed2b1a13431ed24097785f56a24dc9fb15e37b1e266446e1\n  # the following dependencies miss standard license file layout, so we have to manually add their license files\n  - url: https://raw.githubusercontent.com/mattn/go-localereader/master/LICENSE\n    sha256: dceede03550621e65ec7b79fcba87cf6dbb9d31132a8ae71a8fe8ceec0af7da3\n    target_directory: library_licenses_2/github.com/mattn/go-localereader\n\nbuild:\n  number: 2\n  script:\n    interpreter: nu\n    content:\n      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX\n      - ^go build -o=($prefix)/bin/ -v -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" ./cmd/dasel\n      # generate manpage and shell completions\n      - if: build_platform == host_platform\n        then:\n          - ^dasel man             | save --force ($prefix)/share/man/man1/dasel.1\n          - ^dasel completion bash | save --force ($prefix)/share/bash-completion/completions/dasel\n          - ^dasel completion fish | save --force ($prefix)/share/fish/vendor_completions.d/dasel.fish\n          - ^dasel completion zsh  | save --force ($prefix)/share/zsh/site-functions/_dasel\n      # generate and merge library license files\n      - ^go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader\n      - cp --recursive library_licenses_2/. library_licenses/\n      - rm --recursive library_licenses_2\n\nrequirements:\n  build:\n    - ${{ compiler(\"go-nocgo\") }}\n    - go-licenses\n    - nushell\n\ntests:\n  - script:\n      - dasel --help\n      - dasel version\n      - if: not win\n        then: dasel version | grep ${{ version }}\n  - package_contents:\n      bin:\n        - dasel\n      files:\n        - if: unix and build_platform == host_platform\n          then:\n            - share/man/man1/dasel.1\n            - share/bash-completion/completions/dasel\n            - share/fish/vendor_completions.d/dasel.fish\n            - share/zsh/site-functions/_dasel\n        - if: win and build_platform == host_platform\n          then:\n            - Library/share/man/man1/dasel.1\n            - Library/share/bash-completion/completions/dasel\n            - Library/share/fish/vendor_completions.d/dasel.fish\n            - Library/share/zsh/site-functions/_dasel\n      strict: true\n\nabout:\n  license: MIT\n  license_file:\n    - LICENSE\n    - library_licenses/\n  summary: |\n    Dasel (short for data-selector) allows you to query and modify data structures\n    using selector strings.\n  description: |\n    Select, put and delete data from JSON, TOML, YAML, XML and CSV files with a single\n    tool. Supports conversion between formats and can be used as a Go package.\n  homepage: https://daseldocs.tomwright.me\n  repository: https://github.com/TomWright/dasel\n\nextra:\n  recipe-maintainers:\n    - salim-b\n    - tomwright\n    - maresb\n",
   "req": {
     "__set__": true,
     "elements": [
       "go-licenses",
-      "go-nocgo_compiler_stub"
+      "go-nocgo_compiler_stub",
+      "nushell"
     ]
   },
   "requirements": {
@@ -814,7 +729,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -836,7 +752,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -868,12 +785,17 @@
       "summary": "Dasel (short for data-selector) allows you to query and modify data structures\nusing selector strings."
     },
     "build": {
-      "number": "1",
-      "script": [
-        "go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
-        "go build -v -trimpath -ldflags=\"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"%LIBRARY_BIN%\"\\dasel.exe ./cmd/dasel",
-        "xcopy \"library_licenses_2\\*\" \"library_licenses\\\" /E /I /Y & if errorlevel 1 exit /b %ERRORLEVEL% & rmdir /S /Q \"library_licenses_2\""
-      ]
+      "number": "2",
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "^go build -o=($prefix)/bin/ -v -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" ./cmd/dasel",
+          "^go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
+          "cp --recursive library_licenses_2/. library_licenses/",
+          "rm --recursive library_licenses_2"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -889,7 +811,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -920,7 +843,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -934,7 +858,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
@@ -961,12 +886,17 @@
       "summary": "Dasel (short for data-selector) allows you to query and modify data structures\nusing selector strings."
     },
     "build": {
-      "number": "1",
-      "script": [
-        "go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
-        "go build -v -trimpath -ldflags=\"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" -o=\"%LIBRARY_BIN%\"\\dasel.exe ./cmd/dasel",
-        "xcopy \"library_licenses_2\\*\" \"library_licenses\\\" /E /I /Y & if errorlevel 1 exit /b %ERRORLEVEL% & rmdir /S /Q \"library_licenses_2\""
-      ]
+      "number": "2",
+      "script": {
+        "content": [
+          "let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX",
+          "^go build -o=($prefix)/bin/ -v -ldflags \"-s -w -X github.com/tomwright/dasel/v3/internal.Version=v${{ version }}\" ./cmd/dasel",
+          "^go-licenses save ./cmd/dasel --save_path=library_licenses --ignore=github.com/mattn/go-localereader",
+          "cp --recursive library_licenses_2/. library_licenses/",
+          "rm --recursive library_licenses_2"
+        ],
+        "interpreter": "nu"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -982,7 +912,8 @@
         "requirements": {
           "build": [
             "go-nocgo_compiler_stub",
-            "go-licenses"
+            "go-licenses",
+            "nushell"
           ],
           "host": [],
           "run": []
@@ -1013,7 +944,8 @@
     "requirements": {
       "build": [
         "go-nocgo_compiler_stub",
-        "go-licenses"
+        "go-licenses",
+        "nushell"
       ]
     },
     "schema_version": 1,
@@ -1027,7 +959,8 @@
       "__set__": true,
       "elements": [
         "go-licenses",
-        "go-nocgo_compiler_stub"
+        "go-nocgo_compiler_stub",
+        "nushell"
       ]
     },
     "host": {
