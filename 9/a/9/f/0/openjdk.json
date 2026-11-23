@@ -44,8 +44,8 @@
       ]
     }
   },
-  "feedstock_hash": "dc1a3561a37255bdd279ff0b7a82bf82d7b7d368",
-  "feedstock_hash_ts": 1795067941,
+  "feedstock_hash": "e81c0edd86db0e28e133240ab91946d2ce21cd13",
+  "feedstock_hash_ts": 1795426033,
   "feedstock_name": "openjdk",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -57,8 +57,11 @@
       "summary": "An open-source implementation of the JDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
+        "env": {
+          "PKG_VERSION": "27.0.1.1"
+        },
         "file": "build"
       }
     },
@@ -253,8 +256,11 @@
       "summary": "An open-source implementation of the JDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
+        "env": {
+          "PKG_VERSION": "27.0.1.1"
+        },
         "file": "build"
       }
     },
@@ -503,8 +509,11 @@
       "summary": "An open-source implementation of the JDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
+        "env": {
+          "PKG_VERSION": "27.0.1.1"
+        },
         "file": "build"
       }
     },
@@ -752,8 +761,11 @@
       "summary": "The Zulu OpenJDK build"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
+        "env": {
+          "PKG_VERSION": "27.0.1.1"
+        },
         "file": "build"
       }
     },
@@ -1203,8 +1215,11 @@
       "summary": "The Zulu OpenJDK build"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
+        "env": {
+          "PKG_VERSION": "27.0.1.1"
+        },
         "file": "build"
       }
     },
@@ -1311,8 +1326,11 @@
       "summary": "The Zulu OpenJDK build"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
+        "env": {
+          "PKG_VERSION": "27.0.1.1"
+        },
         "file": "build"
       }
     },
@@ -1429,7 +1447,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/openjdk.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  # constants\n  version: 27.0.1.1\n  openjdk_revision: 4\n  zulu_build: 27.30.201-ca\n  zulu_url: https://cdn.azul.com/zulu/bin\n  # derived\n  major: ${{ (version | split(\".\"))[0] | int }}\n  jdk_full: ${{ version }}+${{ openjdk_revision }}\n  zulu_base: zulu${{ zulu_build }}-jdk${{ version }}\n  # platform-specific\n  homepage: ${{ \"https://openjdk.java.net\" if linux else \"https://www.azul.com/products/zulu/\" }}\n  extra_license: ${{ \"fonts/LICENSE\" if linux else \"LICENSE\" }}\n  summary: ${{ \"An open-source implementation of the JDK\" if linux else \"The Zulu OpenJDK build\" }}\n\n  # only combinations are {osx, win} x {x64, arm64}\n  zulu_os: ${{ \"macosx\" if osx else \"win\" }}\n  zulu_arch: ${{ \"x64\" if x86_64 else \"aarch64\" }}\n  zulu_hash: ${{ \"a35898f7c8ce88eaf7cd30630ad2db9e9ea1c59d8853b774c4e3271d35ae318a\" if (osx and x86_64) else\n                 \"31bff5d3b423d582f1941ec37f8e6a21b297852ef561cd60bb316d8b20ac2f0c\" if (osx and arm64) else\n                 \"f5424ea36f832aa28a0441a57ffb1dfe2cd3d903802c0a36d22576b1acc430ec\" if (win and x86_64) else\n                 \"699459a58243a296af0d6beb03e03a58e4a3706f27ac5abd96256f0858a704b2\" }}\n\nrecipe:\n  name: openjdk\n  version: ${{ version }}\n\nsource:\n  - if: linux\n    then:\n      - target_directory: src\n        url: https://github.com/openjdk/jdk${{ major }}u/archive/refs/tags/jdk-${{ jdk_full }}.tar.gz\n        sha256: 93eb9316f5c932929cb91dd6781d5537e972661ac4b9f8037de35bef4e1181bc\n      - target_directory: fonts\n        url: https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.zip\n        sha256: 7576310b219e04159d35ff61dd4a4ec4cdba4f35c00e002a136f00e96a908b0a\n    else:\n      # example of full url for zulu_build=17.44.15-ca & version=17.0.8:\n      # https://cdn.azul.com/zulu/bin/zulu17.44.15-ca-jdk17.0.8-macosx_x64.zip\n      - url: ${{ zulu_url }}/${{ zulu_base }}-${{ zulu_os }}_${{ zulu_arch }}.zip\n        sha256: ${{ zulu_hash }}\n\nbuild:\n  number: 0\n\noutputs:\n  - package:\n      name: openjdk\n    build:\n      script:\n        file: build\n      dynamic_linking:\n        # Binaries are already relocatable and conda-build's post-processing would add a very long RPATH to binaries\n        # which doesn't fit anymore into the __LINKEDIT section. For this, we either need to manually reassemble\n        # the Mach-O header or build everything from source.\n        binary_relocation: ${{ false if osx else true }}\n    requirements:\n      build:\n        # compilers also on osx for creating signatures, on win for run-exports\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler(\"cxx\") }}\n        - if: linux\n          then:\n            # boot JDK for the from-source build; must be JDK N-1 or N\n            - openjdk >=${{ major - 1 }},<${{ major + 1 }}\n            - autoconf\n            - make\n            - pkgconf\n            - unzip\n            - zip\n            - if: build_platform != host_platform\n              then:\n                - alsa-lib\n                - fontconfig\n                - freetype\n                - giflib\n                - harfbuzz\n                - lcms2\n                - libcups\n                - libjpeg-turbo\n                - libpng\n                - xorg-libx11\n                - xorg-libxext\n                - xorg-libxi\n                - xorg-libxrandr\n                - xorg-libxrender\n                - xorg-libxt\n                - xorg-libxtst\n                - xorg-xorgproto\n                - zlib\n        - if: win\n          then:\n            - m2-bash\n            - symlink-exe-build\n      host:\n        - if: linux\n          then:\n            - alsa-lib\n            - fontconfig\n            - freetype\n            - giflib\n            - harfbuzz\n            - harfbuzz\n            - lcms2\n            - libcups\n            - libjpeg-turbo\n            - libpng\n            - xorg-libx11\n            - xorg-libxext\n            - xorg-libxi\n            - xorg-libxrandr\n            - xorg-libxrender\n            - xorg-libxt\n            - xorg-libxtst\n            - xorg-xorgproto\n        - if: unix\n          then:\n            - zlib\n      run:\n        - if: linux\n          then:\n            - xorg-libx11\n            - xorg-libxext\n            - xorg-libxi\n            - xorg-libxrender\n            - xorg-libxtst\n      ignore_run_exports:\n        by_name:\n          # the produced artefacts still need libc++.*.dylib on osx,\n          # but the one in the platform sdk is enough; avoid extra run-export\n          - libcxx\n    tests:\n      - files:\n          recipe:\n            - test-nio/\n            - if: unix\n              then:\n                - test-jni/\n                - test-jni.sh\n                - run_test.sh\n              else:\n                - run_test.bat\n        requirements:\n          run:\n            - if: unix\n              then:\n                - ${{ compiler(\"c\") }}\n        script:\n          - java -version\n          - if: unix\n            then:\n              - '${JAVA_HOME}/bin/java -version'\n              - test -f ${JAVA_HOME}/release\n              - if: not ppc64le\n                then:\n                  - ./test-jni.sh\n\n            else:\n              - '%JAVA_HOME%\\bin\\java -version'\n              - if not exist %JAVA_HOME%\\\\release exit 1\nabout:\n  homepage: ${{ homepage }}\n  license: GPL-2.0-or-later WITH Classpath-exception-2.0\n  license_file:\n    - LICENSE\n    - ${{ extra_license }}\n  summary: ${{ summary }}\n\nextra:\n  recipe-maintainers:\n    - johanneskoester\n    - sodre\n    - CJ-Wright\n    - xhochy\n    - izahn\n    - h-vetinari\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  # constants\n  version: 27.0.1.1\n  openjdk_revision: 4\n  zulu_build: 27.30.201-ca\n  zulu_url: https://cdn.azul.com/zulu/bin\n  # derived\n  major: ${{ (version | split(\".\"))[0] | int }}\n  jdk_full: ${{ version }}+${{ openjdk_revision }}\n  zulu_base: zulu${{ zulu_build }}-jdk${{ version }}\n  # platform-specific\n  homepage: ${{ \"https://openjdk.java.net\" if linux else \"https://www.azul.com/products/zulu/\" }}\n  extra_license: ${{ \"fonts/LICENSE\" if linux else \"LICENSE\" }}\n  summary: ${{ \"An open-source implementation of the JDK\" if linux else \"The Zulu OpenJDK build\" }}\n\n  # only combinations are {osx, win} x {x64, arm64}\n  zulu_os: ${{ \"macosx\" if osx else \"win\" }}\n  zulu_arch: ${{ \"x64\" if x86_64 else \"aarch64\" }}\n  zulu_hash: ${{ \"a35898f7c8ce88eaf7cd30630ad2db9e9ea1c59d8853b774c4e3271d35ae318a\" if (osx and x86_64) else\n                 \"31bff5d3b423d582f1941ec37f8e6a21b297852ef561cd60bb316d8b20ac2f0c\" if (osx and arm64) else\n                 \"f5424ea36f832aa28a0441a57ffb1dfe2cd3d903802c0a36d22576b1acc430ec\" if (win and x86_64) else\n                 \"699459a58243a296af0d6beb03e03a58e4a3706f27ac5abd96256f0858a704b2\" }}\n\nrecipe:\n  name: openjdk\n  version: ${{ version }}\n\nsource:\n  - if: linux\n    then:\n      - target_directory: src\n        url: https://github.com/openjdk/jdk${{ major }}u/archive/refs/tags/jdk-${{ jdk_full }}.tar.gz\n        sha256: 93eb9316f5c932929cb91dd6781d5537e972661ac4b9f8037de35bef4e1181bc\n      - target_directory: fonts\n        url: https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.zip\n        sha256: 7576310b219e04159d35ff61dd4a4ec4cdba4f35c00e002a136f00e96a908b0a\n    else:\n      # example of full url for zulu_build=17.44.15-ca & version=17.0.8:\n      # https://cdn.azul.com/zulu/bin/zulu17.44.15-ca-jdk17.0.8-macosx_x64.zip\n      - url: ${{ zulu_url }}/${{ zulu_base }}-${{ zulu_os }}_${{ zulu_arch }}.zip\n        sha256: ${{ zulu_hash }}\n\nbuild:\n  number: 1\n\noutputs:\n  - package:\n      name: openjdk\n    build:\n      script:\n        file: build\n        # this is a work-around for something rattler-build should be doing,\n        # see https://github.com/prefix-dev/rattler-build/issues/2587\n        env:\n          PKG_VERSION: ${{ version }}\n      dynamic_linking:\n        # Binaries are already relocatable and conda-build's post-processing would add a very long RPATH to binaries\n        # which doesn't fit anymore into the __LINKEDIT section. For this, we either need to manually reassemble\n        # the Mach-O header or build everything from source.\n        binary_relocation: ${{ false if osx else true }}\n    requirements:\n      build:\n        # compilers also on osx for creating signatures, on win for run-exports\n        - ${{ stdlib(\"c\") }}\n        - ${{ compiler(\"cxx\") }}\n        - if: linux\n          then:\n            # boot JDK for the from-source build; must be JDK N-1 or N\n            - openjdk >=${{ major - 1 }},<${{ major + 1 }}\n            - autoconf\n            - make\n            - pkgconf\n            - unzip\n            - zip\n            - if: build_platform != host_platform\n              then:\n                - alsa-lib\n                - fontconfig\n                - freetype\n                - giflib\n                - harfbuzz\n                - lcms2\n                - libcups\n                - libjpeg-turbo\n                - libpng\n                - xorg-libx11\n                - xorg-libxext\n                - xorg-libxi\n                - xorg-libxrandr\n                - xorg-libxrender\n                - xorg-libxt\n                - xorg-libxtst\n                - xorg-xorgproto\n                - zlib\n        - if: win\n          then:\n            - m2-bash\n            - symlink-exe-build\n      host:\n        - if: linux\n          then:\n            - alsa-lib\n            - fontconfig\n            - freetype\n            - giflib\n            - harfbuzz\n            - harfbuzz\n            - lcms2\n            - libcups\n            - libjpeg-turbo\n            - libpng\n            - xorg-libx11\n            - xorg-libxext\n            - xorg-libxi\n            - xorg-libxrandr\n            - xorg-libxrender\n            - xorg-libxt\n            - xorg-libxtst\n            - xorg-xorgproto\n        - if: unix\n          then:\n            - zlib\n      run:\n        - if: linux\n          then:\n            - xorg-libx11\n            - xorg-libxext\n            - xorg-libxi\n            - xorg-libxrender\n            - xorg-libxtst\n      ignore_run_exports:\n        by_name:\n          # the produced artefacts still need libc++.*.dylib on osx,\n          # but the one in the platform sdk is enough; avoid extra run-export\n          - libcxx\n    tests:\n      - files:\n          recipe:\n            - test-nio/\n            - if: unix\n              then:\n                - test-jni/\n                - test-jni.sh\n                - run_test.sh\n              else:\n                - run_test.bat\n        requirements:\n          run:\n            - if: unix\n              then:\n                - ${{ compiler(\"c\") }}\n        script:\n          - java -version\n          - if: unix\n            then:\n              - '${JAVA_HOME}/bin/java -version'\n              - test -f ${JAVA_HOME}/release\n              - if: not ppc64le\n                then:\n                  - ./test-jni.sh\n\n            else:\n              - '%JAVA_HOME%\\bin\\java -version'\n              - if not exist %JAVA_HOME%\\\\release exit 1\nabout:\n  homepage: ${{ homepage }}\n  license: GPL-2.0-or-later WITH Classpath-exception-2.0\n  license_file:\n    - LICENSE\n    - ${{ extra_license }}\n  summary: ${{ summary }}\n\nextra:\n  recipe-maintainers:\n    - johanneskoester\n    - sodre\n    - CJ-Wright\n    - xhochy\n    - izahn\n    - h-vetinari\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1634,8 +1652,11 @@
       "summary": "The Zulu OpenJDK build"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
+        "env": {
+          "PKG_VERSION": "27.0.1.1"
+        },
         "file": "build"
       }
     },
@@ -1731,8 +1752,11 @@
       "summary": "The Zulu OpenJDK build"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
+        "env": {
+          "PKG_VERSION": "27.0.1.1"
+        },
         "file": "build"
       }
     },
