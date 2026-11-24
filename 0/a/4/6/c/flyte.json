@@ -1,0 +1,655 @@
+{
+  "archived": false,
+  "branch": "main",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npython_min:\n- '3.11'\n",
+  "ci_support_migrations": {},
+  "conda-forge.yml": {
+    "conda_build": {
+      "error_overlinking": true
+    },
+    "conda_build_tool": "rattler-build",
+    "conda_forge_output_validation": true,
+    "github": {
+      "branch_name": "main",
+      "tooling_branch_name": "main"
+    }
+  },
+  "feedstock_hash": "0c012e9de023e7efce4e66d23498dd8c238bbe27",
+  "feedstock_hash_ts": 1795523770,
+  "feedstock_name": "flyte",
+  "hash_type": "sha256",
+  "linux_64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/flyteorg/flyte-sdk",
+      "home": "https://flyte.org/",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "The open source durable AI runtime for model training and batch/online inference"
+    },
+    "build": {
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "flyte = flyte.cli.main:main",
+          "a0 = flyte._bin.runtime:main",
+          "clustered = flyte._bin.clustered:main",
+          "fserve = flyte._bin.serve:main",
+          "c0 = flyte._bin.connect:main",
+          "flyte-mcp = flyte._bin.mcp:main"
+        ]
+      },
+      "script": {
+        "content": [
+          "cp ${{ RECIPE_DIR }}/MANIFEST.in MANIFEST.in",
+          "${{ PYTHON }} -m pip install . -vv"
+        ],
+        "env": {
+          "SETUPTOOLS_SCM_PRETEND_VERSION": "2.13.1"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "killua156"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "flyte = flyte.cli.main:main",
+              "a0 = flyte._bin.runtime:main",
+              "clustered = flyte._bin.clustered:main",
+              "fserve = flyte._bin.serve:main",
+              "c0 = flyte._bin.connect:main",
+              "flyte-mcp = flyte._bin.mcp:main"
+            ]
+          }
+        },
+        "name": "flyte",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "setuptools",
+            "setuptools-scm"
+          ],
+          "run": [
+            "python >=3.11",
+            "aiofiles >=24.1.0",
+            "click >=8.2.1",
+            "cloudpickle >=3.1.1",
+            "docstring_parser >=0.16",
+            "fsspec >=2025.3.0",
+            "connectrpc >=0.9.0,<0.11",
+            "obstore >=0.7.3",
+            "protobuf >=6.30.1",
+            "pydantic >=2.10.6",
+            "pyyaml >=6.0.2",
+            "rich-click ==1.8.9",
+            "httpx >=0.28.1,<1.0.0",
+            "keyring >=25.6.0",
+            "msgpack-python >=1.1.0",
+            "toml >=0.10.2",
+            "async-lru >=2.0.5",
+            "mashumaro >=3.15",
+            "aiolimiter >=1.2.1",
+            "flyteidl2 ==2.0.54",
+            "packaging",
+            "sentry-sdk >=2.0",
+            "pyopenssl >=24.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "flyte",
+                "flyte.cli.main",
+                "flyte.io",
+                "flyte.remote",
+                "flyte.storage"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": "python -X utf8 -c \"from flyte.cli.main import main; main(['--help'])\""
+          },
+          {
+            "files": {
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pytest",
+                "pytest-asyncio",
+                "pytest-xdist",
+                "mock",
+                "grpcio",
+                "fastapi",
+                "uvicorn",
+                "starlette",
+                "pandas",
+                "pyarrow",
+                "mcp >=1.26.0,<2",
+                "textual >=0.80",
+                "python-kubernetes >=35,<37",
+                "prometheus_client",
+                "regex >=2024.5.15",
+                "orjson",
+                "asyncssh >=2.14",
+                "ruff"
+              ]
+            },
+            "script": "ignore=(\n  # need pydantic-monty 1.0, conda-forge only has 0.0.1\n  tests/flyte/orchestrator/test_local_runs.py\n  tests/flyte/orchestrator/test_conditions.py\n  # need docker\n  tests/flyte/imagebuild/test_docker_builder.py\n  tests/flyte/test_int_image_builder.py\n)\ndeselect=(\n  # need docker\n  tests/flyte/imagebuild/test_image_build_engine.py::test_cached\n  tests/flyte/imagebuild/test_image_build_engine.py::test_build_looks_up_in_the_explicit_build_queue\n  tests/flyte/imagebuild/test_image_build_engine.py::test_local_docker\n  # need kubectl\n  tests/cli/test_devbox.py::TestMergeKubeconfigRetry\n  tests/cli/test_devbox.py::TestMergeKubeconfigWindows\n  # needs google-cloud-bigquery\n  tests/flyte/type_engine/test_dataframe.py::test_reregister_encoder\n  # assumes a dev (unreleased) flyte version\n  tests/flyte/test_image.py::test_default_base_image\n  # click 8.5 reworded the message\n  tests/cli/test_main_options.py::test_unknown_option_keeps_click_message\n  # rattler-build puts the tests under $PREFIX/etc/conda/test-files/flyte/,\n  # which flyte treats as SDK code (path has /flyte/) or an environment dir\n  tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_success\n  tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_err\n  tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_success_interactive\n  tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_err_interactive\n  tests/flyte/type_engine/test_dataframe.py::test_setting_of_unset_formats\n  tests/user_api/test_environment.py::test_environment_include_populates_declaring_file\n  tests/user_api/test_task_environment.py::test_task_environment_include_populates_declaring_file\n  # calls ps, which isn't in the CI image\n  tests/flyte/apple_silicon/test_robustness.py::test_stopping_kills_the_whole_process_group\n  # reads the repo's plugins/ directory\n  tests/test_plugin_install_names.py::test_installable_plugin_names_are_published_by_this_repo\n  # patches time.monotonic, which stalls the asyncio loop for ~3 minutes per test on osx\n  tests/user_api/test_workload_token_auth.py::TestWorkloadTokenAuthenticator\n  # timing-dependent, the fake daemon doesn't die mid-request on the slower osx runner\n  tests/flyte/apple_silicon/test_bridge.py::test_oom_kill_is_surfaced_not_silent\n  # order-dependent under xdist (an lru_cache'd helper gets filled while other tests mock pyqwest)\n  tests/flyte/remote/test_session.py::TestBuildPyqwestClient::test_detects_system_cert_support_from_signature\n  # order-dependent under xdist: inspect.getsource() on the cloudpickled task\n  # fails or passes depending on which tests ran before it in the same worker\n  tests/flyte/clustered/test_serde.py::test_custom_survives_pickle_roundtrip\n)\nargs=()\nfor path in \"${ignore[@]}\"; do args+=(\"--ignore=$path\"); done\nfor test in \"${deselect[@]}\"; do args+=(\"--deselect=$test\"); done\n# Same marker filter as upstream's `make unit_test`: skips the tests that\n# need a Flyte backend or the S3 sandbox on localhost:4566.\npytest -v -n auto tests -o asyncio_default_fixture_loop_scope=function \\\n  -m \"not integration and not sandbox\" \"${args[@]}\"\n"
+          }
+        ],
+        "version": "2.13.1"
+      }
+    ],
+    "package": {
+      "name": "flyte",
+      "version": "2.13.1"
+    },
+    "requirements": {
+      "host": [
+        "python 3.11.*",
+        "pip",
+        "setuptools",
+        "setuptools-scm"
+      ],
+      "run": [
+        "python >=3.11",
+        "aiofiles >=24.1.0",
+        "click >=8.2.1",
+        "cloudpickle >=3.1.1",
+        "docstring_parser >=0.16",
+        "fsspec >=2025.3.0",
+        "connectrpc >=0.9.0,<0.11",
+        "obstore >=0.7.3",
+        "protobuf >=6.30.1",
+        "pydantic >=2.10.6",
+        "pyyaml >=6.0.2",
+        "rich-click ==1.8.9",
+        "httpx >=0.28.1,<1.0.0",
+        "keyring >=25.6.0",
+        "msgpack-python >=1.1.0",
+        "toml >=0.10.2",
+        "async-lru >=2.0.5",
+        "mashumaro >=3.15",
+        "aiolimiter >=1.2.1",
+        "flyteidl2 ==2.0.54",
+        "packaging",
+        "sentry-sdk >=2.0",
+        "pyopenssl >=24.0.0"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "dbaabd6f799ee3c2ff3dd9f834d6cd4631d4de88c8ace23925892612d25ebb4e",
+      "url": "https://github.com/flyteorg/flyte-sdk/archive/refs/tags/v2.13.1.tar.gz"
+    }
+  },
+  "linux_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": []
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "pip",
+        "python",
+        "setuptools",
+        "setuptools-scm"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "aiofiles",
+        "aiolimiter",
+        "async-lru",
+        "click",
+        "cloudpickle",
+        "connectrpc",
+        "docstring_parser",
+        "flyteidl2",
+        "fsspec",
+        "httpx",
+        "keyring",
+        "mashumaro",
+        "msgpack-python",
+        "obstore",
+        "packaging",
+        "protobuf",
+        "pydantic",
+        "pyopenssl",
+        "python",
+        "pyyaml",
+        "rich-click",
+        "sentry-sdk",
+        "toml"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "asyncssh",
+        "fastapi",
+        "grpcio",
+        "mcp",
+        "mock",
+        "orjson",
+        "pandas",
+        "pip",
+        "prometheus_client",
+        "pyarrow",
+        "pytest",
+        "pytest-asyncio",
+        "pytest-xdist",
+        "python",
+        "python-kubernetes",
+        "regex",
+        "ruff",
+        "starlette",
+        "textual",
+        "uvicorn"
+      ]
+    }
+  },
+  "meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/flyteorg/flyte-sdk",
+      "home": "https://flyte.org/",
+      "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
+      "license_file": "LICENSE",
+      "summary": "The open source durable AI runtime for model training and batch/online inference"
+    },
+    "build": {
+      "noarch": "python",
+      "number": "0",
+      "python": {
+        "entry_points": [
+          "flyte = flyte.cli.main:main",
+          "a0 = flyte._bin.runtime:main",
+          "clustered = flyte._bin.clustered:main",
+          "fserve = flyte._bin.serve:main",
+          "c0 = flyte._bin.connect:main",
+          "flyte-mcp = flyte._bin.mcp:main"
+        ]
+      },
+      "script": {
+        "content": [
+          "cp ${{ RECIPE_DIR }}/MANIFEST.in MANIFEST.in",
+          "${{ PYTHON }} -m pip install . -vv"
+        ],
+        "env": {
+          "SETUPTOOLS_SCM_PRETEND_VERSION": "2.13.1"
+        }
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "killua156"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "noarch": "python",
+          "python": {
+            "entry_points": [
+              "flyte = flyte.cli.main:main",
+              "a0 = flyte._bin.runtime:main",
+              "clustered = flyte._bin.clustered:main",
+              "fserve = flyte._bin.serve:main",
+              "c0 = flyte._bin.connect:main",
+              "flyte-mcp = flyte._bin.mcp:main"
+            ]
+          }
+        },
+        "name": "flyte",
+        "requirements": {
+          "build": [],
+          "host": [
+            "python 3.11.*",
+            "pip",
+            "setuptools",
+            "setuptools-scm"
+          ],
+          "run": [
+            "python >=3.11",
+            "aiofiles >=24.1.0",
+            "click >=8.2.1",
+            "cloudpickle >=3.1.1",
+            "docstring_parser >=0.16",
+            "fsspec >=2025.3.0",
+            "connectrpc >=0.9.0,<0.11",
+            "obstore >=0.7.3",
+            "protobuf >=6.30.1",
+            "pydantic >=2.10.6",
+            "pyyaml >=6.0.2",
+            "rich-click ==1.8.9",
+            "httpx >=0.28.1,<1.0.0",
+            "keyring >=25.6.0",
+            "msgpack-python >=1.1.0",
+            "toml >=0.10.2",
+            "async-lru >=2.0.5",
+            "mashumaro >=3.15",
+            "aiolimiter >=1.2.1",
+            "flyteidl2 ==2.0.54",
+            "packaging",
+            "sentry-sdk >=2.0",
+            "pyopenssl >=24.0.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "flyte",
+                "flyte.cli.main",
+                "flyte.io",
+                "flyte.remote",
+                "flyte.storage"
+              ],
+              "python_version": [
+                "3.11.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "python 3.11.*"
+              ]
+            },
+            "script": "python -X utf8 -c \"from flyte.cli.main import main; main(['--help'])\""
+          },
+          {
+            "files": {
+              "source": [
+                "tests/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "python 3.11.*",
+                "pytest",
+                "pytest-asyncio",
+                "pytest-xdist",
+                "mock",
+                "grpcio",
+                "fastapi",
+                "uvicorn",
+                "starlette",
+                "pandas",
+                "pyarrow",
+                "mcp >=1.26.0,<2",
+                "textual >=0.80",
+                "python-kubernetes >=35,<37",
+                "prometheus_client",
+                "regex >=2024.5.15",
+                "orjson",
+                "asyncssh >=2.14",
+                "ruff"
+              ]
+            },
+            "script": "ignore=(\n  # need pydantic-monty 1.0, conda-forge only has 0.0.1\n  tests/flyte/orchestrator/test_local_runs.py\n  tests/flyte/orchestrator/test_conditions.py\n  # need docker\n  tests/flyte/imagebuild/test_docker_builder.py\n  tests/flyte/test_int_image_builder.py\n)\ndeselect=(\n  # need docker\n  tests/flyte/imagebuild/test_image_build_engine.py::test_cached\n  tests/flyte/imagebuild/test_image_build_engine.py::test_build_looks_up_in_the_explicit_build_queue\n  tests/flyte/imagebuild/test_image_build_engine.py::test_local_docker\n  # need kubectl\n  tests/cli/test_devbox.py::TestMergeKubeconfigRetry\n  tests/cli/test_devbox.py::TestMergeKubeconfigWindows\n  # needs google-cloud-bigquery\n  tests/flyte/type_engine/test_dataframe.py::test_reregister_encoder\n  # assumes a dev (unreleased) flyte version\n  tests/flyte/test_image.py::test_default_base_image\n  # click 8.5 reworded the message\n  tests/cli/test_main_options.py::test_unknown_option_keeps_click_message\n  # rattler-build puts the tests under $PREFIX/etc/conda/test-files/flyte/,\n  # which flyte treats as SDK code (path has /flyte/) or an environment dir\n  tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_success\n  tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_err\n  tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_success_interactive\n  tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_err_interactive\n  tests/flyte/type_engine/test_dataframe.py::test_setting_of_unset_formats\n  tests/user_api/test_environment.py::test_environment_include_populates_declaring_file\n  tests/user_api/test_task_environment.py::test_task_environment_include_populates_declaring_file\n  # calls ps, which isn't in the CI image\n  tests/flyte/apple_silicon/test_robustness.py::test_stopping_kills_the_whole_process_group\n  # reads the repo's plugins/ directory\n  tests/test_plugin_install_names.py::test_installable_plugin_names_are_published_by_this_repo\n  # patches time.monotonic, which stalls the asyncio loop for ~3 minutes per test on osx\n  tests/user_api/test_workload_token_auth.py::TestWorkloadTokenAuthenticator\n  # timing-dependent, the fake daemon doesn't die mid-request on the slower osx runner\n  tests/flyte/apple_silicon/test_bridge.py::test_oom_kill_is_surfaced_not_silent\n  # order-dependent under xdist (an lru_cache'd helper gets filled while other tests mock pyqwest)\n  tests/flyte/remote/test_session.py::TestBuildPyqwestClient::test_detects_system_cert_support_from_signature\n  # order-dependent under xdist: inspect.getsource() on the cloudpickled task\n  # fails or passes depending on which tests ran before it in the same worker\n  tests/flyte/clustered/test_serde.py::test_custom_survives_pickle_roundtrip\n)\nargs=()\nfor path in \"${ignore[@]}\"; do args+=(\"--ignore=$path\"); done\nfor test in \"${deselect[@]}\"; do args+=(\"--deselect=$test\"); done\n# Same marker filter as upstream's `make unit_test`: skips the tests that\n# need a Flyte backend or the S3 sandbox on localhost:4566.\npytest -v -n auto tests -o asyncio_default_fixture_loop_scope=function \\\n  -m \"not integration and not sandbox\" \"${args[@]}\"\n"
+          }
+        ],
+        "version": "2.13.1"
+      }
+    ],
+    "package": {
+      "name": "flyte",
+      "version": "2.13.1"
+    },
+    "requirements": {
+      "host": [
+        "python 3.11.*",
+        "pip",
+        "setuptools",
+        "setuptools-scm"
+      ],
+      "run": [
+        "python >=3.11",
+        "aiofiles >=24.1.0",
+        "click >=8.2.1",
+        "cloudpickle >=3.1.1",
+        "docstring_parser >=0.16",
+        "fsspec >=2025.3.0",
+        "connectrpc >=0.9.0,<0.11",
+        "obstore >=0.7.3",
+        "protobuf >=6.30.1",
+        "pydantic >=2.10.6",
+        "pyyaml >=6.0.2",
+        "rich-click ==1.8.9",
+        "httpx >=0.28.1,<1.0.0",
+        "keyring >=25.6.0",
+        "msgpack-python >=1.1.0",
+        "toml >=0.10.2",
+        "async-lru >=2.0.5",
+        "mashumaro >=3.15",
+        "aiolimiter >=1.2.1",
+        "flyteidl2 ==2.0.54",
+        "packaging",
+        "sentry-sdk >=2.0",
+        "pyopenssl >=24.0.0"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "dbaabd6f799ee3c2ff3dd9f834d6cd4631d4de88c8ace23925892612d25ebb4e",
+      "url": "https://github.com/flyteorg/flyte-sdk/archive/refs/tags/v2.13.1.tar.gz"
+    }
+  },
+  "name": "flyte",
+  "outputs_names": {
+    "__set__": true,
+    "elements": [
+      "flyte"
+    ]
+  },
+  "parsing_error": false,
+  "platforms": [
+    "linux_64"
+  ],
+  "pr_info": {
+    "__lazy_json__": "pr_info/flyte.json"
+  },
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"2.13.1\"\n\npackage:\n  name: flyte\n  version: ${{ version }}\n\nsource:\n  # PyPI only has a wheel.\n  url: https://github.com/flyteorg/flyte-sdk/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: dbaabd6f799ee3c2ff3dd9f834d6cd4631d4de88c8ace23925892612d25ebb4e\n\nbuild:\n  number: 0\n  noarch: python\n  script:\n    env:\n      SETUPTOOLS_SCM_PRETEND_VERSION: ${{ version }}\n    content:\n      # include-package-data relies on setuptools-scm's git file finder, which\n      # finds nothing in the tarball, so py.typed and report/_template.html\n      # would be left out. https://github.com/flyteorg/flyte/issues/8430\n      - if: unix\n        then: cp ${{ RECIPE_DIR }}/MANIFEST.in MANIFEST.in\n        else: copy ${{ RECIPE_DIR }}\\MANIFEST.in MANIFEST.in\n      - ${{ PYTHON }} -m pip install . -vv\n  python:\n    entry_points:\n      - flyte = flyte.cli.main:main\n      - a0 = flyte._bin.runtime:main\n      - clustered = flyte._bin.clustered:main\n      - fserve = flyte._bin.serve:main\n      - c0 = flyte._bin.connect:main\n      - flyte-mcp = flyte._bin.mcp:main\n\nrequirements:\n  host:\n    - python ${{ python_min }}.*\n    - pip\n    - setuptools\n    - setuptools-scm\n  run:\n    - python >=${{ python_min }}\n    - aiofiles >=24.1.0\n    - click >=8.2.1\n    - cloudpickle >=3.1.1\n    - docstring_parser >=0.16\n    - fsspec >=2025.3.0\n    - connectrpc >=0.9.0,<0.11\n    - obstore >=0.7.3\n    - protobuf >=6.30.1\n    - pydantic >=2.10.6\n    - pyyaml >=6.0.2\n    - rich-click ==1.8.9\n    - httpx >=0.28.1,<1.0.0\n    - keyring >=25.6.0\n    - msgpack-python >=1.1.0\n    - toml >=0.10.2\n    - async-lru >=2.0.5\n    - mashumaro >=3.15\n    - aiolimiter >=1.2.1\n    - flyteidl2 ==2.0.54\n    - packaging\n    - sentry-sdk >=2.0\n    - pyopenssl >=24.0.0\n\ntests:\n  - python:\n      imports:\n        - flyte\n        - flyte.cli.main\n        - flyte.io\n        - flyte.remote\n        - flyte.storage\n      pip_check: true\n      python_version:\n        - ${{ python_min }}.*\n        - \"*\"\n  - requirements:\n      run:\n        - python ${{ python_min }}.*\n    script:\n      # rich-click help output needs UTF-8 on Windows CI.\n      - python -X utf8 -c \"from flyte.cli.main import main; main(['--help'])\"\n  # Upstream only runs the suite on Linux.\n  - if: not win\n    then:\n      files:\n        source:\n          - tests/\n      requirements:\n        run:\n          - python ${{ python_min }}.*\n          - pytest\n          - pytest-asyncio\n          - pytest-xdist\n          - mock\n          - grpcio\n          - fastapi\n          - uvicorn\n          - starlette\n          - pandas\n          - pyarrow\n          - mcp >=1.26.0,<2\n          - textual >=0.80\n          # kubernetes 37 turned its models into pydantic models that reject\n          # the int CPU values flyte passes; upstream locks 35.\n          - python-kubernetes >=35,<37\n          - prometheus_client\n          - regex >=2024.5.15\n          - orjson\n          - asyncssh >=2.14\n          - ruff\n      script:\n        - |\n          ignore=(\n            # need pydantic-monty 1.0, conda-forge only has 0.0.1\n            tests/flyte/orchestrator/test_local_runs.py\n            tests/flyte/orchestrator/test_conditions.py\n            # need docker\n            tests/flyte/imagebuild/test_docker_builder.py\n            tests/flyte/test_int_image_builder.py\n          )\n          deselect=(\n            # need docker\n            tests/flyte/imagebuild/test_image_build_engine.py::test_cached\n            tests/flyte/imagebuild/test_image_build_engine.py::test_build_looks_up_in_the_explicit_build_queue\n            tests/flyte/imagebuild/test_image_build_engine.py::test_local_docker\n            # need kubectl\n            tests/cli/test_devbox.py::TestMergeKubeconfigRetry\n            tests/cli/test_devbox.py::TestMergeKubeconfigWindows\n            # needs google-cloud-bigquery\n            tests/flyte/type_engine/test_dataframe.py::test_reregister_encoder\n            # assumes a dev (unreleased) flyte version\n            tests/flyte/test_image.py::test_default_base_image\n            # click 8.5 reworded the message\n            tests/cli/test_main_options.py::test_unknown_option_keeps_click_message\n            # rattler-build puts the tests under $PREFIX/etc/conda/test-files/flyte/,\n            # which flyte treats as SDK code (path has /flyte/) or an environment dir\n            tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_success\n            tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_err\n            tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_success_interactive\n            tests/flyte/roundtrip/test_round_trip.py::test_launch_remote_err_interactive\n            tests/flyte/type_engine/test_dataframe.py::test_setting_of_unset_formats\n            tests/user_api/test_environment.py::test_environment_include_populates_declaring_file\n            tests/user_api/test_task_environment.py::test_task_environment_include_populates_declaring_file\n            # calls ps, which isn't in the CI image\n            tests/flyte/apple_silicon/test_robustness.py::test_stopping_kills_the_whole_process_group\n            # reads the repo's plugins/ directory\n            tests/test_plugin_install_names.py::test_installable_plugin_names_are_published_by_this_repo\n            # patches time.monotonic, which stalls the asyncio loop for ~3 minutes per test on osx\n            tests/user_api/test_workload_token_auth.py::TestWorkloadTokenAuthenticator\n            # timing-dependent, the fake daemon doesn't die mid-request on the slower osx runner\n            tests/flyte/apple_silicon/test_bridge.py::test_oom_kill_is_surfaced_not_silent\n            # order-dependent under xdist (an lru_cache'd helper gets filled while other tests mock pyqwest)\n            tests/flyte/remote/test_session.py::TestBuildPyqwestClient::test_detects_system_cert_support_from_signature\n            # order-dependent under xdist: inspect.getsource() on the cloudpickled task\n            # fails or passes depending on which tests ran before it in the same worker\n            tests/flyte/clustered/test_serde.py::test_custom_survives_pickle_roundtrip\n          )\n          args=()\n          for path in \"${ignore[@]}\"; do args+=(\"--ignore=$path\"); done\n          for test in \"${deselect[@]}\"; do args+=(\"--deselect=$test\"); done\n          # Same marker filter as upstream's `make unit_test`: skips the tests that\n          # need a Flyte backend or the S3 sandbox on localhost:4566.\n          pytest -v -n auto tests -o asyncio_default_fixture_loop_scope=function \\\n            -m \"not integration and not sandbox\" \"${args[@]}\"\n\nabout:\n  homepage: https://flyte.org\n  repository: https://github.com/flyteorg/flyte-sdk\n  summary: The open source durable AI runtime for model training and batch/online inference\n  license: Apache-2.0\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - killua156\n",
+  "req": {
+    "__set__": true,
+    "elements": [
+      "aiofiles",
+      "aiolimiter",
+      "async-lru",
+      "click",
+      "cloudpickle",
+      "connectrpc",
+      "docstring_parser",
+      "flyteidl2",
+      "fsspec",
+      "httpx",
+      "keyring",
+      "mashumaro",
+      "msgpack-python",
+      "obstore",
+      "packaging",
+      "pip",
+      "protobuf",
+      "pydantic",
+      "pyopenssl",
+      "python",
+      "pyyaml",
+      "rich-click",
+      "sentry-sdk",
+      "setuptools",
+      "setuptools-scm",
+      "toml"
+    ]
+  },
+  "requirements": {
+    "build": {
+      "__set__": true,
+      "elements": []
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "pip",
+        "python",
+        "setuptools",
+        "setuptools-scm"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "aiofiles",
+        "aiolimiter",
+        "async-lru",
+        "click",
+        "cloudpickle",
+        "connectrpc",
+        "docstring_parser",
+        "flyteidl2",
+        "fsspec",
+        "httpx",
+        "keyring",
+        "mashumaro",
+        "msgpack-python",
+        "obstore",
+        "packaging",
+        "protobuf",
+        "pydantic",
+        "pyopenssl",
+        "python",
+        "pyyaml",
+        "rich-click",
+        "sentry-sdk",
+        "toml"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "asyncssh",
+        "fastapi",
+        "grpcio",
+        "mcp",
+        "mock",
+        "orjson",
+        "pandas",
+        "pip",
+        "prometheus_client",
+        "pyarrow",
+        "pytest",
+        "pytest-asyncio",
+        "pytest-xdist",
+        "python",
+        "python-kubernetes",
+        "regex",
+        "ruff",
+        "starlette",
+        "textual",
+        "uvicorn"
+      ]
+    }
+  },
+  "strong_exports": false,
+  "total_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": []
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "pip",
+        "python 3.11.*",
+        "setuptools",
+        "setuptools-scm"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "aiofiles >=24.1.0",
+        "aiolimiter >=1.2.1",
+        "async-lru >=2.0.5",
+        "click >=8.2.1",
+        "cloudpickle >=3.1.1",
+        "connectrpc >=0.9.0,<0.11",
+        "docstring_parser >=0.16",
+        "flyteidl2 ==2.0.54",
+        "fsspec >=2025.3.0",
+        "httpx >=0.28.1,<1.0.0",
+        "keyring >=25.6.0",
+        "mashumaro >=3.15",
+        "msgpack-python >=1.1.0",
+        "obstore >=0.7.3",
+        "packaging",
+        "protobuf >=6.30.1",
+        "pydantic >=2.10.6",
+        "pyopenssl >=24.0.0",
+        "python >=3.11",
+        "pyyaml >=6.0.2",
+        "rich-click ==1.8.9",
+        "sentry-sdk >=2.0",
+        "toml >=0.10.2"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "asyncssh >=2.14",
+        "fastapi",
+        "grpcio",
+        "mcp >=1.26.0,<2",
+        "mock",
+        "orjson",
+        "pandas",
+        "pip",
+        "prometheus_client",
+        "pyarrow",
+        "pytest",
+        "pytest-asyncio",
+        "pytest-xdist",
+        "python 3.11.*",
+        "python-kubernetes >=35,<37",
+        "regex >=2024.5.15",
+        "ruff",
+        "starlette",
+        "textual >=0.80",
+        "uvicorn"
+      ]
+    }
+  },
+  "url": "https://github.com/flyteorg/flyte-sdk/archive/refs/tags/v2.13.1.tar.gz",
+  "version": "2.13.1",
+  "version_pr_info": {
+    "__lazy_json__": "version_pr_info/flyte.json"
+  }
+}
