@@ -1,11 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "build_platform": {
-      "linux_ppc64le": "linux_64"
+      "linux_ppc64le": "linux_64",
+      "linux_riscv64": "linux_64",
+      "win_arm64": "win_arm64"
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
@@ -15,12 +17,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "osx_arm64": "default"
+      "osx_arm64": "default",
+      "win_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "c7de13ebda35eb144d58e2f5e7e43d9dfa3d0683",
-  "feedstock_hash_ts": 1792742641,
+  "feedstock_hash": "309fd8577dfde22bf9bbb28a2a9e19a6a1f751c2",
+  "feedstock_hash_ts": 1795530049,
   "feedstock_name": "nng",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -68,7 +71,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -80,14 +83,83 @@
               "test -f $PREFIX/lib/libnng.so",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "nng"
+            ]
+          }
+        },
+        "name": "nng",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "ninja"
+          ],
+          "host": [
+            "mbedtls >=4.2"
+          ],
+          "run": [
+            "mbedtls"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f $PREFIX/lib/libnng.so",
+              "nngcat -V"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
+          }
+        ],
+        "version": "2.1.0"
       }
     ],
     "package": {
       "name": "nng",
-      "version": "2.0.0"
+      "version": "2.1.0"
     },
     "requirements": {
       "build": [
@@ -99,7 +171,7 @@
         "ninja"
       ],
       "host": [
-        "mbedtls >=3.6,<4"
+        "mbedtls >=4.2"
       ],
       "run": [
         "mbedtls"
@@ -110,8 +182,8 @@
       "patches": [
         "test.patch"
       ],
-      "sha256": "439241ca7afd059e2c5635491e430e37b591430c25aa57c0ba07995c3fbdffa6",
-      "url": "https://github.com/nanomsg/nng/archive/v2.0.0.tar.gz"
+      "sha256": "e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d",
+      "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -140,7 +212,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
     }
   },
   "linux_aarch64_meta_yaml": {
@@ -188,7 +263,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -200,14 +275,31 @@
               "test -f $PREFIX/lib/libnng.so",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       }
     ],
     "package": {
       "name": "nng",
-      "version": "2.0.0"
+      "version": "2.1.0"
     },
     "requirements": {
       "build": [
@@ -219,7 +311,7 @@
         "ninja"
       ],
       "host": [
-        "mbedtls >=3.6,<4"
+        "mbedtls >=4.2"
       ],
       "run": [
         "mbedtls"
@@ -230,8 +322,8 @@
       "patches": [
         "test.patch"
       ],
-      "sha256": "439241ca7afd059e2c5635491e430e37b591430c25aa57c0ba07995c3fbdffa6",
-      "url": "https://github.com/nanomsg/nng/archive/v2.0.0.tar.gz"
+      "sha256": "e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d",
+      "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz"
     }
   },
   "linux_aarch64_requirements": {
@@ -260,7 +352,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
     }
   },
   "linux_ppc64le_meta_yaml": {
@@ -308,7 +403,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -320,14 +415,31 @@
               "test -f $PREFIX/lib/libnng.so",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       }
     ],
     "package": {
       "name": "nng",
-      "version": "2.0.0"
+      "version": "2.1.0"
     },
     "requirements": {
       "build": [
@@ -339,7 +451,7 @@
         "ninja"
       ],
       "host": [
-        "mbedtls >=3.6,<4"
+        "mbedtls >=4.2"
       ],
       "run": [
         "mbedtls"
@@ -350,8 +462,8 @@
       "patches": [
         "test.patch"
       ],
-      "sha256": "439241ca7afd059e2c5635491e430e37b591430c25aa57c0ba07995c3fbdffa6",
-      "url": "https://github.com/nanomsg/nng/archive/v2.0.0.tar.gz"
+      "sha256": "e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d",
+      "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz"
     }
   },
   "linux_ppc64le_requirements": {
@@ -380,7 +492,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
     }
   },
   "meta_yaml": {
@@ -428,7 +543,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -440,9 +555,26 @@
               "test -f $PREFIX/lib/libnng.so",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       },
       {
         "build": {
@@ -463,7 +595,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -475,9 +607,26 @@
               "test -f $PREFIX/lib/libnng.so",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       },
       {
         "build": {
@@ -498,7 +647,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -510,9 +659,26 @@
               "test -f $PREFIX/lib/libnng.so",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       },
       {
         "build": {
@@ -533,7 +699,59 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
+          ],
+          "run": [
+            "mbedtls"
+          ]
+        },
+        "tests": [
+          {
+            "script": [
+              "test -f $PREFIX/lib/libnng.so",
+              "nngcat -V"
+            ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
+          }
+        ],
+        "version": "2.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "nng"
+            ]
+          }
+        },
+        "name": "nng",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "ninja"
+          ],
+          "host": [
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -545,9 +763,26 @@
               "test -f $PREFIX/lib/libnng.dylib",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       },
       {
         "build": {
@@ -568,7 +803,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -580,9 +815,26 @@
               "test -f $PREFIX/lib/libnng.dylib",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       },
       {
         "build": {
@@ -603,7 +855,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "ucrt",
@@ -613,14 +865,86 @@
         "tests": [
           {
             "script": "nngcat.exe -V"
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "cl /nologo /I%LIBRARY_INC% test_tls.c /link /LIBPATH:%LIBRARY_LIB% nng.lib",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedtls.dll",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedx509.dll",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i tfpsacrypto.dll",
+              "test_tls.exe"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "nng"
+            ]
+          }
+        },
+        "name": "nng",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "ninja"
+          ],
+          "host": [
+            "mbedtls >=4.2"
+          ],
+          "run": [
+            "mbedtls"
+          ]
+        },
+        "tests": [
+          {
+            "script": "nngcat.exe -V"
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "cl /nologo /I%LIBRARY_INC% test_tls.c /link /LIBPATH:%LIBRARY_LIB% nng.lib",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedtls.dll",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedx509.dll",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i tfpsacrypto.dll",
+              "test_tls.exe"
+            ]
+          }
+        ],
+        "version": "2.1.0"
       }
     ],
     "package": {
       "name": "nng",
-      "version": "2.0.0"
+      "version": "2.1.0"
     },
     "requirements": {
       "build": [
@@ -632,7 +956,7 @@
         "ninja"
       ],
       "host": [
-        "mbedtls >=3.6,<4"
+        "mbedtls >=4.2"
       ],
       "run": [
         "mbedtls",
@@ -644,8 +968,8 @@
       "patches": [
         "test.patch"
       ],
-      "sha256": "439241ca7afd059e2c5635491e430e37b591430c25aa57c0ba07995c3fbdffa6",
-      "url": "https://github.com/nanomsg/nng/archive/v2.0.0.tar.gz"
+      "sha256": "e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d",
+      "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz"
     }
   },
   "name": "nng",
@@ -694,7 +1018,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -706,14 +1030,31 @@
               "test -f $PREFIX/lib/libnng.dylib",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       }
     ],
     "package": {
       "name": "nng",
-      "version": "2.0.0"
+      "version": "2.1.0"
     },
     "requirements": {
       "build": [
@@ -725,7 +1066,7 @@
         "ninja"
       ],
       "host": [
-        "mbedtls >=3.6,<4"
+        "mbedtls >=4.2"
       ],
       "run": [
         "mbedtls"
@@ -733,8 +1074,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "439241ca7afd059e2c5635491e430e37b591430c25aa57c0ba07995c3fbdffa6",
-      "url": "https://github.com/nanomsg/nng/archive/v2.0.0.tar.gz"
+      "sha256": "e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d",
+      "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -763,7 +1104,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
     }
   },
   "osx_arm64_meta_yaml": {
@@ -811,7 +1155,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "mbedtls"
@@ -823,14 +1167,31 @@
               "test -f $PREFIX/lib/libnng.dylib",
               "nngcat -V"
             ]
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng",
+              "./test_tls"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       }
     ],
     "package": {
       "name": "nng",
-      "version": "2.0.0"
+      "version": "2.1.0"
     },
     "requirements": {
       "build": [
@@ -842,7 +1203,7 @@
         "ninja"
       ],
       "host": [
-        "mbedtls >=3.6,<4"
+        "mbedtls >=4.2"
       ],
       "run": [
         "mbedtls"
@@ -850,8 +1211,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "439241ca7afd059e2c5635491e430e37b591430c25aa57c0ba07995c3fbdffa6",
-      "url": "https://github.com/nanomsg/nng/archive/v2.0.0.tar.gz"
+      "sha256": "e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d",
+      "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz"
     }
   },
   "osx_arm64_requirements": {
@@ -880,7 +1241,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
     }
   },
   "outputs_names": {
@@ -896,12 +1260,13 @@
     "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/nng.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: nng\n  version: \"2.0.0\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/nanomsg/nng/archive/v${{ version }}.tar.gz\n  sha256: 439241ca7afd059e2c5635491e430e37b591430c25aa57c0ba07995c3fbdffa6\n  patches:\n    - if: linux\n      then: test.patch\n\nbuild:\n  number: 0\n\nrequirements:\n  run_exports:\n    - ${{ pin_subpackage(name, upper_bound='x') }}\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    - cmake\n    - make\n    - ninja\n  host:\n    - mbedtls >=3.6,<4\n  run:\n    - if: win\n      then: ucrt\n    - ${{ pin_compatible('mbedtls', upper_bound='x.x') }}\n\ntests:\n  - script:\n      - if: linux\n        then: test -f $PREFIX/lib/libnng.so\n      - if: osx\n        then: test -f $PREFIX/lib/libnng.dylib\n      - if: unix\n        then: nngcat -V\n      - if: win\n        then: nngcat.exe -V\n\nabout:\n  summary: nanomsg-next-generation -- light-weight brokerless messaging\n  description: |\n    nanomsg-next-generation -- light-weight brokerless messaging\n  license: MIT\n  license_file: LICENSE.txt\n  homepage: https://nng.nanomsg.org/\n  repository: https://github.com/nanomsg/nng\n  documentation: https://nng.nanomsg.org/man/\n\nextra:\n  recipe-maintainers:\n    - jan-janssen\n    - carlodri\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: nng\n  version: \"2.1.0\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/nanomsg/nng/archive/v${{ version }}.tar.gz\n  sha256: e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d\n  patches:\n    - if: linux\n      then: test.patch\n\nbuild:\n  number: 0\n\nrequirements:\n  run_exports:\n    - ${{ pin_subpackage(name, upper_bound='x') }}\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    - cmake\n    - make\n    - ninja\n  host:\n    - mbedtls >=4.2\n  run:\n    # ucrt is only packaged for win-64; vc14_runtime covers win-arm64\n    - if: win and x86_64\n      then: ucrt\n    - ${{ pin_compatible('mbedtls', upper_bound='x.x') }}\n\ntests:\n  - script:\n      - if: linux\n        then: test -f $PREFIX/lib/libnng.so\n      - if: osx\n        then: test -f $PREFIX/lib/libnng.dylib\n      - if: unix\n        then: nngcat -V\n      - if: win\n        then: nngcat.exe -V\n  # nng_tls_config_alloc() returns NNG_ENOTSUP if nng was built without TLS\n  - script:\n      - if: win\n        then:\n          - cl /nologo /I%LIBRARY_INC% test_tls.c /link /LIBPATH:%LIBRARY_LIB% nng.lib\n          # nng.dll must use the mbedtls DLLs, not static copies of Mbed TLS\n          - dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedtls.dll\n          - dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedx509.dll\n          - dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i tfpsacrypto.dll\n          - test_tls.exe\n        else:\n          - ${CC} ${CFLAGS} -I${PREFIX}/include test_tls.c -o test_tls ${LDFLAGS} -L${PREFIX}/lib -Wl,-rpath,${PREFIX}/lib -lnng\n          - ./test_tls\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n    files:\n      recipe:\n        - test_tls.c\n\nabout:\n  summary: nanomsg-next-generation -- light-weight brokerless messaging\n  description: |\n    nanomsg-next-generation -- light-weight brokerless messaging\n  license: MIT\n  license_file: LICENSE.txt\n  homepage: https://nng.nanomsg.org/\n  repository: https://github.com/nanomsg/nng\n  documentation: https://nng.nanomsg.org/man/\n\nextra:\n  recipe-maintainers:\n    - jan-janssen\n    - carlodri\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -948,7 +1313,10 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
     }
   },
   "strong_exports": false,
@@ -967,7 +1335,7 @@
     "host": {
       "__set__": true,
       "elements": [
-        "mbedtls >=3.6,<4"
+        "mbedtls >=4.2"
       ]
     },
     "run": {
@@ -979,11 +1347,14 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
     }
   },
-  "url": "https://github.com/nanomsg/nng/archive/v2.0.0.tar.gz",
-  "version": "2.0.0",
+  "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz",
+  "version": "2.1.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/nng.json"
   },
@@ -1032,7 +1403,7 @@
             "ninja"
           ],
           "host": [
-            "mbedtls >=3.6,<4"
+            "mbedtls >=4.2"
           ],
           "run": [
             "ucrt",
@@ -1042,14 +1413,34 @@
         "tests": [
           {
             "script": "nngcat.exe -V"
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "cl /nologo /I%LIBRARY_INC% test_tls.c /link /LIBPATH:%LIBRARY_LIB% nng.lib",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedtls.dll",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedx509.dll",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i tfpsacrypto.dll",
+              "test_tls.exe"
+            ]
           }
         ],
-        "version": "2.0.0"
+        "version": "2.1.0"
       }
     ],
     "package": {
       "name": "nng",
-      "version": "2.0.0"
+      "version": "2.1.0"
     },
     "requirements": {
       "build": [
@@ -1061,7 +1452,7 @@
         "ninja"
       ],
       "host": [
-        "mbedtls >=3.6,<4"
+        "mbedtls >=4.2"
       ],
       "run": [
         "ucrt",
@@ -1070,8 +1461,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "439241ca7afd059e2c5635491e430e37b591430c25aa57c0ba07995c3fbdffa6",
-      "url": "https://github.com/nanomsg/nng/archive/v2.0.0.tar.gz"
+      "sha256": "e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d",
+      "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -1101,7 +1492,147 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "description": "nanomsg-next-generation -- light-weight brokerless messaging",
+      "dev_url": "https://github.com/nanomsg/nng",
+      "doc_url": "https://nng.nanomsg.org/man/",
+      "home": "https://nng.nanomsg.org/",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.txt",
+      "summary": "nanomsg-next-generation -- light-weight brokerless messaging"
+    },
+    "build": {
+      "number": "0",
+      "run_exports": {
+        "weak": [
+          "nng"
+        ]
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "jan-janssen",
+        "carlodri"
+      ]
+    },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "nng"
+            ]
+          }
+        },
+        "name": "nng",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cxx_compiler_stub",
+            "cmake",
+            "make",
+            "ninja"
+          ],
+          "host": [
+            "mbedtls >=4.2"
+          ],
+          "run": [
+            "mbedtls"
+          ]
+        },
+        "tests": [
+          {
+            "script": "nngcat.exe -V"
+          },
+          {
+            "files": {
+              "recipe": [
+                "test_tls.c"
+              ]
+            },
+            "requirements": {
+              "build": [
+                "c_stdlib_stub",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "cl /nologo /I%LIBRARY_INC% test_tls.c /link /LIBPATH:%LIBRARY_LIB% nng.lib",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedtls.dll",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i mbedx509.dll",
+              "dumpbin /dependents %LIBRARY_BIN%\\nng.dll | findstr /i tfpsacrypto.dll",
+              "test_tls.exe"
+            ]
+          }
+        ],
+        "version": "2.1.0"
+      }
+    ],
+    "package": {
+      "name": "nng",
+      "version": "2.1.0"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "cmake",
+        "make",
+        "ninja"
+      ],
+      "host": [
+        "mbedtls >=4.2"
+      ],
+      "run": [
+        "mbedtls"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "e2fdcdf126b530e331b4727812b710629cdb5d90d230ce8f080e2eb520299d8d",
+      "url": "https://github.com/nanomsg/nng/archive/v2.1.0.tar.gz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "cmake",
+        "cxx_compiler_stub",
+        "make",
+        "ninja"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "mbedtls"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "mbedtls"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub"
+      ]
     }
   }
 }
