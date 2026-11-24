@@ -9,7 +9,8 @@
     },
     "build_platform": {
       "linux_ppc64le": "linux_64",
-      "linux_riscv64": "linux_64"
+      "linux_riscv64": "linux_64",
+      "win_arm64": "win_64"
     },
     "conda_build": {
       "error_overlinking": true
@@ -28,8 +29,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "a29a8f9481bbe5e20805a1ff4f3e6f528605f87d",
-  "feedstock_hash_ts": 1795446525,
+  "feedstock_hash": "f205329254acda33bd6e4d9932e9158f46500660",
+  "feedstock_hash_ts": 1795505863,
   "feedstock_name": "helm-ls",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -42,7 +43,7 @@
       "summary": "Language server for Helm"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "cd src",
         "go-licenses save . --save_path ../library_licenses",
@@ -170,7 +171,7 @@
       "summary": "Language server for Helm"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "cd src",
         "go-licenses save . --save_path ../library_licenses",
@@ -267,7 +268,7 @@
       "summary": "Language server for Helm"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "cd src",
         "go-licenses save . --save_path ../library_licenses",
@@ -364,12 +365,13 @@
       "summary": "Language server for Helm"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "cd src",
         "go-licenses save . --save_path ../library_licenses",
         "go build -v -trimpath -o $PREFIX/bin/helm_ls -ldflags=\"-s -w -X main.Version=v${{ version }} -X main.Branch=v${{ version }}\"",
-        "go build -v -trimpath -o %LIBRARY_BIN%\\helm_ls.exe -ldflags=\"-s -w -X main.Version=v${{ version }} -X main.Branch=v${{ version }}\""
+        "go build -v -trimpath -o %LIBRARY_BIN%\\helm_ls.exe -ldflags=\"-s -w -X main.Version=v${{ version }} -X main.Branch=v${{ version }}\"",
+        "set \"CC=zig cc -target aarch64-windows-gnu\""
       ]
     },
     "extra": {
@@ -595,6 +597,36 @@
           }
         ],
         "version": "0.5.4"
+      },
+      {
+        "build": null,
+        "name": "helm-ls",
+        "requirements": {
+          "build": [
+            "zig",
+            "go-cgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "helm_ls --help",
+              "helm_ls version"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "helm_ls"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.5.4"
       }
     ],
     "package": {
@@ -608,7 +640,8 @@
         "go-cgo_compiler_stub",
         "go-licenses",
         "m2w64_c_compiler_stub",
-        "m2w64_c_stdlib_stub"
+        "m2w64_c_stdlib_stub",
+        "zig"
       ]
     },
     "schema_version": 1,
@@ -628,7 +661,7 @@
       "summary": "Language server for Helm"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "cd src",
         "go-licenses save . --save_path ../library_licenses",
@@ -725,7 +758,7 @@
       "summary": "Language server for Helm"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "cd src",
         "go-licenses save . --save_path ../library_licenses",
@@ -825,12 +858,13 @@
     "linux_ppc64le",
     "osx_64",
     "osx_arm64",
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/helm-ls.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"0.5.4\"\n\npackage:\n  name: helm-ls\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/mrjosh/helm-ls/archive/v${{ version }}.tar.gz\n  sha256: a8a5490084839af3506c85efcf603fbd71bb9ee37222bbd7817da1da3f054ab3\n  target_directory: src\n\nbuild:\n  number: 1\n  script:\n    - cd src\n    - go-licenses save . --save_path ../library_licenses\n    - if: unix\n      then: go build -v -trimpath -o $PREFIX/bin/helm_ls -ldflags=\"-s -w -X main.Version=v${{ version }} -X main.Branch=v${{ version }}\"\n      else: go build -v -trimpath -o %LIBRARY_BIN%\\helm_ls.exe -ldflags=\"-s -w -X main.Version=v${{ version }} -X main.Branch=v${{ version }}\"\n\nrequirements:\n  build:\n    - if: unix\n      then:\n        - ${{ compiler(\"c\") }}\n        - ${{ stdlib(\"c\") }}\n      else:\n        # cgo on Windows requires a MinGW toolchain, MSVC is not supported\n        - ${{ compiler(\"m2w64_c\") }}\n        - ${{ stdlib(\"m2w64_c\") }}\n    - ${{ compiler(\"go-cgo\") }}\n    - go-licenses\n\ntests:\n  - script:\n      - helm_ls --help\n      - helm_ls version\n  - package_contents:\n      bin:\n        - helm_ls\n      strict: true\n\nabout:\n  license: MIT\n  license_file:\n    - src/LICENSE\n    - library_licenses/\n  summary: Language server for Helm\n  homepage: https://github.com/mrjosh/helm-ls\n  repository: https://github.com/mrjosh/helm-ls\n\nextra:\n  recipe-maintainers:\n    - danielnachun\n    - pavelzw\n",
+  "raw_meta_yaml": "context:\n  version: \"0.5.4\"\n\npackage:\n  name: helm-ls\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/mrjosh/helm-ls/archive/v${{ version }}.tar.gz\n  sha256: a8a5490084839af3506c85efcf603fbd71bb9ee37222bbd7817da1da3f054ab3\n  target_directory: src\n\nbuild:\n  number: 2\n  script:\n    - cd src\n    # no MinGW gcc targets win-arm64; zig ships aarch64 mingw-w64 headers and CRT\n    - if: target_platform == \"win-arm64\"\n      then: set \"CC=zig cc -target aarch64-windows-gnu\"\n    - go-licenses save . --save_path ../library_licenses\n    - if: unix\n      then: go build -v -trimpath -o $PREFIX/bin/helm_ls -ldflags=\"-s -w -X main.Version=v${{ version }} -X main.Branch=v${{ version }}\"\n      else: go build -v -trimpath -o %LIBRARY_BIN%\\helm_ls.exe -ldflags=\"-s -w -X main.Version=v${{ version }} -X main.Branch=v${{ version }}\"\n\nrequirements:\n  build:\n    - if: unix\n      then:\n        - ${{ compiler(\"c\") }}\n        - ${{ stdlib(\"c\") }}\n    # cgo on Windows requires a MinGW toolchain, MSVC is not supported\n    - if: target_platform == \"win-64\"\n      then:\n        - ${{ compiler(\"m2w64_c\") }}\n        - ${{ stdlib(\"m2w64_c\") }}\n    - if: target_platform == \"win-arm64\"\n      then:\n        - zig\n    - ${{ compiler(\"go-cgo\") }}\n    - go-licenses\n\ntests:\n  - script:\n      - helm_ls --help\n      - helm_ls version\n  - package_contents:\n      bin:\n        - helm_ls\n      strict: true\n\nabout:\n  license: MIT\n  license_file:\n    - src/LICENSE\n    - library_licenses/\n  summary: Language server for Helm\n  homepage: https://github.com/mrjosh/helm-ls\n  repository: https://github.com/mrjosh/helm-ls\n\nextra:\n  recipe-maintainers:\n    - danielnachun\n    - pavelzw\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -839,7 +873,8 @@
       "go-cgo_compiler_stub",
       "go-licenses",
       "m2w64_c_compiler_stub",
-      "m2w64_c_stdlib_stub"
+      "m2w64_c_stdlib_stub",
+      "zig"
     ]
   },
   "requirements": {
@@ -851,7 +886,8 @@
         "go-cgo_compiler_stub",
         "go-licenses",
         "m2w64_c_compiler_stub",
-        "m2w64_c_stdlib_stub"
+        "m2w64_c_stdlib_stub",
+        "zig"
       ]
     },
     "host": {
@@ -883,7 +919,8 @@
         "go-cgo_compiler_stub",
         "go-licenses",
         "m2w64_c_compiler_stub",
-        "m2w64_c_stdlib_stub"
+        "m2w64_c_stdlib_stub",
+        "zig"
       ]
     },
     "host": {
@@ -914,7 +951,7 @@
       "summary": "Language server for Helm"
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "script": [
         "cd src",
         "go-licenses save . --save_path ../library_licenses",
@@ -986,6 +1023,101 @@
         "go-licenses",
         "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": []
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/mrjosh/helm-ls",
+      "home": "https://github.com/mrjosh/helm-ls",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "src/LICENSE",
+      "summary": "Language server for Helm"
+    },
+    "build": {
+      "number": "2",
+      "script": [
+        "cd src",
+        "set \"CC=zig cc -target aarch64-windows-gnu\"",
+        "go-licenses save . --save_path ../library_licenses",
+        "go build -v -trimpath -o %LIBRARY_BIN%\\helm_ls.exe -ldflags=\"-s -w -X main.Version=v${{ version }} -X main.Branch=v${{ version }}\""
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "danielnachun",
+        "pavelzw"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "helm-ls",
+        "requirements": {
+          "build": [
+            "zig",
+            "go-cgo_compiler_stub",
+            "go-licenses"
+          ],
+          "host": [],
+          "run": []
+        },
+        "tests": [
+          {
+            "script": [
+              "helm_ls --help",
+              "helm_ls version"
+            ]
+          },
+          {
+            "package_contents": {
+              "bin": [
+                "helm_ls"
+              ],
+              "strict": true
+            }
+          }
+        ],
+        "version": "0.5.4"
+      }
+    ],
+    "package": {
+      "name": "helm-ls",
+      "version": "0.5.4"
+    },
+    "requirements": {
+      "build": [
+        "zig",
+        "go-cgo_compiler_stub",
+        "go-licenses"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "a8a5490084839af3506c85efcf603fbd71bb9ee37222bbd7817da1da3f054ab3",
+      "url": "https://github.com/mrjosh/helm-ls/archive/v0.5.4.tar.gz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "go-cgo_compiler_stub",
+        "go-licenses",
+        "zig"
       ]
     },
     "host": {
