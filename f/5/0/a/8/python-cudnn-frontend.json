@@ -1,7 +1,7 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_c_compiler_version14c_stdlib_version2.17cuda_compiler_version12.9cxx_compiler_version14python3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncudnn:\n- '9'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n",
+  "ci_support_linux_64_c_compiler_version14c_stdlib_version2.17cuda_compiler_version12.9cxx_compiler_version14is_abi3falsepython3.14.____cp314t.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '14'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncuda_compiler:\n- cuda-nvcc\ncuda_compiler_version:\n- '12.9'\ncudnn:\n- '9'\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '14'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nis_abi3:\n- false\nis_python_min:\n- false\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npython:\n- 3.14.* *_cp314t\npython_min:\n- '3.12'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n  - c_stdlib_version\n  - cuda_compiler_version\n- - python\n  - is_python_min\n  - is_abi3\n",
   "ci_support_migrations": {
     "python314t": {
       "migration_number": 1,
@@ -27,8 +27,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "ba639ecf10729c9a80820736ac81a8e432bfcfd9",
-  "feedstock_hash_ts": 1795037961,
+  "feedstock_hash": "0d675a2c8a0e481da2eed135a2d710f1ed807ffa",
+  "feedstock_hash_ts": 1795595716,
   "feedstock_name": "python-cudnn-frontend",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -41,10 +41,14 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
         "env": {
-          "CUDNN_FRONTEND_LOG_INFO": "1"
+          "CUDNN_FRONTEND_LOG_INFO": "1",
+          "CUDNN_FRONTEND_PYTHON_STABLE_ABI": "ON"
         }
       }
     },
@@ -64,22 +68,22 @@
             "cxx_compiler_stub",
             "cuda_compiler_stub",
             "c_stdlib_stub",
-            "cmake >=3.18",
+            "cmake >=3.26",
             "cuda-nvrtc-dev",
             "make",
             "ninja >=1.11.1.1"
           ],
           "host": [
             "cudnn",
+            "nanobind >=3.0.1,<4",
             "pip",
-            "pybind11 >=2.13,<3",
-            "python",
+            "python 3.12.*",
             "setuptools >=64"
           ],
           "run": [
             "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
+            "python >=3.12",
+            "nvidia-cutlass-dsl >=4.8.0"
           ]
         },
         "tests": [
@@ -94,15 +98,13 @@
                 "cudnn.linear_attention",
                 "cudnn.ops",
                 "cudnn.sdpa"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
             "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
           },
           {
@@ -114,7 +116,80 @@
             }
           }
         ],
-        "version": "1.31.0"
+        "version": "1.33.0"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "python-cudnn-frontend",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.26",
+            "cuda-nvrtc-dev",
+            "make",
+            "ninja >=1.11.1.1"
+          ],
+          "host": [
+            "cudnn",
+            "nanobind >=3.0.1,<4",
+            "pip",
+            "python 3.12.*",
+            "python-abi3 3.12.*",
+            "setuptools >=64"
+          ],
+          "run": [
+            "apache-tvm-ffi >=0.1.11",
+            "python >=3.12",
+            "nvidia-cutlass-dsl >=4.8.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "cudnn",
+                "cudnn.block_sparse_attention",
+                "cudnn.experimental.ops",
+                "cudnn.gemm",
+                "cudnn.hstu",
+                "cudnn.linear_attention",
+                "cudnn.ops",
+                "cudnn.sdpa"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\"",
+              "abi3audit $SP_DIR/cudnn/_compiled_module.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "include/cudnn_frontend.h",
+                "include/cudnn_frontend_version.h"
+              ]
+            }
+          }
+        ],
+        "version": "1.33.0"
       },
       {
         "build": null,
@@ -125,22 +200,22 @@
             "cxx_compiler_stub",
             "cuda_compiler_stub",
             "c_stdlib_stub",
-            "cmake >=3.18",
+            "cmake >=3.26",
             "cuda-nvrtc-dev",
             "make",
             "ninja >=1.11.1.1"
           ],
           "host": [
             "cudnn",
+            "nanobind >=3.0.1,<4",
             "pip",
-            "pybind11 >=2.13,<3",
-            "python",
+            "python 3.12.*",
             "setuptools >=64"
           ],
           "run": [
             "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
+            "python >=3.12",
+            "nvidia-cutlass-dsl >=4.8.0"
           ]
         },
         "tests": [
@@ -155,15 +230,13 @@
                 "cudnn.linear_attention",
                 "cudnn.ops",
                 "cudnn.sdpa"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
             "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
           },
           {
@@ -175,10 +248,14 @@
             }
           }
         ],
-        "version": "1.31.0"
+        "version": "1.33.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "python-cudnn-frontend",
         "requirements": {
           "build": [
@@ -186,22 +263,23 @@
             "cxx_compiler_stub",
             "cuda_compiler_stub",
             "c_stdlib_stub",
-            "cmake >=3.18",
+            "cmake >=3.26",
             "cuda-nvrtc-dev",
             "make",
             "ninja >=1.11.1.1"
           ],
           "host": [
             "cudnn",
+            "nanobind >=3.0.1,<4",
             "pip",
-            "pybind11 >=2.13,<3",
-            "python",
+            "python 3.12.*",
+            "python-abi3 3.12.*",
             "setuptools >=64"
           ],
           "run": [
             "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
+            "python >=3.12",
+            "nvidia-cutlass-dsl >=4.8.0"
           ]
         },
         "tests": [
@@ -216,16 +294,23 @@
                 "cudnn.linear_attention",
                 "cudnn.ops",
                 "cudnn.sdpa"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "pip"
+                "abi3audit"
               ]
             },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
+            "script": [
+              "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\"",
+              "abi3audit $SP_DIR/cudnn/_compiled_module.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
           },
           {
             "package_contents": {
@@ -236,439 +321,12 @@
             }
           }
         ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
+        "version": "1.33.0"
       }
     ],
     "package": {
       "name": "python-cudnn-frontend",
-      "version": "1.31.0"
+      "version": "1.33.0"
     },
     "requirements": {
       "build": [
@@ -676,28 +334,29 @@
         "cxx_compiler_stub",
         "cuda_compiler_stub",
         "c_stdlib_stub",
-        "cmake >=3.18",
+        "cmake >=3.26",
         "cuda-nvrtc-dev",
         "make",
         "ninja >=1.11.1.1"
       ],
       "host": [
         "cudnn",
+        "nanobind >=3.0.1,<4",
         "pip",
-        "pybind11 >=2.13,<3",
-        "python",
-        "setuptools >=64"
+        "python 3.12.*",
+        "setuptools >=64",
+        "python-abi3 3.12.*"
       ],
       "run": [
         "apache-tvm-ffi >=0.1.11",
-        "python",
-        "nvidia-cutlass-dsl >=4.6.2"
+        "python >=3.12",
+        "nvidia-cutlass-dsl >=4.8.0"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "130f3e98e3f07defd60bf39b250ae7d96c61ca99443782ce77fd470964fbd899",
-      "url": "https://github.com/NVIDIA/cudnn-frontend/archive/v1.31.0.tar.gz"
+      "sha256": "135a2c56c91dc6b1eca6a75369a0c8c8a3747da95c099be31b4f2a9788f91ce6",
+      "url": "https://github.com/NVIDIA/cudnn-frontend/archive/v1.33.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -718,9 +377,10 @@
       "__set__": true,
       "elements": [
         "cudnn",
+        "nanobind",
         "pip",
-        "pybind11",
         "python",
+        "python-abi3",
         "setuptools"
       ]
     },
@@ -735,6 +395,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
@@ -749,10 +410,14 @@
     },
     "build": {
       "number": "0",
+      "python": {
+        "version_independent": true
+      },
       "script": {
         "content": "${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation",
         "env": {
-          "CUDNN_FRONTEND_LOG_INFO": "1"
+          "CUDNN_FRONTEND_LOG_INFO": "1",
+          "CUDNN_FRONTEND_PYTHON_STABLE_ABI": "ON"
         }
       }
     },
@@ -772,22 +437,22 @@
             "cxx_compiler_stub",
             "cuda_compiler_stub",
             "c_stdlib_stub",
-            "cmake >=3.18",
+            "cmake >=3.26",
             "cuda-nvrtc-dev",
             "make",
             "ninja >=1.11.1.1"
           ],
           "host": [
             "cudnn",
+            "nanobind >=3.0.1,<4",
             "pip",
-            "pybind11 >=2.13,<3",
-            "python",
+            "python 3.12.*",
             "setuptools >=64"
           ],
           "run": [
             "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
+            "python >=3.12",
+            "nvidia-cutlass-dsl >=4.8.0"
           ]
         },
         "tests": [
@@ -802,15 +467,13 @@
                 "cudnn.linear_attention",
                 "cudnn.ops",
                 "cudnn.sdpa"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
             "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
           },
           {
@@ -822,7 +485,80 @@
             }
           }
         ],
-        "version": "1.31.0"
+        "version": "1.33.0"
+      },
+      {
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
+        "name": "python-cudnn-frontend",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "cxx_compiler_stub",
+            "cuda_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.26",
+            "cuda-nvrtc-dev",
+            "make",
+            "ninja >=1.11.1.1"
+          ],
+          "host": [
+            "cudnn",
+            "nanobind >=3.0.1,<4",
+            "pip",
+            "python 3.12.*",
+            "python-abi3 3.12.*",
+            "setuptools >=64"
+          ],
+          "run": [
+            "apache-tvm-ffi >=0.1.11",
+            "python >=3.12",
+            "nvidia-cutlass-dsl >=4.8.0"
+          ]
+        },
+        "tests": [
+          {
+            "python": {
+              "imports": [
+                "cudnn",
+                "cudnn.block_sparse_attention",
+                "cudnn.experimental.ops",
+                "cudnn.gemm",
+                "cudnn.hstu",
+                "cudnn.linear_attention",
+                "cudnn.ops",
+                "cudnn.sdpa"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "abi3audit"
+              ]
+            },
+            "script": [
+              "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\"",
+              "abi3audit $SP_DIR/cudnn/_compiled_module.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
+          },
+          {
+            "package_contents": {
+              "site_packages": [
+                "include/cudnn_frontend.h",
+                "include/cudnn_frontend_version.h"
+              ]
+            }
+          }
+        ],
+        "version": "1.33.0"
       },
       {
         "build": null,
@@ -833,22 +569,22 @@
             "cxx_compiler_stub",
             "cuda_compiler_stub",
             "c_stdlib_stub",
-            "cmake >=3.18",
+            "cmake >=3.26",
             "cuda-nvrtc-dev",
             "make",
             "ninja >=1.11.1.1"
           ],
           "host": [
             "cudnn",
+            "nanobind >=3.0.1,<4",
             "pip",
-            "pybind11 >=2.13,<3",
-            "python",
+            "python 3.12.*",
             "setuptools >=64"
           ],
           "run": [
             "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
+            "python >=3.12",
+            "nvidia-cutlass-dsl >=4.8.0"
           ]
         },
         "tests": [
@@ -863,15 +599,13 @@
                 "cudnn.linear_attention",
                 "cudnn.ops",
                 "cudnn.sdpa"
+              ],
+              "python_version": [
+                "*"
               ]
             }
           },
           {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
             "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
           },
           {
@@ -883,10 +617,14 @@
             }
           }
         ],
-        "version": "1.31.0"
+        "version": "1.33.0"
       },
       {
-        "build": null,
+        "build": {
+          "python": {
+            "version_independent": true
+          }
+        },
         "name": "python-cudnn-frontend",
         "requirements": {
           "build": [
@@ -894,22 +632,23 @@
             "cxx_compiler_stub",
             "cuda_compiler_stub",
             "c_stdlib_stub",
-            "cmake >=3.18",
+            "cmake >=3.26",
             "cuda-nvrtc-dev",
             "make",
             "ninja >=1.11.1.1"
           ],
           "host": [
             "cudnn",
+            "nanobind >=3.0.1,<4",
             "pip",
-            "pybind11 >=2.13,<3",
-            "python",
+            "python 3.12.*",
+            "python-abi3 3.12.*",
             "setuptools >=64"
           ],
           "run": [
             "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
+            "python >=3.12",
+            "nvidia-cutlass-dsl >=4.8.0"
           ]
         },
         "tests": [
@@ -924,16 +663,23 @@
                 "cudnn.linear_attention",
                 "cudnn.ops",
                 "cudnn.sdpa"
+              ],
+              "python_version": [
+                "3.12.*",
+                "*"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "pip"
+                "abi3audit"
               ]
             },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
+            "script": [
+              "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\"",
+              "abi3audit $SP_DIR/cudnn/_compiled_module.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}"
+            ]
           },
           {
             "package_contents": {
@@ -944,439 +690,12 @@
             }
           }
         ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
-      },
-      {
-        "build": null,
-        "name": "python-cudnn-frontend",
-        "requirements": {
-          "build": [
-            "c_compiler_stub",
-            "cxx_compiler_stub",
-            "cuda_compiler_stub",
-            "c_stdlib_stub",
-            "cmake >=3.18",
-            "cuda-nvrtc-dev",
-            "make",
-            "ninja >=1.11.1.1"
-          ],
-          "host": [
-            "cudnn",
-            "pip",
-            "pybind11 >=2.13,<3",
-            "python",
-            "setuptools >=64"
-          ],
-          "run": [
-            "apache-tvm-ffi >=0.1.11",
-            "python",
-            "nvidia-cutlass-dsl >=4.6.2"
-          ]
-        },
-        "tests": [
-          {
-            "python": {
-              "imports": [
-                "cudnn",
-                "cudnn.block_sparse_attention",
-                "cudnn.experimental.ops",
-                "cudnn.gemm",
-                "cudnn.hstu",
-                "cudnn.linear_attention",
-                "cudnn.ops",
-                "cudnn.sdpa"
-              ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "pip"
-              ]
-            },
-            "script": "python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\""
-          },
-          {
-            "package_contents": {
-              "site_packages": [
-                "include/cudnn_frontend.h",
-                "include/cudnn_frontend_version.h"
-              ]
-            }
-          }
-        ],
-        "version": "1.31.0"
+        "version": "1.33.0"
       }
     ],
     "package": {
       "name": "python-cudnn-frontend",
-      "version": "1.31.0"
+      "version": "1.33.0"
     },
     "requirements": {
       "build": [
@@ -1384,28 +703,29 @@
         "cxx_compiler_stub",
         "cuda_compiler_stub",
         "c_stdlib_stub",
-        "cmake >=3.18",
+        "cmake >=3.26",
         "cuda-nvrtc-dev",
         "make",
         "ninja >=1.11.1.1"
       ],
       "host": [
         "cudnn",
+        "nanobind >=3.0.1,<4",
         "pip",
-        "pybind11 >=2.13,<3",
-        "python",
-        "setuptools >=64"
+        "python 3.12.*",
+        "setuptools >=64",
+        "python-abi3 3.12.*"
       ],
       "run": [
         "apache-tvm-ffi >=0.1.11",
-        "python",
-        "nvidia-cutlass-dsl >=4.6.2"
+        "python >=3.12",
+        "nvidia-cutlass-dsl >=4.8.0"
       ]
     },
     "schema_version": 1,
     "source": {
-      "sha256": "130f3e98e3f07defd60bf39b250ae7d96c61ca99443782ce77fd470964fbd899",
-      "url": "https://github.com/NVIDIA/cudnn-frontend/archive/v1.31.0.tar.gz"
+      "sha256": "135a2c56c91dc6b1eca6a75369a0c8c8a3747da95c099be31b4f2a9788f91ce6",
+      "url": "https://github.com/NVIDIA/cudnn-frontend/archive/v1.33.0.tar.gz"
     }
   },
   "name": "python-cudnn-frontend",
@@ -1422,7 +742,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/python-cudnn-frontend.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  build_number: 0\n  version: 1.31.0\n\npackage:\n  name: python-cudnn-frontend\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/NVIDIA/cudnn-frontend/archive/v${{ version }}.tar.gz\n  sha256: 130f3e98e3f07defd60bf39b250ae7d96c61ca99443782ce77fd470964fbd899\n\nbuild:\n  number: ${{ build_number }}\n  string: cuda${{ cuda_compiler_version | replace('.', '') }}_py${{ python | version_to_buildstring }}_h${{ hash }}_${{ build_number }}\n  skip: match(python, '>=3.15') or cuda_compiler_version in (undefined, \"None\") or (not linux)\n  script:\n    env:\n      CUDNN_FRONTEND_LOG_INFO: '1'\n    content:\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('cuda') }}\n    - ${{ stdlib(\"c\") }}\n    - cmake >=3.18\n    - cuda-nvrtc-dev\n    - make\n    - ninja >=1.11.1.1\n  host:\n    - cudnn\n    - pip\n    - pybind11 >=2.13,<3\n    - python\n    - setuptools >=64\n  run:\n    - apache-tvm-ffi >=0.1.11\n    - python\n    - nvidia-cutlass-dsl >=4.6.2\ntests:\n  - python:\n      imports:\n        - cudnn\n        - cudnn.block_sparse_attention\n        - cudnn.experimental.ops\n        - cudnn.gemm\n        # - cudnn.gnn\n        # - cudnn.gnn.agg_simple\n        - cudnn.hstu\n        # - cudnn.hstu_attention\n        # - cudnn.jax\n        - cudnn.linear_attention\n        # - cudnn.fla\n        # - cudnn.native_sparse_attention\n        # - cudnn.native_sparse_attention.compression\n        # - cudnn.native_sparse_attention.selection\n        # - cudnn.native_sparse_attention.sliding_window_attention\n        # - cudnn.native_sparse_attention.top_k\n        - cudnn.ops\n        # - cudnn.ops.causal_conv1d\n        # - cudnn.ops.fft_causal_conv1d\n        - cudnn.sdpa\n      pip_check: true\n  - requirements:\n      run:\n        - pip\n    script:\n      - python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\"\n  - package_contents:\n      strict: false\n      site_packages:\n        - include/cudnn_frontend.h\n        - include/cudnn_frontend_version.h\n\n\nabout:\n  summary: cuDNN FrontEnd API\n  license: MIT\n  license_file:\n    - LICENSE.txt\n    - include/cudnn_frontend/thirdparty/nlohmann/LICENSE.MIT\n  homepage: https://github.com/NVIDIA/cudnn-frontend\n\nextra:\n  recipe-maintainers:\n    - jameslamb\n    - weiji14\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  build_number: 0\n  version: 1.33.0\n\npackage:\n  name: python-cudnn-frontend\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/NVIDIA/cudnn-frontend/archive/v${{ version }}.tar.gz\n  sha256: 135a2c56c91dc6b1eca6a75369a0c8c8a3747da95c099be31b4f2a9788f91ce6\n\nbuild:\n  number: ${{ build_number }}\n  string: cuda${{ cuda_compiler_version | replace('.', '') }}_py${{ python | version_to_buildstring }}_h${{ hash }}_${{ build_number }}\n  skip: (is_abi3 and not is_python_min) or cuda_compiler_version in (undefined, \"None\") or (not linux)\n  script:\n    env:\n      CUDNN_FRONTEND_LOG_INFO: '1'\n      CUDNN_FRONTEND_PYTHON_STABLE_ABI: 'ON'\n    content:\n      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation\n  python:\n    version_independent: ${{ is_abi3 }}\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('cuda') }}\n    - ${{ stdlib(\"c\") }}\n    - cmake >=3.26\n    - cuda-nvrtc-dev\n    - make\n    - ninja >=1.11.1.1\n  host:\n    - cudnn\n    - nanobind >=3.0.1,<4\n    - pip\n    - python ${{ python_min }}.*\n    - if: is_abi3\n      then: python-abi3 ${{ python_min }}.*\n    - setuptools >=64\n  run:\n    - apache-tvm-ffi >=0.1.11\n    - python >=${{ python_min }}\n    - nvidia-cutlass-dsl >=4.8.0\ntests:\n  - python:\n      imports:\n        - cudnn\n        - cudnn.block_sparse_attention\n        - cudnn.experimental.ops\n        - cudnn.gemm\n        # - cudnn.gnn\n        # - cudnn.gnn.agg_simple\n        - cudnn.hstu\n        # - cudnn.hstu_attention\n        # - cudnn.jax\n        - cudnn.linear_attention\n        # - cudnn.fla\n        # - cudnn.native_sparse_attention\n        # - cudnn.native_sparse_attention.compression\n        # - cudnn.native_sparse_attention.selection\n        # - cudnn.native_sparse_attention.sliding_window_attention\n        # - cudnn.native_sparse_attention.top_k\n        - cudnn.ops\n        # - cudnn.ops.causal_conv1d\n        # - cudnn.ops.fft_causal_conv1d\n        - cudnn.sdpa\n      pip_check: true\n      python_version:\n        - if: is_abi3\n          then: ${{ python_min }}.*\n        - \"*\"\n  - requirements:\n      run:\n        - if: is_abi3\n          then: abi3audit\n    script:\n      - python -c \"import cudnn; assert cudnn.backend_version() >= 92600, cudnn.backend_version()\"\n      - if: is_abi3\n        then: abi3audit $SP_DIR/cudnn/_compiled_module.abi3.so -s -v --assume-minimum-abi3 ${{ python_min }}\n  - package_contents:\n      strict: false\n      site_packages:\n        - include/cudnn_frontend.h\n        - include/cudnn_frontend_version.h\n\n\nabout:\n  summary: cuDNN FrontEnd API\n  license: MIT\n  license_file:\n    - LICENSE.txt\n    - include/cudnn_frontend/thirdparty/nlohmann/LICENSE.MIT\n  homepage: https://github.com/NVIDIA/cudnn-frontend\n\nextra:\n  recipe-maintainers:\n    - jameslamb\n    - weiji14\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1435,11 +755,12 @@
       "cudnn",
       "cxx_compiler_stub",
       "make",
+      "nanobind",
       "ninja",
       "nvidia-cutlass-dsl",
       "pip",
-      "pybind11",
       "python",
+      "python-abi3",
       "setuptools"
     ]
   },
@@ -1465,9 +786,10 @@
         "cuda_compiler_stub",
         "cudnn",
         "cxx_compiler_stub",
+        "nanobind",
         "pip",
-        "pybind11",
         "python",
+        "python-abi3",
         "setuptools"
       ]
     },
@@ -1486,6 +808,7 @@
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
@@ -1497,7 +820,7 @@
       "elements": [
         "c_compiler_stub",
         "c_stdlib_stub",
-        "cmake >=3.18",
+        "cmake >=3.26",
         "cuda-nvrtc-dev",
         "cuda_compiler_stub",
         "cxx_compiler_stub",
@@ -1509,9 +832,10 @@
       "__set__": true,
       "elements": [
         "cudnn",
+        "nanobind >=3.0.1,<4",
         "pip",
-        "pybind11 >=2.13,<3",
-        "python",
+        "python 3.12.*",
+        "python-abi3 3.12.*",
         "setuptools >=64"
       ]
     },
@@ -1519,19 +843,20 @@
       "__set__": true,
       "elements": [
         "apache-tvm-ffi >=0.1.11",
-        "nvidia-cutlass-dsl >=4.6.2",
-        "python"
+        "nvidia-cutlass-dsl >=4.8.0",
+        "python >=3.12"
       ]
     },
     "test": {
       "__set__": true,
       "elements": [
+        "abi3audit",
         "pip"
       ]
     }
   },
-  "url": "https://github.com/NVIDIA/cudnn-frontend/archive/v1.31.0.tar.gz",
-  "version": "1.31.0",
+  "url": "https://github.com/NVIDIA/cudnn-frontend/archive/v1.33.0.tar.gz",
+  "version": "1.33.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/python-cudnn-frontend.json"
   }
