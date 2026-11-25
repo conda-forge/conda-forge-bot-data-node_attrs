@@ -1,35 +1,40 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_compiler:\n- gcc\nc_compiler_version:\n- '12'\ncdt_name:\n- cos6\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '12'\ndocker_image:\n- quay.io/condaforge/linux-anvil-cos7-x86_64\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\n",
   "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "a8e4381f2df7267c69d1c2407f0b6ca109820fa8",
-  "feedstock_hash_ts": 1776949495,
+  "feedstock_hash": "d0f50cb40e4de76e9768ad3591fd47f06bd8311a",
+  "feedstock_hash_ts": 1795612389,
   "feedstock_name": "fast-cdr",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
     "about": {
-      "description": "eProsima FastCDR library provides two serialization mechanisms. One is the\nstandard CDR serialization mechanism, while the other is a faster\nimplementation of it.\n",
+      "description": "eProsima Fast CDR provides standard CDR serialization and a faster\nimplementation of the same mechanism.",
       "home": "https://github.com/eProsima/Fast-CDR",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
-      "summary": "eProsima FastCDR\n"
+      "summary": "eProsima Fast CDR"
     },
     "build": {
       "number": "0",
-      "run_exports": [
-        "fast-cdr"
-      ]
+      "run_exports": {
+        "weak": [
+          "fast-cdr"
+        ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -39,32 +44,92 @@
         "EduPonz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "fast-cdr"
+            ]
+          }
+        },
+        "name": "fast-cdr",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.22",
+            "ninja",
+            "pkg-config"
+          ],
+          "host": [
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libfastcdr.so.2.4.0"
+              ],
+              "include": [
+                "fastcdr/Cdr.h",
+                "fastcdr/FastBuffer.h"
+              ],
+              "lib": [
+                "fastcdr"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "cmake_test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "cmake >=3.22",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S cmake_test -B consumer -G Ninja $CMAKE_ARGS",
+              "cmake --build consumer",
+              "ctest --test-dir consumer --output-on-failure"
+            ]
+          }
+        ],
+        "version": "2.4.0"
+      }
+    ],
     "package": {
       "name": "fast-cdr",
-      "version": "1.1.1"
+      "version": "2.4.0"
     },
     "requirements": {
       "build": [
         "cxx_compiler_stub",
         "c_compiler_stub",
-        "cmake",
+        "c_stdlib_stub",
+        "cmake >=3.22",
         "ninja",
         "pkg-config"
+      ],
+      "host": [
+        "gtest"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "5b5c1fc138a0d3092010158be0306c587da56bf406b0bfd45c20835e53839caf",
-        "url": "https://github.com/eProsima/Fast-CDR/archive/v1.1.1.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "test -f $PREFIX/lib/libfastcdr${SHLIB_EXT}",
-        "test -f $PREFIX/lib/libfastcdr${SHLIB_EXT}.1.1.1",
-        "test -f $PREFIX/include/fastcdr/Cdr.h"
-      ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "0001-check-compiler-warnings-with-ninja.patch"
+      ],
+      "sha256": "79d8466107dd6b7d1defe961c4aa31735038937cf9dd1175cf6b0da0df2209ab",
+      "url": "https://github.com/eProsima/Fast-CDR/archive/v2.4.0.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -72,6 +137,7 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
         "ninja",
@@ -80,7 +146,9 @@
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "gtest"
+      ]
     },
     "run": {
       "__set__": true,
@@ -88,22 +156,29 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
   "meta_yaml": {
     "about": {
-      "description": "eProsima FastCDR library provides two serialization mechanisms. One is the\nstandard CDR serialization mechanism, while the other is a faster\nimplementation of it.\n",
+      "description": "eProsima Fast CDR provides standard CDR serialization and a faster\nimplementation of the same mechanism.",
       "home": "https://github.com/eProsima/Fast-CDR",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
-      "summary": "eProsima FastCDR\n"
+      "summary": "eProsima Fast CDR"
     },
     "build": {
       "number": "0",
-      "run_exports": [
-        "fast-cdr"
-      ]
+      "run_exports": {
+        "weak": [
+          "fast-cdr"
+        ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -113,57 +188,225 @@
         "EduPonz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "fast-cdr"
+            ]
+          }
+        },
+        "name": "fast-cdr",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.22",
+            "ninja",
+            "pkg-config"
+          ],
+          "host": [
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/libfastcdr.so.2.4.0"
+              ],
+              "include": [
+                "fastcdr/Cdr.h",
+                "fastcdr/FastBuffer.h"
+              ],
+              "lib": [
+                "fastcdr"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "cmake_test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "cmake >=3.22",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S cmake_test -B consumer -G Ninja $CMAKE_ARGS",
+              "cmake --build consumer",
+              "ctest --test-dir consumer --output-on-failure"
+            ]
+          }
+        ],
+        "version": "2.4.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "fast-cdr"
+            ]
+          }
+        },
+        "name": "fast-cdr",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.22",
+            "ninja",
+            "pkg-config"
+          ],
+          "host": [
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "fastcdr/Cdr.h",
+                "fastcdr/FastBuffer.h"
+              ],
+              "lib": [
+                "fastcdr"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "cmake_test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "cmake >=3.22",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S cmake_test -B consumer -G Ninja $CMAKE_ARGS",
+              "cmake --build consumer",
+              "ctest --test-dir consumer --output-on-failure"
+            ]
+          }
+        ],
+        "version": "2.4.0"
+      },
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "fast-cdr"
+            ]
+          }
+        },
+        "name": "fast-cdr",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.22",
+            "ninja",
+            "pkg-config"
+          ],
+          "host": [
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "fastcdr/Cdr.h",
+                "fastcdr/FastBuffer.h"
+              ],
+              "lib": [
+                "fastcdr-2.4"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "cmake_test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "cmake >=3.22",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S cmake_test -B consumer -G Ninja %CMAKE_ARGS%",
+              "cmake --build consumer",
+              "ctest --test-dir consumer --output-on-failure"
+            ]
+          }
+        ],
+        "version": "2.4.0"
+      }
+    ],
     "package": {
       "name": "fast-cdr",
-      "version": "1.1.1"
+      "version": "2.4.0"
     },
     "requirements": {
       "build": [
         "cxx_compiler_stub",
         "c_compiler_stub",
-        "cmake",
+        "c_stdlib_stub",
+        "cmake >=3.22",
         "ninja",
         "pkg-config"
+      ],
+      "host": [
+        "gtest"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "5b5c1fc138a0d3092010158be0306c587da56bf406b0bfd45c20835e53839caf",
-        "url": "https://github.com/eProsima/Fast-CDR/archive/v1.1.1.tar.gz"
-      },
-      {
-        "sha256": "5b5c1fc138a0d3092010158be0306c587da56bf406b0bfd45c20835e53839caf",
-        "url": "https://github.com/eProsima/Fast-CDR/archive/v1.1.1.tar.gz"
-      },
-      {
-        "sha256": "5b5c1fc138a0d3092010158be0306c587da56bf406b0bfd45c20835e53839caf",
-        "url": "https://github.com/eProsima/Fast-CDR/archive/v1.1.1.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "test -f $PREFIX/lib/libfastcdr${SHLIB_EXT}",
-        "test -f $PREFIX/lib/libfastcdr${SHLIB_EXT}.1.1.1",
-        "test -f $PREFIX/include/fastcdr/Cdr.h",
-        "if not exist %LIBRARY_PREFIX%\\\\bin\\\\fastcdr-1.1.dll exit 1"
-      ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "0001-check-compiler-warnings-with-ninja.patch"
+      ],
+      "sha256": "79d8466107dd6b7d1defe961c4aa31735038937cf9dd1175cf6b0da0df2209ab",
+      "url": "https://github.com/eProsima/Fast-CDR/archive/v2.4.0.tar.gz"
     }
   },
   "name": "fast-cdr",
   "osx_64_meta_yaml": {
     "about": {
-      "description": "eProsima FastCDR library provides two serialization mechanisms. One is the\nstandard CDR serialization mechanism, while the other is a faster\nimplementation of it.\n",
+      "description": "eProsima Fast CDR provides standard CDR serialization and a faster\nimplementation of the same mechanism.",
       "home": "https://github.com/eProsima/Fast-CDR",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
-      "summary": "eProsima FastCDR\n"
+      "summary": "eProsima Fast CDR"
     },
     "build": {
       "number": "0",
-      "run_exports": [
-        "fast-cdr"
-      ]
+      "run_exports": {
+        "weak": [
+          "fast-cdr"
+        ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -173,31 +416,89 @@
         "EduPonz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "fast-cdr"
+            ]
+          }
+        },
+        "name": "fast-cdr",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.22",
+            "ninja",
+            "pkg-config"
+          ],
+          "host": [
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "fastcdr/Cdr.h",
+                "fastcdr/FastBuffer.h"
+              ],
+              "lib": [
+                "fastcdr"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "cmake_test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "cmake >=3.22",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S cmake_test -B consumer -G Ninja $CMAKE_ARGS",
+              "cmake --build consumer",
+              "ctest --test-dir consumer --output-on-failure"
+            ]
+          }
+        ],
+        "version": "2.4.0"
+      }
+    ],
     "package": {
       "name": "fast-cdr",
-      "version": "1.1.1"
+      "version": "2.4.0"
     },
     "requirements": {
       "build": [
         "cxx_compiler_stub",
         "c_compiler_stub",
-        "cmake",
+        "c_stdlib_stub",
+        "cmake >=3.22",
         "ninja",
         "pkg-config"
+      ],
+      "host": [
+        "gtest"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "5b5c1fc138a0d3092010158be0306c587da56bf406b0bfd45c20835e53839caf",
-        "url": "https://github.com/eProsima/Fast-CDR/archive/v1.1.1.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "test -f $PREFIX/lib/libfastcdr${SHLIB_EXT}",
-        "test -f $PREFIX/include/fastcdr/Cdr.h"
-      ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "0001-check-compiler-warnings-with-ninja.patch"
+      ],
+      "sha256": "79d8466107dd6b7d1defe961c4aa31735038937cf9dd1175cf6b0da0df2209ab",
+      "url": "https://github.com/eProsima/Fast-CDR/archive/v2.4.0.tar.gz"
     }
   },
   "osx_64_requirements": {
@@ -205,6 +506,7 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
         "ninja",
@@ -213,7 +515,9 @@
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "gtest"
+      ]
     },
     "run": {
       "__set__": true,
@@ -221,7 +525,11 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
   "outputs_names": {
@@ -239,13 +547,15 @@
   "pr_info": {
     "__lazy_json__": "pr_info/fast-cdr.json"
   },
-  "raw_meta_yaml": "{% set name = \"fast-cdr\" %}\n{% set version = \"1.1.1\" %}\n{% set major_minor_version = version.split('.')[0] + '.' + version.split('.')[1] %}\n\npackage:\n  name: {{ name }}\n  version: {{ version }}\n\nsource:\n  - url: https://github.com/eProsima/Fast-CDR/archive/v{{ version }}.tar.gz\n    sha256: 5b5c1fc138a0d3092010158be0306c587da56bf406b0bfd45c20835e53839caf\n\nbuild:\n  number: 0\n  run_exports:\n    - {{ pin_subpackage(name, max_pin='x.x') }}\n\nrequirements:\n  build:\n    - {{ compiler('cxx') }}\n    - {{ compiler('c') }}\n    - cmake\n    - ninja\n    - pkg-config\n\ntest:\n  commands:\n    - if not exist %LIBRARY_PREFIX%\\\\bin\\\\fastcdr-{{ major_minor_version }}.dll exit 1  # [win]\n    - test -f $PREFIX/lib/libfastcdr${SHLIB_EXT}  # [unix]\n    - test -f $PREFIX/lib/libfastcdr${SHLIB_EXT}.{{ version }}  # [linux]\n    - test -f $PREFIX/include/fastcdr/Cdr.h  # [unix]\n\nabout:\n  home: https://github.com/eProsima/Fast-CDR\n  license: Apache-2.0\n  license_file: LICENSE\n  summary: |\n    eProsima FastCDR\n  description: |\n    eProsima FastCDR library provides two serialization mechanisms. One is the\n    standard CDR serialization mechanism, while the other is a faster\n    implementation of it.\n\nextra:\n  recipe-maintainers:\n    - seanyen\n    - wolfv\n    - MiguelCompany\n    - EduPonz\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"2.4.0\"\n  major_minor_version: ${{ (version | split('.'))[:2] | join('.') }}\n\npackage:\n  name: fast-cdr\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/eProsima/Fast-CDR/archive/v${{ version }}.tar.gz\n  sha256: 79d8466107dd6b7d1defe961c4aa31735038937cf9dd1175cf6b0da0df2209ab\n  patches:\n    - 0001-check-compiler-warnings-with-ninja.patch\n\nbuild:\n  number: 0\n\nrequirements:\n  build:\n    - ${{ compiler('cxx') }}\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - cmake >=3.22\n    - ninja\n    - pkg-config\n  host:\n    - gtest\n  ignore_run_exports:\n    by_name:\n      - gtest\n  run_exports:\n    - ${{ pin_subpackage('fast-cdr', upper_bound='x.x') }}\n\ntests:\n  - package_contents:\n      lib:\n        - if: win\n          then: fastcdr-${{ major_minor_version }}\n          else: fastcdr\n      include:\n        - fastcdr/Cdr.h\n        - fastcdr/FastBuffer.h\n      files:\n        - if: linux\n          then: lib/libfastcdr.so.${{ version }}\n\n  - requirements:\n      run:\n        - ${{ compiler('cxx') }}\n        - cmake >=3.22\n        - ninja\n    files:\n      recipe:\n        - cmake_test/\n    script:\n      - if: unix\n        then: cmake -S cmake_test -B consumer -G Ninja $CMAKE_ARGS\n        else: cmake -S cmake_test -B consumer -G Ninja %CMAKE_ARGS%\n      - cmake --build consumer\n      - ctest --test-dir consumer --output-on-failure\n\nabout:\n  homepage: https://github.com/eProsima/Fast-CDR\n  license: Apache-2.0\n  license_file: LICENSE\n  summary: eProsima Fast CDR\n  description: |\n    eProsima Fast CDR provides standard CDR serialization and a faster\n    implementation of the same mechanism.\n\nextra:\n  recipe-maintainers:\n    - seanyen\n    - wolfv\n    - MiguelCompany\n    - EduPonz\n",
   "req": {
     "__set__": true,
     "elements": [
       "c_compiler_stub",
+      "c_stdlib_stub",
       "cmake",
       "cxx_compiler_stub",
+      "gtest",
       "ninja",
       "pkg-config"
     ]
@@ -255,6 +565,7 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
         "ninja",
@@ -265,19 +576,26 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "cxx_compiler_stub"
+        "c_stdlib_stub",
+        "cxx_compiler_stub",
+        "gtest"
       ]
     },
     "run": {
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cxx_compiler_stub"
       ]
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
   "strong_exports": false,
@@ -286,7 +604,8 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
-        "cmake",
+        "c_stdlib_stub",
+        "cmake >=3.22",
         "cxx_compiler_stub",
         "ninja",
         "pkg-config"
@@ -294,7 +613,9 @@
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "gtest"
+      ]
     },
     "run": {
       "__set__": true,
@@ -302,27 +623,34 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cmake >=3.22",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   },
-  "url": "https://github.com/eProsima/Fast-CDR/archive/v1.1.1.tar.gz",
-  "version": "1.1.1",
+  "url": "https://github.com/eProsima/Fast-CDR/archive/v2.4.0.tar.gz",
+  "version": "2.4.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/fast-cdr.json"
   },
   "win_64_meta_yaml": {
     "about": {
-      "description": "eProsima FastCDR library provides two serialization mechanisms. One is the\nstandard CDR serialization mechanism, while the other is a faster\nimplementation of it.\n",
+      "description": "eProsima Fast CDR provides standard CDR serialization and a faster\nimplementation of the same mechanism.",
       "home": "https://github.com/eProsima/Fast-CDR",
       "license": "Apache-2.0",
+      "license_family": "Apache-2.0",
       "license_file": "LICENSE",
-      "summary": "eProsima FastCDR\n"
+      "summary": "eProsima Fast CDR"
     },
     "build": {
       "number": "0",
-      "run_exports": [
-        "fast-cdr"
-      ]
+      "run_exports": {
+        "weak": [
+          "fast-cdr"
+        ]
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -332,30 +660,89 @@
         "EduPonz"
       ]
     },
+    "outputs": [
+      {
+        "build": {
+          "run_exports": {
+            "weak": [
+              "fast-cdr"
+            ]
+          }
+        },
+        "name": "fast-cdr",
+        "requirements": {
+          "build": [
+            "cxx_compiler_stub",
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "cmake >=3.22",
+            "ninja",
+            "pkg-config"
+          ],
+          "host": [
+            "gtest"
+          ],
+          "run": []
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "include": [
+                "fastcdr/Cdr.h",
+                "fastcdr/FastBuffer.h"
+              ],
+              "lib": [
+                "fastcdr-2.4"
+              ]
+            }
+          },
+          {
+            "files": {
+              "recipe": [
+                "cmake_test/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "cxx_compiler_stub",
+                "cmake >=3.22",
+                "ninja"
+              ]
+            },
+            "script": [
+              "cmake -S cmake_test -B consumer -G Ninja %CMAKE_ARGS%",
+              "cmake --build consumer",
+              "ctest --test-dir consumer --output-on-failure"
+            ]
+          }
+        ],
+        "version": "2.4.0"
+      }
+    ],
     "package": {
       "name": "fast-cdr",
-      "version": "1.1.1"
+      "version": "2.4.0"
     },
     "requirements": {
       "build": [
         "cxx_compiler_stub",
         "c_compiler_stub",
-        "cmake",
+        "c_stdlib_stub",
+        "cmake >=3.22",
         "ninja",
         "pkg-config"
+      ],
+      "host": [
+        "gtest"
       ]
     },
-    "schema_version": 0,
-    "source": [
-      {
-        "sha256": "5b5c1fc138a0d3092010158be0306c587da56bf406b0bfd45c20835e53839caf",
-        "url": "https://github.com/eProsima/Fast-CDR/archive/v1.1.1.tar.gz"
-      }
-    ],
-    "test": {
-      "commands": [
-        "if not exist %LIBRARY_PREFIX%\\\\bin\\\\fastcdr-1.1.dll exit 1"
-      ]
+    "schema_version": 1,
+    "source": {
+      "patches": [
+        "0001-check-compiler-warnings-with-ninja.patch"
+      ],
+      "sha256": "79d8466107dd6b7d1defe961c4aa31735038937cf9dd1175cf6b0da0df2209ab",
+      "url": "https://github.com/eProsima/Fast-CDR/archive/v2.4.0.tar.gz"
     }
   },
   "win_64_requirements": {
@@ -363,6 +750,7 @@
       "__set__": true,
       "elements": [
         "c_compiler_stub",
+        "c_stdlib_stub",
         "cmake",
         "cxx_compiler_stub",
         "ninja",
@@ -371,7 +759,9 @@
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "gtest"
+      ]
     },
     "run": {
       "__set__": true,
@@ -379,7 +769,11 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "cmake",
+        "cxx_compiler_stub",
+        "ninja"
+      ]
     }
   }
 }
