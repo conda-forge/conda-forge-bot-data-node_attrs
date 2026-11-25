@@ -1,8 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzstd:\n- '1.5'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\ntarget_platform:\n- linux-64\nzstd:\n- '1.6'\n",
+  "ci_support_migrations": {
+    "zstd16": {
+      "migration_number": 1,
+      "migrator_ts": 1795498666.105089
+    }
+  },
   "conda-forge.yml": {
     "conda_build": {
       "error_overlinking": true
@@ -18,8 +23,8 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "ca7be8a3183a0e1d5cd3f804f66a1fe33b1bba53",
-  "feedstock_hash_ts": 1795449509,
+  "feedstock_hash": "51ec0c0ecb6a7f44f53e4322e54743ceb5f92fe2",
+  "feedstock_hash_ts": 1795640746,
   "feedstock_name": "selenium-manager",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -31,7 +36,7 @@
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"",
@@ -155,7 +160,7 @@
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"",
@@ -375,7 +380,7 @@
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"",
@@ -499,7 +504,7 @@
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"",
@@ -630,7 +635,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/selenium-manager.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"4.54.0\"\n  env_d_json: selenium-manager.json\n\npackage:\n  name: selenium-manager\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-${{ version }}.tar.gz\n  sha256: 4f161eb6f3125825a769132eb839ed933d5f1936511d9a69cc602dd35369e668\n\nbuild:\n  number: 0\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      ZSTD_SYS_USE_PKG_CONFIG: \"1\"\n    content:\n      - if: unix\n        then:\n          - mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"\n          - |-\n            cat <<EOF > \"${PREFIX}/etc/conda/env_vars.d/${{ env_d_json }}\"\n            {\"SE_MANAGER_PATH\":\"${PREFIX}/bin/selenium-manager\"}\n            EOF\n        else:\n          - mkdir %PREFIX%\\etc\\conda\\env_vars.d\n          - |-\n            echo {\"SE_MANAGER_PATH\":\"%PREFIX%\\\\Scripts\\\\selenium-manager.exe\"} > \"%PREFIX%\\etc\\conda\\env_vars.d\\${{ env_d_json }}\"\n      - if: osx\n        then:\n          - export RUSTFLAGS=\"-C link-args=-Wl,-rpath,${PREFIX}/lib\"\n      - if: linux\n        then:\n          - export RUSTFLAGS=\"-C link-arg=-Wl,-rpath-link,${PREFIX}/lib -L${PREFIX}/lib\"\n      - cd rust\n      - cargo auditable install --locked --no-track --root=${{ PREFIX }} --path=.\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      - cd \"${{ RECIPE_DIR }}\"\n      - if: win\n        then:\n          - md \"%SCRIPTS%\" || echo \"%SCRIPTS% already exists\"\n          - move \"%PREFIX%\\bin\\selenium-manager.exe\" \"%SCRIPTS%\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - pkgconf\n  host:\n    - zstd\n\ntests:\n  - package_contents:\n      strict: true\n      bin:\n        - selenium-manager\n      files:\n        - etc/conda/env_vars.d/${{ env_d_json }}\n  - script:\n      - selenium-manager --version\n      - selenium-manager --help\n      - if: unix\n        then: ls \"${SE_MANAGER_PATH}\"\n        else: dir \"%SE_MANAGER_PATH%\"\n\nabout:\n  homepage: https://github.com/SeleniumHQ/selenium\n  license: Apache-2.0\n  license_file:\n    - rust/THIRDPARTY.yml\n    - LICENSE\n    - NOTICE\n  summary: |-\n    Selenium Manager is a standalone tool that automatically manages the browser\n    infrastructure required by Selenium (i.e., browsers and drivers).\n\nextra:\n  recipe-maintainers:\n    - conda-forge/selenium\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"4.54.0\"\n  env_d_json: selenium-manager.json\n\npackage:\n  name: selenium-manager\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/SeleniumHQ/selenium/archive/refs/tags/selenium-${{ version }}.tar.gz\n  sha256: 4f161eb6f3125825a769132eb839ed933d5f1936511d9a69cc602dd35369e668\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      ZSTD_SYS_USE_PKG_CONFIG: \"1\"\n    content:\n      - if: unix\n        then:\n          - mkdir -p \"${PREFIX}/etc/conda/env_vars.d\"\n          - |-\n            cat <<EOF > \"${PREFIX}/etc/conda/env_vars.d/${{ env_d_json }}\"\n            {\"SE_MANAGER_PATH\":\"${PREFIX}/bin/selenium-manager\"}\n            EOF\n        else:\n          - mkdir %PREFIX%\\etc\\conda\\env_vars.d\n          - |-\n            echo {\"SE_MANAGER_PATH\":\"%PREFIX%\\\\Scripts\\\\selenium-manager.exe\"} > \"%PREFIX%\\etc\\conda\\env_vars.d\\${{ env_d_json }}\"\n      - if: osx\n        then:\n          - export RUSTFLAGS=\"-C link-args=-Wl,-rpath,${PREFIX}/lib\"\n      - if: linux\n        then:\n          - export RUSTFLAGS=\"-C link-arg=-Wl,-rpath-link,${PREFIX}/lib -L${PREFIX}/lib\"\n      - cd rust\n      - cargo auditable install --locked --no-track --root=${{ PREFIX }} --path=.\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      - cd \"${{ RECIPE_DIR }}\"\n      - if: win\n        then:\n          - md \"%SCRIPTS%\" || echo \"%SCRIPTS% already exists\"\n          - move \"%PREFIX%\\bin\\selenium-manager.exe\" \"%SCRIPTS%\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - pkgconf\n  host:\n    - zstd\n\ntests:\n  - package_contents:\n      strict: true\n      bin:\n        - selenium-manager\n      files:\n        - etc/conda/env_vars.d/${{ env_d_json }}\n  - script:\n      - selenium-manager --version\n      - selenium-manager --help\n      - if: unix\n        then: ls \"${SE_MANAGER_PATH}\"\n        else: dir \"%SE_MANAGER_PATH%\"\n\nabout:\n  homepage: https://github.com/SeleniumHQ/selenium\n  license: Apache-2.0\n  license_file:\n    - rust/THIRDPARTY.yml\n    - LICENSE\n    - NOTICE\n  summary: |-\n    Selenium Manager is a standalone tool that automatically manages the browser\n    infrastructure required by Selenium (i.e., browsers and drivers).\n\nextra:\n  recipe-maintainers:\n    - conda-forge/selenium\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -717,7 +722,7 @@
       "summary": "Selenium Manager is a standalone tool that automatically manages the browser\ninfrastructure required by Selenium (i.e., browsers and drivers)."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "mkdir %PREFIX%\\etc\\conda\\env_vars.d",
