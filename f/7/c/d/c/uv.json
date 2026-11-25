@@ -1,8 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\nrust_compiler_version:\n- '1.98'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzstd:\n- '1.5'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nrust_compiler:\n- rust\nrust_compiler_version:\n- '1.98'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzstd:\n- '1.6'\n",
+  "ci_support_migrations": {
+    "zstd16": {
+      "migration_number": 1,
+      "migrator_ts": 1795498666.105089
+    }
+  },
   "conda-forge.yml": {
     "bot": {
       "automerge": true
@@ -24,8 +29,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "97230047cfdb7575b25b8bc2478ba443c17f84b7",
-  "feedstock_hash_ts": 1795596722,
+  "feedstock_hash": "1589a8d233ee17f816ca90264114cfb5379b23a8",
+  "feedstock_hash_ts": 1795639735,
   "feedstock_name": "uv",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -38,7 +43,7 @@
       "summary": "An extremely fast Python package installer and resolver, written in Rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "cd crates/uv",
@@ -227,7 +232,7 @@
       "summary": "An extremely fast Python package installer and resolver, written in Rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "unset PKG_CONFIG_SYSROOT_DIR",
@@ -366,7 +371,7 @@
       "summary": "An extremely fast Python package installer and resolver, written in Rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "cd crates/uv",
@@ -732,7 +737,7 @@
       "summary": "An extremely fast Python package installer and resolver, written in Rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "unset PKG_CONFIG_SYSROOT_DIR",
@@ -871,7 +876,7 @@
       "summary": "An extremely fast Python package installer and resolver, written in Rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "unset PKG_CONFIG_SYSROOT_DIR",
@@ -1018,7 +1023,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/uv.json"
   },
-  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.13.10\"\n\npackage:\n  name: uv\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/astral-sh/uv/releases/download/${{ version }}/source.tar.gz\n  sha256: c74718c9167796fbb82956637e4b162303b3e10d275c3056276c6143dab713fa\n  patches:\n    - 0000-no-link-static-vc-runtime.patch\n    - 0001-no-writeln-space-colon.patch\n    - 0002-zstd-pkg-config.patch\n\nbuild:\n  number: 0\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      # This env var specifies the base 2 log of the allocator page size\n      JEMALLOC_SYS_WITH_LG_PAGE: ${{ \"16\" if target_platform == \"linux-aarch64\" or target_platform == \"linux-ppc64le\" }}\n      # for cross-compiling issues\n      #   fatal error LNK1112: module machine type 'x64' conflicts with target machine type 'ARM64'\n      AWS_LC_SYS_CMAKE_BUILDER: \"1\"\n      # for cross-compiling issues\n      #   error LNK2019: unresolved external symbol ZSTD_compressStream\n      ZSTD_SYS_USE_PKG_CONFIG: \"1\"\n      # for cross-compiling issues\n      #   Can't probe for zstd in pkg-config: pkg-config has not been configured to support cross-compilation.\n      PKG_CONFIG_ALLOW_CROSS: \"1\"\n    content:\n      - if: unix and build_platform != target_platform\n        then:\n          - unset PKG_CONFIG_SYSROOT_DIR\n          - export PKG_CONFIG_LIBDIR=\"${PREFIX}/lib/pkgconfig\"\n          - export PKG_CONFIG_PATH=\"${PREFIX}/lib/pkgconfig\"\n      - if: win\n        then:\n          - set \"PKG_CONFIG_SYSROOT_DIR=%PREFIX%\"\n          - set \"PKG_CONFIG_PATH=%LIBRARY_PREFIX%\\lib\\pkgconfig\"\n      - if: osx\n        then:\n          - export DYLD_LIBRARY_PATH=${PREFIX}/lib:${DYLD_LIBRARY_PATH:-}\n      - cd crates/uv\n      - cargo auditable install --no-track --locked --path=. --profile=release --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      - if: unix and build_platform == target_platform\n        then:\n          - mkdir -p \"${PREFIX}/share/bash-completion/completions\" \"${PREFIX}/share/fish/vendor_completions.d\" \"${PREFIX}/share/zsh/site-functions\"\n          - |-\n            \"${PREFIX}/bin/uv\" generate-shell-completion bash       > \"${PREFIX}/share/bash-completion/completions/uv\"\n          - |-\n            \"${PREFIX}/bin/uv\" generate-shell-completion fish       > \"${PREFIX}/share/fish/vendor_completions.d/uv.fish\"\n          - |-\n            \"${PREFIX}/bin/uv\" generate-shell-completion zsh        > \"${PREFIX}/share/zsh/site-functions/_uv\"\n      - if: win and build_platform == target_platform\n        then:\n          - md \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\" \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\" \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\"\n          - |-\n            \"%LIBRARY_BIN%\\uv.exe\" generate-shell-completion bash   > \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\\uv\"\n          - |-\n            \"%LIBRARY_BIN%\\uv.exe\" generate-shell-completion fish   > \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\\uv.fish\"\n          - |-\n            \"%LIBRARY_BIN%\\uv.exe\" generate-shell-completion zsh    > \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\\_uv\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - cmake\n    - pkgconf\n    # TODO: remove condition after https://github.com/conda-forge/make-feedstock/pull/36\n    - if: target_platform != \"win-arm64\"\n      then:\n        - make\n  host:\n    - zstd\n\ntests:\n  - package_contents:\n      strict: true\n      bin:\n        - uv\n        - uvx\n      files:\n        - if: build_platform == target_platform\n          then:\n            - ${{ \"Library/\" if win }}share/bash-completion/completions/uv\n            - ${{ \"Library/\" if win }}share/fish/vendor_completions.d/uv.fish\n            - ${{ \"Library/\" if win }}share/zsh/site-functions/_uv\n  - script:\n      - uv --help\n      - uv --version\n      - uv --version | ${{ \"grep -iE \" if unix else \"findstr /r /c:\" }}${{ version | replace('.', '\\\\.') }}\n\nabout:\n  homepage: https://github.com/astral-sh/uv\n  license: Apache-2.0 OR MIT\n  license_file:\n    - LICENSE-APACHE\n    - LICENSE-MIT\n    - crates/uv/THIRDPARTY.yml\n  summary: An extremely fast Python package installer and resolver, written in Rust.\n  documentation: https://docs.astral.sh/uv\n\nextra:\n  recipe-maintainers:\n    - charliermarsh\n    - bollwyvl\n",
+  "raw_meta_yaml": "# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json\nschema_version: 1\n\ncontext:\n  version: \"0.13.10\"\n\npackage:\n  name: uv\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/astral-sh/uv/releases/download/${{ version }}/source.tar.gz\n  sha256: c74718c9167796fbb82956637e4b162303b3e10d275c3056276c6143dab713fa\n  patches:\n    - 0000-no-link-static-vc-runtime.patch\n    - 0001-no-writeln-space-colon.patch\n    - 0002-zstd-pkg-config.patch\n\nbuild:\n  number: 1\n  script:\n    env:\n      CARGO_PROFILE_RELEASE_LTO: fat\n      CARGO_PROFILE_RELEASE_STRIP: symbols\n      # This env var specifies the base 2 log of the allocator page size\n      JEMALLOC_SYS_WITH_LG_PAGE: ${{ \"16\" if target_platform == \"linux-aarch64\" or target_platform == \"linux-ppc64le\" }}\n      # for cross-compiling issues\n      #   fatal error LNK1112: module machine type 'x64' conflicts with target machine type 'ARM64'\n      AWS_LC_SYS_CMAKE_BUILDER: \"1\"\n      # for cross-compiling issues\n      #   error LNK2019: unresolved external symbol ZSTD_compressStream\n      ZSTD_SYS_USE_PKG_CONFIG: \"1\"\n      # for cross-compiling issues\n      #   Can't probe for zstd in pkg-config: pkg-config has not been configured to support cross-compilation.\n      PKG_CONFIG_ALLOW_CROSS: \"1\"\n    content:\n      - if: unix and build_platform != target_platform\n        then:\n          - unset PKG_CONFIG_SYSROOT_DIR\n          - export PKG_CONFIG_LIBDIR=\"${PREFIX}/lib/pkgconfig\"\n          - export PKG_CONFIG_PATH=\"${PREFIX}/lib/pkgconfig\"\n      - if: win\n        then:\n          - set \"PKG_CONFIG_SYSROOT_DIR=%PREFIX%\"\n          - set \"PKG_CONFIG_PATH=%LIBRARY_PREFIX%\\lib\\pkgconfig\"\n      - if: osx\n        then:\n          - export DYLD_LIBRARY_PATH=${PREFIX}/lib:${DYLD_LIBRARY_PATH:-}\n      - cd crates/uv\n      - cargo auditable install --no-track --locked --path=. --profile=release --root=\"${{ '${PREFIX}' if unix else '%LIBRARY_PREFIX%' }}\"\n      - cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml\n      - if: unix and build_platform == target_platform\n        then:\n          - mkdir -p \"${PREFIX}/share/bash-completion/completions\" \"${PREFIX}/share/fish/vendor_completions.d\" \"${PREFIX}/share/zsh/site-functions\"\n          - |-\n            \"${PREFIX}/bin/uv\" generate-shell-completion bash       > \"${PREFIX}/share/bash-completion/completions/uv\"\n          - |-\n            \"${PREFIX}/bin/uv\" generate-shell-completion fish       > \"${PREFIX}/share/fish/vendor_completions.d/uv.fish\"\n          - |-\n            \"${PREFIX}/bin/uv\" generate-shell-completion zsh        > \"${PREFIX}/share/zsh/site-functions/_uv\"\n      - if: win and build_platform == target_platform\n        then:\n          - md \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\" \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\" \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\"\n          - |-\n            \"%LIBRARY_BIN%\\uv.exe\" generate-shell-completion bash   > \"%LIBRARY_PREFIX%\\share\\bash-completion\\completions\\uv\"\n          - |-\n            \"%LIBRARY_BIN%\\uv.exe\" generate-shell-completion fish   > \"%LIBRARY_PREFIX%\\share\\fish\\vendor_completions.d\\uv.fish\"\n          - |-\n            \"%LIBRARY_BIN%\\uv.exe\" generate-shell-completion zsh    > \"%LIBRARY_PREFIX%\\share\\zsh\\site-functions\\_uv\"\n\nrequirements:\n  build:\n    - ${{ compiler(\"c\") }}\n    - ${{ compiler(\"cxx\") }}\n    - ${{ compiler(\"rust\") }}\n    - ${{ stdlib(\"c\") }}\n    - cargo-auditable\n    - cargo-bundle-licenses\n    - cmake\n    - pkgconf\n    # TODO: remove condition after https://github.com/conda-forge/make-feedstock/pull/36\n    - if: target_platform != \"win-arm64\"\n      then:\n        - make\n  host:\n    - zstd\n\ntests:\n  - package_contents:\n      strict: true\n      bin:\n        - uv\n        - uvx\n      files:\n        - if: build_platform == target_platform\n          then:\n            - ${{ \"Library/\" if win }}share/bash-completion/completions/uv\n            - ${{ \"Library/\" if win }}share/fish/vendor_completions.d/uv.fish\n            - ${{ \"Library/\" if win }}share/zsh/site-functions/_uv\n  - script:\n      - uv --help\n      - uv --version\n      - uv --version | ${{ \"grep -iE \" if unix else \"findstr /r /c:\" }}${{ version | replace('.', '\\\\.') }}\n\nabout:\n  homepage: https://github.com/astral-sh/uv\n  license: Apache-2.0 OR MIT\n  license_file:\n    - LICENSE-APACHE\n    - LICENSE-MIT\n    - crates/uv/THIRDPARTY.yml\n  summary: An extremely fast Python package installer and resolver, written in Rust.\n  documentation: https://docs.astral.sh/uv\n\nextra:\n  recipe-maintainers:\n    - charliermarsh\n    - bollwyvl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1117,7 +1122,7 @@
       "summary": "An extremely fast Python package installer and resolver, written in Rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "set \"PKG_CONFIG_SYSROOT_DIR=%PREFIX%\"",
@@ -1254,7 +1259,7 @@
       "summary": "An extremely fast Python package installer and resolver, written in Rust."
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "content": [
           "set \"PKG_CONFIG_SYSROOT_DIR=%PREFIX%\"",
