@@ -29,8 +29,8 @@
       "win_arm64": "default"
     }
   },
-  "feedstock_hash": "28e9b54cf38eb4f41bf4326a72c6b59d8192e076",
-  "feedstock_hash_ts": 1795388761,
+  "feedstock_hash": "df8e2aeba9c86ce553c38bef279e2074d8961dcc",
+  "feedstock_hash_ts": 1795652469,
   "feedstock_name": "ocaml-ppxlib",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,7 +44,7 @@
       "summary": "Standard infrastructure for ppx rewriters"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "bash ${{ RECIPE_DIR }}/build.sh ppxlib"
     },
     "extra": {
@@ -298,7 +298,7 @@
       "summary": "Standard infrastructure for ppx rewriters"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "bash ${{ RECIPE_DIR }}/build.sh ppxlib"
     },
     "extra": {
@@ -450,7 +450,7 @@
       "summary": "Standard infrastructure for ppx rewriters"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "bash ${{ RECIPE_DIR }}/build.sh ppxlib"
     },
     "extra": {
@@ -602,7 +602,7 @@
       "summary": "Standard infrastructure for ppx rewriters"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "bash ${{ RECIPE_DIR }}/build.sh ppxlib"
     },
     "extra": {
@@ -1226,7 +1226,7 @@
       "summary": "Standard infrastructure for ppx rewriters"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "bash ${{ RECIPE_DIR }}/build.sh ppxlib"
     },
     "extra": {
@@ -1378,7 +1378,7 @@
       "summary": "Standard infrastructure for ppx rewriters"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "bash ${{ RECIPE_DIR }}/build.sh ppxlib"
     },
     "extra": {
@@ -1538,7 +1538,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/ocaml-ppxlib.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: ppxlib\n  version: \"0.39.0\"\n  build_number: 2\n\n  # ocaml_win-64 ships gcc_* and vs_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n  # static archive paired with the .cmxa: msvc ships .lib, gcc and unix ship .a\n  native_lib_ext: ${{ \".lib\" if c_compiler == \"vs\" else \".a\" }}\n\npackage:\n  name: ocaml-${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml-ppx/ppxlib/releases/download/${{ version }}/ppxlib-${{ version }}.tbz\n  sha256: 441a2814dbac3f5dc0c8dcefca263548e9b4d6dda1ef2990ce6a4999e108be3c\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script: bash ${{ RECIPE_DIR }}/build.sh ppxlib\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # ocaml_win-64 >=14 only run-constrains the C compiler; activate it here, once (vs, zig)\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler(\"zig\") if c_compiler == \"zig\" else compiler(\"c\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # the cross compiler does not pull the native one; the build runs OCaml on the build machine\n    - if: build_platform != target_platform and unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n        # the cross compiler activates itself (shims, OCAMLLIB, host OCAMLPATH)\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.*\n    # windows cross: the self-contained gcc track needs no vcvars\n    - if: build_platform != target_platform and not unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.* gcc_*\n    - ocaml-dune >=3.4\n    - ${{ m2 }}make\n    - if: not unix\n      then:\n        - m2-bash\n        - m2-coreutils\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # the noarch ocaml metapackage does not pin the windows toolchain track\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - ocaml-compiler-libs >=0.11\n    - ocaml-dune >=3.4\n    - ocaml-ppx-derivers >=1.0\n    - ocaml-sexplib0 >=0.12\n    - ocaml-stdlib-shims\n  run:\n    - ocaml-compiler-libs >=0.11\n    - ocaml-ppx-derivers >=1.0\n    - ocaml-sexplib0 >=0.12\n    - ocaml-stdlib-shims\n  # the ocaml run_export does not encode the windows toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # installed dune-package declares (lang dune X.Y); older dune cannot read it\n    - ${{ pin_compatible('ocaml-dune', lower_bound='x.x', upper_bound=None) }}\n\ntests:\n  - package_contents:\n      files:\n        - ${{ library }}lib/ocaml/${{ name }}/META\n        # win-arm64 is bytecode-only upstream: OCaml 5.4 has no arm64 Windows backend\n        - if: target_platform != \"win-arm64\"\n          then:\n            - ${{ library }}lib/ocaml/${{ name }}/ppxlib.cmxa\n            - ${{ library }}lib/ocaml/${{ name }}/ppxlib${{ native_lib_ext }}\n            - ${{ library }}lib/ocaml/${{ name }}/ast/ppxlib_ast.cmxa\n            - ${{ library }}lib/ocaml/${{ name }}/astlib/astlib.cmxa\n  # the script links native executables, so it cannot run on the bytecode-only lane\n  - if: target_platform != \"win-arm64\"\n    then:\n      script: bash testing/test_ppxlib.sh\n      files:\n        recipe:\n          - testing/test_ppxlib.sh\n      requirements:\n        run:\n          - ocaml ${{ ocaml_compiler_version }}.*\n          - if: not unix\n            then:\n              - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n          - ocaml-dune >=3.4\n          - if: not unix and c_compiler != \"gcc\"\n            then:\n              - ${{ compiler(\"c\") }}\n          - if: not unix\n            then:\n              - m2-bash\n              - m2-coreutils\n\nabout:\n  homepage: https://github.com/ocaml-ppx/ppxlib\n  repository: https://github.com/ocaml-ppx/ppxlib\n  documentation: https://ocaml-ppx.github.io/ppxlib/\n  license: MIT\n  license_file: LICENSE.md\n  summary: Standard infrastructure for ppx rewriters\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n    - ManuelLerchner\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: ppxlib\n  version: \"0.39.0\"\n  build_number: 3\n\n  # ocaml_win-64 ships gcc_* and vs_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n  # static archive paired with the .cmxa: msvc ships .lib, gcc and unix ship .a\n  native_lib_ext: ${{ \".lib\" if c_compiler == \"vs\" else \".a\" }}\n\npackage:\n  name: ocaml-${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ocaml-ppx/ppxlib/releases/download/${{ version }}/ppxlib-${{ version }}.tbz\n  sha256: 441a2814dbac3f5dc0c8dcefca263548e9b4d6dda1ef2990ce6a4999e108be3c\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script: bash ${{ RECIPE_DIR }}/build.sh ppxlib\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # ocaml_win-64 >=14 only run-constrains the C compiler; activate it here, once (vs, zig)\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler(\"zig\") if c_compiler == \"zig\" else compiler(\"c\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # the cross compiler does not pull the native one; the build runs OCaml on the build machine\n    - if: build_platform != target_platform and unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n        # the cross compiler activates itself (shims, OCAMLLIB, host OCAMLPATH)\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.*\n    # windows cross: the self-contained gcc track needs no vcvars\n    - if: build_platform != target_platform and not unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.* gcc_*\n    - ocaml-dune >=3.4\n    - ${{ m2 }}make\n    - if: not unix\n      then:\n        - m2-bash\n        - m2-coreutils\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # the noarch ocaml metapackage does not pin the windows toolchain track\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - ocaml-compiler-libs >=0.11\n    - ocaml-dune >=3.4\n    - ocaml-ppx-derivers >=1.0\n    - ocaml-sexplib0 >=0.12\n    - ocaml-stdlib-shims\n  run:\n    - ocaml-compiler-libs >=0.11\n    - ocaml-ppx-derivers >=1.0\n    - ocaml-sexplib0 >=0.12\n    - ocaml-stdlib-shims\n  # the ocaml run_export does not encode the windows toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # installed dune-package declares (lang dune X.Y); older dune cannot read it\n    - ${{ pin_compatible('ocaml-dune', lower_bound='x.x', upper_bound=None) }}\n\ntests:\n  - package_contents:\n      files:\n        - ${{ library }}lib/ocaml/${{ name }}/META\n        # win-arm64 is bytecode-only upstream: OCaml 5.4 has no arm64 Windows backend\n        - if: target_platform != \"win-arm64\"\n          then:\n            - ${{ library }}lib/ocaml/${{ name }}/ppxlib.cmxa\n            - ${{ library }}lib/ocaml/${{ name }}/ppxlib${{ native_lib_ext }}\n            - ${{ library }}lib/ocaml/${{ name }}/ast/ppxlib_ast.cmxa\n            - ${{ library }}lib/ocaml/${{ name }}/astlib/astlib.cmxa\n  # the script links native executables, so it cannot run on the bytecode-only lane\n  - if: target_platform != \"win-arm64\"\n    then:\n      script: bash testing/test_ppxlib.sh\n      files:\n        recipe:\n          - testing/test_ppxlib.sh\n      requirements:\n        run:\n          - ocaml ${{ ocaml_compiler_version }}.*\n          - if: not unix\n            then:\n              - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n          - ocaml-dune >=3.4\n          - if: not unix and c_compiler != \"gcc\"\n            then:\n              - ${{ compiler(\"c\") }}\n          - if: not unix\n            then:\n              - m2-bash\n              - m2-coreutils\n\nabout:\n  homepage: https://github.com/ocaml-ppx/ppxlib\n  repository: https://github.com/ocaml-ppx/ppxlib\n  documentation: https://ocaml-ppx.github.io/ppxlib/\n  license: MIT\n  license_file: LICENSE.md\n  summary: Standard infrastructure for ppx rewriters\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n    - ManuelLerchner\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1700,7 +1700,7 @@
       "summary": "Standard infrastructure for ppx rewriters"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "bash ${{ RECIPE_DIR }}/build.sh ppxlib"
     },
     "extra": {
@@ -1936,7 +1936,7 @@
       "summary": "Standard infrastructure for ppx rewriters"
     },
     "build": {
-      "number": "2",
+      "number": "3",
       "script": "bash ${{ RECIPE_DIR }}/build.sh ppxlib"
     },
     "extra": {
