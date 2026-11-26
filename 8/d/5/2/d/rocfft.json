@@ -11,13 +11,14 @@
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "e978c6a79c8f63b37b894e9748a5dd2b681c13d0",
-  "feedstock_hash_ts": 1794837661,
+  "feedstock_hash": "21261e01ee707821df114de46b616dba10228d71",
+  "feedstock_hash_ts": 1795702424,
   "feedstock_name": "rocfft",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -32,7 +33,7 @@
       "summary": "ROCm Fast Fourier Transform (FFT) library"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": []
     },
     "extra": {
@@ -73,6 +74,7 @@
             "ninja"
           ],
           "host": [
+            "rocm-core 7.2.4.*",
             "rocm-cmake",
             "sqlite"
           ],
@@ -109,6 +111,7 @@
             "ninja"
           ],
           "host": [
+            "rocm-core 7.2.4.*",
             "rocm-cmake",
             "sqlite"
           ],
@@ -174,6 +177,7 @@
       "__set__": true,
       "elements": [
         "rocm-cmake",
+        "rocm-core",
         "sqlite"
       ]
     },
@@ -206,7 +210,7 @@
       "summary": "ROCm Fast Fourier Transform (FFT) library"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": []
     },
     "extra": {
@@ -247,6 +251,7 @@
             "ninja"
           ],
           "host": [
+            "rocm-core 7.2.4.*",
             "rocm-cmake",
             "sqlite"
           ],
@@ -283,6 +288,7 @@
             "ninja"
           ],
           "host": [
+            "rocm-core 7.2.4.*",
             "rocm-cmake",
             "sqlite"
           ],
@@ -347,7 +353,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/rocfft.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: rocfft\n  version: \"7.2.4\"\n\nrecipe:\n  name: rocfft-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ROCm/rocm-libraries/releases/download/rocm-${{ version }}/rocfft.tar.gz\n  sha256: c37e25e7a4f09a1064c53b93b14c14cb7400f046405ea0ef3ea1f4b4a80d7528\n  patches:\n    - 0001-Fix-mman-include-for-MADV_HUGEPAGE.patch\n\nbuild:\n  number: 0\n  skip:\n    - not linux\n    - hip_compiler_version in (None, \"None\")\n\noutputs:\n  - staging:\n      name: rocfft-build\n    requirements:\n      build:\n        - ${{ compiler('clang') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('clangxx') }}\n        - ${{ compiler('hip') }}\n        - cmake\n        - pkgconf\n        - ninja\n      host:\n        - rocm-cmake\n        - sqlite\n    build:\n      script: build.sh\n\n  - package:\n      name: librocfft\n    inherit: rocfft-build\n    build:\n      files:\n        include:\n          - \"**/*\"\n        exclude:\n          - include/**\n          - lib/*.a\n          - lib/cmake/**\n          - lib/pkgconfig/**\n          - share/pkgconfig/**\n          - share/doc/**\n    tests:\n      - package_contents:\n          lib:\n            - rocfft\n\n  - package:\n      name: librocfft-devel\n    inherit: rocfft-build\n    build:\n      files:\n        - include/**\n        - lib/*.a\n        - lib/cmake/**\n        - lib/pkgconfig/**\n        - share/pkgconfig/**\n        - share/doc/**\n    requirements:\n      run:\n        - hip-devel\n        - ${{ pin_subpackage('librocfft', exact=True) }}\n\n      run_exports:\n        - ${{ pin_subpackage('librocfft', upper_bound='x.x') }}\n\n    tests:\n      - requirements:\n          run:\n            - cmake-package-check\n            - ${{ compiler('clang') }}\n            - ${{ compiler('clangxx') }}\n        script:\n          - cmake-package-check rocfft\n      - package_contents:\n          include:\n            - rocfft/rocfft.h\n\n  - package:\n      name: rocfft\n    requirements:\n      run:\n        - ${{ pin_subpackage('librocfft-devel', exact=True) }}\n    tests:\n      - script:\n          - test -f $PREFIX/include/rocfft/rocfft.h\n\nabout:\n  homepage: https://rocm.docs.amd.com/projects/rocFFT\n  summary: ROCm Fast Fourier Transform (FFT) library\n  description: |\n    rocFFT is a software library for computing fast Fourier transforms (FFTs)\n    written in the HIP programming language. It's part of AMD's software ecosystem\n    based on ROCm. The rocFFT library can be used with AMD GPUs.\n    Kernels are compiled at runtime on first use; set ROCFFT_RTC_CACHE_PATH to\n    keep a persistent cache and avoid recompiling them.\n  license: MIT\n  license_file: LICENSE.md\n  documentation: https://rocm.docs.amd.com/projects/rocFFT/en/latest/\n  repository: https://github.com/ROCm/rocm-libraries/tree/develop/projects/rocfft\n\nextra:\n  recipe-maintainers:\n    - zklaus\n    - conda-forge/rocm-core\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: rocfft\n  version: \"7.2.4\"\n\nrecipe:\n  name: rocfft-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/ROCm/rocm-libraries/releases/download/rocm-${{ version }}/rocfft.tar.gz\n  sha256: c37e25e7a4f09a1064c53b93b14c14cb7400f046405ea0ef3ea1f4b4a80d7528\n  patches:\n    - 0001-Fix-mman-include-for-MADV_HUGEPAGE.patch\n\nbuild:\n  number: 1\n  skip:\n    - not linux\n    - hip_compiler_version in (None, \"None\")\n\noutputs:\n  - staging:\n      name: rocfft-build\n    requirements:\n      build:\n        - ${{ compiler('clang') }}\n        - ${{ stdlib('c') }}\n        - ${{ compiler('clangxx') }}\n        - ${{ compiler('hip') }}\n        - cmake\n        - pkgconf\n        - ninja\n      host:\n        # rocm-core is a host dependency by convention, see\n        # https://github.com/conda-forge/rocm-core-feedstock/issues/21\n        - rocm-core ${{ version }}.*\n        - rocm-cmake\n        - sqlite\n    build:\n      script: build.sh\n\n  - package:\n      name: librocfft\n    inherit: rocfft-build\n    build:\n      files:\n        include:\n          - \"**/*\"\n        exclude:\n          - include/**\n          - lib/*.a\n          - lib/cmake/**\n          - lib/pkgconfig/**\n          - share/pkgconfig/**\n          - share/doc/**\n    tests:\n      - package_contents:\n          lib:\n            - rocfft\n\n  - package:\n      name: librocfft-devel\n    inherit: rocfft-build\n    build:\n      files:\n        - include/**\n        - lib/*.a\n        - lib/cmake/**\n        - lib/pkgconfig/**\n        - share/pkgconfig/**\n        - share/doc/**\n    requirements:\n      run:\n        - hip-devel\n        - ${{ pin_subpackage('librocfft', exact=True) }}\n\n      run_exports:\n        - ${{ pin_subpackage('librocfft', upper_bound='x.x') }}\n\n    tests:\n      - requirements:\n          run:\n            - cmake-package-check\n            - ${{ compiler('clang') }}\n            - ${{ compiler('clangxx') }}\n        script:\n          - cmake-package-check rocfft\n      - package_contents:\n          include:\n            - rocfft/rocfft.h\n\n  - package:\n      name: rocfft\n    requirements:\n      run:\n        - ${{ pin_subpackage('librocfft-devel', exact=True) }}\n    tests:\n      - script:\n          - test -f $PREFIX/include/rocfft/rocfft.h\n\nabout:\n  homepage: https://rocm.docs.amd.com/projects/rocFFT\n  summary: ROCm Fast Fourier Transform (FFT) library\n  description: |\n    rocFFT is a software library for computing fast Fourier transforms (FFTs)\n    written in the HIP programming language. It's part of AMD's software ecosystem\n    based on ROCm. The rocFFT library can be used with AMD GPUs.\n    Kernels are compiled at runtime on first use; set ROCFFT_RTC_CACHE_PATH to\n    keep a persistent cache and avoid recompiling them.\n  license: MIT\n  license_file: LICENSE.md\n  documentation: https://rocm.docs.amd.com/projects/rocFFT/en/latest/\n  repository: https://github.com/ROCm/rocm-libraries/tree/develop/projects/rocfft\n\nextra:\n  recipe-maintainers:\n    - zklaus\n    - conda-forge/rocm-core\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -362,6 +368,7 @@
       "ninja",
       "pkgconf",
       "rocm-cmake",
+      "rocm-core",
       "sqlite"
     ]
   },
@@ -383,6 +390,7 @@
       "elements": [
         "c_stdlib_stub",
         "rocm-cmake",
+        "rocm-core",
         "sqlite"
       ]
     },
@@ -422,6 +430,7 @@
       "__set__": true,
       "elements": [
         "rocm-cmake",
+        "rocm-core 7.2.4.*",
         "sqlite"
       ]
     },
