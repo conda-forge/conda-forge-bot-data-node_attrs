@@ -2,7 +2,7 @@
   "archived": false,
   "branch": "main",
   "ci_support_migrations": {},
-  "ci_support_win_64_channel_targetsconda-forge_mainhardeningnone.yaml": "c_compiler:\n- vs\nc_compiler_version:\n- '2022'\nc_stdlib:\n- vs\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- vs\ncxx_compiler_version:\n- '2022'\nhardening:\n- none\ntarget_platform:\n- win-64\nzip_keys:\n- - hardening\n  - channel_targets\n",
+  "ci_support_win_64_channel_targetsconda-forge_mainhardeningnone.yaml": "c_compiler:\n- vs\nc_compiler_version:\n- '2026'\nc_stdlib:\n- vs\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- vs\ncxx_compiler_version:\n- '2026'\nhardening:\n- none\ntarget_platform:\n- win-64\nzip_keys:\n- - hardening\n  - channel_targets\n",
   "conda-forge.yml": {
     "conda_build": {
       "error_overlinking": true
@@ -12,10 +12,18 @@
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
+    },
+    "workflow_settings": {
+      "vm_image": [
+        {
+          "os": "win",
+          "value": "windows-2025-vs2026"
+        }
+      ]
     }
   },
-  "feedstock_hash": "3538aa0cb3f6ebe9c0955655760e0134bdfa378a",
-  "feedstock_hash_ts": 1795673881,
+  "feedstock_hash": "fd5934362a63eee813f1b85104a1aeb523c9dfeb",
+  "feedstock_hash_ts": 1795677716,
   "feedstock_name": "msvcstl",
   "hash_type": "sha256",
   "meta_yaml": {
@@ -67,7 +75,7 @@
             }
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": null,
@@ -98,7 +106,7 @@
             }
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": null,
@@ -154,7 +162,7 @@
             "script": "compile_test.bat"
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": {
@@ -183,7 +191,7 @@
             }
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": {
@@ -220,7 +228,7 @@
             }
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": null,
@@ -277,12 +285,12 @@
             "script": "compile_test.bat"
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       }
     ],
     "package": {
       "name": "msvcstl-headers",
-      "version": "14.44"
+      "version": "14.51"
     },
     "requirements": {
       "build": [
@@ -296,8 +304,11 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "848542f4d92ea157dec5e66e1f71cde28675b34982390430ad11fcec0cd35bb0",
-      "url": "https://github.com/microsoft/STL/archive/refs/tags/vs-2022-17.14.tar.gz"
+      "patches": [
+        "patches/0001-Declare-__isa_available-and-__isa_enabled-properly-6.patch"
+      ],
+      "sha256": "504de81500b18e68829fcef9a14495d66b3d0c00e1a1b88456ff6e8b70cdf2c6",
+      "url": "https://github.com/microsoft/STL/archive/refs/tags/msvc-build-tools-14.51.tar.gz"
     }
   },
   "name": "msvcstl-headers",
@@ -316,7 +327,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/msvcstl.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"14.44\"\n\nrecipe:\n  name: msvcstl-packages\n  version: \"${{ version }}\"\n\nsource:\n  # Upstream recently changed tagging to match MSVC, but the latest VS 2022 build still uses the old scheme\n  - url: https://github.com/microsoft/STL/archive/refs/tags/vs-2022-17.14.tar.gz\n    sha256: 848542f4d92ea157dec5e66e1f71cde28675b34982390430ad11fcec0cd35bb0\n  - url: https://github.com/boostorg/math/archive/4d0885ae44f7d4ce94568339b2ae5501eb234e8f.tar.gz\n    sha256: 40d66987f3eabe43a2dcd02fdd96ea64dfd9b2b9387131051b7d8ba65436ea49\n    target_directory: boost-math\n\nbuild:\n  number: 0\n  skip: not win\n\noutputs:\n  # this builds both the release & debug variants at the same time\n  - staging:\n      name: msvcstl-build\n    build:\n      script:\n        file: build.bat\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - python >=3.13\n\n  - package:\n      name: msvcstl-headers\n    inherit: msvcstl-build\n    build:\n      noarch: generic\n      files:\n        - Library/include/c++/*\n    requirements:\n      run_constraints:\n        - msvcstl-devel ==${{ version }}\n        # Keep in sync with the __clang_major__ check in stl/inc/yvals_core.h\n        - clangxx >=19\n        - vs >=2022\n    tests:\n      - package_contents:\n          files:\n            - Library/include/c++/*\n          strict: true\n\n  - package:\n      name: msvcstl\n    inherit: msvcstl-build\n    build:\n      string: ${{ \"debug_\" if hardening == \"debug\" }}h${{ hash }}_${{ build_number }}\n      variant:\n        use_keys:\n          - hardening\n      files:\n        - Library/bin/msvcp140_1${{ \"d\" if hardening == \"debug\" }}_conda.dll\n        - Library/bin/msvcp140_2${{ \"d\" if hardening == \"debug\" }}_conda.dll\n        - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_atomic_wait_conda.dll\n        - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_codecvt_ids_conda.dll\n        - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_conda.dll\n    requirements:\n      run_exports:\n        - if: hardening == \"debug\"\n          then: msvcstl * debug*\n    tests:\n      - package_contents:\n          files:\n            - Library/bin/msvcp140_1${{ \"d\" if hardening == \"debug\" }}_conda.dll\n            - Library/bin/msvcp140_2${{ \"d\" if hardening == \"debug\" }}_conda.dll\n            - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_atomic_wait_conda.dll\n            - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_codecvt_ids_conda.dll\n            - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_conda.dll\n          strict: true\n\n  - package:\n      name: msvcstl-devel\n    build:\n      string: ${{ \"debug_\" if hardening == \"debug\" }}h${{ hash }}_${{ build_number }}\n      variant:\n        use_keys:\n          - hardening\n      files:\n        - Library/modules/modules.json\n        - Library/modules/std.compat.ixx\n        - Library/modules/std.ixx\n        - Library/lib/stl_asan.lib\n        - Library/lib/msvcprt${{ \"d\" if hardening == \"debug\" }}.lib\n        - Library/lib/libcpmt${{ \"d\" if hardening == \"debug\" }}.lib\n        - Library/lib/libcpmt${{ \"d\" if hardening == \"debug\" }}1.lib\n        - if: hardening == \"debug\"\n          then: Library/lib/libcpmtd0.lib\n    inherit: msvcstl-build\n    requirements:\n      host:\n        - ${{ pin_subpackage(\"msvcstl\", exact = True) }}\n        - ${{ pin_subpackage(\"msvcstl-headers\", exact = True) }}\n      run:\n        - if: hardening == \"none\"\n          then: msvcstl * h*\n          else: msvcstl * debug*\n        - ${{ pin_subpackage(\"msvcstl\", upper_bound = None) }}\n        - ${{ pin_subpackage(\"msvcstl-headers\", upper_bound = \"x.x.x\") }}\n    tests:\n      - package_contents:\n          files:\n            - Library/modules/modules.json\n            - Library/modules/std.compat.ixx\n            - Library/modules/std.ixx\n            - Library/lib/stl_asan.lib\n            - Library/lib/msvcprt${{ \"d\" if hardening == \"debug\" }}.lib\n            - Library/lib/libcpmt${{ \"d\" if hardening == \"debug\" }}.lib\n            - Library/lib/libcpmt${{ \"d\" if hardening == \"debug\" }}1.lib\n            - etc/conda/test-files/*\n            - if: hardening == \"debug\"\n              then: Library/lib/libcpmtd0.lib\n          strict: true\n      - script: compile_test.bat\n        requirements:\n          run:\n            - ${{ stdlib('c') }}\n            - ${{ compiler('c') }}\n            - ${{ compiler('cxx') }}\n        files:\n          recipe:\n            - test_sources/\n\nabout:\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  summary: MSVC's implementation of the C++ Standard Library.\n  homepage: https://github.com/microsoft/STL\n\nextra:\n  recipe-maintainers:\n    - h-vetinari\n    - isuruf\n    - danielnachun\n  feedstock-name: msvcstl\n",
+  "raw_meta_yaml": "context:\n  version: \"14.51\"\n\nrecipe:\n  name: msvcstl-packages\n  version: \"${{ version }}\"\n\nsource:\n  - url: https://github.com/microsoft/STL/archive/refs/tags/msvc-build-tools-${{ version }}.tar.gz\n    sha256: 504de81500b18e68829fcef9a14495d66b3d0c00e1a1b88456ff6e8b70cdf2c6\n    patches:\n      # backport https://github.com/microsoft/STL/commit/488e7953685722d2d6666f764c1f2f61958bba76\n      - patches/0001-Declare-__isa_available-and-__isa_enabled-properly-6.patch\n\n  # submodules\n  - target_directory: boost-math\n    url: https://github.com/boostorg/math/archive/e0fcd19f7227d81391770ea46015acc3c80af810.tar.gz\n    sha256: 1abfe848c60e409b88b3a7f4f592e2c0dad7a1e2798197dedf623588a77585a6\n  - target_directory: llvm-project\n    url: https://github.com/llvm/llvm-project/archive/58f4da463e5b3cd3531cace17cc3f2d8d860964e.tar.gz\n    sha256: 11d18604acef9116f0683ad5c532ed83a96c628cd3ece868cd7c47d71083739c\n\nbuild:\n  number: 0\n  skip: not win\n\noutputs:\n  # this builds both the release & debug variants at the same time\n  - staging:\n      name: msvcstl-build\n    build:\n      script:\n        file: build.bat\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - python >=3.13\n\n  - package:\n      name: msvcstl-headers\n    inherit: msvcstl-build\n    build:\n      noarch: generic\n      files:\n        - Library/include/c++/*\n    requirements:\n      run_constraints:\n        - msvcstl-devel ==${{ version }}\n        # Keep in sync with the __clang_major__ check in stl/inc/yvals_core.h\n        - clangxx >=20\n        - vs >=2026\n    tests:\n      - package_contents:\n          files:\n            - Library/include/c++/*\n          strict: true\n\n  - package:\n      name: msvcstl\n    inherit: msvcstl-build\n    build:\n      string: ${{ \"debug_\" if hardening == \"debug\" }}h${{ hash }}_${{ build_number }}\n      variant:\n        use_keys:\n          - hardening\n      files:\n        - Library/bin/msvcp140_1${{ \"d\" if hardening == \"debug\" }}_conda.dll\n        - Library/bin/msvcp140_2${{ \"d\" if hardening == \"debug\" }}_conda.dll\n        - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_atomic_wait_conda.dll\n        - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_codecvt_ids_conda.dll\n        - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_conda.dll\n    requirements:\n      run_exports:\n        - if: hardening == \"debug\"\n          then: msvcstl * debug*\n    tests:\n      - package_contents:\n          files:\n            - Library/bin/msvcp140_1${{ \"d\" if hardening == \"debug\" }}_conda.dll\n            - Library/bin/msvcp140_2${{ \"d\" if hardening == \"debug\" }}_conda.dll\n            - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_atomic_wait_conda.dll\n            - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_codecvt_ids_conda.dll\n            - Library/bin/msvcp140${{ \"d\" if hardening == \"debug\" }}_conda.dll\n          strict: true\n\n  - package:\n      name: msvcstl-devel\n    build:\n      string: ${{ \"debug_\" if hardening == \"debug\" }}h${{ hash }}_${{ build_number }}\n      variant:\n        use_keys:\n          - hardening\n      files:\n        - Library/modules/modules.json\n        - Library/modules/std.compat.ixx\n        - Library/modules/std.ixx\n        - Library/lib/stl_asan.lib\n        - Library/lib/msvcprt${{ \"d\" if hardening == \"debug\" }}.lib\n        - Library/lib/libcpmt${{ \"d\" if hardening == \"debug\" }}.lib\n        - Library/lib/libcpmt${{ \"d\" if hardening == \"debug\" }}1.lib\n        - if: hardening == \"debug\"\n          then: Library/lib/libcpmtd0.lib\n    inherit: msvcstl-build\n    requirements:\n      host:\n        - ${{ pin_subpackage(\"msvcstl\", exact = True) }}\n        - ${{ pin_subpackage(\"msvcstl-headers\", exact = True) }}\n      run:\n        - if: hardening == \"none\"\n          then: msvcstl * h*\n          else: msvcstl * debug*\n        - ${{ pin_subpackage(\"msvcstl\", upper_bound = None) }}\n        - ${{ pin_subpackage(\"msvcstl-headers\", upper_bound = \"x.x.x\") }}\n    tests:\n      - package_contents:\n          files:\n            - Library/modules/modules.json\n            - Library/modules/std.compat.ixx\n            - Library/modules/std.ixx\n            - Library/lib/stl_asan.lib\n            - Library/lib/msvcprt${{ \"d\" if hardening == \"debug\" }}.lib\n            - Library/lib/libcpmt${{ \"d\" if hardening == \"debug\" }}.lib\n            - Library/lib/libcpmt${{ \"d\" if hardening == \"debug\" }}1.lib\n            - etc/conda/test-files/*\n            - if: hardening == \"debug\"\n              then: Library/lib/libcpmtd0.lib\n          strict: true\n      - script: compile_test.bat\n        requirements:\n          run:\n            - ${{ stdlib('c') }}\n            - ${{ compiler('c') }}\n            - ${{ compiler('cxx') }}\n        files:\n          recipe:\n            - test_sources/\n\nabout:\n  license: Apache-2.0\n  license_file: LICENSE.txt\n  summary: MSVC's implementation of the C++ Standard Library.\n  homepage: https://github.com/microsoft/STL\n\nextra:\n  recipe-maintainers:\n    - h-vetinari\n    - isuruf\n    - danielnachun\n  feedstock-name: msvcstl\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -409,8 +420,8 @@
       ]
     }
   },
-  "url": "https://github.com/microsoft/STL/archive/refs/tags/vs-2022-17.14.tar.gz",
-  "version": "14.44",
+  "url": "https://github.com/microsoft/STL/archive/refs/tags/msvc-build-tools-14.51.tar.gz",
+  "version": "14.51",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/msvcstl.json"
   },
@@ -463,7 +474,7 @@
             }
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": null,
@@ -494,7 +505,7 @@
             }
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": null,
@@ -550,7 +561,7 @@
             "script": "compile_test.bat"
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": {
@@ -579,7 +590,7 @@
             }
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": {
@@ -616,7 +627,7 @@
             }
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       },
       {
         "build": null,
@@ -673,12 +684,12 @@
             "script": "compile_test.bat"
           }
         ],
-        "version": "14.44"
+        "version": "14.51"
       }
     ],
     "package": {
       "name": "msvcstl-headers",
-      "version": "14.44"
+      "version": "14.51"
     },
     "requirements": {
       "build": [
@@ -692,8 +703,11 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "848542f4d92ea157dec5e66e1f71cde28675b34982390430ad11fcec0cd35bb0",
-      "url": "https://github.com/microsoft/STL/archive/refs/tags/vs-2022-17.14.tar.gz"
+      "patches": [
+        "patches/0001-Declare-__isa_available-and-__isa_enabled-properly-6.patch"
+      ],
+      "sha256": "504de81500b18e68829fcef9a14495d66b3d0c00e1a1b88456ff6e8b70cdf2c6",
+      "url": "https://github.com/microsoft/STL/archive/refs/tags/msvc-build-tools-14.51.tar.gz"
     }
   },
   "win_64_requirements": {
