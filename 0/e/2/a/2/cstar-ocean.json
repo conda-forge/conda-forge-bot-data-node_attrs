@@ -14,8 +14,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "f1c49210eaf2509ce722a4a265aaf049f7e72ffe",
-  "feedstock_hash_ts": 1795473657,
+  "feedstock_hash": "f3c6970d44e9e4f79addf80467be9d5b288f7bff",
+  "feedstock_hash_ts": 1795652865,
   "feedstock_name": "cstar-ocean",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -116,6 +116,7 @@
                 "cstar.applications.forge",
                 "cstar.catalog",
                 "cstar.wizard",
+                "cstar.wizard.wizard",
                 "cstar.cli.forge"
               ],
               "python_version": [
@@ -138,7 +139,7 @@
             ]
           }
         ],
-        "version": "0.19.0"
+        "version": "0.19.1"
       },
       {
         "build": {
@@ -182,12 +183,12 @@
             ]
           }
         ],
-        "version": "0.19.0"
+        "version": "0.19.1"
       }
     ],
     "package": {
       "name": "cstar-ocean",
-      "version": "0.19.0"
+      "version": "0.19.1"
     },
     "requirements": {
       "host": [
@@ -237,8 +238,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6cfc7c7893b07164379631c006f3119b57e84cbef7e994977c76267a7df3d7d6",
-      "url": "https://pypi.org/packages/source/c/cstar-ocean/cstar_ocean-0.19.0.tar.gz"
+      "sha256": "0a75e9729f31dde4c83c461547723fde847b9129dc7c063be06666a08fd05bae",
+      "url": "https://pypi.org/packages/source/c/cstar-ocean/cstar_ocean-0.19.1.tar.gz"
     }
   },
   "linux_64_requirements": {
@@ -415,6 +416,7 @@
                 "cstar.applications.forge",
                 "cstar.catalog",
                 "cstar.wizard",
+                "cstar.wizard.wizard",
                 "cstar.cli.forge"
               ],
               "python_version": [
@@ -437,7 +439,7 @@
             ]
           }
         ],
-        "version": "0.19.0"
+        "version": "0.19.1"
       },
       {
         "build": {
@@ -481,12 +483,12 @@
             ]
           }
         ],
-        "version": "0.19.0"
+        "version": "0.19.1"
       }
     ],
     "package": {
       "name": "cstar-ocean",
-      "version": "0.19.0"
+      "version": "0.19.1"
     },
     "requirements": {
       "host": [
@@ -536,8 +538,8 @@
     },
     "schema_version": 1,
     "source": {
-      "sha256": "6cfc7c7893b07164379631c006f3119b57e84cbef7e994977c76267a7df3d7d6",
-      "url": "https://pypi.org/packages/source/c/cstar-ocean/cstar_ocean-0.19.0.tar.gz"
+      "sha256": "0a75e9729f31dde4c83c461547723fde847b9129dc7c063be06666a08fd05bae",
+      "url": "https://pypi.org/packages/source/c/cstar-ocean/cstar_ocean-0.19.1.tar.gz"
     }
   },
   "name": "cstar-ocean",
@@ -555,7 +557,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/cstar-ocean.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.19.0\"\n  python_min: \"3.12\"\n\nrecipe:\n  name: cstar-ocean-suite\n  version: ${{ version }}\n\nsource:\n  - url: https://pypi.org/packages/source/c/cstar-ocean/cstar_ocean-${{ version }}.tar.gz\n    sha256: 6cfc7c7893b07164379631c006f3119b57e84cbef7e994977c76267a7df3d7d6\n\nbuild:\n  number: 0\n\noutputs:\n  - package:\n      name: cstar-ocean\n      version: ${{ version }}\n\n    build:\n      # noarch; not solvable on Windows today (roms-tools -> xesmf/esmf has no\n      # win-64 build) but will work there as soon as the deps become available\n      noarch: python\n      script:\n        - python -m pip install . -vv --no-deps --no-build-isolation\n        # activate.d/deactivate.d hooks (recipe/activate.sh has the rationale):\n        # PYTHONNOUSERSITE=1 on activation keeps the env off Python's user-site\n        # (~/.local), which otherwise precedes site-packages on sys.path and\n        # silently shadows it -- a chronic breakage on HPC systems where a module\n        # Python shares ~/.local. Carried over from the cstar-forge recipe, whose\n        # users (the wizard/Jupyter path in particular) hit this; now everyone does.\n        - mkdir -p \"$PREFIX/etc/conda/activate.d\" \"$PREFIX/etc/conda/deactivate.d\"\n        - cp \"$RECIPE_DIR/activate.sh\" \"$PREFIX/etc/conda/activate.d/cstar-ocean_pythonnousersite.sh\"\n        - cp \"$RECIPE_DIR/deactivate.sh\" \"$PREFIX/etc/conda/deactivate.d/cstar-ocean_pythonnousersite.sh\"\n      python:\n        entry_points:\n          - cstar = cstar.cli.cli:main\n\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools >=61.0.0\n        - wheel\n        - setuptools-scm >=7.0\n      run:\n        - python >=${{ python_min }}\n        - fakeredis <2.35\n        - networkx >=3.6.1\n        - psutil >=7.2.2\n        - pydantic >=2.13\n        - pydantic-settings >=2.13\n        - python-dateutil >=2.8.2\n        - pytimeparse >=1.1.8\n        - python-dotenv\n        - pyyaml >=6.0,<7\n        - f90nml >=1.4\n        - numpy >2.0,<2.4\n        # >=5.4.0: `bottom_fill_blend_m` (Forge and nest_ic), the CONUS404\n        # surface source and the surface-forcing blend; 5.3.0 added the interior-\n        # only CDR metrics `UpscaledCDR` needs, 5.2.2 Python 3.14 support, and\n        # all 5.2+ are free of the old xarray<2025.8 cap, so the solver can reach\n        # xarray 2026.9 (below)\n        - roms-tools >=5.4.0,<6\n        - typer <=0.25\n        # shell detection for `cstar env shell-init`\n        - shellingham >=1.3\n        # -- the forge domain-generation application (cstar.applications.forge),\n        #    merged from cstar-forge; mirrors [project.dependencies] --\n        - jinja2\n        - pandas\n        - copernicusmarine\n        - gdown\n        - dask\n        - distributed\n        - threadpoolctl\n        - numba\n        - fsspec\n        # S3 backend for fsspec: Forge streams CONUS404 from its S3 store.\n        # >=2025.1: unfloored, an in-place update can solve to s3fs 0.4.2 (2020)\n        # and downgrade pandas to keep it\n        - s3fs >=2025.1\n        - kerchunk\n        - ujson\n        - fastparquet\n        # >=2026.9: pydata/xarray#11622 fixes the netCDF4-backend lock-order\n        # deadlock that froze forge input generation mid-save_mfdataset\n        - xarray >=2026.9\n        # `cstar run compress` reads and writes netCDF directly; >=1.6 for\n        # netCDF-C's native quantization (`significant_digits`)\n        - netcdf4 >=1.6\n        # -- the blueprint wizard (cstar.wizard; `cstar forge wizard` runs it\n        #    under voila, `cstar forge copy-notebook` under jupyterlab) --\n        - ipywidgets\n        - voila\n        - jupyterlab\n        # matplotlib-base (not the `matplotlib` GUI metapackage): notebooks\n        # render via the inline/Agg backends; keeps pyqt out of the default install.\n        - matplotlib-base\n        - ipython\n      run_constraints:\n        # copernicusmarine 2.4.x's conda-forge package under-pins click\n        # (>=8.0.4,<8.3) relative to its own wheel metadata (>8.2.0,!=8.3.0,\n        # !=8.3.1), so a solve landing on 2.4.x can pick click 8.1.x and fail\n        # `pip check`. 2.5.0 aligned the conda pin; this stays until 2.4.x is\n        # no longer a plausible solve (nothing here floors copernicusmarine).\n        - click >8.2.0,!=8.3.0,!=8.3.1\n\n    tests:\n      - python:\n          imports:\n            - cstar\n            # forge application (pulls roms-tools/dask/kerchunk: a real dependency\n            # smoke test), catalog, wizard (import-light) and the CLI group\n            - cstar.applications.forge\n            - cstar.catalog\n            - cstar.wizard\n            - cstar.cli.forge\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n      - script:\n          - cstar --version\n          - cstar forge --help\n          - cstar env register-kernel --help\n          - cstar env shell-init --help\n          - cstar run --help\n          - cstar init --help\n          # the bundled systems are YAML package data from 0.19.0: listing them\n          # proves the sdist carried cstar/catalog/bundled/systems/\n          - cstar system list\n          - cstar run compress --help\n          # the agent skills ship as package data under\n          # cstar/additional_files/skills/ from 0.19.0 (C-Star #912)\n          - cstar skill path cstar-system\n\n    about:\n      homepage: https://www.cworthy.org\n      repository: https://github.com/CWorthy-ocean/C-Star\n      documentation: https://c-star.readthedocs.io\n      summary: Computational systems for tracking ocean carbon\n      description: |\n        C-Star automates the setup and execution of reproducible ocean-carbon\n        modeling workflows (ROMS-MARBL and related regional ocean/biogeochemistry\n        simulations) via a blueprint-driven, orchestration-aware Python API and\n        command-line tool.\n      license: Apache-2.0\n      license_file: LICENSE\n\n  - package:\n      name: cstar-ocean-standalone\n      version: ${{ version }}\n\n    build:\n      # metapackage (no code): the toolchain deps below resolve to their\n      # platform-specific variants at install time\n      noarch: generic\n\n    requirements:\n      run:\n        - ${{ pin_subpackage(\"cstar-ocean\", exact=True) }}\n        - c-compiler\n        - cxx-compiler\n        - fortran-compiler\n        - make\n        - cmake\n        # mpich-mpicc/mpich-mpifort pin the exact mpich build plus the\n        # activation package providing the compiler its wrappers hardcode;\n        # bare mpich + raw compilers 2.0 can otherwise solve to a broken\n        # mpicc on osx-arm64 (conda-forge/mpich-feedstock#142)\n        - mpich\n        - mpich-mpicc\n        - mpich-mpifort\n        - netcdf-fortran\n        - libpnetcdf\n        # ParallelIO's CMake configure calls find_package(PkgConfig); without it\n        # the ROMS build fails on a machine with no system pkg-config (0.17.0\n        # users on a clean Linux box hit this)\n        - pkg-config\n        # ucla-roms Makefiles require GNU-flavored rsync; macOS system rsync lacks the needed flags\n        - rsync\n        # local-launcher walltimes (max_walltime / force_kill_timeout) run the step\n        # under GNU `timeout`; macOS has none (0.16.0 also accepts Homebrew's gtimeout)\n        - coreutils\n\n    tests:\n      - script:\n          # the point of this metapackage is a working toolchain next to cstar\n          - cstar --version\n          - gfortran --version\n          - mpirun --version\n          # these exec the wrappers' underlying compilers, catching a broken\n          # mpicc/mpif90 (conda-forge/mpich-feedstock#142)\n          - mpicc --version\n          - mpif90 --version\n          - cmake --version\n          - make --version\n          - rsync --version\n          - timeout --version\n          - nf-config --version\n          - pkg-config --version\n\n    about:\n      homepage: https://www.cworthy.org\n      repository: https://github.com/CWorthy-ocean/C-Star\n      documentation: https://c-star.readthedocs.io\n      summary: >-\n        C-Star with a full conda-provided build toolchain for laptops/workstations\n        (HPC users should use system modules instead)\n      license: Apache-2.0\n      license_file: LICENSE\n\nabout:\n  homepage: https://www.cworthy.org\n  repository: https://github.com/CWorthy-ocean/C-Star\n  documentation: https://c-star.readthedocs.io\n  summary: Computational systems for tracking ocean carbon\n  license: Apache-2.0\n  license_file: LICENSE\n\nextra:\n  # multi-output recipe: infrastructure needs the feedstock name to be explicit\n  feedstock-name: cstar-ocean\n  recipe-maintainers:\n    - ScottEilerman\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"0.19.1\"\n  python_min: \"3.12\"\n\nrecipe:\n  name: cstar-ocean-suite\n  version: ${{ version }}\n\nsource:\n  - url: https://pypi.org/packages/source/c/cstar-ocean/cstar_ocean-${{ version }}.tar.gz\n    sha256: 0a75e9729f31dde4c83c461547723fde847b9129dc7c063be06666a08fd05bae\n\nbuild:\n  number: 0\n\noutputs:\n  - package:\n      name: cstar-ocean\n      version: ${{ version }}\n\n    build:\n      # noarch; not solvable on Windows today (roms-tools -> xesmf/esmf has no\n      # win-64 build) but will work there as soon as the deps become available\n      noarch: python\n      script:\n        - python -m pip install . -vv --no-deps --no-build-isolation\n        # activate.d/deactivate.d hooks (recipe/activate.sh has the rationale):\n        # PYTHONNOUSERSITE=1 on activation keeps the env off Python's user-site\n        # (~/.local), which otherwise precedes site-packages on sys.path and\n        # silently shadows it -- a chronic breakage on HPC systems where a module\n        # Python shares ~/.local. Carried over from the cstar-forge recipe, whose\n        # users (the wizard/Jupyter path in particular) hit this; now everyone does.\n        - mkdir -p \"$PREFIX/etc/conda/activate.d\" \"$PREFIX/etc/conda/deactivate.d\"\n        - cp \"$RECIPE_DIR/activate.sh\" \"$PREFIX/etc/conda/activate.d/cstar-ocean_pythonnousersite.sh\"\n        - cp \"$RECIPE_DIR/deactivate.sh\" \"$PREFIX/etc/conda/deactivate.d/cstar-ocean_pythonnousersite.sh\"\n      python:\n        entry_points:\n          - cstar = cstar.cli.cli:main\n\n    requirements:\n      host:\n        - python ${{ python_min }}.*\n        - pip\n        - setuptools >=61.0.0\n        - wheel\n        - setuptools-scm >=7.0\n      run:\n        - python >=${{ python_min }}\n        - fakeredis <2.35\n        - networkx >=3.6.1\n        - psutil >=7.2.2\n        - pydantic >=2.13\n        - pydantic-settings >=2.13\n        - python-dateutil >=2.8.2\n        - pytimeparse >=1.1.8\n        - python-dotenv\n        - pyyaml >=6.0,<7\n        - f90nml >=1.4\n        - numpy >2.0,<2.4\n        # >=5.4.0: `bottom_fill_blend_m` (Forge and nest_ic), the CONUS404\n        # surface source and the surface-forcing blend; 5.3.0 added the interior-\n        # only CDR metrics `UpscaledCDR` needs, 5.2.2 Python 3.14 support, and\n        # all 5.2+ are free of the old xarray<2025.8 cap, so the solver can reach\n        # xarray 2026.9 (below)\n        - roms-tools >=5.4.0,<6\n        - typer <=0.25\n        # shell detection for `cstar env shell-init`\n        - shellingham >=1.3\n        # -- the forge domain-generation application (cstar.applications.forge),\n        #    merged from cstar-forge; mirrors [project.dependencies] --\n        - jinja2\n        - pandas\n        - copernicusmarine\n        - gdown\n        - dask\n        - distributed\n        - threadpoolctl\n        - numba\n        - fsspec\n        # S3 backend for fsspec: Forge streams CONUS404 from its S3 store.\n        # >=2025.1: unfloored, an in-place update can solve to s3fs 0.4.2 (2020)\n        # and downgrade pandas to keep it\n        - s3fs >=2025.1\n        - kerchunk\n        - ujson\n        - fastparquet\n        # >=2026.9: pydata/xarray#11622 fixes the netCDF4-backend lock-order\n        # deadlock that froze forge input generation mid-save_mfdataset\n        - xarray >=2026.9\n        # `cstar run compress` reads and writes netCDF directly; >=1.6 for\n        # netCDF-C's native quantization (`significant_digits`)\n        - netcdf4 >=1.6\n        # -- the blueprint wizard (cstar.wizard; `cstar forge wizard` runs it\n        #    under voila, `cstar forge copy-notebook` under jupyterlab) --\n        - ipywidgets\n        - voila\n        - jupyterlab\n        # matplotlib-base (not the `matplotlib` GUI metapackage): notebooks\n        # render via the inline/Agg backends; keeps pyqt out of the default install.\n        - matplotlib-base\n        - ipython\n      run_constraints:\n        # copernicusmarine 2.4.x's conda-forge package under-pins click\n        # (>=8.0.4,<8.3) relative to its own wheel metadata (>8.2.0,!=8.3.0,\n        # !=8.3.1), so a solve landing on 2.4.x can pick click 8.1.x and fail\n        # `pip check`. 2.5.0 aligned the conda pin; this stays until 2.4.x is\n        # no longer a plausible solve (nothing here floors copernicusmarine).\n        - click >8.2.0,!=8.3.0,!=8.3.1\n\n    tests:\n      - python:\n          imports:\n            - cstar\n            # forge application (pulls roms-tools/dask/kerchunk: a real dependency\n            # smoke test), catalog, wizard (import-light) and the CLI group\n            - cstar.applications.forge\n            - cstar.catalog\n            - cstar.wizard\n            # the blueprint wizard, split into card and editor modules in 0.19.1\n            # (import-light: loads every module of it, no ipywidgets/roms-tools)\n            - cstar.wizard.wizard\n            - cstar.cli.forge\n          pip_check: true\n          python_version:\n            - ${{ python_min }}.*\n            - \"*\"\n      - script:\n          - cstar --version\n          - cstar forge --help\n          - cstar env register-kernel --help\n          - cstar env shell-init --help\n          - cstar run --help\n          - cstar init --help\n          # the bundled systems are YAML package data from 0.19.0: listing them\n          # proves the sdist carried cstar/catalog/bundled/systems/\n          - cstar system list\n          - cstar run compress --help\n          # the agent skills ship as package data under\n          # cstar/additional_files/skills/ from 0.19.0 (C-Star #912)\n          - cstar skill path cstar-system\n\n    about:\n      homepage: https://www.cworthy.org\n      repository: https://github.com/CWorthy-ocean/C-Star\n      documentation: https://c-star.readthedocs.io\n      summary: Computational systems for tracking ocean carbon\n      description: |\n        C-Star automates the setup and execution of reproducible ocean-carbon\n        modeling workflows (ROMS-MARBL and related regional ocean/biogeochemistry\n        simulations) via a blueprint-driven, orchestration-aware Python API and\n        command-line tool.\n      license: Apache-2.0\n      license_file: LICENSE\n\n  - package:\n      name: cstar-ocean-standalone\n      version: ${{ version }}\n\n    build:\n      # metapackage (no code): the toolchain deps below resolve to their\n      # platform-specific variants at install time\n      noarch: generic\n\n    requirements:\n      run:\n        - ${{ pin_subpackage(\"cstar-ocean\", exact=True) }}\n        - c-compiler\n        - cxx-compiler\n        - fortran-compiler\n        - make\n        - cmake\n        # mpich-mpicc/mpich-mpifort pin the exact mpich build plus the\n        # activation package providing the compiler its wrappers hardcode;\n        # bare mpich + raw compilers 2.0 can otherwise solve to a broken\n        # mpicc on osx-arm64 (conda-forge/mpich-feedstock#142)\n        - mpich\n        - mpich-mpicc\n        - mpich-mpifort\n        - netcdf-fortran\n        - libpnetcdf\n        # ParallelIO's CMake configure calls find_package(PkgConfig); without it\n        # the ROMS build fails on a machine with no system pkg-config (0.17.0\n        # users on a clean Linux box hit this)\n        - pkg-config\n        # ucla-roms Makefiles require GNU-flavored rsync; macOS system rsync lacks the needed flags\n        - rsync\n        # local-launcher walltimes (max_walltime / force_kill_timeout) run the step\n        # under GNU `timeout`; macOS has none (0.16.0 also accepts Homebrew's gtimeout)\n        - coreutils\n\n    tests:\n      - script:\n          # the point of this metapackage is a working toolchain next to cstar\n          - cstar --version\n          - gfortran --version\n          - mpirun --version\n          # these exec the wrappers' underlying compilers, catching a broken\n          # mpicc/mpif90 (conda-forge/mpich-feedstock#142)\n          - mpicc --version\n          - mpif90 --version\n          - cmake --version\n          - make --version\n          - rsync --version\n          - timeout --version\n          - nf-config --version\n          - pkg-config --version\n\n    about:\n      homepage: https://www.cworthy.org\n      repository: https://github.com/CWorthy-ocean/C-Star\n      documentation: https://c-star.readthedocs.io\n      summary: >-\n        C-Star with a full conda-provided build toolchain for laptops/workstations\n        (HPC users should use system modules instead)\n      license: Apache-2.0\n      license_file: LICENSE\n\nabout:\n  homepage: https://www.cworthy.org\n  repository: https://github.com/CWorthy-ocean/C-Star\n  documentation: https://c-star.readthedocs.io\n  summary: Computational systems for tracking ocean carbon\n  license: Apache-2.0\n  license_file: LICENSE\n\nextra:\n  # multi-output recipe: infrastructure needs the feedstock name to be explicit\n  feedstock-name: cstar-ocean\n  recipe-maintainers:\n    - ScottEilerman\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -767,8 +769,8 @@
       ]
     }
   },
-  "url": "https://pypi.org/packages/source/c/cstar-ocean/cstar_ocean-0.19.0.tar.gz",
-  "version": "0.19.0",
+  "url": "https://pypi.org/packages/source/c/cstar-ocean/cstar_ocean-0.19.1.tar.gz",
+  "version": "0.19.1",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/cstar-ocean.json"
   }
