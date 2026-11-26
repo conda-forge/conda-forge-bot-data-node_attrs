@@ -1,13 +1,16 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "bzip2:\n- '1'\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibiconv:\n- '1'\nliblzma_devel:\n- '5'\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nbzip2:\n- '1'\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibiconv:\n- '1'\nliblzma_devel:\n- '5'\nopenssl:\n- '3.5'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.6'\n",
+  "ci_support_migrations": {
+    "zstd16": {
+      "migration_number": 1,
+      "migrator_ts": 1795498666.105089
+    }
+  },
   "conda-forge.yml": {
     "build_platform": {
-      "linux_aarch64": "linux_64",
-      "linux_ppc64le": "linux_64",
-      "osx_arm64": "osx_64"
+      "linux_ppc64le": "linux_64"
     },
     "conda_build": {
       "error_overlinking": true
@@ -21,12 +24,13 @@
     "provider": {
       "linux_aarch64": "default",
       "linux_ppc64le": "default",
+      "osx_arm64": "default",
       "win_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "c5d0d25d3bc2aff85865d3b06828b77b3d4d0b89",
-  "feedstock_hash_ts": 1788896487,
+  "feedstock_hash": "a77e1ed04f477703c8ff2c0262d8c008e5bb946b",
+  "feedstock_hash_ts": 1795706699,
   "feedstock_name": "minizip",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -40,7 +44,7 @@
       "summary": "minizip-ng is a zip manipulation library written in C."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "minizip"
@@ -163,7 +167,7 @@
       "summary": "minizip-ng is a zip manipulation library written in C."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "minizip"
@@ -286,7 +290,7 @@
       "summary": "minizip-ng is a zip manipulation library written in C."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "minizip"
@@ -409,7 +413,7 @@
       "summary": "minizip-ng is a zip manipulation library written in C."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "minizip"
@@ -749,7 +753,7 @@
       "summary": "minizip-ng is a zip manipulation library written in C."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "minizip"
@@ -872,7 +876,7 @@
       "summary": "minizip-ng is a zip manipulation library written in C."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "minizip"
@@ -1003,7 +1007,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/minizip.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: minizip\n  version: \"4.2.2\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/zlib-ng/minizip-ng/archive/${{ version }}/${{ name }}-${{ version }}.tar.gz\n  sha256: 71af7b9799856d8b03619df3949e9c1be9703f8de0795af71399ba283cb27aac\n  patches:\n    - if: win\n      then: win_patch_output_name.patch\n    - if: win\n      then: gtest_shared_main.patch\n\nbuild:\n  number: 1\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    - cmake\n    - if: not win\n      then: make\n    - if: win\n      then: ninja\n    - if: not win\n      then: pkg-config\n  host:\n    - bzip2\n    - if: win\n      then: gtest\n    - if: not win\n      then: libiconv\n    - if: not win\n      then: openssl\n    - liblzma-devel\n    - zlib\n    - zstd\n  run_exports:\n    - ${{ pin_subpackage('minizip', upper_bound='x') }}\n  ignore_run_exports:\n    from_package:\n      - gtest\n\ntests:\n  - files:\n      recipe:\n        - if: target_platform == \"win-arm64\"\n          then: CMakeLists.txt\n        - if: target_platform == \"win-arm64\"\n          then: test_minizip.c\n    requirements:\n      run:\n        - if: target_platform == \"win-arm64\"\n          then: ${{ compiler('c') }}\n        - if: target_platform == \"win-arm64\"\n          then: cmake\n        - if: target_platform == \"win-arm64\"\n          then: zlib\n    script:\n      - if: unix\n        then: test -f $PREFIX/lib/libminizip${SHLIB_EXT}\n      - if: win\n        then: if not exist %LIBRARY_BIN%\\libminizip.dll exit 1\n      - if: win\n        then: if not exist %LIBRARY_LIB%\\libminizip.lib exit 1\n      - if: target_platform == \"win-arm64\"\n        then: cmake -S . -B test-build -G \"NMake Makefiles\"\n      - if: target_platform == \"win-arm64\"\n        then: cmake --build test-build --config Release\n      - if: target_platform == \"win-arm64\"\n        then: test-build\\minizip_consumer.exe\n      - if: target_platform == \"win-arm64\"\n        then: dumpbin /headers test-build\\minizip_consumer.exe | findstr /c:\"AA64\"\n      - if: target_platform == \"win-arm64\"\n        then: dumpbin /headers %LIBRARY_BIN%\\libminizip.dll | findstr /c:\"AA64\"\n      - if: unix\n        then: test ! -f $PREFIX/lib/libminizip.a\n\nabout:\n  # http://zlib.net/zlib_license.html\n  license: Zlib\n  license_file: LICENSE\n  summary: minizip-ng is a zip manipulation library written in C.\n  description: |\n    minizip-ng is a zip manipulation library written in C\n  homepage: https://github.com/zlib-ng/minizip-ng\n  repository: https://github.com/zlib-ng/minizip-ng\n\nextra:\n  recipe-maintainers:\n    - akrherz\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: minizip\n  version: \"4.2.2\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/zlib-ng/minizip-ng/archive/${{ version }}/${{ name }}-${{ version }}.tar.gz\n  sha256: 71af7b9799856d8b03619df3949e9c1be9703f8de0795af71399ba283cb27aac\n  patches:\n    - if: win\n      then: win_patch_output_name.patch\n    - if: win\n      then: gtest_shared_main.patch\n\nbuild:\n  number: 2\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib(\"c\") }}\n    - ${{ compiler('cxx') }}\n    - cmake\n    - if: not win\n      then: make\n    - if: win\n      then: ninja\n    - if: not win\n      then: pkg-config\n  host:\n    - bzip2\n    - if: win\n      then: gtest\n    - if: not win\n      then: libiconv\n    - if: not win\n      then: openssl\n    - liblzma-devel\n    - zlib\n    - zstd\n  run_exports:\n    - ${{ pin_subpackage('minizip', upper_bound='x') }}\n  ignore_run_exports:\n    from_package:\n      - gtest\n\ntests:\n  - files:\n      recipe:\n        - if: target_platform == \"win-arm64\"\n          then: CMakeLists.txt\n        - if: target_platform == \"win-arm64\"\n          then: test_minizip.c\n    requirements:\n      run:\n        - if: target_platform == \"win-arm64\"\n          then: ${{ compiler('c') }}\n        - if: target_platform == \"win-arm64\"\n          then: cmake\n        - if: target_platform == \"win-arm64\"\n          then: zlib\n    script:\n      - if: unix\n        then: test -f $PREFIX/lib/libminizip${SHLIB_EXT}\n      - if: win\n        then: if not exist %LIBRARY_BIN%\\libminizip.dll exit 1\n      - if: win\n        then: if not exist %LIBRARY_LIB%\\libminizip.lib exit 1\n      - if: target_platform == \"win-arm64\"\n        then: cmake -S . -B test-build -G \"NMake Makefiles\"\n      - if: target_platform == \"win-arm64\"\n        then: cmake --build test-build --config Release\n      - if: target_platform == \"win-arm64\"\n        then: test-build\\minizip_consumer.exe\n      - if: target_platform == \"win-arm64\"\n        then: dumpbin /headers test-build\\minizip_consumer.exe | findstr /c:\"AA64\"\n      - if: target_platform == \"win-arm64\"\n        then: dumpbin /headers %LIBRARY_BIN%\\libminizip.dll | findstr /c:\"AA64\"\n      - if: unix\n        then: test ! -f $PREFIX/lib/libminizip.a\n\nabout:\n  # http://zlib.net/zlib_license.html\n  license: Zlib\n  license_file: LICENSE\n  summary: minizip-ng is a zip manipulation library written in C.\n  description: |\n    minizip-ng is a zip manipulation library written in C\n  homepage: https://github.com/zlib-ng/minizip-ng\n  repository: https://github.com/zlib-ng/minizip-ng\n\nextra:\n  recipe-maintainers:\n    - akrherz\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -1123,7 +1127,7 @@
       "summary": "minizip-ng is a zip manipulation library written in C."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "minizip"
@@ -1244,7 +1248,7 @@
       "summary": "minizip-ng is a zip manipulation library written in C."
     },
     "build": {
-      "number": "1",
+      "number": "2",
       "run_exports": {
         "weak": [
           "minizip"
