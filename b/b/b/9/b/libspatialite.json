@@ -1,11 +1,15 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_license_familygpl.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngeos:\n- 3.15.0\nlibxml2_devel:\n- '2.15'\nlicense_family:\n- gpl\nproj:\n- '9.9'\nsqlite:\n- '3'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
+  "ci_support_linux_64_license_familygpl.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\ngeos:\n- 3.15.1\nlibxml2_devel:\n- '2.15'\nlicense_family:\n- gpl\nproj:\n- '9.9'\nsqlite:\n- '3'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\n",
   "ci_support_migrations": {
     "geos3150": {
       "migration_number": 1,
       "migrator_ts": 1794007522.6958659
+    },
+    "geos3151": {
+      "migration_number": 1,
+      "migrator_ts": 1795513350.6778615
     }
   },
   "conda-forge.yml": {
@@ -31,8 +35,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "adc9b789f2a71f68509cc3ba13f13d516a284fdb",
-  "feedstock_hash_ts": 1794143343,
+  "feedstock_hash": "f8156a4a34c9d4fa76785b521a0362cfe0cdf864",
+  "feedstock_hash_ts": 1795652827,
   "feedstock_name": "libspatialite",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -44,7 +48,7 @@
       "summary": "Extend the SQLite core to support fully fledged Spatial SQL capabilities"
     },
     "build": {
-      "number": "23",
+      "number": "24",
       "run_exports": {
         "weak": [
           "libspatialite"
@@ -277,7 +281,7 @@
       "summary": "Extend the SQLite core to support fully fledged Spatial SQL capabilities"
     },
     "build": {
-      "number": "23",
+      "number": "24",
       "run_exports": {
         "weak": [
           "libspatialite"
@@ -510,7 +514,7 @@
       "summary": "Extend the SQLite core to support fully fledged Spatial SQL capabilities"
     },
     "build": {
-      "number": "23",
+      "number": "24",
       "run_exports": {
         "weak": [
           "libspatialite"
@@ -743,7 +747,7 @@
       "summary": "Extend the SQLite core to support fully fledged Spatial SQL capabilities"
     },
     "build": {
-      "number": "23",
+      "number": "24",
       "run_exports": {
         "weak": [
           "libspatialite"
@@ -1636,7 +1640,7 @@
       "summary": "Extend the SQLite core to support fully fledged Spatial SQL capabilities"
     },
     "build": {
-      "number": "23",
+      "number": "24",
       "run_exports": {
         "weak": [
           "libspatialite"
@@ -1866,7 +1870,7 @@
       "summary": "Extend the SQLite core to support fully fledged Spatial SQL capabilities"
     },
     "build": {
-      "number": "23",
+      "number": "24",
       "run_exports": {
         "weak": [
           "libspatialite"
@@ -2106,7 +2110,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/libspatialite.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"5.1.0\"\n  build_number: 23\n  # gpl gets a higher build number since we want to favor the build where\n  # librttopo is included\n  build: ${{ build_number + 100 if license_family == \"gpl\" else build_number }}\n\npackage:\n  name: libspatialite\n  version: ${{ version }}\n\nsource:\n  url: https://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-${{ version }}.tar.gz\n  sha256: 43be2dd349daffe016dd1400c5d11285828c22fea35ca5109f21f3ed50605080\n  patches:\n    # Patch Win to fix build path\n    - if: win\n      then: 0001-win_fix_paths.patch\n    # Patch configure for OSX to make sure we get dylib, not so\n    - if: osx\n      then: 0002-osx_fix_lib_ext.patch\n    # Skip some tests that fail\n    - 0003-skip_tests.patch\n    # Guard deprecated nanohttp cleanup for libxml2 2.14 where HTTP may be disabled\n    - 0004-guard-nanohttp-cleanup.patch\n    # Disable rttopo support when GPL is not allowed\n    - if: license_family != \"gpl\"\n      then: 0005-create_vector_coverages-without-rttopo.patch\n    - if: win and license_family != \"gpl\"\n      then: 0006-win_fix_lgpl_defines.patch\n    # SQLite >= 3.54 refuses ALTER TABLE ... ADD COLUMN rowid; skip the\n    # shadowed-rowid checks in check_spatialindex in that case\n    - 0007-skip-shadowed-rowid-test-sqlite-3.54.patch\n    # check_topoplus picks a vertex by edge id, which depends on the ordering\n    # of GEOS overlay output; use the vertex coordinates instead\n    - 0008-topoplus-dirty-node-by-coordinates.patch\n\nbuild:\n  number: ${{ build }}\n  string: ${{ license_family }}_h${{ hash }}_${{ build }}\n\nrequirements:\n  build:\n    - if: linux\n      then:\n        - autoconf\n        - automake\n        - libtool\n    - if: unix\n      then:\n        - pkgconf\n        - make\n        - gnuconfig\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n  host:\n    - if: osx\n      then: libiconv\n    - sqlite\n    - geos\n    - proj\n    - freexl >=2\n    - zlib\n    - libxml2-devel\n    - if: license_family == \"gpl\"\n      then: librttopo\n  run:\n    - if: osx\n      then: libiconv\n    - sqlite\n    - geos\n    - proj\n    - freexl >=2\n    - zlib\n    - libxml2-devel\n    - if: license_family == \"gpl\"\n      then: librttopo\n  run_exports:\n    # No idea.  Staying with minor version pin.\n    - ${{ pin_subpackage('libspatialite', upper_bound='x.x') }}\n\ntests:\n  - script:\n      - python run_test.py\n    requirements:\n      run:\n        - python\n    files:\n      recipe:\n        - run_test.py\n  - if: win\n    then:\n      script:\n        - call test-spatialite.bat ${{ license_family }}\n      requirements:\n        build:\n          - ${{ compiler('c') }}\n      files:\n        recipe:\n          - test-spatialite.c\n          - test-spatialite.bat\n\nabout:\n  homepage: https://www.gaia-gis.it/fossil/libspatialite/index\n  license: MPL-1.1\n  license_file: COPYING\n  summary: Extend the SQLite core to support fully fledged Spatial SQL capabilities\n\nextra:\n  recipe-maintainers:\n    - akrherz\n    - danclewley\n    - gillins\n    - ocefpaf\n    - xylar\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  version: \"5.1.0\"\n  build_number: 24\n  # gpl gets a higher build number since we want to favor the build where\n  # librttopo is included\n  build: 24\n\npackage:\n  name: libspatialite\n  version: ${{ version }}\n\nsource:\n  url: https://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-${{ version }}.tar.gz\n  sha256: 43be2dd349daffe016dd1400c5d11285828c22fea35ca5109f21f3ed50605080\n  patches:\n    # Patch Win to fix build path\n    - if: win\n      then: 0001-win_fix_paths.patch\n    # Patch configure for OSX to make sure we get dylib, not so\n    - if: osx\n      then: 0002-osx_fix_lib_ext.patch\n    # Skip some tests that fail\n    - 0003-skip_tests.patch\n    # Guard deprecated nanohttp cleanup for libxml2 2.14 where HTTP may be disabled\n    - 0004-guard-nanohttp-cleanup.patch\n    # Disable rttopo support when GPL is not allowed\n    - if: license_family != \"gpl\"\n      then: 0005-create_vector_coverages-without-rttopo.patch\n    - if: win and license_family != \"gpl\"\n      then: 0006-win_fix_lgpl_defines.patch\n    # SQLite >= 3.54 refuses ALTER TABLE ... ADD COLUMN rowid; skip the\n    # shadowed-rowid checks in check_spatialindex in that case\n    - 0007-skip-shadowed-rowid-test-sqlite-3.54.patch\n    # check_topoplus picks a vertex by edge id, which depends on the ordering\n    # of GEOS overlay output; use the vertex coordinates instead\n    - 0008-topoplus-dirty-node-by-coordinates.patch\n\nbuild:\n  number: ${{ build }}\n  string: ${{ license_family }}_h${{ hash }}_${{ build }}\n\nrequirements:\n  build:\n    - if: linux\n      then:\n        - autoconf\n        - automake\n        - libtool\n    - if: unix\n      then:\n        - pkgconf\n        - make\n        - gnuconfig\n    - ${{ compiler('c') }}\n    - ${{ compiler('cxx') }}\n    - ${{ stdlib('c') }}\n  host:\n    - if: osx\n      then: libiconv\n    - sqlite\n    - geos\n    - proj\n    - freexl >=2\n    - zlib\n    - libxml2-devel\n    - if: license_family == \"gpl\"\n      then: librttopo\n  run:\n    - if: osx\n      then: libiconv\n    - sqlite\n    - geos\n    - proj\n    - freexl >=2\n    - zlib\n    - libxml2-devel\n    - if: license_family == \"gpl\"\n      then: librttopo\n  run_exports:\n    # No idea.  Staying with minor version pin.\n    - ${{ pin_subpackage('libspatialite', upper_bound='x.x') }}\n\ntests:\n  - script:\n      - python run_test.py\n    requirements:\n      run:\n        - python\n    files:\n      recipe:\n        - run_test.py\n  - if: win\n    then:\n      script:\n        - call test-spatialite.bat ${{ license_family }}\n      requirements:\n        build:\n          - ${{ compiler('c') }}\n      files:\n        recipe:\n          - test-spatialite.c\n          - test-spatialite.bat\n\nabout:\n  homepage: https://www.gaia-gis.it/fossil/libspatialite/index\n  license: MPL-1.1\n  license_file: COPYING\n  summary: Extend the SQLite core to support fully fledged Spatial SQL capabilities\n\nextra:\n  recipe-maintainers:\n    - akrherz\n    - danclewley\n    - gillins\n    - ocefpaf\n    - xylar\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -2248,7 +2252,7 @@
       "summary": "Extend the SQLite core to support fully fledged Spatial SQL capabilities"
     },
     "build": {
-      "number": "23",
+      "number": "24",
       "run_exports": {
         "weak": [
           "libspatialite"
@@ -2488,7 +2492,7 @@
       "summary": "Extend the SQLite core to support fully fledged Spatial SQL capabilities"
     },
     "build": {
-      "number": "23",
+      "number": "24",
       "run_exports": {
         "weak": [
           "libspatialite"
