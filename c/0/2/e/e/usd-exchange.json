@@ -1,13 +1,14 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_python3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npybind11_abi:\n- '11'\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\ntbb_devel:\n- '2023'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_python3.11.____cpython.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\npin_run_as_build:\n  python:\n    min_pin: x.x\n    max_pin: x.x\npybind11_abi:\n- '12'\npython:\n- 3.11.* *_cpython\ntarget_platform:\n- linux-64\ntbb_devel:\n- '2023'\n",
+  "ci_support_migrations": {
+    "pybind11_abi12": {
+      "migration_number": 1,
+      "migrator_ts": 1786210654.0401042
+    }
+  },
   "conda-forge.yml": {
-    "build_platform": {
-      "linux_aarch64": "linux_aarch64",
-      "osx_arm64": "osx_arm64"
-    },
     "conda_build": {
       "error_overlinking": true
     },
@@ -23,8 +24,8 @@
       "osx_arm64": "default"
     }
   },
-  "feedstock_hash": "f6c4419a597f5a560f4a75702efc74f5fc25ceac",
-  "feedstock_hash_ts": 1795713568,
+  "feedstock_hash": "b80e8dbce9d631b1717a34e42621a3d7dc9576e3",
+  "feedstock_hash_ts": 1795731209,
   "feedstock_name": "usd-exchange",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -38,7 +39,7 @@
       "summary": "OpenUSD Exchange SDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libusd-exchange"
@@ -971,7 +972,7 @@
       "summary": "OpenUSD Exchange SDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libusd-exchange"
@@ -1932,7 +1933,7 @@
       "summary": "OpenUSD Exchange SDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libusd-exchange"
@@ -6258,7 +6259,7 @@
       "summary": "OpenUSD Exchange SDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libusd-exchange"
@@ -7219,7 +7220,7 @@
       "summary": "OpenUSD Exchange SDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libusd-exchange"
@@ -8188,7 +8189,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/usd-exchange.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"3.0.1\"\n  # Reuse these exact patterns in the owning output and runtime exclusions.\n  python_files: \"**/site-packages/**\"\n  devel_files: \"${{ 'Library/' if win else '' }}{include/**,lib/cmake/**,lib/pkgconfig/**,lib/*.a,lib/*.lib,share/pkgconfig/**,share/doc/**,share/man/**,dev/**,bin/*.pdb}\"\n\nrecipe:\n  name: usd-exchange-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/NVIDIA-Omniverse/usd-exchange/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 4e0a8b387aea521ceac3a3e07da740a74e2a2a15a9dc490295fffff48a389e7c\n  patches:\n    - use-pxr-targets.patch\n    - macos-build.patch\n    - remove-dev-tools.patch\n    - disable-werror.patch\n    - namespace-alias.patch\n    - upstream-cpp-tests.patch\n    - macos-typeinfo-visibility.patch\n\nbuild:\n  number: 0\n\noutputs:\n  # Build all artifacts together, against the same Python and OpenUSD ABI.\n  - staging:\n      name: usd-exchange-build\n    build:\n      # Remove generated host-dependency bytecode before caching the install.\n      # Package bytecode is regenerated from the output's own Python sources.\n      script:\n        - if: unix\n          then:\n            - bash \"${RECIPE_DIR}/build.sh\"\n            - cmake -P \"${RECIPE_DIR}/clean_bytecode.cmake\"\n            - cmake -DUSDEX_PACKAGE_VERSION=${{ version }} -P \"${RECIPE_DIR}/install_python_metadata.cmake\"\n        - if: win\n          then:\n            - call \"%RECIPE_DIR%\\build.bat\"\n            - if errorlevel 1 exit /b 1\n            - cmake -P \"%RECIPE_DIR%\\clean_bytecode.cmake\"\n            - cmake -DUSDEX_PACKAGE_VERSION=${{ version }} -P \"%RECIPE_DIR%\\install_python_metadata.cmake\"\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - if: build_platform != target_platform\n          then:\n            - cross-python_${{ target_platform }}\n            - python\n      host:\n        - openusd\n        - python\n        - pybind11\n        - pybind11-abi\n        - tbb-devel\n        - doctest\n        - cxxopts\n\n  - package:\n      name: libusd-exchange\n    inherit: usd-exchange-build\n    build:\n      dynamic_linking:\n        overlinking_behavior: error\n      # Catch-all: new installed files stay here unless assigned to Python/devel.\n      files:\n        include:\n          - \"**\"\n        exclude:\n          - \"${{ python_files }}\"\n          - \"${{ devel_files }}\"\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n      host:\n        - openusd\n        - python\n        - if: win\n          then: libpython\n      ignore_run_exports:\n        from_package:\n          - pybind11-abi\n      run:\n        # OpenUSD links Python into DLLs on Windows; Unix shared libraries use\n        # dynamic lookup, with libpython linked only into executable consumers.\n        # https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.08/cmake/defaults/Packages.cmake#L69-L76\n        - if: win\n          then: python\n      run_exports:\n        - ${{ pin_subpackage('libusd-exchange', upper_bound='x.x') }}\n    tests:\n      - package_contents:\n          lib:\n            - ${{ 'usdex_core.dll' if win else 'usdex_core' }}\n            - ${{ 'usdex_rtx.dll' if win else 'usdex_rtx' }}\n          files:\n            not_exists:\n              - \"${{ python_files }}\"\n              - \"${{ devel_files }}\"\n              - ${{ 'Library/' if win else '' }}bin/test_usdex_core*\n\n  - package:\n      name: libusd-exchange-devel\n    inherit: usd-exchange-build\n    build:\n      files:\n        include:\n          - \"${{ devel_files }}\"\n        # Python owns its whole directory, including any future static helpers.\n        exclude:\n          - \"${{ python_files }}\"\n    requirements:\n      ignore_run_exports:\n        from_package:\n          - pybind11-abi\n      run:\n        - ${{ pin_subpackage('libusd-exchange', exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage('libusd-exchange', upper_bound='x.x') }}\n    tests:\n      - package_contents:\n          include:\n            - usdex/core/Core.h\n            - usdex/rtx/MaterialAlgo.h\n          files:\n            exists:\n              - ${{ 'Library/' if win else '' }}lib/cmake/usdex/usdex-config.cmake\n              - ${{ 'Library/' if win else '' }}lib/cmake/usd-exchange/usd-exchange-config.cmake\n            not_exists:\n              - \"${{ python_files }}\"\n              - ${{ 'Library/bin/usdex_*.dll' if win else 'lib/libusdex_*.so*' }}\n              - lib/libusdex_*.dylib\n              - ${{ 'Library/' if win else '' }}dev/**\n      - script:\n          - cmake-package-check usdex --targets usdex::core usdex::rtx\n          - cmake-package-check usd-exchange --targets usdex::core usdex::rtx\n          # Match the SDK deployment target; compiler activation may default to macOS 10.9.\n          - cmake -S test-consumer -B consumer-build -G Ninja -DCMAKE_BUILD_TYPE=Release ${{ '-DCMAKE_OSX_DEPLOYMENT_TARGET=' ~ c_stdlib_version if osx else '' }}\n          - cmake --build consumer-build --config Release\n          - ctest --test-dir consumer-build -C Release --output-on-failure\n        files:\n          recipe:\n            - test-consumer/\n        requirements:\n          run:\n            - cmake-package-check\n            - ninja\n            - python\n            - ${{ compiler('cxx') }}\n\n  - package:\n      name: usd-exchange\n    inherit: usd-exchange-build\n    build:\n      dynamic_linking:\n        overlinking_behavior: error\n      files:\n        - \"${{ python_files }}\"\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n      host:\n        - python\n        - if: win\n          then: libpython\n        - openusd\n        - ${{ pin_subpackage('libusd-exchange', exact=True) }}\n      run:\n        - python\n        - ${{ pin_subpackage('libusd-exchange', exact=True) }}\n    tests:\n      - package_contents:\n          site_packages:\n            - usdex/core/__init__.py\n            - usdex/rtx/__init__.py\n            - usdex/test/__init__.py\n            - usd_exchange-${{ version }}.dist-info/METADATA\n            - usd_exchange-${{ version }}.dist-info/INSTALLER\n          files:\n            not_exists:\n              - ${{ 'Library/' if win else '' }}include/usdex/**\n              - ${{ 'Library/' if win else '' }}lib/cmake/**\n              - ${{ 'Library/' if win else '' }}dev/**\n      - python:\n          imports:\n            - usdex.core\n            - usdex.rtx\n      - script:\n          - python -W error::RuntimeWarning -c \"import usdex.core; import usdex.rtx\"\n          - python check_pip_metadata.py ${{ version }}\n        files:\n          recipe:\n            - check_pip_metadata.py\n        requirements:\n          run:\n            - pip\n      - files:\n          source:\n            - CHANGELOG.md\n            - source/core/tests/unittest/testCore.py\n            - source/core/tests/unittest/testPxr.py\n        script:\n          - python -m unittest discover -v -s source/core/tests/unittest -p testCore.py\n          - python -m unittest discover -v -s source/core/tests/unittest -p testPxr.py\n\nabout:\n  homepage: https://github.com/NVIDIA-Omniverse/usd-exchange\n  summary: OpenUSD Exchange SDK\n  description: |\n    OpenUSD Exchange SDK accelerates OpenUSD adoption by helping developers\n    design, build, and test USD I/O solutions, producing consistent assets\n    across diverse 3D ecosystems.\n  license: Apache-2.0\n  license_file: LICENSE.md\n  repository: https://github.com/NVIDIA-Omniverse/usd-exchange\n\nextra:\n  recipe-maintainers:\n    - oursland\n    - traversaro\n  feedstock-name: usd-exchange\n",
+  "raw_meta_yaml": "context:\n  version: \"3.0.1\"\n  # Reuse these exact patterns in the owning output and runtime exclusions.\n  python_files: \"**/site-packages/**\"\n  devel_files: \"${{ 'Library/' if win else '' }}{include/**,lib/cmake/**,lib/pkgconfig/**,lib/*.a,lib/*.lib,share/pkgconfig/**,share/doc/**,share/man/**,dev/**,bin/*.pdb}\"\n\nrecipe:\n  name: usd-exchange-split\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/NVIDIA-Omniverse/usd-exchange/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 4e0a8b387aea521ceac3a3e07da740a74e2a2a15a9dc490295fffff48a389e7c\n  patches:\n    - use-pxr-targets.patch\n    - macos-build.patch\n    - remove-dev-tools.patch\n    - disable-werror.patch\n    - namespace-alias.patch\n    - upstream-cpp-tests.patch\n    - macos-typeinfo-visibility.patch\n\nbuild:\n  number: 1\n\noutputs:\n  # Build all artifacts together, against the same Python and OpenUSD ABI.\n  - staging:\n      name: usd-exchange-build\n    build:\n      # Remove generated host-dependency bytecode before caching the install.\n      # Package bytecode is regenerated from the output's own Python sources.\n      script:\n        - if: unix\n          then:\n            - bash \"${RECIPE_DIR}/build.sh\"\n            - cmake -P \"${RECIPE_DIR}/clean_bytecode.cmake\"\n            - cmake -DUSDEX_PACKAGE_VERSION=${{ version }} -P \"${RECIPE_DIR}/install_python_metadata.cmake\"\n        - if: win\n          then:\n            - call \"%RECIPE_DIR%\\build.bat\"\n            - if errorlevel 1 exit /b 1\n            - cmake -P \"%RECIPE_DIR%\\clean_bytecode.cmake\"\n            - cmake -DUSDEX_PACKAGE_VERSION=${{ version }} -P \"%RECIPE_DIR%\\install_python_metadata.cmake\"\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n        - ${{ compiler('cxx') }}\n        - cmake\n        - ninja\n        - if: build_platform != target_platform\n          then:\n            - cross-python_${{ target_platform }}\n            - python\n      host:\n        - openusd\n        - python\n        - pybind11\n        - pybind11-abi\n        - tbb-devel\n        - doctest\n        - cxxopts\n\n  - package:\n      name: libusd-exchange\n    inherit: usd-exchange-build\n    build:\n      dynamic_linking:\n        overlinking_behavior: error\n      # Catch-all: new installed files stay here unless assigned to Python/devel.\n      files:\n        include:\n          - \"**\"\n        exclude:\n          - \"${{ python_files }}\"\n          - \"${{ devel_files }}\"\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n      host:\n        - openusd\n        - python\n        - if: win\n          then: libpython\n      ignore_run_exports:\n        from_package:\n          - pybind11-abi\n      run:\n        # OpenUSD links Python into DLLs on Windows; Unix shared libraries use\n        # dynamic lookup, with libpython linked only into executable consumers.\n        # https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.08/cmake/defaults/Packages.cmake#L69-L76\n        - if: win\n          then: python\n      run_exports:\n        - ${{ pin_subpackage('libusd-exchange', upper_bound='x.x') }}\n    tests:\n      - package_contents:\n          lib:\n            - ${{ 'usdex_core.dll' if win else 'usdex_core' }}\n            - ${{ 'usdex_rtx.dll' if win else 'usdex_rtx' }}\n          files:\n            not_exists:\n              - \"${{ python_files }}\"\n              - \"${{ devel_files }}\"\n              - ${{ 'Library/' if win else '' }}bin/test_usdex_core*\n\n  - package:\n      name: libusd-exchange-devel\n    inherit: usd-exchange-build\n    build:\n      files:\n        include:\n          - \"${{ devel_files }}\"\n        # Python owns its whole directory, including any future static helpers.\n        exclude:\n          - \"${{ python_files }}\"\n    requirements:\n      ignore_run_exports:\n        from_package:\n          - pybind11-abi\n      run:\n        - ${{ pin_subpackage('libusd-exchange', exact=True) }}\n      run_exports:\n        - ${{ pin_subpackage('libusd-exchange', upper_bound='x.x') }}\n    tests:\n      - package_contents:\n          include:\n            - usdex/core/Core.h\n            - usdex/rtx/MaterialAlgo.h\n          files:\n            exists:\n              - ${{ 'Library/' if win else '' }}lib/cmake/usdex/usdex-config.cmake\n              - ${{ 'Library/' if win else '' }}lib/cmake/usd-exchange/usd-exchange-config.cmake\n            not_exists:\n              - \"${{ python_files }}\"\n              - ${{ 'Library/bin/usdex_*.dll' if win else 'lib/libusdex_*.so*' }}\n              - lib/libusdex_*.dylib\n              - ${{ 'Library/' if win else '' }}dev/**\n      - script:\n          - cmake-package-check usdex --targets usdex::core usdex::rtx\n          - cmake-package-check usd-exchange --targets usdex::core usdex::rtx\n          # Match the SDK deployment target; compiler activation may default to macOS 10.9.\n          - cmake -S test-consumer -B consumer-build -G Ninja -DCMAKE_BUILD_TYPE=Release ${{ '-DCMAKE_OSX_DEPLOYMENT_TARGET=' ~ c_stdlib_version if osx else '' }}\n          - cmake --build consumer-build --config Release\n          - ctest --test-dir consumer-build -C Release --output-on-failure\n        files:\n          recipe:\n            - test-consumer/\n        requirements:\n          run:\n            - cmake-package-check\n            - ninja\n            - python\n            - ${{ compiler('cxx') }}\n\n  - package:\n      name: usd-exchange\n    inherit: usd-exchange-build\n    build:\n      dynamic_linking:\n        overlinking_behavior: error\n      files:\n        - \"${{ python_files }}\"\n    requirements:\n      build:\n        - ${{ stdlib('c') }}\n      host:\n        - python\n        - if: win\n          then: libpython\n        - openusd\n        - ${{ pin_subpackage('libusd-exchange', exact=True) }}\n      run:\n        - python\n        - ${{ pin_subpackage('libusd-exchange', exact=True) }}\n    tests:\n      - package_contents:\n          site_packages:\n            - usdex/core/__init__.py\n            - usdex/rtx/__init__.py\n            - usdex/test/__init__.py\n            - usd_exchange-${{ version }}.dist-info/METADATA\n            - usd_exchange-${{ version }}.dist-info/INSTALLER\n          files:\n            not_exists:\n              - ${{ 'Library/' if win else '' }}include/usdex/**\n              - ${{ 'Library/' if win else '' }}lib/cmake/**\n              - ${{ 'Library/' if win else '' }}dev/**\n      - python:\n          imports:\n            - usdex.core\n            - usdex.rtx\n      - script:\n          - python -W error::RuntimeWarning -c \"import usdex.core; import usdex.rtx\"\n          - python check_pip_metadata.py ${{ version }}\n        files:\n          recipe:\n            - check_pip_metadata.py\n        requirements:\n          run:\n            - pip\n      - files:\n          source:\n            - CHANGELOG.md\n            - source/core/tests/unittest/testCore.py\n            - source/core/tests/unittest/testPxr.py\n        script:\n          - python -m unittest discover -v -s source/core/tests/unittest -p testCore.py\n          - python -m unittest discover -v -s source/core/tests/unittest -p testPxr.py\n\nabout:\n  homepage: https://github.com/NVIDIA-Omniverse/usd-exchange\n  summary: OpenUSD Exchange SDK\n  description: |\n    OpenUSD Exchange SDK accelerates OpenUSD adoption by helping developers\n    design, build, and test USD I/O solutions, producing consistent assets\n    across diverse 3D ecosystems.\n  license: Apache-2.0\n  license_file: LICENSE.md\n  repository: https://github.com/NVIDIA-Omniverse/usd-exchange\n\nextra:\n  recipe-maintainers:\n    - oursland\n    - traversaro\n  feedstock-name: usd-exchange\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -8328,7 +8329,7 @@
       "summary": "OpenUSD Exchange SDK"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "run_exports": {
         "weak": [
           "libusd-exchange"
