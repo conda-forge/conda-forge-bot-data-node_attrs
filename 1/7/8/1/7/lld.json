@@ -1,8 +1,13 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibxml2_devel:\n- '2.15'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.5'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncxx_compiler:\n- gxx\ncxx_compiler_version:\n- '15'\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nlibxml2_devel:\n- '2.15'\ntarget_platform:\n- linux-64\nzip_keys:\n- - c_compiler_version\n  - cxx_compiler_version\nzlib:\n- '1'\nzstd:\n- '1.6'\n",
+  "ci_support_migrations": {
+    "zstd16": {
+      "migration_number": 1,
+      "migrator_ts": 1795498666.105089
+    }
+  },
   "conda-forge.yml": {
     "bot": {
       "abi_migration_branches": [
@@ -30,8 +35,8 @@
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "4b9926d83ddeca5130e3f8360312f2f215a3de81",
-  "feedstock_hash_ts": 1795042185,
+  "feedstock_hash": "632b58d08392a6d6500e7724d328a67a9dadb43f",
+  "feedstock_hash_ts": 1795767484,
   "feedstock_name": "lld",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -46,7 +51,7 @@
       "ignore_run_exports_from": [
         "libxml2-devel"
       ],
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -136,7 +141,7 @@
       "ignore_run_exports_from": [
         "libxml2-devel"
       ],
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -224,7 +229,7 @@
       "ignore_run_exports_from": [
         "libxml2-devel"
       ],
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -310,7 +315,7 @@
     },
     "build": {
       "ignore_run_exports_from": null,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -337,7 +342,7 @@
         "libxml2-devel",
         "zlib",
         "zstd",
-        "libcxx 21"
+        "libcxx 22"
       ],
       "run": [
         "libcxx"
@@ -373,7 +378,7 @@
       "ignore_run_exports_from": [
         "libxml2-devel"
       ],
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -394,7 +399,7 @@
         "ninja"
       ],
       "host": [
-        "libcxx 21",
+        "libcxx 22",
         "llvmdev ==23.1.6",
         "llvm",
         "libxml2-devel",
@@ -465,7 +470,7 @@
       "ignore_run_exports_from": [
         "libxml2-devel"
       ],
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -486,7 +491,7 @@
         "ninja"
       ],
       "host": [
-        "libcxx 21",
+        "libcxx 22",
         "llvmdev ==23.1.6",
         "llvm",
         "libxml2-devel",
@@ -564,7 +569,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/lld.json"
   },
-  "raw_meta_yaml": "{% set version = \"23.1.6\" %}\n\npackage:\n  name: lld\n  version: {{ version }}\n\nsource:\n  url: https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-{{ version.replace(\".rc\", \"-rc\") }}.tar.gz\n  sha256: 66b37a51976c46ad86f49a2304c4dfd64be971f858846dfffaa8a32632474bb8\n  patches:\n    - patches/0001-point-header-inclusion-in-lld-MachO-CMakeLists.txt-t.patch\n\nbuild:\n  number: 0\n  ignore_run_exports_from:\n    # not actually needed on unix\n    - libxml2-devel  # [unix]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n    - cmake\n    - ninja\n    - llvmdev =={{ version }}              # [build_platform != target_platform]\n  host:\n    - libcxx {{ cxx_compiler_version }}    # [osx]\n    - llvmdev =={{ version }}\n    - llvm\n    # these they are present in the host env anyway as run-deps of llvm\n    # and will be picked up for the build by the default settings\n    - libxml2-devel\n    - zlib\n    - zstd\n  run:\n    - {{ pin_compatible(\"libcxx\", max_pin=None) }}  # [osx]\n  run_constrained:\n    - llvm =={{ version }}\n\ntest:\n  commands:\n    - ld.lld --version  # [linux]\n    - lld-link /?  # [win]\n\nabout:\n  home: https://lld.llvm.org/\n  license: Apache-2.0 WITH LLVM-exception\n  license_file: lld/LICENSE.TXT\n  summary: The LLVM Linker\n  dev_url: https://github.com/llvm/llvm-project/\n\nextra:\n  recipe-maintainers:\n    - isuruf\n    - h-vetinari\n",
+  "raw_meta_yaml": "{% set version = \"23.1.6\" %}\n\npackage:\n  name: lld\n  version: {{ version }}\n\nsource:\n  url: https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-{{ version.replace(\".rc\", \"-rc\") }}.tar.gz\n  sha256: 66b37a51976c46ad86f49a2304c4dfd64be971f858846dfffaa8a32632474bb8\n  patches:\n    - patches/0001-point-header-inclusion-in-lld-MachO-CMakeLists.txt-t.patch\n\nbuild:\n  number: 1\n  ignore_run_exports_from:\n    # not actually needed on unix\n    - libxml2-devel  # [unix]\n\nrequirements:\n  build:\n    - {{ compiler('c') }}\n    - {{ stdlib(\"c\") }}\n    - {{ compiler('cxx') }}\n    - cmake\n    - ninja\n    - llvmdev =={{ version }}              # [build_platform != target_platform]\n  host:\n    - libcxx {{ cxx_compiler_version }}    # [osx]\n    - llvmdev =={{ version }}\n    - llvm\n    # these they are present in the host env anyway as run-deps of llvm\n    # and will be picked up for the build by the default settings\n    - libxml2-devel\n    - zlib\n    - zstd\n  run:\n    - {{ pin_compatible(\"libcxx\", max_pin=None) }}  # [osx]\n  run_constrained:\n    - llvm =={{ version }}\n\ntest:\n  commands:\n    - ld.lld --version  # [linux]\n    - lld-link /?  # [win]\n\nabout:\n  home: https://lld.llvm.org/\n  license: Apache-2.0 WITH LLVM-exception\n  license_file: lld/LICENSE.TXT\n  summary: The LLVM Linker\n  dev_url: https://github.com/llvm/llvm-project/\n\nextra:\n  recipe-maintainers:\n    - isuruf\n    - h-vetinari\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -637,7 +642,7 @@
     "host": {
       "__set__": true,
       "elements": [
-        "libcxx 21",
+        "libcxx 22",
         "libxml2-devel",
         "llvm",
         "llvmdev ==23.1.6",
@@ -671,7 +676,7 @@
     },
     "build": {
       "ignore_run_exports_from": null,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
@@ -757,7 +762,7 @@
     },
     "build": {
       "ignore_run_exports_from": null,
-      "number": "0"
+      "number": "1"
     },
     "extra": {
       "recipe-maintainers": [
