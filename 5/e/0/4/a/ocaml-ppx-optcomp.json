@@ -1,21 +1,38 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nocaml_compiler:\n- ocaml\nocaml_compiler_version:\n- 5.5.1\ntarget_platform:\n- linux-64\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_compiler:\n- gcc\nc_compiler_version:\n- '15'\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nocaml_compiler:\n- ocaml\nocaml_compiler_version:\n- 5.5.2\ntarget_platform:\n- linux-64\n",
+  "ci_support_migrations": {
+    "ocaml552": {
+      "migration_number": 1,
+      "migrator_ts": 1795132800.0
+    }
+  },
   "conda-forge.yml": {
+    "build_platform": {
+      "linux_ppc64le": "linux_64",
+      "linux_riscv64": "linux_64",
+      "linux_s390x": "linux_64"
+    },
     "conda_build": {
       "error_overlinking": true
     },
     "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
+    "conda_install_tool": "pixi",
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
-    }
+    },
+    "provider": {
+      "linux_aarch64": "default",
+      "osx_arm64": "default",
+      "win_arm64": "default"
+    },
+    "test": "all"
   },
-  "feedstock_hash": "ffd5bec6c45bee4339f760d9bc52ab68f6462dc1",
-  "feedstock_hash_ts": 1795766215,
+  "feedstock_hash": "ed76fdfef2a81e99ac1ebdfee77622531e8fd8b2",
+  "feedstock_hash_ts": 1795817206,
   "feedstock_name": "ocaml-ppx-optcomp",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -28,8 +45,11 @@
       "summary": "Optional compilation for OCaml (Jane Street ppx)"
     },
     "build": {
-      "number": "0",
-      "script": "bash ${{ RECIPE_DIR }}/build.sh ${{ opam_name }}"
+      "number": "1",
+      "script": [
+        "dune build --profile=release -p ${{ opam_name }} @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ${{ opam_name }}"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -44,14 +64,11 @@
         "requirements": {
           "build": [
             "ocaml_compiler_stub",
-            "ocaml_linux-64 5.5.1.*",
             "c_stdlib_stub",
-            "ocaml-dune >=3.11",
-            "make"
+            "ocaml-dune >=3.11"
           ],
           "host": [
-            "ocaml 5.5.1.*",
-            "ocaml-dune >=3.11",
+            "ocaml 5.5.2.*",
             "ocaml-base >=0.17,<0.18",
             "ocaml-stdio >=0.17,<0.18",
             "ocaml-ppxlib >=0.36"
@@ -69,32 +86,195 @@
                 "lib/ocaml/ppx_optcomp/META",
                 "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
                 "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
-                "lib/ocaml/ppx_optcomp/ppx_optcomp.a",
-                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs"
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "ocaml 5.5.1.*",
+                "ocaml 5.5.2.*",
                 "ocaml-dune >=3.11",
                 "c_compiler_stub"
               ]
             },
+            "script": [
+              "export DUNE_CACHE=disabled",
+              "export OCAMLPATH=\"${PREFIX}/lib/ocaml${OCAMLPATH:+:$OCAMLPATH}\"",
+              "echo '(lang dune 3.0)' > dune-project",
+              "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
+              "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
+              "dune build --root . ./t.exe",
+              "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+            ]
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
             "script": {
               "content": [
-                "export DUNE_CACHE=disabled",
-                "LIBDIR=$PREFIX/lib/ocaml; SEP=':'",
-                "if [[ -d $PREFIX/Library/lib/ocaml ]]; then LIBDIR=$PREFIX/Library/lib/ocaml; SEP=';'; fi",
-                "export OCAMLPATH=\"$LIBDIR${OCAMLPATH:+$SEP$OCAMLPATH}\"",
-                "echo '(lang dune 3.0)' > dune-project",
-                "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
-                "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
-                "dune build --root . ./t.exe",
-                "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
               ],
-              "interpreter": "bash"
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "ocaml 5.5.2.*",
+                "ocaml-dune >=3.11",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "export DUNE_CACHE=disabled",
+              "export OCAMLPATH=\"${PREFIX}/lib/ocaml${OCAMLPATH:+:$OCAMLPATH}\"",
+              "echo '(lang dune 3.0)' > dune-project",
+              "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
+              "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
+              "dune build --root . ./t.exe",
+              "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+            ]
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "ocaml 5.5.2.*",
+                "ocaml-dune >=3.11",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "export DUNE_CACHE=disabled",
+              "export OCAMLPATH=\"${PREFIX}/lib/ocaml${OCAMLPATH:+:$OCAMLPATH}\"",
+              "echo '(lang dune 3.0)' > dune-project",
+              "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
+              "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
+              "dune build --root . ./t.exe",
+              "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+            ]
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
             }
           }
         ],
@@ -108,14 +288,11 @@
     "requirements": {
       "build": [
         "ocaml_compiler_stub",
-        "ocaml_linux-64 5.5.1.*",
         "c_stdlib_stub",
-        "ocaml-dune >=3.11",
-        "make"
+        "ocaml-dune >=3.11"
       ],
       "host": [
-        "ocaml 5.5.1.*",
-        "ocaml-dune >=3.11",
+        "ocaml 5.5.2.*",
         "ocaml-base >=0.17,<0.18",
         "ocaml-stdio >=0.17,<0.18",
         "ocaml-ppxlib >=0.36"
@@ -137,10 +314,8 @@
       "__set__": true,
       "elements": [
         "c_stdlib_stub",
-        "make",
         "ocaml-dune",
-        "ocaml_compiler_stub",
-        "ocaml_linux-64"
+        "ocaml_compiler_stub"
       ]
     },
     "host": {
@@ -148,7 +323,6 @@
       "elements": [
         "ocaml",
         "ocaml-base",
-        "ocaml-dune",
         "ocaml-ppxlib",
         "ocaml-stdio"
       ]
@@ -164,13 +338,15 @@
     "test": {
       "__set__": true,
       "elements": [
+        "binutils",
         "c_compiler_stub",
+        "file",
         "ocaml",
         "ocaml-dune"
       ]
     }
   },
-  "meta_yaml": {
+  "linux_aarch64_meta_yaml": {
     "about": {
       "dev_url": "https://github.com/janestreet/ppx_optcomp",
       "home": "https://github.com/janestreet/ppx_optcomp",
@@ -180,8 +356,11 @@
       "summary": "Optional compilation for OCaml (Jane Street ppx)"
     },
     "build": {
-      "number": "0",
-      "script": "bash ${{ RECIPE_DIR }}/build.sh ${{ opam_name }}"
+      "number": "1",
+      "script": [
+        "dune build --profile=release -p ${{ opam_name }} @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ${{ opam_name }}"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -196,14 +375,13 @@
         "requirements": {
           "build": [
             "ocaml_compiler_stub",
-            "ocaml_linux-64 5.5.1.*",
             "c_stdlib_stub",
-            "ocaml-dune >=3.11",
-            "make"
+            "ocaml_linux-64 5.5.2.*",
+            "ocaml_linux-aarch64 5.5.2.*",
+            "ocaml-dune >=3.11"
           ],
           "host": [
-            "ocaml 5.5.1.*",
-            "ocaml-dune >=3.11",
+            "ocaml 5.5.2.*",
             "ocaml-base >=0.17,<0.18",
             "ocaml-stdio >=0.17,<0.18",
             "ocaml-ppxlib >=0.36"
@@ -221,51 +399,137 @@
                 "lib/ocaml/ppx_optcomp/META",
                 "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
                 "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
-                "lib/ocaml/ppx_optcomp/ppx_optcomp.a",
-                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs"
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
               ]
             }
           },
           {
             "requirements": {
-              "run": [
-                "ocaml 5.5.1.*",
-                "ocaml-dune >=3.11",
-                "c_compiler_stub"
+              "build": [
+                "file",
+                "binutils"
               ]
             },
             "script": {
               "content": [
-                "export DUNE_CACHE=disabled",
-                "LIBDIR=$PREFIX/lib/ocaml; SEP=':'",
-                "if [[ -d $PREFIX/Library/lib/ocaml ]]; then LIBDIR=$PREFIX/Library/lib/ocaml; SEP=';'; fi",
-                "export OCAMLPATH=\"$LIBDIR${OCAMLPATH:+$SEP$OCAMLPATH}\"",
-                "echo '(lang dune 3.0)' > dune-project",
-                "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
-                "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
-                "dune build --root . ./t.exe",
-                "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
               ],
-              "interpreter": "bash"
+              "env": {
+                "ELF_ARCH": "aarch64"
+              }
             }
           }
         ],
         "version": "0.17.1"
-      },
+      }
+    ],
+    "package": {
+      "name": "ocaml-ppx-optcomp",
+      "version": "0.17.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.5.2.*",
+        "ocaml_linux-aarch64 5.5.2.*",
+        "ocaml-dune >=3.11"
+      ],
+      "host": [
+        "ocaml 5.5.2.*",
+        "ocaml-base >=0.17,<0.18",
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml-ppxlib >=0.36"
+      ],
+      "run": [
+        "ocaml-base >=0.17,<0.18",
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml-ppxlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "2efe65a0210ed7bda8ddd9e076385b76619f23ac3aee1db5b6140ac1a1feb99d",
+      "url": "https://github.com/janestreet/ppx_optcomp/archive/refs/tags/v0.17.1.tar.gz"
+    }
+  },
+  "linux_aarch64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_linux-aarch64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml",
+        "ocaml-base",
+        "ocaml-ppxlib",
+        "ocaml-stdio"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "ocaml-base",
+        "ocaml-ppxlib",
+        "ocaml-stdio"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
+    }
+  },
+  "linux_ppc64le_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/janestreet/ppx_optcomp",
+      "home": "https://github.com/janestreet/ppx_optcomp",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.md",
+      "summary": "Optional compilation for OCaml (Jane Street ppx)"
+    },
+    "build": {
+      "number": "1",
+      "script": [
+        "dune build --profile=release -p ${{ opam_name }} @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ${{ opam_name }}"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "MementoRC",
+        "ManuelLerchner"
+      ]
+    },
+    "outputs": [
       {
         "build": null,
         "name": "ocaml-ppx-optcomp",
         "requirements": {
           "build": [
             "ocaml_compiler_stub",
-            "ocaml_osx-64 5.5.1.*",
             "c_stdlib_stub",
-            "ocaml-dune >=3.11",
-            "make"
+            "ocaml_linux-64 5.5.2.*",
+            "ocaml_linux-ppc64le 5.5.2.*",
+            "ocaml-dune >=3.11"
           ],
           "host": [
-            "ocaml 5.5.1.*",
-            "ocaml-dune >=3.11",
+            "ocaml 5.5.2.*",
             "ocaml-base >=0.17,<0.18",
             "ocaml-stdio >=0.17,<0.18",
             "ocaml-ppxlib >=0.36"
@@ -283,32 +547,197 @@
                 "lib/ocaml/ppx_optcomp/META",
                 "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
                 "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
-                "lib/ocaml/ppx_optcomp/ppx_optcomp.a",
-                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs"
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
+              ],
+              "env": {
+                "ELF_ARCH": "PowerPC"
+              }
+            }
+          }
+        ],
+        "version": "0.17.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-ppx-optcomp",
+      "version": "0.17.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.5.2.*",
+        "ocaml_linux-ppc64le 5.5.2.*",
+        "ocaml-dune >=3.11"
+      ],
+      "host": [
+        "ocaml 5.5.2.*",
+        "ocaml-base >=0.17,<0.18",
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml-ppxlib >=0.36"
+      ],
+      "run": [
+        "ocaml-base >=0.17,<0.18",
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml-ppxlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "2efe65a0210ed7bda8ddd9e076385b76619f23ac3aee1db5b6140ac1a1feb99d",
+      "url": "https://github.com/janestreet/ppx_optcomp/archive/refs/tags/v0.17.1.tar.gz"
+    }
+  },
+  "linux_ppc64le_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_linux-ppc64le"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml",
+        "ocaml-base",
+        "ocaml-ppxlib",
+        "ocaml-stdio"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "ocaml-base",
+        "ocaml-ppxlib",
+        "ocaml-stdio"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "binutils",
+        "file"
+      ]
+    }
+  },
+  "meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/janestreet/ppx_optcomp",
+      "home": "https://github.com/janestreet/ppx_optcomp",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.md",
+      "summary": "Optional compilation for OCaml (Jane Street ppx)"
+    },
+    "build": {
+      "number": "1",
+      "script": [
+        "dune build --profile=release -p ${{ opam_name }} @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ${{ opam_name }}",
+        "set DUNE_CACHE=disabled",
+        "dune build --cache=disabled --profile=release -p ${{ opam_name }} @install",
+        "if errorlevel 1 exit 1",
+        "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ${{ opam_name }}"
+      ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "MementoRC",
+        "ManuelLerchner"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
               ]
             }
           },
           {
             "requirements": {
               "run": [
-                "ocaml 5.5.1.*",
+                "ocaml 5.5.2.*",
                 "ocaml-dune >=3.11",
                 "c_compiler_stub"
               ]
             },
+            "script": [
+              "export DUNE_CACHE=disabled",
+              "export OCAMLPATH=\"${PREFIX}/lib/ocaml${OCAMLPATH:+:$OCAMLPATH}\"",
+              "echo '(lang dune 3.0)' > dune-project",
+              "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
+              "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
+              "dune build --root . ./t.exe",
+              "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+            ]
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
             "script": {
               "content": [
-                "export DUNE_CACHE=disabled",
-                "LIBDIR=$PREFIX/lib/ocaml; SEP=':'",
-                "if [[ -d $PREFIX/Library/lib/ocaml ]]; then LIBDIR=$PREFIX/Library/lib/ocaml; SEP=';'; fi",
-                "export OCAMLPATH=\"$LIBDIR${OCAMLPATH:+$SEP$OCAMLPATH}\"",
-                "echo '(lang dune 3.0)' > dune-project",
-                "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
-                "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
-                "dune build --root . ./t.exe",
-                "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
               ],
-              "interpreter": "bash"
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
             }
           }
         ],
@@ -320,20 +749,354 @@
         "requirements": {
           "build": [
             "ocaml_compiler_stub",
-            "ocaml_win-64 5.5.1.* gcc_*",
-            "m2w64_c_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "ocaml 5.5.2.*",
+                "ocaml-dune >=3.11",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "export DUNE_CACHE=disabled",
+              "export OCAMLPATH=\"${PREFIX}/lib/ocaml${OCAMLPATH:+:$OCAMLPATH}\"",
+              "echo '(lang dune 3.0)' > dune-project",
+              "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
+              "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
+              "dune build --root . ./t.exe",
+              "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+            ]
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "run": [
+                "ocaml 5.5.2.*",
+                "ocaml-dune >=3.11",
+                "c_compiler_stub"
+              ]
+            },
+            "script": [
+              "export DUNE_CACHE=disabled",
+              "export OCAMLPATH=\"${PREFIX}/lib/ocaml${OCAMLPATH:+:$OCAMLPATH}\"",
+              "echo '(lang dune 3.0)' > dune-project",
+              "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
+              "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
+              "dune build --root . ./t.exe",
+              "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
+            ]
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
+              ],
+              "env": {
+                "ELF_ARCH": "x86-64"
+              }
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.5.2.*",
+            "ocaml_linux-aarch64 5.5.2.*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
+              ],
+              "env": {
+                "ELF_ARCH": "aarch64"
+              }
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.5.2.*",
+            "ocaml_linux-ppc64le 5.5.2.*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          },
+          {
+            "requirements": {
+              "build": [
+                "file",
+                "binutils"
+              ]
+            },
+            "script": {
+              "content": [
+                "mkdir -p objs",
+                "cd objs",
+                "ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"",
+                "file -L ./*.o",
+                "test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\""
+              ],
+              "env": {
+                "ELF_ARCH": "PowerPC"
+              }
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.5.2.*",
+            "ocaml_osx-64 5.5.2.*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.5.2.*",
+            "ocaml_osx-arm64 5.5.2.*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
             "m2w64_c_stdlib_stub",
-            "ocaml-dune >=3.11",
-            "m2-make",
-            "m2-bash",
-            "m2-coreutils",
-            "m2-sed",
-            "m2-grep",
-            "m2-findutils"
+            "ocaml_win-64 5.5.2.* c_compiler_stub",
+            "ocaml_linux-64 5.5.2.* gcc_*",
+            "ocaml-dune >=3.11"
           ],
           "host": [
-            "ocaml 5.5.1.* gcc_*",
-            "ocaml-dune >=3.11",
+            "ocaml 5.5.2.*",
+            "ocaml_win-64 5.5.2.* c_compiler_stub",
             "ocaml-base >=0.17,<0.18",
             "ocaml-stdio >=0.17,<0.18",
             "ocaml-ppxlib >=0.36"
@@ -351,34 +1114,86 @@
                 "Library/lib/ocaml/ppx_optcomp/META",
                 "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
                 "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
-                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.a",
-                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs"
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
               ]
             }
-          },
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-64 5.5.2.* c_compiler_stub",
+            "ocaml_linux-64 5.5.2.* gcc_*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml_win-64 5.5.2.* c_compiler_stub",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
           {
-            "requirements": {
-              "run": [
-                "ocaml 5.5.1.* gcc_*",
-                "ocaml-dune >=3.11",
-                "m2-bash",
-                "m2-coreutils",
-                "m2-grep"
+            "package_contents": {
+              "files": [
+                "Library/lib/ocaml/ppx_optcomp/META",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
               ]
-            },
-            "script": {
-              "content": [
-                "export DUNE_CACHE=disabled",
-                "LIBDIR=$PREFIX/lib/ocaml; SEP=':'",
-                "if [[ -d $PREFIX/Library/lib/ocaml ]]; then LIBDIR=$PREFIX/Library/lib/ocaml; SEP=';'; fi",
-                "export OCAMLPATH=\"$LIBDIR${OCAMLPATH:+$SEP$OCAMLPATH}\"",
-                "echo '(lang dune 3.0)' > dune-project",
-                "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
-                "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
-                "dune build --root . ./t.exe",
-                "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
-              ],
-              "interpreter": "bash"
+            }
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-arm64 5.5.2.* c_compiler_stub",
+            "ocaml_linux-64 5.5.2.* gcc_*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml_win-arm64 5.5.2.* c_compiler_stub",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/lib/ocaml/ppx_optcomp/META",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cma"
+              ]
             }
           }
         ],
@@ -392,28 +1207,26 @@
     "requirements": {
       "build": [
         "ocaml_compiler_stub",
-        "ocaml_linux-64 5.5.1.*",
         "c_stdlib_stub",
         "ocaml-dune >=3.11",
-        "make",
-        "ocaml_osx-64 5.5.1.*",
-        "ocaml_win-64 5.5.1.* gcc_*",
-        "m2w64_c_compiler_stub",
+        "ocaml_linux-64 5.5.2.*",
+        "ocaml_linux-aarch64 5.5.2.*",
+        "ocaml_linux-ppc64le 5.5.2.*",
+        "ocaml_osx-64 5.5.2.*",
+        "ocaml_osx-arm64 5.5.2.*",
         "m2w64_c_stdlib_stub",
-        "m2-make",
-        "m2-bash",
-        "m2-coreutils",
-        "m2-sed",
-        "m2-grep",
-        "m2-findutils"
+        "ocaml_win-64 5.5.2.* c_compiler_stub",
+        "ocaml_linux-64 5.5.2.* gcc_*",
+        "c_compiler_stub",
+        "ocaml_win-arm64 5.5.2.* c_compiler_stub"
       ],
       "host": [
-        "ocaml 5.5.1.*",
-        "ocaml-dune >=3.11",
+        "ocaml 5.5.2.*",
         "ocaml-base >=0.17,<0.18",
         "ocaml-stdio >=0.17,<0.18",
         "ocaml-ppxlib >=0.36",
-        "ocaml 5.5.1.* gcc_*"
+        "ocaml_win-64 5.5.2.* c_compiler_stub",
+        "ocaml_win-arm64 5.5.2.* c_compiler_stub"
       ],
       "run": [
         "ocaml-base >=0.17,<0.18",
@@ -438,8 +1251,11 @@
       "summary": "Optional compilation for OCaml (Jane Street ppx)"
     },
     "build": {
-      "number": "0",
-      "script": "bash ${{ RECIPE_DIR }}/build.sh ${{ opam_name }}"
+      "number": "1",
+      "script": [
+        "dune build --profile=release -p ${{ opam_name }} @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ${{ opam_name }}"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -454,14 +1270,13 @@
         "requirements": {
           "build": [
             "ocaml_compiler_stub",
-            "ocaml_osx-64 5.5.1.*",
             "c_stdlib_stub",
-            "ocaml-dune >=3.11",
-            "make"
+            "ocaml_linux-64 5.5.2.*",
+            "ocaml_osx-64 5.5.2.*",
+            "ocaml-dune >=3.11"
           ],
           "host": [
-            "ocaml 5.5.1.*",
-            "ocaml-dune >=3.11",
+            "ocaml 5.5.2.*",
             "ocaml-base >=0.17,<0.18",
             "ocaml-stdio >=0.17,<0.18",
             "ocaml-ppxlib >=0.36"
@@ -479,32 +1294,9 @@
                 "lib/ocaml/ppx_optcomp/META",
                 "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
                 "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
-                "lib/ocaml/ppx_optcomp/ppx_optcomp.a",
-                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs"
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
               ]
-            }
-          },
-          {
-            "requirements": {
-              "run": [
-                "ocaml 5.5.1.*",
-                "ocaml-dune >=3.11",
-                "c_compiler_stub"
-              ]
-            },
-            "script": {
-              "content": [
-                "export DUNE_CACHE=disabled",
-                "LIBDIR=$PREFIX/lib/ocaml; SEP=':'",
-                "if [[ -d $PREFIX/Library/lib/ocaml ]]; then LIBDIR=$PREFIX/Library/lib/ocaml; SEP=';'; fi",
-                "export OCAMLPATH=\"$LIBDIR${OCAMLPATH:+$SEP$OCAMLPATH}\"",
-                "echo '(lang dune 3.0)' > dune-project",
-                "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
-                "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
-                "dune build --root . ./t.exe",
-                "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
-              ],
-              "interpreter": "bash"
             }
           }
         ],
@@ -518,14 +1310,13 @@
     "requirements": {
       "build": [
         "ocaml_compiler_stub",
-        "ocaml_osx-64 5.5.1.*",
         "c_stdlib_stub",
-        "ocaml-dune >=3.11",
-        "make"
+        "ocaml_linux-64 5.5.2.*",
+        "ocaml_osx-64 5.5.2.*",
+        "ocaml-dune >=3.11"
       ],
       "host": [
-        "ocaml 5.5.1.*",
-        "ocaml-dune >=3.11",
+        "ocaml 5.5.2.*",
         "ocaml-base >=0.17,<0.18",
         "ocaml-stdio >=0.17,<0.18",
         "ocaml-ppxlib >=0.36"
@@ -547,9 +1338,9 @@
       "__set__": true,
       "elements": [
         "c_stdlib_stub",
-        "make",
         "ocaml-dune",
         "ocaml_compiler_stub",
+        "ocaml_linux-64",
         "ocaml_osx-64"
       ]
     },
@@ -558,7 +1349,6 @@
       "elements": [
         "ocaml",
         "ocaml-base",
-        "ocaml-dune",
         "ocaml-ppxlib",
         "ocaml-stdio"
       ]
@@ -573,11 +1363,132 @@
     },
     "test": {
       "__set__": true,
-      "elements": [
-        "c_compiler_stub",
-        "ocaml",
-        "ocaml-dune"
+      "elements": []
+    }
+  },
+  "osx_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/janestreet/ppx_optcomp",
+      "home": "https://github.com/janestreet/ppx_optcomp",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.md",
+      "summary": "Optional compilation for OCaml (Jane Street ppx)"
+    },
+    "build": {
+      "number": "1",
+      "script": [
+        "dune build --profile=release -p ${{ opam_name }} @install",
+        "dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ${{ opam_name }}"
       ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "MementoRC",
+        "ManuelLerchner"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "ocaml_linux-64 5.5.2.*",
+            "ocaml_osx-arm64 5.5.2.*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "lib/ocaml/ppx_optcomp/META",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
+              ]
+            }
+          }
+        ],
+        "version": "0.17.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-ppx-optcomp",
+      "version": "0.17.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml_linux-64 5.5.2.*",
+        "ocaml_osx-arm64 5.5.2.*",
+        "ocaml-dune >=3.11"
+      ],
+      "host": [
+        "ocaml 5.5.2.*",
+        "ocaml-base >=0.17,<0.18",
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml-ppxlib >=0.36"
+      ],
+      "run": [
+        "ocaml-base >=0.17,<0.18",
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml-ppxlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "2efe65a0210ed7bda8ddd9e076385b76619f23ac3aee1db5b6140ac1a1feb99d",
+      "url": "https://github.com/janestreet/ppx_optcomp/archive/refs/tags/v0.17.1.tar.gz"
+    }
+  },
+  "osx_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_osx-arm64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml",
+        "ocaml-base",
+        "ocaml-ppxlib",
+        "ocaml-stdio"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "ocaml-base",
+        "ocaml-ppxlib",
+        "ocaml-stdio"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
     }
   },
   "outputs_names": {
@@ -589,26 +1500,23 @@
   "parsing_error": false,
   "platforms": [
     "linux_64",
+    "linux_aarch64",
+    "linux_ppc64le",
     "osx_64",
-    "win_64"
+    "osx_arm64",
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/ocaml-ppx-optcomp.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: ppx-optcomp\n  opam_name: ppx_optcomp\n  version: \"0.17.1\"\n  build_number: 0\n\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  m2: ${{ \"m2-\" if not unix else \"\" }}\n  # ocaml_<platform> matchspec tail: version, plus the gcc_ (MinGW) track on non-unix\n  ocaml_spec: ${{ ocaml_compiler_version ~ (\".*\" if unix else \".* gcc_*\") }}\n\npackage:\n  name: ocaml-${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/janestreet/ppx_optcomp/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 2efe65a0210ed7bda8ddd9e076385b76619f23ac3aee1db5b6140ac1a1feb99d\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ \"gcc_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script: bash ${{ RECIPE_DIR }}/build.sh ${{ opam_name }}\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name the gcc_ (MinGW) one on non-unix\n    - ocaml_${{ target_platform }} ${{ ocaml_spec }}\n    # no C stubs; ocamlopt still links through the C compiler on non-unix\n    - if: unix\n      then:\n        - ${{ stdlib(\"c\") }}\n      else:\n        - ${{ compiler(\"m2w64_c\") }}\n        - ${{ stdlib(\"m2w64_c\") }}\n    - ocaml-dune >=3.11\n    - ${{ m2 }}make\n    - if: not unix\n      then:\n        - m2-bash\n        - m2-coreutils\n        - m2-sed\n        - m2-grep\n        - m2-findutils\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_spec }}\n    - ocaml-dune >=3.11\n    - ocaml-base >=0.17,<0.18\n    - ocaml-stdio >=0.17,<0.18\n    - ocaml-ppxlib >=0.36\n  run:\n    - ocaml-base >=0.17,<0.18\n    - ocaml-stdio >=0.17,<0.18\n    - ${{ pin_compatible('ocaml-ppxlib', upper_bound='x.x') }}\n  # the ocaml run_export does not encode the non-unix toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_spec }}\n    # installed dune-package declares (lang dune X.Y); older dune cannot read it\n    - ${{ pin_compatible('ocaml-dune', lower_bound='x.x', upper_bound=None) }}\n\ntests:\n  - package_contents:\n      files:\n        - ${{ library }}lib/ocaml/${{ opam_name }}/META\n        - ${{ library }}lib/ocaml/${{ opam_name }}/${{ opam_name }}.cma\n        - ${{ library }}lib/ocaml/${{ opam_name }}/${{ opam_name }}.cmxa\n        - ${{ library }}lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\n        - ${{ library }}lib/ocaml/${{ opam_name }}/${{ opam_name }}.cmxs\n  - script:\n      interpreter: bash\n      content:\n        - export DUNE_CACHE=disabled\n        - LIBDIR=$PREFIX/lib/ocaml; SEP=':'\n        - if [[ -d $PREFIX/Library/lib/ocaml ]]; then LIBDIR=$PREFIX/Library/lib/ocaml; SEP=';'; fi\n        - export OCAMLPATH=\"$LIBDIR${OCAMLPATH:+$SEP$OCAMLPATH}\"\n        - echo '(lang dune 3.0)' > dune-project\n        - echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune\n        - printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml\n        - dune build --root . ./t.exe\n        - ./_build/default/t.exe | grep -q \"ppx_optcomp ok\"\n    requirements:\n      run:\n        - ocaml ${{ ocaml_spec }}\n        - ocaml-dune >=3.11\n        - if: unix\n          then:\n            - ${{ compiler(\"c\") }}\n        - if: not unix\n          then:\n            - m2-bash\n            - m2-coreutils\n            - m2-grep\n\nabout:\n  homepage: https://github.com/janestreet/ppx_optcomp\n  repository: https://github.com/janestreet/ppx_optcomp\n  license: MIT\n  license_file: LICENSE.md\n  summary: Optional compilation for OCaml (Jane Street ppx)\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n    - ManuelLerchner\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: ppx-optcomp\n  opam_name: ppx_optcomp\n  version: \"0.17.1\"\n  build_number: 1\n\n  # ocaml_win-64 ships gcc_* and vs_* at the same version/build; name the track.\n  c_toolchain: ${{ \"\" if unix else c_compiler ~ \"_*\" }}\n  library: ${{ \"Library/\" if not unix else \"\" }}\n  # static archive paired with the .cmxa: msvc ships .lib, gcc and unix ship .a\n  native_lib_ext: ${{ \".lib\" if c_compiler == \"vs\" else \".a\" }}\n  # ELF machine token `file` prints for the target; checked by the arch test\n  elf_arch: ${{ \"x86-64\" if target_platform == \"linux-64\" else \"aarch64\" if target_platform == \"linux-aarch64\" else \"PowerPC\" if target_platform == \"linux-ppc64le\" else \"RISC-V\" if target_platform == \"linux-riscv64\" else \"S/390\" if target_platform == \"linux-s390x\" else \"\" }}\n\npackage:\n  name: ocaml-${{ name }}\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/janestreet/ppx_optcomp/archive/refs/tags/v${{ version }}.tar.gz\n  sha256: 2efe65a0210ed7bda8ddd9e076385b76619f23ac3aee1db5b6140ac1a1feb99d\n\nbuild:\n  number: ${{ build_number }}\n  string: ${{ c_compiler ~ \"_\" if not unix }}h${{ hash }}_${{ build_number }}\n  script:\n    - if: unix\n      then:\n        - dune build --profile=release -p ${{ opam_name }} @install\n        - dune install --prefix=\"${PREFIX}\" --libdir=\"${PREFIX}/lib/ocaml\" ${{ opam_name }}\n      else:\n        # Plain cmd.exe, not MSYS2 bash: pure OCaml, no stubs, so no wrapper is\n        # needed and the backslashed install prefix reaches dune intact. The\n        # dune cache trips over mixed path separators on windows.\n        # dune install also opens the shared cache; disable it for every dune call\n        - set DUNE_CACHE=disabled\n        - dune build --cache=disabled --profile=release -p ${{ opam_name }} @install\n        - if errorlevel 1 exit 1\n        - dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ${{ opam_name }}\n        - if errorlevel 1 exit 1\n\nrequirements:\n  build:\n    - ${{ compiler(\"ocaml\") }}\n    - if: not unix and c_compiler == \"gcc\"\n      then:\n        - ${{ stdlib(\"m2w64_c\") }}\n      else:\n        - ${{ stdlib(\"c\") }}\n    # ocaml_win-64 >=14 only run-constrains the C compiler; activate it here, once (vs, zig)\n    - if: not unix and c_compiler != \"gcc\"\n      then:\n        - ${{ compiler(\"zig\") if c_compiler == \"zig\" else compiler(\"c\") }}\n    # compiler(\"ocaml\") renders no toolchain track; name it on windows\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # the cross compiler does not pull the native one; the build runs OCaml on the build machine\n    - if: build_platform != target_platform and unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.*\n        # the cross compiler activates itself (shims, OCAMLLIB, host OCAMLPATH)\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.*\n    # windows cross: the self-contained gcc track needs no vcvars\n    - if: build_platform != target_platform and not unix\n      then:\n        - ocaml_${{ build_platform }} ${{ ocaml_compiler_version }}.* gcc_*\n    - ocaml-dune >=3.11\n  host:\n    # library: ocaml's run_export pins the compiler patch version\n    - ocaml ${{ ocaml_compiler_version }}.*\n    # the noarch ocaml metapackage does not pin the windows toolchain track\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    - ocaml-base >=0.17,<0.18\n    - ocaml-stdio >=0.17,<0.18\n    - ocaml-ppxlib >=0.36\n  run:\n    - ocaml-base >=0.17,<0.18\n    - ocaml-stdio >=0.17,<0.18\n    - ${{ pin_compatible('ocaml-ppxlib', upper_bound='x.x') }}\n  # the ocaml run_export does not encode the windows toolchain track\n  run_constraints:\n    - if: not unix\n      then:\n        - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n    # installed dune-package declares (lang dune X.Y); older dune cannot read it\n    - ${{ pin_compatible('ocaml-dune', lower_bound='x.x', upper_bound=None) }}\n\ntests:\n  - package_contents:\n      files:\n        - ${{ library }}lib/ocaml/${{ opam_name }}/META\n        - ${{ library }}lib/ocaml/${{ opam_name }}/${{ opam_name }}.cma\n        # win-arm64 is bytecode-only upstream: OCaml 5.4 has no arm64 Windows backend\n        - if: target_platform != \"win-arm64\"\n          then:\n            - ${{ library }}lib/ocaml/${{ opam_name }}/${{ opam_name }}.cmxa\n            - ${{ library }}lib/ocaml/${{ opam_name }}/${{ opam_name }}.cmxs\n            - ${{ library }}lib/ocaml/${{ opam_name }}/${{ opam_name }}${{ native_lib_ext }}\n\n  # run the ppx only where the target binary can execute natively\n  - if: unix and build_platform == target_platform\n    then:\n      script:\n        - export DUNE_CACHE=disabled\n        - export OCAMLPATH=\"${PREFIX}/lib/ocaml${OCAMLPATH:+:$OCAMLPATH}\"\n        - echo '(lang dune 3.0)' > dune-project\n        - echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune\n        - printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml\n        - dune build --root . ./t.exe\n        - ./_build/default/t.exe | grep -q \"ppx_optcomp ok\"\n      requirements:\n        run:\n          - ocaml ${{ ocaml_compiler_version }}.*\n          - ocaml-dune >=3.11\n          - ${{ compiler(\"c\") }}\n\n  # windows: msys bash drives the same check; no arm64 backend, no cross runs\n  - if: win and target_platform != \"win-arm64\" and build_platform == target_platform\n    then:\n      script:\n        interpreter: bash\n        content:\n          - export DUNE_CACHE=disabled\n          - export OCAMLPATH=\"${PREFIX}/Library/lib/ocaml${OCAMLPATH:+;$OCAMLPATH}\"\n          - echo '(lang dune 3.0)' > dune-project\n          - echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune\n          - printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml\n          - dune build --root . ./t.exe\n          - ./_build/default/t.exe | grep -q \"ppx_optcomp ok\"\n      requirements:\n        run:\n          - ocaml ${{ ocaml_compiler_version }}.*\n          - ocaml_${{ target_platform }} ${{ ocaml_compiler_version }}.* ${{ c_toolchain }}\n          - ocaml-dune >=3.11\n          - if: not unix and c_compiler != \"gcc\"\n            then:\n              - ${{ compiler(\"c\") }}\n          - m2-bash\n          - m2-coreutils\n          - m2-grep\n\n  # cross lanes test under qemu binfmt, which would also run a build-machine\n  # binary; check the native objects' ELF headers name the target instead\n  - if: linux\n    then:\n      script:\n        # test scripts are not jinja-rendered; hand the token over by env\n        env:\n          ELF_ARCH: ${{ elf_arch }}\n        content:\n          - mkdir -p objs\n          - cd objs\n          - ar x \"${PREFIX}/lib/ocaml/${{ opam_name }}/${{ opam_name }}.a\"\n          - file -L ./*.o\n          - test -z \"$(file -L ./*.o | grep -v \"${ELF_ARCH}\")\"\n      requirements:\n        build:\n          - file\n          - binutils\n\nabout:\n  homepage: https://github.com/janestreet/ppx_optcomp\n  repository: https://github.com/janestreet/ppx_optcomp\n  license: MIT\n  license_file: LICENSE.md\n  summary: Optional compilation for OCaml (Jane Street ppx)\n\nextra:\n  recipe-maintainers:\n    - MementoRC\n    - ManuelLerchner\n",
   "req": {
     "__set__": true,
     "elements": [
+      "c_compiler_stub",
       "c_stdlib_stub",
-      "m2-bash",
-      "m2-coreutils",
-      "m2-findutils",
-      "m2-grep",
-      "m2-make",
-      "m2-sed",
-      "m2w64_c_compiler_stub",
       "m2w64_c_stdlib_stub",
-      "make",
       "ocaml",
       "ocaml-base",
       "ocaml-dune",
@@ -616,29 +1524,30 @@
       "ocaml-stdio",
       "ocaml_compiler_stub",
       "ocaml_linux-64",
+      "ocaml_linux-aarch64",
+      "ocaml_linux-ppc64le",
       "ocaml_osx-64",
-      "ocaml_win-64"
+      "ocaml_osx-arm64",
+      "ocaml_win-64",
+      "ocaml_win-arm64"
     ]
   },
   "requirements": {
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
-        "m2-bash",
-        "m2-coreutils",
-        "m2-findutils",
-        "m2-grep",
-        "m2-make",
-        "m2-sed",
-        "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
-        "make",
         "ocaml-dune",
         "ocaml_compiler_stub",
         "ocaml_linux-64",
+        "ocaml_linux-aarch64",
+        "ocaml_linux-ppc64le",
         "ocaml_osx-64",
-        "ocaml_win-64"
+        "ocaml_osx-arm64",
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "host": {
@@ -648,9 +1557,10 @@
         "c_stdlib_stub",
         "ocaml",
         "ocaml-base",
-        "ocaml-dune",
         "ocaml-ppxlib",
-        "ocaml-stdio"
+        "ocaml-stdio",
+        "ocaml_win-64",
+        "ocaml_win-arm64"
       ]
     },
     "run": {
@@ -667,10 +1577,9 @@
     "test": {
       "__set__": true,
       "elements": [
+        "binutils",
         "c_compiler_stub",
-        "m2-bash",
-        "m2-coreutils",
-        "m2-grep",
+        "file",
         "ocaml",
         "ocaml-dune"
       ]
@@ -681,32 +1590,30 @@
     "build": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "c_stdlib_stub",
-        "m2-bash",
-        "m2-coreutils",
-        "m2-findutils",
-        "m2-grep",
-        "m2-make",
-        "m2-sed",
-        "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
-        "make",
         "ocaml-dune >=3.11",
         "ocaml_compiler_stub",
-        "ocaml_linux-64 5.5.1.*",
-        "ocaml_osx-64 5.5.1.*",
-        "ocaml_win-64 5.5.1.* gcc_*"
+        "ocaml_linux-64 5.5.2.*",
+        "ocaml_linux-64 5.5.2.* gcc_*",
+        "ocaml_linux-aarch64 5.5.2.*",
+        "ocaml_linux-ppc64le 5.5.2.*",
+        "ocaml_osx-64 5.5.2.*",
+        "ocaml_osx-arm64 5.5.2.*",
+        "ocaml_win-64 5.5.2.* c_compiler_stub",
+        "ocaml_win-arm64 5.5.2.* c_compiler_stub"
       ]
     },
     "host": {
       "__set__": true,
       "elements": [
-        "ocaml 5.5.1.*",
-        "ocaml 5.5.1.* gcc_*",
+        "ocaml 5.5.2.*",
         "ocaml-base >=0.17,<0.18",
-        "ocaml-dune >=3.11",
         "ocaml-ppxlib >=0.36",
-        "ocaml-stdio >=0.17,<0.18"
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml_win-64 5.5.2.* c_compiler_stub",
+        "ocaml_win-arm64 5.5.2.* c_compiler_stub"
       ]
     },
     "run": {
@@ -720,12 +1627,10 @@
     "test": {
       "__set__": true,
       "elements": [
+        "binutils",
         "c_compiler_stub",
-        "m2-bash",
-        "m2-coreutils",
-        "m2-grep",
-        "ocaml 5.5.1.*",
-        "ocaml 5.5.1.* gcc_*",
+        "file",
+        "ocaml 5.5.2.*",
         "ocaml-dune >=3.11"
       ]
     }
@@ -745,8 +1650,13 @@
       "summary": "Optional compilation for OCaml (Jane Street ppx)"
     },
     "build": {
-      "number": "0",
-      "script": "bash ${{ RECIPE_DIR }}/build.sh ${{ opam_name }}"
+      "number": "1",
+      "script": [
+        "set DUNE_CACHE=disabled",
+        "dune build --cache=disabled --profile=release -p ${{ opam_name }} @install",
+        "if errorlevel 1 exit 1",
+        "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ${{ opam_name }}"
+      ]
     },
     "extra": {
       "recipe-maintainers": [
@@ -761,20 +1671,14 @@
         "requirements": {
           "build": [
             "ocaml_compiler_stub",
-            "ocaml_win-64 5.5.1.* gcc_*",
-            "m2w64_c_compiler_stub",
             "m2w64_c_stdlib_stub",
-            "ocaml-dune >=3.11",
-            "m2-make",
-            "m2-bash",
-            "m2-coreutils",
-            "m2-sed",
-            "m2-grep",
-            "m2-findutils"
+            "ocaml_win-64 5.5.2.* c_compiler_stub",
+            "ocaml_linux-64 5.5.2.* gcc_*",
+            "ocaml-dune >=3.11"
           ],
           "host": [
-            "ocaml 5.5.1.* gcc_*",
-            "ocaml-dune >=3.11",
+            "ocaml 5.5.2.*",
+            "ocaml_win-64 5.5.2.* c_compiler_stub",
             "ocaml-base >=0.17,<0.18",
             "ocaml-stdio >=0.17,<0.18",
             "ocaml-ppxlib >=0.36"
@@ -792,34 +1696,49 @@
                 "Library/lib/ocaml/ppx_optcomp/META",
                 "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
                 "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
-                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.a",
-                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs"
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
               ]
             }
-          },
+          }
+        ],
+        "version": "0.17.1"
+      },
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-64 5.5.2.* c_compiler_stub",
+            "ocaml_linux-64 5.5.2.* gcc_*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml_win-64 5.5.2.* c_compiler_stub",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
           {
-            "requirements": {
-              "run": [
-                "ocaml 5.5.1.* gcc_*",
-                "ocaml-dune >=3.11",
-                "m2-bash",
-                "m2-coreutils",
-                "m2-grep"
+            "package_contents": {
+              "files": [
+                "Library/lib/ocaml/ppx_optcomp/META",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cma",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxa",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cmxs",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcompc_compiler_stub"
               ]
-            },
-            "script": {
-              "content": [
-                "export DUNE_CACHE=disabled",
-                "LIBDIR=$PREFIX/lib/ocaml; SEP=':'",
-                "if [[ -d $PREFIX/Library/lib/ocaml ]]; then LIBDIR=$PREFIX/Library/lib/ocaml; SEP=';'; fi",
-                "export OCAMLPATH=\"$LIBDIR${OCAMLPATH:+$SEP$OCAMLPATH}\"",
-                "echo '(lang dune 3.0)' > dune-project",
-                "echo '(executable (name t) (preprocess (pps ppx_optcomp)))' > dune",
-                "printf '%s\\n' '[%%if ocaml_version >= (4, 8, 0)]' 'let x = 1' '[%%else]' 'let x = this_identifier_does_not_exist' '[%%endif]' 'let () = assert (x = 1); print_string \"ppx_optcomp ok\"' > t.ml",
-                "dune build --root . ./t.exe",
-                "./_build/default/t.exe | grep -q \"ppx_optcomp ok\""
-              ],
-              "interpreter": "bash"
             }
           }
         ],
@@ -833,20 +1752,16 @@
     "requirements": {
       "build": [
         "ocaml_compiler_stub",
-        "ocaml_win-64 5.5.1.* gcc_*",
-        "m2w64_c_compiler_stub",
         "m2w64_c_stdlib_stub",
+        "ocaml_win-64 5.5.2.* c_compiler_stub",
+        "ocaml_linux-64 5.5.2.* gcc_*",
         "ocaml-dune >=3.11",
-        "m2-make",
-        "m2-bash",
-        "m2-coreutils",
-        "m2-sed",
-        "m2-grep",
-        "m2-findutils"
+        "c_stdlib_stub",
+        "c_compiler_stub"
       ],
       "host": [
-        "ocaml 5.5.1.* gcc_*",
-        "ocaml-dune >=3.11",
+        "ocaml 5.5.2.*",
+        "ocaml_win-64 5.5.2.* c_compiler_stub",
         "ocaml-base >=0.17,<0.18",
         "ocaml-stdio >=0.17,<0.18",
         "ocaml-ppxlib >=0.36"
@@ -867,16 +1782,12 @@
     "build": {
       "__set__": true,
       "elements": [
-        "m2-bash",
-        "m2-coreutils",
-        "m2-findutils",
-        "m2-grep",
-        "m2-make",
-        "m2-sed",
-        "m2w64_c_compiler_stub",
+        "c_compiler_stub",
+        "c_stdlib_stub",
         "m2w64_c_stdlib_stub",
         "ocaml-dune",
         "ocaml_compiler_stub",
+        "ocaml_linux-64",
         "ocaml_win-64"
       ]
     },
@@ -885,9 +1796,9 @@
       "elements": [
         "ocaml",
         "ocaml-base",
-        "ocaml-dune",
         "ocaml-ppxlib",
-        "ocaml-stdio"
+        "ocaml-stdio",
+        "ocaml_win-64"
       ]
     },
     "run": {
@@ -900,13 +1811,137 @@
     },
     "test": {
       "__set__": true,
-      "elements": [
-        "m2-bash",
-        "m2-coreutils",
-        "m2-grep",
-        "ocaml",
-        "ocaml-dune"
+      "elements": []
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "dev_url": "https://github.com/janestreet/ppx_optcomp",
+      "home": "https://github.com/janestreet/ppx_optcomp",
+      "license": "MIT",
+      "license_family": "MIT",
+      "license_file": "LICENSE.md",
+      "summary": "Optional compilation for OCaml (Jane Street ppx)"
+    },
+    "build": {
+      "number": "1",
+      "script": [
+        "set DUNE_CACHE=disabled",
+        "dune build --cache=disabled --profile=release -p ${{ opam_name }} @install",
+        "if errorlevel 1 exit 1",
+        "dune install --prefix=\"%LIBRARY_PREFIX%\" --libdir=\"%LIBRARY_PREFIX%\\lib\\ocaml\" ${{ opam_name }}"
       ]
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "MementoRC",
+        "ManuelLerchner"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "ocaml-ppx-optcomp",
+        "requirements": {
+          "build": [
+            "ocaml_compiler_stub",
+            "c_stdlib_stub",
+            "c_compiler_stub",
+            "ocaml_win-arm64 5.5.2.* c_compiler_stub",
+            "ocaml_linux-64 5.5.2.* gcc_*",
+            "ocaml-dune >=3.11"
+          ],
+          "host": [
+            "ocaml 5.5.2.*",
+            "ocaml_win-arm64 5.5.2.* c_compiler_stub",
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib >=0.36"
+          ],
+          "run": [
+            "ocaml-base >=0.17,<0.18",
+            "ocaml-stdio >=0.17,<0.18",
+            "ocaml-ppxlib"
+          ]
+        },
+        "tests": [
+          {
+            "package_contents": {
+              "files": [
+                "Library/lib/ocaml/ppx_optcomp/META",
+                "Library/lib/ocaml/ppx_optcomp/ppx_optcomp.cma"
+              ]
+            }
+          }
+        ],
+        "version": "0.17.1"
+      }
+    ],
+    "package": {
+      "name": "ocaml-ppx-optcomp",
+      "version": "0.17.1"
+    },
+    "requirements": {
+      "build": [
+        "ocaml_compiler_stub",
+        "c_stdlib_stub",
+        "c_compiler_stub",
+        "ocaml_win-arm64 5.5.2.* c_compiler_stub",
+        "ocaml_linux-64 5.5.2.* gcc_*",
+        "ocaml-dune >=3.11"
+      ],
+      "host": [
+        "ocaml 5.5.2.*",
+        "ocaml_win-arm64 5.5.2.* c_compiler_stub",
+        "ocaml-base >=0.17,<0.18",
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml-ppxlib >=0.36"
+      ],
+      "run": [
+        "ocaml-base >=0.17,<0.18",
+        "ocaml-stdio >=0.17,<0.18",
+        "ocaml-ppxlib"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "2efe65a0210ed7bda8ddd9e076385b76619f23ac3aee1db5b6140ac1a1feb99d",
+      "url": "https://github.com/janestreet/ppx_optcomp/archive/refs/tags/v0.17.1.tar.gz"
+    }
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "ocaml-dune",
+        "ocaml_compiler_stub",
+        "ocaml_linux-64",
+        "ocaml_win-arm64"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "ocaml",
+        "ocaml-base",
+        "ocaml-ppxlib",
+        "ocaml-stdio",
+        "ocaml_win-arm64"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "ocaml-base",
+        "ocaml-ppxlib",
+        "ocaml-stdio"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
     }
   }
 }
