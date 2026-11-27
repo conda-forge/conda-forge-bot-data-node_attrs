@@ -1,39 +1,139 @@
 {
   "archived": false,
   "branch": "main",
+  "ci_support_migrations": {},
+  "ci_support_win_64_.yaml": "c_compiler:\n- vs2022\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ntarget_platform:\n- win-64\n",
   "conda-forge.yml": {
     "conda_build": {
       "pkg_format": "2"
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     },
     "provider": {
-      "win": "azure"
-    }
+      "win_arm64": "default"
+    },
+    "test": "native_and_emulated"
   },
-  "feedstock_hash": "df7f48bc3d4a78a92ba9b9b9a3a4201da447fd6a",
-  "feedstock_hash_ts": 1762880891,
+  "feedstock_hash": "c6c2cbe2191bbbb4575b677f941ded7741204bee",
+  "feedstock_hash_ts": 1789405062,
   "feedstock_name": "autotools_clang_conda",
   "meta_yaml": {
     "about": {
-      "description": "This package installs clang compiler, lld linker, tools like llvm-ranlib, llvm-ar,\nbash, autoconf to compiler autotools on windows. Resulting packages will be MSVC compatible.\nTo use this package, in meta.yaml\n\n  build:\n  requirements:\n    build:\n\n\n      - c_compiler_stub\n      - autotools_clang_conda\n\n      - llvm-openmp\n\nIn bld.bat\n\n  call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat\n  if %ERRORLEVEL% neq 0 exit 1\n\nIn build.sh\n\n  ./configure --prefix=$PREFIX\n  [[ \"$target_platform\" == \"win-64\" ]] && patch_libtool\n  make -j${CPU_COUNT}\n  make install\n\nIn case the build script has a different name (for example in multi-output recipes),\nyou can pass the name of the build script in the recipe folder to the bat-script:\n\nIn build_subpackage.bat\n\n  call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat build_subpackage.sh\n  if %ERRORLEVEL% neq 0 exit 1\n",
+      "description": "This package installs clang compiler, lld linker, tools like llvm-ranlib, llvm-ar,\nbash, autoconf to compiler autotools on windows. Resulting packages will be MSVC compatible.\nTo use this package, in meta.yaml\n\n    build:\n      skip: True  # [win and vc<14]\n    requirements:\n      build:\n        # cl compiler on win is required only for setting up env variables for\n        # activating the build environment\n        - {{ compiler('c') }}\n        - autotools_clang_conda  # [win]\n        # Needed only if OpenMP is used. Not compatible with MSVC's OpenMP implementation\n        - llvm-openmp   # [win]\n\nIn bld.bat\n\n    call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat\n    if %ERRORLEVEL% neq 0 exit 1\n\nIn build.sh\n\n    ./configure --prefix=$PREFIX\n    [[ \"$target_platform\" == win-* ]] && patch_libtool\n    make -j${CPU_COUNT}\n    make install\n\nIn case the build script has a different name (for example in multi-output recipes),\nyou can pass the name of the build script in the recipe folder to the bat-script:\n\nIn build_subpackage.bat\n\n    call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat build_subpackage.sh\n    if %ERRORLEVEL% neq 0 exit 1",
       "home": "http://github.com/conda-forge/autotools_clang_conda-feedstock",
       "license": "BSD-3-Clause",
-      "license_family": "BSD",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE",
       "summary": "Scripts to compile autotools projects on windows using clang and llvm tools"
     },
     "build": {
-      "number": "0"
+      "number": "2"
     },
     "extra": {
       "recipe-maintainers": [
         "isuruf"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "autotools_clang_conda",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "clang",
+            "clangxx",
+            "llvm-tools",
+            "lld",
+            "m2-automake-wrapper",
+            "m2-libtool",
+            "m2-autoconf",
+            "m2-make",
+            "m2-findutils",
+            "m2-m4",
+            "m2-bash",
+            "m2-sed",
+            "m2-base",
+            "m2-diffutils",
+            "m2-tar",
+            "m2-unzip",
+            "m2-zip",
+            "cmake"
+          ]
+        },
+        "tests": [
+          {
+            "script": "if not exist %LIBRARY_BIN%\\run_autotools_clang_conda_build.bat exit 1"
+          },
+          {
+            "files": {
+              "recipe": [
+                "tests/autotools-smoke/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": "call tests\\autotools-smoke\\run-smoke.bat"
+          }
+        ],
+        "version": "0.0.14"
+      },
+      {
+        "build": null,
+        "name": "autotools_clang_conda",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "clang",
+            "clangxx",
+            "llvm-tools",
+            "lld",
+            "m2-automake-wrapper",
+            "m2-libtool",
+            "m2-autoconf",
+            "m2-make",
+            "m2-findutils",
+            "m2-m4",
+            "m2-bash",
+            "m2-sed",
+            "m2-base",
+            "m2-diffutils",
+            "m2-tar",
+            "m2-unzip",
+            "m2-zip",
+            "cmake"
+          ]
+        },
+        "tests": [
+          {
+            "script": "if not exist %LIBRARY_BIN%\\run_autotools_clang_conda_build.bat exit 1"
+          },
+          {
+            "files": {
+              "recipe": [
+                "tests/autotools-smoke/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": "call tests\\autotools-smoke\\run-smoke.bat"
+          }
+        ],
+        "version": "0.0.14"
+      }
+    ],
     "package": {
       "name": "autotools_clang_conda",
       "version": "0.0.14"
@@ -60,12 +160,7 @@
         "cmake"
       ]
     },
-    "schema_version": 0,
-    "test": {
-      "commands": [
-        "if not exist %LIBRARY_BIN%\\run_autotools_clang_conda_build.bat exit 0"
-      ]
-    }
+    "schema_version": 1
   },
   "name": "autotools_clang_conda",
   "outputs_names": {
@@ -74,14 +169,15 @@
       "autotools_clang_conda"
     ]
   },
-  "parsing_error": "feedstock parsing error: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error UnboundLocalError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 781, in load_feedstock_local\n    return populate_feedstock_attributes(\n        name,\n    ...<6 lines>...\n        use_container=False,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 425, in populate_feedstock_attributes\n    parse_recipe_yaml(\n    ~~~~~~~~~~~~~~~~~^\n        recipe_yaml,\n        ^^^^^^^^^^^^\n    ...<2 lines>...\n        use_container=use_container,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ),\n    ^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 379, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n        text,\n    ...<2 lines>...\n        cbc_path=cbc_path,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 556, in parse_recipe_yaml_local\n    parsed_recipes = _parse_recipes(rendered_recipes)  # type: ignore[arg-type]\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 845, in _parse_recipes\n    \"source\": source_data,\n              ^^^^^^^^^^^\nUnboundLocalError: cannot access local variable 'source_data' where it is not associated with a value\n\nTraceback (most recent call last):\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/make_graph.py\", line 138, in try_load_feedstock\n    data = load_feedstock(name, attrs.data, mark_not_archived=mark_not_archived)\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 902, in load_feedstock\n    return load_feedstock_containerized(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 854, in load_feedstock_containerized\n    data = run_container_operation(\n        args,\n    ...<2 lines>...\n        extra_container_args=get_container_env_command_args(),\n    )\n  File \"/home/runner/micromamba/envs/conda-forge-bot/lib/python3.14/site-packages/conda_forge_feedstock_ops/container_utils.py\", line 218, in run_container_operation\n    raise ContainerRuntimeError(\n    ...<6 lines>...\n    )\nconda_forge_feedstock_ops.container_utils.ContainerRuntimeError: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error UnboundLocalError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 781, in load_feedstock_local\n    return populate_feedstock_attributes(\n        name,\n    ...<6 lines>...\n        use_container=False,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 425, in populate_feedstock_attributes\n    parse_recipe_yaml(\n    ~~~~~~~~~~~~~~~~~^\n        recipe_yaml,\n        ^^^^^^^^^^^^\n    ...<2 lines>...\n        use_container=use_container,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ),\n    ^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 379, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n        text,\n    ...<2 lines>...\n        cbc_path=cbc_path,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 556, in parse_recipe_yaml_local\n    parsed_recipes = _parse_recipes(rendered_recipes)  # type: ignore[arg-type]\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 845, in _parse_recipes\n    \"source\": source_data,\n              ^^^^^^^^^^^\nUnboundLocalError: cannot access local variable 'source_data' where it is not associated with a value\n\n",
+  "parsing_error": false,
   "platforms": [
-    "win_64"
+    "win_64",
+    "win_arm64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/autotools_clang_conda.json"
   },
-  "raw_meta_yaml": "package:\n  name: autotools_clang_conda\n  version: 0.0.14\n\nbuild:\n  number: 0\n  skip: True   # [not win]\n\nrequirements:\n  run:\n    - clang\n    - clangxx\n    - llvm-tools\n    - lld\n    - m2-automake-wrapper\n    - m2-libtool\n    - m2-autoconf\n    - m2-make\n    - m2-findutils\n    - m2-m4\n    - m2-bash\n    - m2-sed\n    - m2-base\n    - m2-diffutils\n    - m2-tar\n    - m2-unzip\n    - m2-zip\n    - cmake\n\ntest:\n  commands:\n    - if not exist %LIBRARY_BIN%\\run_autotools_clang_conda_build.bat exit 0\n\nabout:\n  home: http://github.com/conda-forge/autotools_clang_conda-feedstock\n  license: BSD-3-Clause\n  license_family: BSD\n  license_file: LICENSE\n  summary: 'Scripts to compile autotools projects on windows using clang and llvm tools'\n  description: |\n    This package installs clang compiler, lld linker, tools like llvm-ranlib, llvm-ar,\n    bash, autoconf to compiler autotools on windows. Resulting packages will be MSVC compatible.\n    To use this package, in meta.yaml\n\n      build:\n        skip: True  # [win and vc<14]\n      requirements:\n        build:\n          # cl compiler on win is required only for setting up env variables for\n          # activating the build environment\n          - {{ compiler('c') }}\n          - autotools_clang_conda  # [win]\n          # Needed only if OpenMP is used. Not compatible with MSVC's OpenMP implementation\n          - llvm-openmp   # [win]\n\n    In bld.bat\n\n      call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat\n      if %ERRORLEVEL% neq 0 exit 1\n\n    In build.sh\n\n      ./configure --prefix=$PREFIX\n      [[ \"$target_platform\" == \"win-64\" ]] && patch_libtool\n      make -j${CPU_COUNT}\n      make install\n\n    In case the build script has a different name (for example in multi-output recipes),\n    you can pass the name of the build script in the recipe folder to the bat-script:\n\n    In build_subpackage.bat\n\n      call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat build_subpackage.sh\n      if %ERRORLEVEL% neq 0 exit 1\n\nextra:\n  recipe-maintainers:\n    - isuruf\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  # Keep documentation examples separate from recipe comment selectors.\n  doc_comment: \"#\"\n\npackage:\n  name: autotools_clang_conda\n  version: 0.0.14\n\nbuild:\n  number: 2\n  skip: not win\n\nrequirements:\n  run:\n    - clang\n    - clangxx\n    - llvm-tools\n    - lld\n    - m2-automake-wrapper\n    - m2-libtool\n    - m2-autoconf\n    - m2-make\n    - m2-findutils\n    - m2-m4\n    - m2-bash\n    - m2-sed\n    - m2-base\n    - m2-diffutils\n    - m2-tar\n    - m2-unzip\n    - m2-zip\n    - cmake\n\ntests:\n  - script:\n      - if not exist %LIBRARY_BIN%\\run_autotools_clang_conda_build.bat exit 1\n  - files:\n      recipe:\n        - tests/autotools-smoke/\n    requirements:\n      run:\n        - ${{ compiler('c') }}\n    script:\n      - call tests\\autotools-smoke\\run-smoke.bat\n\nabout:\n  license: BSD-3-Clause\n  license_file: LICENSE\n  summary: Scripts to compile autotools projects on windows using clang and llvm tools\n  description: |\n    This package installs clang compiler, lld linker, tools like llvm-ranlib, llvm-ar,\n    bash, autoconf to compiler autotools on windows. Resulting packages will be MSVC compatible.\n    To use this package, in meta.yaml\n\n        build:\n          skip: True  ${{ doc_comment }} [win and vc<14]\n        requirements:\n          build:\n            # cl compiler on win is required only for setting up env variables for\n            # activating the build environment\n            - {{ compiler('c') }}\n            - autotools_clang_conda  ${{ doc_comment }} [win]\n            # Needed only if OpenMP is used. Not compatible with MSVC's OpenMP implementation\n            - llvm-openmp   ${{ doc_comment }} [win]\n\n    In bld.bat\n\n        call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat\n        if %ERRORLEVEL% neq 0 exit 1\n\n    In build.sh\n\n        ./configure --prefix=$PREFIX\n        [[ \"$target_platform\" == win-* ]] && patch_libtool\n        make -j${CPU_COUNT}\n        make install\n\n    In case the build script has a different name (for example in multi-output recipes),\n    you can pass the name of the build script in the recipe folder to the bat-script:\n\n    In build_subpackage.bat\n\n        call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat build_subpackage.sh\n        if %ERRORLEVEL% neq 0 exit 1\n  homepage: http://github.com/conda-forge/autotools_clang_conda-feedstock\n\nextra:\n  recipe-maintainers:\n    - isuruf\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -112,11 +208,14 @@
     },
     "host": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     },
     "run": {
       "__set__": true,
       "elements": [
+        "c_compiler_stub",
         "clang",
         "clangxx",
         "cmake",
@@ -139,7 +238,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   },
   "strong_exports": false,
@@ -178,7 +279,9 @@
     },
     "test": {
       "__set__": true,
-      "elements": []
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   },
   "version": "0.0.14",
@@ -187,21 +290,70 @@
   },
   "win_64_meta_yaml": {
     "about": {
-      "description": "This package installs clang compiler, lld linker, tools like llvm-ranlib, llvm-ar,\nbash, autoconf to compiler autotools on windows. Resulting packages will be MSVC compatible.\nTo use this package, in meta.yaml\n\n  build:\n  requirements:\n    build:\n\n\n      - c_compiler_stub\n      - autotools_clang_conda\n\n      - llvm-openmp\n\nIn bld.bat\n\n  call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat\n  if %ERRORLEVEL% neq 0 exit 1\n\nIn build.sh\n\n  ./configure --prefix=$PREFIX\n  [[ \"$target_platform\" == \"win-64\" ]] && patch_libtool\n  make -j${CPU_COUNT}\n  make install\n\nIn case the build script has a different name (for example in multi-output recipes),\nyou can pass the name of the build script in the recipe folder to the bat-script:\n\nIn build_subpackage.bat\n\n  call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat build_subpackage.sh\n  if %ERRORLEVEL% neq 0 exit 1\n",
+      "description": "This package installs clang compiler, lld linker, tools like llvm-ranlib, llvm-ar,\nbash, autoconf to compiler autotools on windows. Resulting packages will be MSVC compatible.\nTo use this package, in meta.yaml\n\n    build:\n      skip: True  # [win and vc<14]\n    requirements:\n      build:\n        # cl compiler on win is required only for setting up env variables for\n        # activating the build environment\n        - {{ compiler('c') }}\n        - autotools_clang_conda  # [win]\n        # Needed only if OpenMP is used. Not compatible with MSVC's OpenMP implementation\n        - llvm-openmp   # [win]\n\nIn bld.bat\n\n    call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat\n    if %ERRORLEVEL% neq 0 exit 1\n\nIn build.sh\n\n    ./configure --prefix=$PREFIX\n    [[ \"$target_platform\" == win-* ]] && patch_libtool\n    make -j${CPU_COUNT}\n    make install\n\nIn case the build script has a different name (for example in multi-output recipes),\nyou can pass the name of the build script in the recipe folder to the bat-script:\n\nIn build_subpackage.bat\n\n    call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat build_subpackage.sh\n    if %ERRORLEVEL% neq 0 exit 1",
       "home": "http://github.com/conda-forge/autotools_clang_conda-feedstock",
       "license": "BSD-3-Clause",
-      "license_family": "BSD",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE",
       "summary": "Scripts to compile autotools projects on windows using clang and llvm tools"
     },
     "build": {
-      "number": "0"
+      "number": "2"
     },
     "extra": {
       "recipe-maintainers": [
         "isuruf"
       ]
     },
+    "outputs": [
+      {
+        "build": null,
+        "name": "autotools_clang_conda",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "clang",
+            "clangxx",
+            "llvm-tools",
+            "lld",
+            "m2-automake-wrapper",
+            "m2-libtool",
+            "m2-autoconf",
+            "m2-make",
+            "m2-findutils",
+            "m2-m4",
+            "m2-bash",
+            "m2-sed",
+            "m2-base",
+            "m2-diffutils",
+            "m2-tar",
+            "m2-unzip",
+            "m2-zip",
+            "cmake"
+          ]
+        },
+        "tests": [
+          {
+            "script": "if not exist %LIBRARY_BIN%\\run_autotools_clang_conda_build.bat exit 1"
+          },
+          {
+            "files": {
+              "recipe": [
+                "tests/autotools-smoke/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": "call tests\\autotools-smoke\\run-smoke.bat"
+          }
+        ],
+        "version": "0.0.14"
+      }
+    ],
     "package": {
       "name": "autotools_clang_conda",
       "version": "0.0.14"
@@ -228,12 +380,7 @@
         "cmake"
       ]
     },
-    "schema_version": 0,
-    "test": {
-      "commands": [
-        "if not exist %LIBRARY_BIN%\\run_autotools_clang_conda_build.bat exit 0"
-      ]
-    }
+    "schema_version": 1
   },
   "win_64_requirements": {
     "build": {
@@ -269,7 +416,142 @@
     },
     "test": {
       "__set__": true,
+      "elements": [
+        "c_compiler_stub"
+      ]
+    }
+  },
+  "win_arm64_meta_yaml": {
+    "about": {
+      "description": "This package installs clang compiler, lld linker, tools like llvm-ranlib, llvm-ar,\nbash, autoconf to compiler autotools on windows. Resulting packages will be MSVC compatible.\nTo use this package, in meta.yaml\n\n    build:\n      skip: True  # [win and vc<14]\n    requirements:\n      build:\n        # cl compiler on win is required only for setting up env variables for\n        # activating the build environment\n        - {{ compiler('c') }}\n        - autotools_clang_conda  # [win]\n        # Needed only if OpenMP is used. Not compatible with MSVC's OpenMP implementation\n        - llvm-openmp   # [win]\n\nIn bld.bat\n\n    call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat\n    if %ERRORLEVEL% neq 0 exit 1\n\nIn build.sh\n\n    ./configure --prefix=$PREFIX\n    [[ \"$target_platform\" == win-* ]] && patch_libtool\n    make -j${CPU_COUNT}\n    make install\n\nIn case the build script has a different name (for example in multi-output recipes),\nyou can pass the name of the build script in the recipe folder to the bat-script:\n\nIn build_subpackage.bat\n\n    call %BUILD_PREFIX%\\Library\\bin\\run_autotools_clang_conda_build.bat build_subpackage.sh\n    if %ERRORLEVEL% neq 0 exit 1",
+      "home": "http://github.com/conda-forge/autotools_clang_conda-feedstock",
+      "license": "BSD-3-Clause",
+      "license_family": "BSD-3-Clause",
+      "license_file": "LICENSE",
+      "summary": "Scripts to compile autotools projects on windows using clang and llvm tools"
+    },
+    "build": {
+      "number": "2"
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "isuruf"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "autotools_clang_conda",
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": [
+            "clang",
+            "clangxx",
+            "llvm-tools",
+            "lld",
+            "m2-automake-wrapper",
+            "m2-libtool",
+            "m2-autoconf",
+            "m2-make",
+            "m2-findutils",
+            "m2-m4",
+            "m2-bash",
+            "m2-sed",
+            "m2-base",
+            "m2-diffutils",
+            "m2-tar",
+            "m2-unzip",
+            "m2-zip",
+            "cmake"
+          ]
+        },
+        "tests": [
+          {
+            "script": "if not exist %LIBRARY_BIN%\\run_autotools_clang_conda_build.bat exit 1"
+          },
+          {
+            "files": {
+              "recipe": [
+                "tests/autotools-smoke/"
+              ]
+            },
+            "requirements": {
+              "run": [
+                "c_compiler_stub"
+              ]
+            },
+            "script": "call tests\\autotools-smoke\\run-smoke.bat"
+          }
+        ],
+        "version": "0.0.14"
+      }
+    ],
+    "package": {
+      "name": "autotools_clang_conda",
+      "version": "0.0.14"
+    },
+    "requirements": {
+      "run": [
+        "clang",
+        "clangxx",
+        "llvm-tools",
+        "lld",
+        "m2-automake-wrapper",
+        "m2-libtool",
+        "m2-autoconf",
+        "m2-make",
+        "m2-findutils",
+        "m2-m4",
+        "m2-bash",
+        "m2-sed",
+        "m2-base",
+        "m2-diffutils",
+        "m2-tar",
+        "m2-unzip",
+        "m2-zip",
+        "cmake"
+      ]
+    },
+    "schema_version": 1
+  },
+  "win_arm64_requirements": {
+    "build": {
+      "__set__": true,
       "elements": []
+    },
+    "host": {
+      "__set__": true,
+      "elements": []
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "clang",
+        "clangxx",
+        "cmake",
+        "lld",
+        "llvm-tools",
+        "m2-autoconf",
+        "m2-automake-wrapper",
+        "m2-base",
+        "m2-bash",
+        "m2-diffutils",
+        "m2-findutils",
+        "m2-libtool",
+        "m2-m4",
+        "m2-make",
+        "m2-sed",
+        "m2-tar",
+        "m2-unzip",
+        "m2-zip"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub"
+      ]
     }
   }
 }
