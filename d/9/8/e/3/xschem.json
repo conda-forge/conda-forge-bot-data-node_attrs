@@ -14,8 +14,8 @@
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "dc79dcd13010d8a23b076271ab9326104c7b3523",
-  "feedstock_hash_ts": 1795601359,
+  "feedstock_hash": "a0422edfaf0f8dfdb6beac468f6500d204b69814",
+  "feedstock_hash_ts": 1795786438,
   "feedstock_name": "xschem",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -29,8 +29,11 @@
       "summary": "Schematic capture and netlisting EDA tool"
     },
     "build": {
-      "number": "0",
-      "script": "build.sh"
+      "number": "1",
+      "script": {
+        "file": "build.sh",
+        "interpreter": "bash"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -149,8 +152,11 @@
       "summary": "Schematic capture and netlisting EDA tool"
     },
     "build": {
-      "number": "0",
-      "script": "build.sh"
+      "number": "1",
+      "script": {
+        "file": "build.bat",
+        "interpreter": "cmd"
+      }
     },
     "extra": {
       "recipe-maintainers": [
@@ -189,6 +195,31 @@
           }
         ],
         "version": "3.4.7"
+      },
+      {
+        "build": null,
+        "name": "xschem",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "winflexbison"
+          ],
+          "host": [
+            "tk",
+            "cairo"
+          ],
+          "run": [
+            "tk",
+            "cairo"
+          ]
+        },
+        "tests": [
+          {
+            "script": "xschem -v"
+          }
+        ],
+        "version": "3.4.7"
       }
     ],
     "package": {
@@ -202,7 +233,8 @@
         "make",
         "pkgconf",
         "bison",
-        "flex"
+        "flex",
+        "winflexbison"
       ],
       "host": [
         "tk",
@@ -232,12 +264,13 @@
   },
   "parsing_error": false,
   "platforms": [
-    "linux_64"
+    "linux_64",
+    "win_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/xschem.json"
   },
-  "raw_meta_yaml": "context:\n  version: \"3.4.7\"\n\npackage:\n  name: xschem\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/StefanSchippers/xschem/archive/refs/tags/${{ version }}.tar.gz\n  sha256: 8f6c7165c38f528b6cbae8f9fae72cde3b765652df90597011a5f7b5e7fdb273\n\nbuild:\n  number: 0\n  skip:\n    - win\n    - osx\n  script: build.sh\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - make\n    - pkgconf\n    - bison\n    - flex\n  host:\n    - tk\n    - cairo\n    - xorg-libx11\n    - xorg-libxpm\n    - xorg-xorgproto   # X11/X.h and friends (xorg-libx11 does not ship protocol headers)\n  run:\n    - tk\n    - cairo\n    - xorg-libxpm\n\ntests:\n  - script:\n      - xschem -v\n\nabout:\n  homepage: http://repo.hu/projects/xschem/index.html\n  repository: https://github.com/StefanSchippers/xschem\n  license: GPL-2.0-or-later\n  license_file: LICENSE\n  summary: Schematic capture and netlisting EDA tool\n  description: |\n    Xschem is a schematic capture program, it allows creation of hierarchical\n    representation of circuits with a top down approach. By focusing on\n    interfaces, hierarchy and instance properties a complex system can be\n    described in terms of simpler building blocks. A VHDL or Verilog or Spice\n    netlist can be generated from the drawn schematic, allowing the simulation\n    of the circuit. Key feature of the program is its drawing engine written in\n    C and using directly the Xlib drawing primitives; this gives very good\n    speed performance, even on very big circuits. The user interface is built\n    with the Tcl-Tk toolkit, tcl is also the extension language used.\n\nextra:\n  recipe-maintainers:\n    - duyhieubui\n",
+  "raw_meta_yaml": "context:\n  version: \"3.4.7\"\n\npackage:\n  name: xschem\n  version: ${{ version }}\n\nsource:\n  url: https://github.com/StefanSchippers/xschem/archive/refs/tags/${{ version }}.tar.gz\n  sha256: 8f6c7165c38f528b6cbae8f9fae72cde3b765652df90597011a5f7b5e7fdb273\n\nbuild:\n  number: 1\n  skip:\n    - osx\n  script:\n    file: ${{ \"build.bat\" if win else \"build.sh\" }}\n\nrequirements:\n  build:\n    - ${{ compiler('c') }}\n    - ${{ stdlib('c') }}\n    - if: unix\n      then:\n        - make\n        - pkgconf\n        - bison\n        - flex\n    - if: win\n      then:\n        - winflexbison\n  host:\n    - tk\n    - cairo\n    - if: unix\n      then:\n        - xorg-libx11\n        - xorg-libxpm\n        - xorg-xorgproto   # X11/X.h and friends (xorg-libx11 does not ship protocol headers)\n  run:\n    - tk\n    - cairo\n    - if: unix\n      then:\n        - xorg-libxpm\n\ntests:\n  - script:\n      - xschem -v\n\nabout:\n  homepage: http://repo.hu/projects/xschem/index.html\n  repository: https://github.com/StefanSchippers/xschem\n  license: GPL-2.0-or-later\n  license_file: LICENSE\n  summary: Schematic capture and netlisting EDA tool\n  description: |\n    Xschem is a schematic capture program, it allows creation of hierarchical\n    representation of circuits with a top down approach. By focusing on\n    interfaces, hierarchy and instance properties a complex system can be\n    described in terms of simpler building blocks. A VHDL or Verilog or Spice\n    netlist can be generated from the drawn schematic, allowing the simulation\n    of the circuit. Key feature of the program is its drawing engine written in\n    C and using directly the Xlib drawing primitives; this gives very good\n    speed performance, even on very big circuits. The user interface is built\n    with the Tcl-Tk toolkit, tcl is also the extension language used.\n\nextra:\n  recipe-maintainers:\n    - duyhieubui\n",
   "req": {
     "__set__": true,
     "elements": [
@@ -249,6 +282,7 @@
       "make",
       "pkgconf",
       "tk",
+      "winflexbison",
       "xorg-libx11",
       "xorg-libxpm",
       "xorg-xorgproto"
@@ -263,7 +297,8 @@
         "c_stdlib_stub",
         "flex",
         "make",
-        "pkgconf"
+        "pkgconf",
+        "winflexbison"
       ]
     },
     "host": {
@@ -303,7 +338,8 @@
         "c_stdlib_stub",
         "flex",
         "make",
-        "pkgconf"
+        "pkgconf",
+        "winflexbison"
       ]
     },
     "host": {
@@ -333,5 +369,107 @@
   "version": "3.4.7",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/xschem.json"
+  },
+  "win_64_meta_yaml": {
+    "about": {
+      "description": "Xschem is a schematic capture program, it allows creation of hierarchical\nrepresentation of circuits with a top down approach. By focusing on\ninterfaces, hierarchy and instance properties a complex system can be\ndescribed in terms of simpler building blocks. A VHDL or Verilog or Spice\nnetlist can be generated from the drawn schematic, allowing the simulation\nof the circuit. Key feature of the program is its drawing engine written in\nC and using directly the Xlib drawing primitives; this gives very good\nspeed performance, even on very big circuits. The user interface is built\nwith the Tcl-Tk toolkit, tcl is also the extension language used.",
+      "dev_url": "https://github.com/StefanSchippers/xschem",
+      "home": "http://repo.hu/projects/xschem/index.html",
+      "license": "GPL-2.0-or-later",
+      "license_family": "GPL-2.0-or-later",
+      "license_file": "LICENSE",
+      "summary": "Schematic capture and netlisting EDA tool"
+    },
+    "build": {
+      "number": "1",
+      "script": {
+        "file": "build.bat",
+        "interpreter": "cmd"
+      }
+    },
+    "extra": {
+      "recipe-maintainers": [
+        "duyhieubui"
+      ]
+    },
+    "outputs": [
+      {
+        "build": null,
+        "name": "xschem",
+        "requirements": {
+          "build": [
+            "c_compiler_stub",
+            "c_stdlib_stub",
+            "winflexbison"
+          ],
+          "host": [
+            "tk",
+            "cairo"
+          ],
+          "run": [
+            "tk",
+            "cairo"
+          ]
+        },
+        "tests": [
+          {
+            "script": "xschem -v"
+          }
+        ],
+        "version": "3.4.7"
+      }
+    ],
+    "package": {
+      "name": "xschem",
+      "version": "3.4.7"
+    },
+    "requirements": {
+      "build": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "winflexbison"
+      ],
+      "host": [
+        "tk",
+        "cairo"
+      ],
+      "run": [
+        "tk",
+        "cairo"
+      ]
+    },
+    "schema_version": 1,
+    "source": {
+      "sha256": "8f6c7165c38f528b6cbae8f9fae72cde3b765652df90597011a5f7b5e7fdb273",
+      "url": "https://github.com/StefanSchippers/xschem/archive/refs/tags/3.4.7.tar.gz"
+    }
+  },
+  "win_64_requirements": {
+    "build": {
+      "__set__": true,
+      "elements": [
+        "c_compiler_stub",
+        "c_stdlib_stub",
+        "winflexbison"
+      ]
+    },
+    "host": {
+      "__set__": true,
+      "elements": [
+        "cairo",
+        "tk"
+      ]
+    },
+    "run": {
+      "__set__": true,
+      "elements": [
+        "cairo",
+        "tk"
+      ]
+    },
+    "test": {
+      "__set__": true,
+      "elements": []
+    }
   }
 }
