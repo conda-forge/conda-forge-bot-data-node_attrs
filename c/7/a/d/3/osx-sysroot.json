@@ -1,36 +1,69 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64__MACOSX_DEPLOYMENT_TARGET_10.10cross_target_platformosx-64.yaml": "MACOSX_SDK_VERSION:\n- '11.0'\n_MACOSX_DEPLOYMENT_TARGET_:\n- '10.10'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncross_target_platform:\n- osx-64\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\ntarget_platform:\n- linux-64\n",
+  "ci_support_linux_64__MACOSX_DEPLOYMENT_TARGET_10.10cross_target_platformosx-64.yaml": "MACOSX_SDK_VERSION:\n- '11.0'\n_MACOSX_DEPLOYMENT_TARGET_:\n- '10.10'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ncross_target_platform:\n- osx-64\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma9\n",
+  "ci_support_migrations": {},
   "conda-forge.yml": {
     "conda_build": {
       "error_overlinking": true
     },
+    "conda_build_tool": "rattler-build",
     "conda_forge_output_validation": true,
     "github": {
       "branch_name": "main",
       "tooling_branch_name": "main"
     }
   },
-  "feedstock_hash": "3ffb459ce8d87ab89661636035c2f3028d15e4f8",
-  "feedstock_hash_ts": 1767712177,
+  "feedstock_hash": "e7163ea686676652b3cd64add637a0e59c15b732",
+  "feedstock_hash_ts": 1776861987,
   "feedstock_name": "osx-sysroot",
   "linux_64_meta_yaml": {
     "about": {
       "home": "https://github.com/conda-forge/osx-sysroot-feedstock",
       "license": "BSD-3-Clause",
-      "license_family": "BSD",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE",
       "summary": "metapackage to set the MACOSX_DEPLOYMENT_TARGET"
     },
     "build": {
-      "number": "5",
-      "skip": true
+      "noarch": "generic",
+      "number": "7",
+      "run_exports": {
+        "strong": [
+          "__osx >=10.10",
+          "__osx >=10.11",
+          "__osx >=10.12",
+          "__osx >=10.13",
+          "__osx >=10.14",
+          "__osx >=10.15",
+          "__osx >=10.9",
+          "__osx >=11.0",
+          "__osx >=11.1",
+          "__osx >=11.3",
+          "__osx >=12.0",
+          "__osx >=12.1",
+          "__osx >=12.3",
+          "__osx >=13.0",
+          "__osx >=13.1",
+          "__osx >=13.3",
+          "__osx >=14.0",
+          "__osx >=14.2",
+          "__osx >=14.4",
+          "__osx >=14.5",
+          "__osx >=15.0",
+          "__osx >=15.1",
+          "__osx >=15.2",
+          "__osx >=15.4",
+          "__osx >=15.5",
+          "__osx >=26.0"
+        ]
+      },
+      "script": "build_mdt.sh"
     },
     "extra": {
       "recipe-maintainers": [
-        "isuruf",
         "beckermr",
+        "isuruf",
         "xhochy"
       ]
     },
@@ -45,12 +78,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.10' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.10"
       },
       {
@@ -58,51 +95,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.10 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.10"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.10"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.10 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.10' ]]"
-          ]
-        },
-        "version": "10.10"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.10 *_5"
-          ]
-        },
+        ],
         "version": "10.10"
       },
       {
@@ -115,12 +125,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.11' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.11"
       },
       {
@@ -128,51 +142,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.11 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.11"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.11"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.11 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.11' ]]"
-          ]
-        },
-        "version": "10.11"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.11 *_5"
-          ]
-        },
+        ],
         "version": "10.11"
       },
       {
@@ -185,12 +172,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.12' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.12"
       },
       {
@@ -198,51 +189,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.12 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.12"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.12"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.12 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.12' ]]"
-          ]
-        },
-        "version": "10.12"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.12 *_5"
-          ]
-        },
+        ],
         "version": "10.12"
       },
       {
@@ -255,12 +219,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.13' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.13"
       },
       {
@@ -268,51 +236,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.13 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.13"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.13"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.13 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.13' ]]"
-          ]
-        },
-        "version": "10.13"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.13 *_5"
-          ]
-        },
+        ],
         "version": "10.13"
       },
       {
@@ -325,12 +266,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.14' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.14"
       },
       {
@@ -338,51 +283,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.14 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.14"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.14"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.14 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.14' ]]"
-          ]
-        },
-        "version": "10.14"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.14 *_5"
-          ]
-        },
+        ],
         "version": "10.14"
       },
       {
@@ -395,12 +313,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.15' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.15"
       },
       {
@@ -408,51 +330,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.15 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.15"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.15"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.15 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.15' ]]"
-          ]
-        },
-        "version": "10.15"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.15 *_5"
-          ]
-        },
+        ],
         "version": "10.15"
       },
       {
@@ -465,12 +360,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.9' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.9"
       },
       {
@@ -478,51 +377,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.9 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.9"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.9"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.9 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.9' ]]"
-          ]
-        },
-        "version": "10.9"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.9 *_5"
-          ]
-        },
+        ],
         "version": "10.9"
       },
       {
@@ -535,12 +407,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.0"
       },
       {
@@ -548,16 +424,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 11.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==11.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.0"
       },
       {
@@ -570,12 +454,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.0"
       },
       {
@@ -583,16 +471,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 11.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==11.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.0"
       },
       {
@@ -605,12 +501,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.1"
       },
       {
@@ -618,16 +518,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 11.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==11.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.1"
       },
       {
@@ -640,12 +548,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.1"
       },
       {
@@ -653,16 +565,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 11.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==11.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.1"
       },
       {
@@ -675,12 +595,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.3"
       },
       {
@@ -688,16 +612,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 11.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==11.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.3"
       },
       {
@@ -710,12 +642,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.3"
       },
       {
@@ -723,16 +659,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 11.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==11.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.3"
       },
       {
@@ -745,12 +689,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.0"
       },
       {
@@ -758,16 +706,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 12.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==12.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.0"
       },
       {
@@ -780,12 +736,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.0"
       },
       {
@@ -793,16 +753,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 12.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==12.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.0"
       },
       {
@@ -815,12 +783,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.1"
       },
       {
@@ -828,16 +800,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 12.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==12.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.1"
       },
       {
@@ -850,12 +830,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.1"
       },
       {
@@ -863,16 +847,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 12.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==12.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.1"
       },
       {
@@ -885,12 +877,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.3"
       },
       {
@@ -898,16 +894,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 12.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==12.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.3"
       },
       {
@@ -920,12 +924,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.3"
       },
       {
@@ -933,16 +941,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 12.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==12.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.3"
       },
       {
@@ -955,12 +971,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.0"
       },
       {
@@ -968,16 +988,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 13.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==13.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.0"
       },
       {
@@ -990,12 +1018,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.0"
       },
       {
@@ -1003,16 +1035,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 13.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==13.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.0"
       },
       {
@@ -1025,12 +1065,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.1"
       },
       {
@@ -1038,16 +1082,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 13.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==13.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.1"
       },
       {
@@ -1060,12 +1112,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.1"
       },
       {
@@ -1073,16 +1129,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 13.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==13.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.1"
       },
       {
@@ -1095,12 +1159,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.3"
       },
       {
@@ -1108,16 +1176,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 13.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==13.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.3"
       },
       {
@@ -1130,12 +1206,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.3"
       },
       {
@@ -1143,16 +1223,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 13.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==13.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.3"
       },
       {
@@ -1165,12 +1253,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.0"
       },
       {
@@ -1178,16 +1270,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 14.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==14.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.0"
       },
       {
@@ -1200,12 +1300,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.0"
       },
       {
@@ -1213,16 +1317,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 14.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==14.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.0"
       },
       {
@@ -1235,12 +1347,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.2' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.2"
       },
       {
@@ -1248,16 +1364,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 14.2 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==14.2 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.2"
       },
       {
@@ -1270,12 +1394,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.2' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.2"
       },
       {
@@ -1283,16 +1411,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 14.2 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==14.2 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.2"
       },
       {
@@ -1305,12 +1441,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.4' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.4"
       },
       {
@@ -1318,16 +1458,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 14.4 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==14.4 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.4"
       },
       {
@@ -1340,12 +1488,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.4' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.4"
       },
       {
@@ -1353,16 +1505,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 14.4 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==14.4 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.4"
       },
       {
@@ -1375,12 +1535,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.5' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.5"
       },
       {
@@ -1388,16 +1552,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 14.5 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==14.5 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.5"
       },
       {
@@ -1410,12 +1582,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.5' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.5"
       },
       {
@@ -1423,16 +1599,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 14.5 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==14.5 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.5"
       },
       {
@@ -1445,12 +1629,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.0"
       },
       {
@@ -1458,16 +1646,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.0"
       },
       {
@@ -1480,12 +1676,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.0"
       },
       {
@@ -1493,16 +1693,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.0"
       },
       {
@@ -1515,12 +1723,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.1"
       },
       {
@@ -1528,16 +1740,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.1"
       },
       {
@@ -1550,12 +1770,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.1"
       },
       {
@@ -1563,16 +1787,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.1"
       },
       {
@@ -1585,12 +1817,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.2' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.2"
       },
       {
@@ -1598,16 +1834,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.2 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.2 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.2"
       },
       {
@@ -1620,12 +1864,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.2' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.2"
       },
       {
@@ -1633,16 +1881,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.2 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.2 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.2"
       },
       {
@@ -1655,12 +1911,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.4' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.4"
       },
       {
@@ -1668,16 +1928,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.4 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.4 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.4"
       },
       {
@@ -1690,12 +1958,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.4' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.4"
       },
       {
@@ -1703,16 +1975,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.4 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.4 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.4"
       },
       {
@@ -1725,12 +2005,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.5' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.5"
       },
       {
@@ -1738,16 +2022,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.5 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.5 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.5"
       },
       {
@@ -1760,12 +2052,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.5' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.5"
       },
       {
@@ -1773,16 +2069,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.5 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.5 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.5"
       },
       {
@@ -1795,12 +2099,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '26.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "26.0"
       },
       {
@@ -1808,16 +2116,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 26.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==26.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "26.0"
       },
       {
@@ -1830,12 +2146,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '26.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "26.0"
       },
       {
@@ -1843,24 +2163,33 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 26.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==26.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "26.0"
       }
     ],
     "package": {
-      "name": "osx-sysroot",
-      "version": "1"
+      "name": "macosx_deployment_target_osx-arm64",
+      "version": "26.0"
     },
-    "schema_version": 0
+    "requirements": {},
+    "schema_version": 1
   },
   "linux_64_requirements": {
     "build": {
@@ -1887,18 +2216,49 @@
     "about": {
       "home": "https://github.com/conda-forge/osx-sysroot-feedstock",
       "license": "BSD-3-Clause",
-      "license_family": "BSD",
+      "license_family": "BSD-3-Clause",
       "license_file": "LICENSE",
       "summary": "metapackage to set the MACOSX_DEPLOYMENT_TARGET"
     },
     "build": {
-      "number": "5",
-      "skip": true
+      "noarch": "generic",
+      "number": "7",
+      "run_exports": {
+        "strong": [
+          "__osx >=10.10",
+          "__osx >=10.11",
+          "__osx >=10.12",
+          "__osx >=10.13",
+          "__osx >=10.14",
+          "__osx >=10.15",
+          "__osx >=10.9",
+          "__osx >=11.0",
+          "__osx >=11.1",
+          "__osx >=11.3",
+          "__osx >=12.0",
+          "__osx >=12.1",
+          "__osx >=12.3",
+          "__osx >=13.0",
+          "__osx >=13.1",
+          "__osx >=13.3",
+          "__osx >=14.0",
+          "__osx >=14.2",
+          "__osx >=14.4",
+          "__osx >=14.5",
+          "__osx >=15.0",
+          "__osx >=15.1",
+          "__osx >=15.2",
+          "__osx >=15.4",
+          "__osx >=15.5",
+          "__osx >=26.0"
+        ]
+      },
+      "script": "build_mdt.sh"
     },
     "extra": {
       "recipe-maintainers": [
-        "isuruf",
         "beckermr",
+        "isuruf",
         "xhochy"
       ]
     },
@@ -1913,12 +2273,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.10' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.10"
       },
       {
@@ -1926,51 +2290,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.10 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.10"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.10"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.10 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.10' ]]"
-          ]
-        },
-        "version": "10.10"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.10 *_5"
-          ]
-        },
+        ],
         "version": "10.10"
       },
       {
@@ -1983,12 +2320,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.11' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.11"
       },
       {
@@ -1996,51 +2337,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.11 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.11"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.11"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.11 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.11' ]]"
-          ]
-        },
-        "version": "10.11"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.11 *_5"
-          ]
-        },
+        ],
         "version": "10.11"
       },
       {
@@ -2053,12 +2367,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.12' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.12"
       },
       {
@@ -2066,51 +2384,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.12 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.12"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.12"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.12 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.12' ]]"
-          ]
-        },
-        "version": "10.12"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.12 *_5"
-          ]
-        },
+        ],
         "version": "10.12"
       },
       {
@@ -2123,12 +2414,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.13' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.13"
       },
       {
@@ -2136,51 +2431,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.13 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.13"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.13"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.13 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.13' ]]"
-          ]
-        },
-        "version": "10.13"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.13 *_5"
-          ]
-        },
+        ],
         "version": "10.13"
       },
       {
@@ -2193,12 +2461,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.14' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.14"
       },
       {
@@ -2206,51 +2478,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.14 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.14"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.14"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.14 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.14' ]]"
-          ]
-        },
-        "version": "10.14"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.14 *_5"
-          ]
-        },
+        ],
         "version": "10.14"
       },
       {
@@ -2263,12 +2508,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.15' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.15"
       },
       {
@@ -2276,51 +2525,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.15 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.15"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.15"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.15 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.15' ]]"
-          ]
-        },
-        "version": "10.15"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.15 *_5"
-          ]
-        },
+        ],
         "version": "10.15"
       },
       {
@@ -2333,12 +2555,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.9' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "10.9"
       },
       {
@@ -2346,51 +2572,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 10.9 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
-        "version": "10.9"
-      },
-      {
-        "build": {
-          "noarch": "generic",
-          "run_exports": {
-            "strong": [
-              "__osx >=10.9"
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==10.9 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
             ]
           }
-        },
-        "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '10.9' ]]"
-          ]
-        },
-        "version": "10.9"
-      },
-      {
-        "build": {
-          "noarch": "generic"
-        },
-        "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 10.9 *_5"
-          ]
-        },
+        ],
         "version": "10.9"
       },
       {
@@ -2403,12 +2602,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.0"
       },
       {
@@ -2416,16 +2619,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 11.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==11.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.0"
       },
       {
@@ -2438,12 +2649,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.0"
       },
       {
@@ -2451,16 +2666,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 11.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==11.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.0"
       },
       {
@@ -2473,12 +2696,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.1"
       },
       {
@@ -2486,16 +2713,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 11.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==11.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.1"
       },
       {
@@ -2508,12 +2743,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.1"
       },
       {
@@ -2521,16 +2760,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 11.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==11.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.1"
       },
       {
@@ -2543,12 +2790,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.3"
       },
       {
@@ -2556,16 +2807,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 11.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==11.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.3"
       },
       {
@@ -2578,12 +2837,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '11.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "11.3"
       },
       {
@@ -2591,16 +2854,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 11.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==11.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "11.3"
       },
       {
@@ -2613,12 +2884,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.0"
       },
       {
@@ -2626,16 +2901,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 12.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==12.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.0"
       },
       {
@@ -2648,12 +2931,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.0"
       },
       {
@@ -2661,16 +2948,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 12.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==12.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.0"
       },
       {
@@ -2683,12 +2978,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.1"
       },
       {
@@ -2696,16 +2995,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 12.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==12.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.1"
       },
       {
@@ -2718,12 +3025,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.1"
       },
       {
@@ -2731,16 +3042,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 12.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==12.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.1"
       },
       {
@@ -2753,12 +3072,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.3"
       },
       {
@@ -2766,16 +3089,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 12.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==12.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.3"
       },
       {
@@ -2788,12 +3119,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '12.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "12.3"
       },
       {
@@ -2801,16 +3136,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 12.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==12.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "12.3"
       },
       {
@@ -2823,12 +3166,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.0"
       },
       {
@@ -2836,16 +3183,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 13.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==13.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.0"
       },
       {
@@ -2858,12 +3213,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.0"
       },
       {
@@ -2871,16 +3230,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 13.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==13.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.0"
       },
       {
@@ -2893,12 +3260,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.1"
       },
       {
@@ -2906,16 +3277,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 13.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==13.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.1"
       },
       {
@@ -2928,12 +3307,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.1"
       },
       {
@@ -2941,16 +3324,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 13.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==13.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.1"
       },
       {
@@ -2963,12 +3354,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.3"
       },
       {
@@ -2976,16 +3371,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 13.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==13.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.3"
       },
       {
@@ -2998,12 +3401,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '13.3' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "13.3"
       },
       {
@@ -3011,16 +3418,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 13.3 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==13.3 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "13.3"
       },
       {
@@ -3033,12 +3448,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.0"
       },
       {
@@ -3046,16 +3465,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 14.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==14.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.0"
       },
       {
@@ -3068,12 +3495,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.0"
       },
       {
@@ -3081,16 +3512,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 14.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==14.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.0"
       },
       {
@@ -3103,12 +3542,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.2' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.2"
       },
       {
@@ -3116,16 +3559,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 14.2 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==14.2 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.2"
       },
       {
@@ -3138,12 +3589,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.2' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.2"
       },
       {
@@ -3151,16 +3606,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 14.2 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==14.2 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.2"
       },
       {
@@ -3173,12 +3636,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.4' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.4"
       },
       {
@@ -3186,16 +3653,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 14.4 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==14.4 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.4"
       },
       {
@@ -3208,12 +3683,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.4' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.4"
       },
       {
@@ -3221,16 +3700,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 14.4 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==14.4 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.4"
       },
       {
@@ -3243,12 +3730,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.5' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.5"
       },
       {
@@ -3256,16 +3747,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 14.5 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==14.5 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.5"
       },
       {
@@ -3278,12 +3777,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '14.5' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "14.5"
       },
       {
@@ -3291,16 +3794,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 14.5 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==14.5 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "14.5"
       },
       {
@@ -3313,12 +3824,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.0"
       },
       {
@@ -3326,16 +3841,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.0"
       },
       {
@@ -3348,12 +3871,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.0"
       },
       {
@@ -3361,16 +3888,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.0"
       },
       {
@@ -3383,12 +3918,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.1"
       },
       {
@@ -3396,16 +3935,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.1"
       },
       {
@@ -3418,12 +3965,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.1' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.1"
       },
       {
@@ -3431,16 +3982,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.1 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.1 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.1"
       },
       {
@@ -3453,12 +4012,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.2' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.2"
       },
       {
@@ -3466,16 +4029,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.2 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.2 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.2"
       },
       {
@@ -3488,12 +4059,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.2' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.2"
       },
       {
@@ -3501,16 +4076,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.2 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.2 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.2"
       },
       {
@@ -3523,12 +4106,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.4' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.4"
       },
       {
@@ -3536,16 +4123,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.4 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.4 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.4"
       },
       {
@@ -3558,12 +4153,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.4' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.4"
       },
       {
@@ -3571,16 +4170,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.4 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.4 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.4"
       },
       {
@@ -3593,12 +4200,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.5' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.5"
       },
       {
@@ -3606,16 +4217,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 15.5 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==15.5 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.5"
       },
       {
@@ -3628,12 +4247,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '15.5' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "15.5"
       },
       {
@@ -3641,16 +4264,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 15.5 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==15.5 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "15.5"
       },
       {
@@ -3663,12 +4294,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '26.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "26.0"
       },
       {
@@ -3676,16 +4311,24 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-64 26.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-64 ==26.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "26.0"
       },
       {
@@ -3698,12 +4341,16 @@
           }
         },
         "name": "macosx_deployment_target_osx-arm64",
-        "script": "build_mdt.sh",
-        "test": {
-          "commands": [
-            "[[ ${MACOSX_DEPLOYMENT_TARGET} == '26.0' ]]"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "script": "[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]"
+          }
+        ],
         "version": "26.0"
       },
       {
@@ -3711,26 +4358,35 @@
           "noarch": "generic"
         },
         "name": "sdkroot_env_osx-arm64",
-        "script": "build_sdkroot_env.sh",
-        "test": {
-          "commands": [
-            "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
-            "echo 11.0"
-          ],
-          "requires": [
-            "macosx_deployment_target_osx-arm64 26.0 *_5"
-          ]
+        "requirements": {
+          "build": [],
+          "host": [],
+          "run": []
         },
+        "tests": [
+          {
+            "requirements": {
+              "run": [
+                "macosx_deployment_target_osx-arm64 ==26.0 *_7"
+              ]
+            },
+            "script": [
+              "[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]",
+              "echo ${{ MACOSX_SDK_VERSION }}"
+            ]
+          }
+        ],
         "version": "26.0"
       }
     ],
     "package": {
-      "name": "osx-sysroot",
-      "version": "1"
+      "name": "macosx_deployment_target_osx-arm64",
+      "version": "26.0"
     },
-    "schema_version": 0
+    "requirements": {},
+    "schema_version": 1
   },
-  "name": "osx-sysroot",
+  "name": "macosx_deployment_target_osx-arm64",
   "outputs_names": {
     "__set__": true,
     "elements": [
@@ -3740,14 +4396,14 @@
       "sdkroot_env_osx-arm64"
     ]
   },
-  "parsing_error": "feedstock parsing error: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error UnboundLocalError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 781, in load_feedstock_local\n    return populate_feedstock_attributes(\n        name,\n    ...<6 lines>...\n        use_container=False,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 425, in populate_feedstock_attributes\n    parse_recipe_yaml(\n    ~~~~~~~~~~~~~~~~~^\n        recipe_yaml,\n        ^^^^^^^^^^^^\n    ...<2 lines>...\n        use_container=use_container,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ),\n    ^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 379, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n        text,\n    ...<2 lines>...\n        cbc_path=cbc_path,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 556, in parse_recipe_yaml_local\n    parsed_recipes = _parse_recipes(rendered_recipes)  # type: ignore[arg-type]\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 845, in _parse_recipes\n    \"source\": source_data,\n              ^^^^^^^^^^^\nUnboundLocalError: cannot access local variable 'source_data' where it is not associated with a value\n\nTraceback (most recent call last):\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/make_graph.py\", line 138, in try_load_feedstock\n    data = load_feedstock(name, attrs.data, mark_not_archived=mark_not_archived)\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 902, in load_feedstock\n    return load_feedstock_containerized(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/home/runner/work/conda-forge-bot/conda-forge-bot/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 854, in load_feedstock_containerized\n    data = run_container_operation(\n        args,\n    ...<2 lines>...\n        extra_container_args=get_container_env_command_args(),\n    )\n  File \"/home/runner/micromamba/envs/conda-forge-bot/lib/python3.14/site-packages/conda_forge_feedstock_ops/container_utils.py\", line 218, in run_container_operation\n    raise ContainerRuntimeError(\n    ...<6 lines>...\n    )\nconda_forge_feedstock_ops.container_utils.ContainerRuntimeError: Error running 'conda-forge-tick-container parse-feedstock --existing-feedstock-node-attrs - --log-level info --mark-not-archived' in container - error UnboundLocalError raised:\ntraceback: Traceback (most recent call last):\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 115, in _run_bot_task\n    data = func(attrs=attrs, **kwargs)\n  File \"/opt/conda-forge-bot/conda_forge_tick/container_cli.py\", line 280, in _parse_feedstock\n    node_attrs = load_feedstock_local(\n        name,\n    ...<4 lines>...\n        mark_not_archived=mark_not_archived,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 781, in load_feedstock_local\n    return populate_feedstock_attributes(\n        name,\n    ...<6 lines>...\n        use_container=False,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/feedstock_parser.py\", line 425, in populate_feedstock_attributes\n    parse_recipe_yaml(\n    ~~~~~~~~~~~~~~~~~^\n        recipe_yaml,\n        ^^^^^^^^^^^^\n    ...<2 lines>...\n        use_container=use_container,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ),\n    ^\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 379, in parse_recipe_yaml\n    return parse_recipe_yaml_local(\n        text,\n    ...<2 lines>...\n        cbc_path=cbc_path,\n    )\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 556, in parse_recipe_yaml_local\n    parsed_recipes = _parse_recipes(rendered_recipes)  # type: ignore[arg-type]\n  File \"/opt/conda-forge-bot/conda_forge_tick/utils.py\", line 845, in _parse_recipes\n    \"source\": source_data,\n              ^^^^^^^^^^^\nUnboundLocalError: cannot access local variable 'source_data' where it is not associated with a value\n\n",
+  "parsing_error": false,
   "platforms": [
     "linux_64"
   ],
   "pr_info": {
     "__lazy_json__": "pr_info/osx-sysroot.json"
   },
-  "raw_meta_yaml": "{% set name = \"osx-sysroot\" %}\n{% set version = \"1\" %}\n{% set build = \"5\" %}\n\npackage:\n  name: {{ name|lower }}\n  version: {{ version }}\n\nbuild:\n  number: {{ build }}\n  {% if cross_target_platform == \"osx-arm64\" and _MACOSX_DEPLOYMENT_TARGET_[0:2]|int < 11 %}\n  skip: True\n  {% endif %}\n\noutputs:\n  - name: macosx_deployment_target_{{ cross_target_platform }}\n    version: \"{{ _MACOSX_DEPLOYMENT_TARGET_ }}\"\n    script: build_mdt.sh\n    build:\n      noarch: generic\n      run_exports:\n        strong:\n          - __osx >={{ _MACOSX_DEPLOYMENT_TARGET_ }}\n    test:\n      commands:\n        - \"[[ ${MACOSX_DEPLOYMENT_TARGET} == '{{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]\"\n  - name: sdkroot_env_{{ cross_target_platform }}\n    version: \"{{ _MACOSX_DEPLOYMENT_TARGET_ }}\"\n    script: build_sdkroot_env.sh\n    build:\n      noarch: generic\n    test:\n      requires:\n        - macosx_deployment_target_{{ cross_target_platform }} {{ _MACOSX_DEPLOYMENT_TARGET_ }} *_{{ build }}\n      commands:\n        - \"[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]\"\n        - echo {{ MACOSX_SDK_VERSION }}\n\nabout:\n  home: https://github.com/conda-forge/osx-sysroot-feedstock\n  summary: metapackage to set the MACOSX_DEPLOYMENT_TARGET\n  license: BSD-3-Clause\n  license_family: BSD\n  license_file: LICENSE\n\nextra:\n  recipe-maintainers:\n    - isuruf\n    - beckermr\n    - xhochy\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  build_number: 7\n\nrecipe:\n  name: osx-sysroot\n  version: ${{ _MACOSX_DEPLOYMENT_TARGET_ }}\n\nbuild:\n  number: ${{ build_number }}\n  skip:\n    - cross_target_platform == \"osx-arm64\" and match(_MACOSX_DEPLOYMENT_TARGET_, \"<11\")\n\noutputs:\n  - package:\n      name: macosx_deployment_target_${{ cross_target_platform }}\n    build:\n      noarch: generic\n      script: build_mdt.sh\n    requirements:\n      run_exports:\n        strong:\n          - __osx >=${{ _MACOSX_DEPLOYMENT_TARGET_ }}\n    tests:\n      - script:\n          - \"[[ ${MACOSX_DEPLOYMENT_TARGET} == '${{ _MACOSX_DEPLOYMENT_TARGET_ }}' ]]\"\n\n  - package:\n      name: sdkroot_env_${{ cross_target_platform }}\n    build:\n      noarch: generic\n      script: build_sdkroot_env.sh\n    tests:\n      - requirements:\n          run:\n            # rattler-build fails with pin_subpackage here.\n            - macosx_deployment_target_${{ cross_target_platform }} ==${{ _MACOSX_DEPLOYMENT_TARGET_ }} *_${{ build_number }}\n        script:\n          - \"[[ ${SDKROOT} == ${CONDA_BUILD_SYSROOT} ]]\"\n          - echo ${{ MACOSX_SDK_VERSION }}\n\nabout:\n  summary: metapackage to set the MACOSX_DEPLOYMENT_TARGET\n  license: BSD-3-Clause\n  license_file: LICENSE\n  homepage: https://github.com/conda-forge/osx-sysroot-feedstock\n\nextra:\n  recipe-maintainers:\n    - beckermr\n    - isuruf\n    - xhochy\n",
   "req": {
     "__set__": true,
     "elements": []
@@ -3794,62 +4450,55 @@
     "test": {
       "__set__": true,
       "elements": [
-        "macosx_deployment_target_osx-64 10.10 *_5",
-        "macosx_deployment_target_osx-64 10.11 *_5",
-        "macosx_deployment_target_osx-64 10.12 *_5",
-        "macosx_deployment_target_osx-64 10.13 *_5",
-        "macosx_deployment_target_osx-64 10.14 *_5",
-        "macosx_deployment_target_osx-64 10.15 *_5",
-        "macosx_deployment_target_osx-64 10.9 *_5",
-        "macosx_deployment_target_osx-64 11.0 *_5",
-        "macosx_deployment_target_osx-64 11.1 *_5",
-        "macosx_deployment_target_osx-64 11.3 *_5",
-        "macosx_deployment_target_osx-64 12.0 *_5",
-        "macosx_deployment_target_osx-64 12.1 *_5",
-        "macosx_deployment_target_osx-64 12.3 *_5",
-        "macosx_deployment_target_osx-64 13.0 *_5",
-        "macosx_deployment_target_osx-64 13.1 *_5",
-        "macosx_deployment_target_osx-64 13.3 *_5",
-        "macosx_deployment_target_osx-64 14.0 *_5",
-        "macosx_deployment_target_osx-64 14.2 *_5",
-        "macosx_deployment_target_osx-64 14.4 *_5",
-        "macosx_deployment_target_osx-64 14.5 *_5",
-        "macosx_deployment_target_osx-64 15.0 *_5",
-        "macosx_deployment_target_osx-64 15.1 *_5",
-        "macosx_deployment_target_osx-64 15.2 *_5",
-        "macosx_deployment_target_osx-64 15.4 *_5",
-        "macosx_deployment_target_osx-64 15.5 *_5",
-        "macosx_deployment_target_osx-64 26.0 *_5",
-        "macosx_deployment_target_osx-arm64 10.10 *_5",
-        "macosx_deployment_target_osx-arm64 10.11 *_5",
-        "macosx_deployment_target_osx-arm64 10.12 *_5",
-        "macosx_deployment_target_osx-arm64 10.13 *_5",
-        "macosx_deployment_target_osx-arm64 10.14 *_5",
-        "macosx_deployment_target_osx-arm64 10.15 *_5",
-        "macosx_deployment_target_osx-arm64 10.9 *_5",
-        "macosx_deployment_target_osx-arm64 11.0 *_5",
-        "macosx_deployment_target_osx-arm64 11.1 *_5",
-        "macosx_deployment_target_osx-arm64 11.3 *_5",
-        "macosx_deployment_target_osx-arm64 12.0 *_5",
-        "macosx_deployment_target_osx-arm64 12.1 *_5",
-        "macosx_deployment_target_osx-arm64 12.3 *_5",
-        "macosx_deployment_target_osx-arm64 13.0 *_5",
-        "macosx_deployment_target_osx-arm64 13.1 *_5",
-        "macosx_deployment_target_osx-arm64 13.3 *_5",
-        "macosx_deployment_target_osx-arm64 14.0 *_5",
-        "macosx_deployment_target_osx-arm64 14.2 *_5",
-        "macosx_deployment_target_osx-arm64 14.4 *_5",
-        "macosx_deployment_target_osx-arm64 14.5 *_5",
-        "macosx_deployment_target_osx-arm64 15.0 *_5",
-        "macosx_deployment_target_osx-arm64 15.1 *_5",
-        "macosx_deployment_target_osx-arm64 15.2 *_5",
-        "macosx_deployment_target_osx-arm64 15.4 *_5",
-        "macosx_deployment_target_osx-arm64 15.5 *_5",
-        "macosx_deployment_target_osx-arm64 26.0 *_5"
+        "macosx_deployment_target_osx-64 ==10.10 *_7",
+        "macosx_deployment_target_osx-64 ==10.11 *_7",
+        "macosx_deployment_target_osx-64 ==10.12 *_7",
+        "macosx_deployment_target_osx-64 ==10.13 *_7",
+        "macosx_deployment_target_osx-64 ==10.14 *_7",
+        "macosx_deployment_target_osx-64 ==10.15 *_7",
+        "macosx_deployment_target_osx-64 ==10.9 *_7",
+        "macosx_deployment_target_osx-64 ==11.0 *_7",
+        "macosx_deployment_target_osx-64 ==11.1 *_7",
+        "macosx_deployment_target_osx-64 ==11.3 *_7",
+        "macosx_deployment_target_osx-64 ==12.0 *_7",
+        "macosx_deployment_target_osx-64 ==12.1 *_7",
+        "macosx_deployment_target_osx-64 ==12.3 *_7",
+        "macosx_deployment_target_osx-64 ==13.0 *_7",
+        "macosx_deployment_target_osx-64 ==13.1 *_7",
+        "macosx_deployment_target_osx-64 ==13.3 *_7",
+        "macosx_deployment_target_osx-64 ==14.0 *_7",
+        "macosx_deployment_target_osx-64 ==14.2 *_7",
+        "macosx_deployment_target_osx-64 ==14.4 *_7",
+        "macosx_deployment_target_osx-64 ==14.5 *_7",
+        "macosx_deployment_target_osx-64 ==15.0 *_7",
+        "macosx_deployment_target_osx-64 ==15.1 *_7",
+        "macosx_deployment_target_osx-64 ==15.2 *_7",
+        "macosx_deployment_target_osx-64 ==15.4 *_7",
+        "macosx_deployment_target_osx-64 ==15.5 *_7",
+        "macosx_deployment_target_osx-64 ==26.0 *_7",
+        "macosx_deployment_target_osx-arm64 ==11.0 *_7",
+        "macosx_deployment_target_osx-arm64 ==11.1 *_7",
+        "macosx_deployment_target_osx-arm64 ==11.3 *_7",
+        "macosx_deployment_target_osx-arm64 ==12.0 *_7",
+        "macosx_deployment_target_osx-arm64 ==12.1 *_7",
+        "macosx_deployment_target_osx-arm64 ==12.3 *_7",
+        "macosx_deployment_target_osx-arm64 ==13.0 *_7",
+        "macosx_deployment_target_osx-arm64 ==13.1 *_7",
+        "macosx_deployment_target_osx-arm64 ==13.3 *_7",
+        "macosx_deployment_target_osx-arm64 ==14.0 *_7",
+        "macosx_deployment_target_osx-arm64 ==14.2 *_7",
+        "macosx_deployment_target_osx-arm64 ==14.4 *_7",
+        "macosx_deployment_target_osx-arm64 ==14.5 *_7",
+        "macosx_deployment_target_osx-arm64 ==15.0 *_7",
+        "macosx_deployment_target_osx-arm64 ==15.1 *_7",
+        "macosx_deployment_target_osx-arm64 ==15.2 *_7",
+        "macosx_deployment_target_osx-arm64 ==15.4 *_7",
+        "macosx_deployment_target_osx-arm64 ==15.5 *_7",
+        "macosx_deployment_target_osx-arm64 ==26.0 *_7"
       ]
     }
   },
-  "version": "1",
+  "version": "26.0",
   "version_pr_info": {
     "__lazy_json__": "version_pr_info/osx-sysroot.json"
   }
