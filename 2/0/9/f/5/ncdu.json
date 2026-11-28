@@ -1,12 +1,14 @@
 {
   "archived": false,
   "branch": "main",
-  "ci_support_linux_64_.yaml": "c_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nncurses:\n- '6'\ntarget_platform:\n- linux-64\nzstd:\n- '1.5'\n",
-  "ci_support_migrations": {},
+  "ci_support_linux_64_.yaml": "DOCKER_PLATFORM:\n- linux/amd64\nc_stdlib:\n- sysroot\nc_stdlib_version:\n- '2.17'\nchannel_sources:\n- conda-forge\nchannel_targets:\n- conda-forge main\ndocker_image:\n- quay.io/condaforge/linux-anvil-x86_64:alma10\nncurses:\n- '6'\ntarget_platform:\n- linux-64\nzstd:\n- '1.6'\n",
+  "ci_support_migrations": {
+    "zstd16": {
+      "migration_number": 1,
+      "migrator_ts": 1795498666.105089
+    }
+  },
   "conda-forge.yml": {
-    "build_platform": {
-      "osx_arm64": "osx_64"
-    },
     "conda_build": {
       "pkg_format": "2"
     },
@@ -18,12 +20,13 @@
     },
     "provider": {
       "linux_aarch64": "default",
-      "linux_ppc64le": "default"
+      "linux_ppc64le": "default",
+      "osx_arm64": "default"
     },
     "test": "native_and_emulated"
   },
-  "feedstock_hash": "56cdbfeecdc10c493695179c7bf3c2632588b277",
-  "feedstock_hash_ts": 1788651175,
+  "feedstock_hash": "7ce2a12f326b9b717ee09cb0e0bcbefc955ff553",
+  "feedstock_hash_ts": 1795877378,
   "feedstock_name": "ncdu",
   "hash_type": "sha256",
   "linux_64_meta_yaml": {
@@ -38,7 +41,7 @@
       "summary": "NCurses Disk Usage"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "CONDA_C_STDLIB_VERSION": "2.17"
@@ -145,7 +148,7 @@
       "summary": "NCurses Disk Usage"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "CONDA_C_STDLIB_VERSION": "2.17"
@@ -252,7 +255,7 @@
       "summary": "NCurses Disk Usage"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "CONDA_C_STDLIB_VERSION": "11.0"
@@ -437,7 +440,7 @@
       "summary": "NCurses Disk Usage"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "CONDA_C_STDLIB_VERSION": "11.0"
@@ -547,7 +550,7 @@
       "summary": "NCurses Disk Usage"
     },
     "build": {
-      "number": "0",
+      "number": "1",
       "script": {
         "env": {
           "CONDA_C_STDLIB_VERSION": "11.0"
@@ -661,7 +664,7 @@
   "pr_info": {
     "__lazy_json__": "pr_info/ncdu.json"
   },
-  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: ncdu\n  version: \"2.9.2\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://dev.yorhel.nl/download/${{ name }}-${{ version }}.tar.gz\n  sha256: e91135281cb66569f2ca4c0bac277246991e7e52524c0ca8cba3de5c8e81cec9\n\nbuild:\n  number: 0\n  skip: win or ppc64le\n  script:\n    file: build\n    env:\n      # The libc floor to compile against. Passing the variant means the\n      # binary's actual floor and the __glibc/__osx bound stdlib(\"c\")\n      # declares are the same number rather than two kept in sync by hand.\n      # default(\"\") keeps the win-64 render working, where the recipe is\n      # skipped and c_stdlib_version is undefined; build.sh rejects an empty\n      # value, so a real platform missing it fails loudly rather than\n      # producing a truncated target triple.\n      CONDA_C_STDLIB_VERSION: ${{ c_stdlib_version | default(\"\") }}\n\nrequirements:\n  build:\n    # zig bundles its own clang and never invokes a host C compiler, so this\n    # is likely droppable; it is kept because verifying that needs a macOS CI\n    # run, and the macOS legs of this recipe have been the fragile ones.\n    - if: osx\n      then:\n        - ${{ compiler('c') }}\n    # Needed even though zig is self-contained: this supplies the package's\n    # __glibc/__osx floor, which must match build.sh's -Dtarget triples.\n    - ${{ stdlib(\"c\") }}\n    - zig >=0.15.2,<0.16\n    - pkg-config\n  host:\n    - ncurses\n    - zstd\n\ntests:\n  - script:\n      - ncdu --version\n  - package_contents:\n      # The whole payload is these two files, so strict costs nothing.\n      strict: true\n      bin:\n        - ncdu\n      files:\n        - share/man/man1/ncdu.1\n\nabout:\n  license: MIT\n  license_file: LICENSES/MIT.txt\n  summary: NCurses Disk Usage\n  description: |\n    Ncdu is a disk usage analyzer with an ncurses interface. It is designed to\n    find space hogs on a remote server where you don't have an entire graphical\n    setup available, but it is a useful tool even on regular desktop systems.\n    Ncdu aims to be fast, simple and easy to use, and should be able to run\n    in any minimal POSIX-like environment with ncurses installed.\n  homepage: https://dev.yorhel.nl/ncdu\n  repository: https://g.blicky.net/ncdu.git/\n  documentation: https://dev.yorhel.nl/ncdu/man\n\nextra:\n  recipe-maintainers:\n    - chrisburr\n    - carlodri\n",
+  "raw_meta_yaml": "schema_version: 1\n\ncontext:\n  name: ncdu\n  version: \"2.9.2\"\n\npackage:\n  name: ${{ name|lower }}\n  version: ${{ version }}\n\nsource:\n  url: https://dev.yorhel.nl/download/${{ name }}-${{ version }}.tar.gz\n  sha256: e91135281cb66569f2ca4c0bac277246991e7e52524c0ca8cba3de5c8e81cec9\n\nbuild:\n  number: 1\n  skip: win or ppc64le\n  script:\n    file: build\n    env:\n      # The libc floor to compile against. Passing the variant means the\n      # binary's actual floor and the __glibc/__osx bound stdlib(\"c\")\n      # declares are the same number rather than two kept in sync by hand.\n      # default(\"\") keeps the win-64 render working, where the recipe is\n      # skipped and c_stdlib_version is undefined; build.sh rejects an empty\n      # value, so a real platform missing it fails loudly rather than\n      # producing a truncated target triple.\n      CONDA_C_STDLIB_VERSION: ${{ c_stdlib_version | default(\"\") }}\n\nrequirements:\n  build:\n    # zig bundles its own clang and never invokes a host C compiler, so this\n    # is likely droppable; it is kept because verifying that needs a macOS CI\n    # run, and the macOS legs of this recipe have been the fragile ones.\n    - if: osx\n      then:\n        - ${{ compiler('c') }}\n    # Needed even though zig is self-contained: this supplies the package's\n    # __glibc/__osx floor, which must match build.sh's -Dtarget triples.\n    - ${{ stdlib(\"c\") }}\n    - zig >=0.15.2,<0.16\n    - pkg-config\n  host:\n    - ncurses\n    - zstd\n\ntests:\n  - script:\n      - ncdu --version\n  - package_contents:\n      # The whole payload is these two files, so strict costs nothing.\n      strict: true\n      bin:\n        - ncdu\n      files:\n        - share/man/man1/ncdu.1\n\nabout:\n  license: MIT\n  license_file: LICENSES/MIT.txt\n  summary: NCurses Disk Usage\n  description: |\n    Ncdu is a disk usage analyzer with an ncurses interface. It is designed to\n    find space hogs on a remote server where you don't have an entire graphical\n    setup available, but it is a useful tool even on regular desktop systems.\n    Ncdu aims to be fast, simple and easy to use, and should be able to run\n    in any minimal POSIX-like environment with ncurses installed.\n  homepage: https://dev.yorhel.nl/ncdu\n  repository: https://g.blicky.net/ncdu.git/\n  documentation: https://dev.yorhel.nl/ncdu/man\n\nextra:\n  recipe-maintainers:\n    - chrisburr\n    - carlodri\n",
   "req": {
     "__set__": true,
     "elements": [
